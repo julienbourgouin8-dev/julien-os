@@ -27,6 +27,51 @@ chercher des entreprises BTP dans une zone donnée sur Google Maps,
 récupérer leurs coordonnées, compléter via leur site web, et déposer le
 tout trié dans un onglet dédié au métier d'un Google Sheet prêt à
 travailler. **100% gratuit** : pas d'API payante, pas de carte bancaire —
+
+## Mode d'exécution — un métier vs plusieurs (agents en parallèle)
+
+**Un seul métier demandé** ("trouve-moi des leads plombier Périgueux") :
+exécuter les étapes ci-dessous directement dans la conversation
+principale, comme avant. Pas de changement.
+
+**Plusieurs métiers demandés en une fois** ("fais pareil pour couvreurs,
+maçons, peintres" — le cas du balayage du 2026-07-23 sur 10 corps de
+métier, qui a pris tout le temps de la session car fait en séquence) :
+**spawn un Agent par métier, en parallèle, dans le même message** (un seul
+tour d'appels d'outils avec N invocations `Agent`, pas N tours
+successifs). Chaque agent :
+
+- Prend `subagent_type: general-purpose` (a besoin des outils navigateur +
+  fichiers), `run_in_background: true` (défaut).
+- Est responsable de **toute l'Étape 1** (ci-dessous) pour son métier
+  seul : toutes les communes de la zone, scroll complet, filtrage
+  catégorie, dédoublonnage interne, récupération des URLs de site. Le
+  prompt doit être autonome — l'agent démarre à froid, sans mémoire de
+  cette conversation : lui donner le métier, la ville + communes
+  limitrophes, et rappeler explicitement les pièges déjà documentés plus
+  bas (scroll insuffisant, "maçon" mal interprété par Maps, réattribution
+  par catégorie réelle plutôt que terme de recherche).
+- **Doit créer son propre onglet dédié** (`tabs_create_mcp`) avant toute
+  navigation, et toujours cibler ce `tabId` précis dans ses appels
+  suivants — ne jamais réutiliser l'onglet 0 (l'onglet actif de Julien) ni
+  celui d'un autre agent. C'est la seule garantie d'isolation quand
+  plusieurs agents pilotent le même navigateur Chrome en même temps.
+- Écrit son résultat brut dans
+  `projects/leads-btp-perigueux/<métier>-<date>-raw.json` (liste d'objets
+  `name, rating, reviews, phone, address, website`) plutôt que de le
+  retourner en texte — évite de saturer le contexte de l'orchestrateur
+  avec des dizaines de fiches par métier.
+
+**Attendre que tous les agents se terminent** (notification de complétion
+de chaque tâche) avant de continuer — ne jamais avancer sur l'Étape 2 avec
+des résultats partiels, et ne jamais inventer un résultat d'agent pas
+encore revenu. Une fois tous les fichiers `*-raw.json` écrits, la
+conversation principale reprend la main pour l'Étape 2 (enrichissement)
+et la suite — ces étapes-là restent scriptées et séquentielles (aucun
+navigateur impliqué, donc aucun besoin de parallélisme), jusqu'à la
+validation humaine avant écriture au Sheet (Étape 3).
+
+---
 Google Maps est scrapé directement via le navigateur
 (`mcp__claude-in-chrome__*`, ou **Playwright MCP** — installé le 2026-07-21,
 voir `connections.md` — préférable pour l'extraction pure de données : il
@@ -440,6 +485,14 @@ par défaut).
 - Ce skill trouve des prospects, il n'écrit ni n'envoie aucun email —
   l'étape de contact reste manuelle (ou un futur skill séparé), pas mélangée
   ici.
+- **Mode agents parallèles (ajouté 2026-07-26) : pas encore validé sur un
+  vrai run.** L'isolation par onglet dédié (`tabs_create_mcp` par agent)
+  est la garantie théorique contre les collisions entre agents sur le même
+  navigateur Chrome, mais n'a pas encore été observée en conditions
+  réelles avec plusieurs métiers en simultané. Au premier run multi-métier
+  après ce changement, vérifier que les onglets restent bien isolés
+  (pas de résultats mélangés entre métiers) avant de faire confiance au
+  mode par défaut.
 
 ## Fichiers de référence
 
