@@ -9,7 +9,7 @@ anthropics/claude-code @ 07dcb0e13580b21174ff1bf6a7e1d5ead3b61d60
 (plugins/frontend-design/skills/frontend-design/SKILL.md). Governed by the repo's
 LICENSE.md (Anthropic Commercial Terms of Service). Kept general-purpose on
 purpose — applies to any frontend work (rebuilds, components, pages), not just
-scroll-driven video sites. For that specific genre, see the `video-to-website`
+scroll-driven video sites. For that specific genre, see the `site-revamp`
 skill's `scroll-design-guidelines.md`, which layers genre-specific rules on top
 of this one rather than duplicating or contradicting it.
 -->

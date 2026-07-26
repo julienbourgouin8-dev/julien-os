@@ -64,6 +64,13 @@ consultation client.
   capable de la session (`/model opus` si dispo) ; la construction mécanique
   peut redescendre sur Sonnet une fois le concept figé — même logique que
   `site-revamp`, en plus rapide vu la taille du site.
+- **Même garde-fou dur que `site-revamp` si cette répartition passe par des
+  subagents** : le prompt d'un agent Opus doit dire explicitement "tu écris
+  SEULEMENT le concept/la direction artistique, pas le CSS/JS final." Un
+  agent Opus qui dérive vers la construction complète doit être stoppé
+  (`TaskStop`) puis relancé sur Sonnet — voir `site-revamp` Étape 2 pour
+  l'incident réel qui a motivé cette règle, le même risque existe ici avec
+  le même pattern de répartition de modèle.
 
 ## Étape 3 — Capture en vidéo verticale
 

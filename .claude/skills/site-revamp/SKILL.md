@@ -47,6 +47,21 @@ celui avec le plus d'avis" plutôt que de nommer l'entreprise. Dans ce cas :
    s'appliquent (jamais de contenu inventé/raccourci) — Facebook remplace le
    site comme source, il ne change rien au reste du process.
 4. Confirmer le choix avec Julien avant de lancer le scraping complet.
+5. **Marquer immédiatement ce lead comme "En cours (site-revamp)" dans le Sheet**
+   (colonne J, "Statut" — voir `lead-gen/SKILL.md` Étape 3 pour l'ordre des
+   colonnes), avant de lancer quoi que ce soit d'autre. Sans cette étape, le tri
+   "premier À contacter par nombre d'avis" re-sélectionne le même prospect à
+   chaque run tant que personne n'a mis à jour le Sheet à la main — trou de
+   process réel repéré le 2026-07-26, jamais fermé jusqu'ici. Trouver la ligne
+   du lead choisi (lire la colonne A pour son numéro de ligne), puis :
+   ```
+   gws sheets spreadsheets values update \
+     --params '{"spreadsheetId":"<ID>","range":"'"'"'<Onglet>'"'"'!J<row>","valueInputOption":"USER_ENTERED"}' \
+     --json '{"range":"'"'"'<Onglet>'"'"'!J<row>","majorDimension":"ROWS","values":[["En cours (site-revamp)"]]}'
+   ```
+   Ce statut n'est pas "Contacté" — `site-revamp` construit une offre, il
+   n'envoie rien au prospect. Le passage à "Contacté" reste manuel, au moment
+   où Julien envoie réellement le lien du site fini.
 
 ## Étape 0 — L'interview, ancrée dans le site réel
 
