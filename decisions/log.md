@@ -223,3 +223,39 @@ clarification — il a choisi l'option la plus simple, réduire à un pointeur).
 **Owner:** Julien.
 
 ---
+
+## 2026-07-26 — GTM : deux voies distinctes au lieu d'un entonnoir unique site→email
+
+**Decision:** `context/about-business.md` décrivait un entonnoir unique ("refaire le site
+d'abord, puis cold email pour proposer le site fini") qui ne reflétait plus la réalité.
+Il existe en fait deux voies parallèles :
+- **Voie A** (`site-revamp`) : un prospect prioritaire à la fois, site reconstruit AVANT
+  le premier contact, le site est le pitch. Ne scale pas — réservé au prospect en tête de
+  liste (ETS Lévesque aujourd'hui).
+- **Voie B** (`cold-email-v1.md`, écrit le 2026-07-25) : mail de masse vers les ~1176
+  leads du Sheet, sans site pré-construit. Pitch différent — devis auto pendant le
+  rendez-vous + assistant téléphonique IA avec résumé d'appel, CTA = appel de 15 min. La
+  refonte de site gratuite devient une preuve de valeur envoyée après une réponse
+  positive, plus la porte d'entrée.
+
+`context/about-business.md` mis à jour pour documenter les deux voies.
+
+**Why:** construire un site par lead n'est pas réaliste à l'échelle de 1176 leads — Voie B
+existe précisément pour ça. Mais rien n'avait acté ce pivot nulle part : `cold-email-v1.md`
+existait déjà (écrit la veille) sans qu'aucun fichier canonique (`context/`) ne soit mis à
+jour pour le refléter, ce qui a produit une vraie contradiction repérée le 2026-07-26 : Claude
+a répondu en supposant que le cold email de masse contenait un lien vers un site refait (en
+se fiant à l'ancienne description de `about-business.md`) au lieu de vérifier le template
+réel. Root cause : un pivot business réel documenté seulement dans un fichier de template,
+jamais remonté dans la source canonique (`context/`) ni dans le journal de décisions — exactement
+le mode d'échec "clash" (deux sources en désaccord) déjà nommé plus tôt dans la session.
+
+**Alternatives considered :** ne documenter que dans le template lui-même (écarté — c'est
+précisément ce qui a causé la confusion, un template n'est pas une source canonique) ;
+fusionner les deux voies en une seule description vague (écarté — elles ont des mécaniques
+et des métriques de suivi différentes, taux de clic n'a pas de sens pour la Voie B qui n'a
+pas de lien, seul le taux de réponse compte).
+
+**Owner:** Julien.
+
+---
