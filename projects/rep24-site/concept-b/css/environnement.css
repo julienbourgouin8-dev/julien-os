@@ -1,0 +1,113 @@
+.environnement {
+  background: var(--bg-environnement);
+  overflow: hidden;
+}
+
+.environnement__texture {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(700px 500px at 85% 10%, rgba(55, 214, 122, 0.16), transparent 60%),
+    radial-gradient(600px 500px at 5% 90%, rgba(55, 214, 122, 0.1), transparent 60%);
+}
+
+.environnement__texture svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.5;
+}
+
+.environnement__inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: var(--sp-8);
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .environnement__inner {
+    grid-template-columns: 1fr;
+    gap: var(--sp-6);
+  }
+}
+
+.environnement__title {
+  font-size: var(--fs-section);
+  max-width: 14ch;
+  margin-bottom: var(--sp-3);
+}
+
+.environnement__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85em;
+  margin-top: var(--sp-3);
+}
+
+.environnement__list li {
+  position: relative;
+  padding-left: 1.4em;
+  color: var(--text-muted);
+  font-size: 0.98rem;
+}
+
+.environnement__list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green-neon);
+  box-shadow: 0 0 8px var(--green-neon);
+}
+
+.environnement__cta {
+  margin-top: var(--sp-4);
+}
+
+.environnement__badge-panel {
+  background: var(--plate-bg);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--sp-3);
+  box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.55);
+}
+
+.environnement__badge-panel img {
+  max-height: 84px;
+  width: auto;
+}
+
+.environnement__badge-caption {
+  font-size: 0.85rem;
+  color: #3a4048;
+  font-weight: 600;
+  max-width: 26ch;
+}
+
+.environnement__badge-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--green-neon);
+  background: rgba(55, 214, 122, 0.12);
+  border: 1px solid rgba(55, 214, 122, 0.35);
+  padding: 0.5em 1em;
+  border-radius: 999px;
+}

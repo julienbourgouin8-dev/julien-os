@@ -1,0 +1,384 @@
+/* Traitement plein cadre partagé par les sections "Nos services" #service-sanitaire
+   et #service-pac. Mêmes recettes typographiques et d'ombre que
+   .hero__eyebrow/.hero__title/.hero__subtitle (hero.css) et .stove__title/
+   .stove__text (stove.css), pour que ces panneaux soient indiscernables des
+   autres sections vidéo plein cadre du site — mais sans scroll-scrub : la
+   vidéo salle de bain avait d'abord été branchée sur js/scroll-video.js
+   (comme hero/drone), abandonné après avoir vu le rendu réel : le scrub
+   n'apportait rien ici et amplifiait le souci de recadrage ci-dessous — une
+   vidéo qui joue toute seule (autoplay/loop) est plus simple et suffisante. */
+
+.service-panel {
+  position: relative;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--teal-deep);
+}
+
+/* Section partagée regroupant les deux panneaux (voir index.html) : sur
+   mobile, un simple conteneur de bloc sans style propre — chaque
+   .service-panel garde son plein écran empilé, identique au comportement
+   d'origine. Sur desktop, devient un diptyque plein cadre (split-screen,
+   50/50) — règles tout en bas du fichier. */
+.services-duo {
+  position: relative;
+}
+
+.service-panel__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(13, 59, 62, 0.25) 0%,
+    rgba(13, 59, 62, 0) 20%,
+    rgba(13, 59, 62, 0) 60%,
+    rgba(13, 59, 62, 0.75) 100%
+  );
+}
+
+.service-panel__content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: var(--sp-6) var(--sp-3) var(--sp-10);
+  /* Dérive continue liée au scroll (js/service-panel-parallax.js), en plus
+     du fondu d'apparition ponctuel ci-dessous sur les enfants (kicker/
+     titre/texte/CTA) : portée par la propriété autonome `translate` (pas
+     le raccourci `transform`, que ces enfants utilisent pour leur propre
+     entrée) pour que les deux animations ne se marchent jamais dessus —
+     même principe que `.meter__readout` dans css/stats.css. Transition
+     courte pour lisser les pas du rAF plutôt qu'un suivi 1:1 brut du scroll.
+     */
+  translate: 0 0;
+  transition: translate 300ms linear;
+}
+
+.service-panel__kicker {
+  display: inline-block;
+  width: fit-content;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #4dede1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 1), 0 1px 4px rgba(0, 0, 0, 0.9),
+    0 0 16px rgba(77, 237, 225, 0.35);
+  margin: 0 0 var(--sp-2);
+}
+
+.service-panel__title {
+  font-family: var(--font-display);
+  color: var(--white);
+  margin: 0 0 var(--sp-2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 2px 12px rgba(0, 0, 0, 0.6),
+    0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+.service-panel__text {
+  font-family: var(--font-body);
+  font-size: var(--fs-md);
+  max-width: 46ch;
+  margin: 0;
+  color: var(--white);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.95), 0 1px 3px rgba(0, 0, 0, 0.8),
+    0 2px 8px rgba(0, 0, 0, 0.5);
+}
+.service-panel__text strong {
+  display: block;
+  margin-bottom: var(--sp-1);
+  font-weight: 700;
+}
+
+.service-panel__cta {
+  margin-top: var(--sp-4);
+}
+
+/* Apparition au scroll : même langage que .stove__title/.stove__text
+   (flou + léger glissement vers le haut, fondu), mais déclenchée par le
+   .reveal générique (js/reveal.js) plutôt qu'un état lié à une vidéo
+   verrouillée — ces sections n'ont pas de scroll-lock. */
+.service-panel__kicker,
+.service-panel__title,
+.service-panel__text,
+.service-panel__cta {
+  opacity: 0;
+  filter: blur(8px);
+  transform: translateY(16px);
+  transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out),
+    filter 700ms var(--ease-out);
+}
+.service-panel__title { transition-delay: 100ms; }
+.service-panel__text { transition-delay: 200ms; }
+.service-panel__cta { transition-delay: 300ms; }
+
+.reveal.is-visible .service-panel__kicker,
+.reveal.is-visible .service-panel__title,
+.reveal.is-visible .service-panel__text,
+.reveal.is-visible .service-panel__cta {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .service-panel__kicker,
+  .service-panel__title,
+  .service-panel__text,
+  .service-panel__cta {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    transition: none;
+  }
+  .service-panel__content {
+    translate: 0 0;
+    transition: none;
+  }
+}
+
+/* --- Média : source (vidéo/photos) en 9:16, cadre plein écran en 16:9+.
+   object-fit:cover pur rognait le haut/bas du plan (le sujet cadré large en
+   portrait finit rogné en un bandeau serré une fois étiré à la largeur du
+   cadre desktop — "trop zoomé", cf. le premier essai) : un fond flouté/agrandi
+   du même visuel remplit les bords, et le média net est affiché en entier
+   par-dessus (object-fit:contain), sans rien couper. --- */
+.service-panel__media {
+  position: absolute;
+  inset: 0;
+}
+
+.service-panel__media-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(40px) brightness(0.55) saturate(1.1);
+  transform: scale(1.15);
+}
+
+.service-panel__media-fg,
+.service-panel__media-fg video,
+.service-panel__media-fg picture,
+.service-panel__media-fg img,
+video.service-panel__media-fg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* #service-pac : les deux photos réelles sont en portrait 4:5 — object-fit:
+   cover direct (mêmes deux breakpoints) pour qu'elles remplissent tout le
+   cadre 9:16 sans bande de fond, quitte à rogner un peu les côtés (voir les
+   ajustements object-position plus bas). */
+#service-pac .service-panel__media-fg img {
+  object-fit: cover;
+}
+
+/* Pompe à Chaleur : les 2 photos "premier plan" crossfadent (5s de cycle,
+   2.5s de décalage) ; le fond flouté reste une image fixe (la 1ère photo) —
+   les deux plans sont assez proches visuellement pour qu'un fond flou figé
+   ne se remarque pas, et ça évite de dupliquer/synchroniser l'animation sur
+   4 calques au lieu de 2. Ciblage 1ère/2ème photo par classe explicite
+   (.service-panel__photo--1/--2, directement sur l'<img>) plutôt que
+   :nth-child/:first-child. */
+.service-panel__media-fg img {
+  opacity: 0;
+  animation-name: service-panel-fade;
+  animation-duration: 5s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  animation-fill-mode: backwards;
+}
+.service-panel__photo--1 { animation-delay: 0s; }
+.service-panel__photo--2 { animation-delay: 2.5s; }
+
+@keyframes service-panel-fade {
+  0%   { opacity: 0; }
+  12%  { opacity: 1; }
+  50%  { opacity: 1; }
+  62%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .service-panel__media-fg img {
+    animation: none;
+    opacity: 0;
+  }
+  .service-panel__photo--1 {
+    opacity: 1;
+  }
+}
+
+/* #service-pac : recadrage horizontal des photos réelles (4:5) une fois
+   étirées en cover dans un cadre 9:16, aux deux breakpoints (mobile empilé
+   plein écran, desktop en carte dans .services-duo) — le recadrage centré
+   par défaut coupait la pompe à chaleur/le ballon ; décalées vers la gauche
+   pour garder l'équipement/les placards bien visibles. */
+#service-pac .service-panel__photo--1 {
+  object-position: 35% center;
+}
+#service-pac .service-panel__photo--2 {
+  object-position: 15% center;
+}
+
+@media (max-width: 768px) {
+  .service-panel__content { padding: var(--sp-4) var(--sp-2) var(--sp-6); }
+
+  /* Le copywriting complet (kicker + titre + accroche + paragraphe + CTA)
+     prenait une part disproportionnée de l'écran mobile, empiétant sur la
+     vidéo/photo derrière : on resserre tailles et marges plutôt que de
+     toucher au texte lui-même (contenu métier à préserver verbatim). */
+  .service-panel__kicker { font-size: 11px; margin-bottom: 6px; }
+  .service-panel__title { font-size: 22px; margin-bottom: 8px; }
+  .service-panel__text { font-size: 14px; max-width: 34ch; }
+  .service-panel__text strong { margin-bottom: 4px; }
+  .service-panel__cta { margin-top: var(--sp-2); }
+
+  /* #service-sanitaire : la vidéo verticale porte un petit filigrane
+     (sparkle "Gemini") dans son coin bas-droit. Plutôt que de rogner/masquer
+     la vidéo, on aligne le CTA à droite pour qu'il vienne se poser dessus et
+     le recouvre naturellement, sans toucher au reste du bloc (kicker/titre/
+     texte restent alignés à gauche). Même alignement repris sur #service-pac
+     pour une présentation cohérente entre les deux panneaux. Desktop n'en a
+     plus besoin : la légende est sous le média, pas dessus (voir plus bas),
+     le halo du dégradé suffit à estomper le filigrane. */
+  #service-sanitaire .service-panel__cta,
+  #service-pac .service-panel__cta {
+    align-self: flex-end;
+    margin-right: var(--sp-1);
+  }
+
+  /* #service-sanitaire : le plan vertical (720x1280, 9:16) ne remplit pas
+     tout à fait le cadre de l'écran une fois centré en object-fit:contain —
+     un mince liseré du fond (teal) reste visible sur les bords. Un léger
+     zoom uniforme (recadré par l'overflow:hidden du panneau) fait disparaître
+     ce liseré sans jamais déformer l'image (aucun changement de ratio,
+     juste un agrandissement centré). */
+  #service-sanitaire .service-panel__media-fg {
+    transform: scale(1.08);
+  }
+}
+
+/* --- Desktop : diptyque plein cadre (split-screen) — chaque panneau prend
+   50% de la largeur / 100% de la hauteur, média edge-to-edge, texte en
+   surimpression directe (dégradé + text-shadow, comme hero/#poele). Pas de
+   carte, pas de coin arrondi, pas d'ombre, pas de vide autour : ça reprend
+   le langage plein-cadre du reste du site plutôt qu'une grille de
+   vignettes. Une fine ligne de séparation verticale (même bleu que le
+   kicker) marque la coupure entre les deux plans plutôt qu'un espace vide. */
+@media (min-width: 769px) {
+  .services-duo {
+    display: flex;
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  .services-duo .service-panel {
+    width: 50%;
+    height: 100%;
+  }
+
+  .services-duo #service-sanitaire {
+    border-right: 2px solid #4dede1;
+  }
+
+  /* #service-pac est un diaporama (2 photos qui crossfadent) : le texte doit
+     rester lisible peu importe laquelle des deux photos est affichée à cet
+     instant, pas seulement sur celle visible pendant les réglages. Le dégradé
+     de base (.service-panel__overlay, partagé avec #service-sanitaire pour
+     que les deux panneaux du diptyque restent visuellement cohérents) est
+     renforcé ici uniquement en desktop : zone sombre étendue à 45% (au lieu
+     de 60%) et opacité finale relevée à 0.85 (au lieu de 0.75), pour
+     compenser le bloc de texte repoussé plus bas/plus compact ci-dessous —
+     un scrim permanent plutôt qu'un ajustement au cas par cas à chaque photo. */
+  .services-duo .service-panel__overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(13, 59, 62, 0.25) 0%,
+      rgba(13, 59, 62, 0) 20%,
+      rgba(13, 59, 62, 0) 45%,
+      rgba(13, 59, 62, 0.85) 100%
+    );
+  }
+
+  /* Le panneau desktop est nettement moins large qu'un plein-cadre 100vw
+     (hero/#poele) : la vidéo verticale (9:16) y est déjà proche du ratio du
+     panneau lui-même, contrairement à la tentative précédente de la forcer
+     en 16:9 — cover ne recadre donc plus que modérément les côtés. */
+  .services-duo .service-panel__media-fg,
+  .services-duo video.service-panel__media-fg {
+    object-fit: cover;
+  }
+
+  /* Bloc de texte poussé au plus près du bord inférieur du panneau
+     (davantage d'image visible au-dessus) — sp-4 plutôt que sp-12 en bas. */
+  .services-duo .service-panel__content {
+    padding: var(--sp-6) var(--sp-5) var(--sp-4);
+  }
+
+  /* Resserre kicker/titre/texte/CTA en un seul paquet compact plutôt qu'une
+     colonne étalée, maintenant que le bloc est poussé tout en bas — mêmes
+     valeurs resserrées que l'override mobile ci-dessus, gardées séparées
+     (pas de règle commune) pour ne pas retoucher le bloc mobile déjà validé
+     sur device réel. */
+  .services-duo .service-panel__kicker {
+    margin-bottom: 6px;
+  }
+  .services-duo .service-panel__title {
+    margin-bottom: 6px;
+  }
+  .services-duo .service-panel__cta {
+    margin-top: 8px;
+  }
+
+  /* Réserve la même hauteur aux deux paragraphes, qu'ils remplissent
+     réellement 3 ou 4 lignes à telle ou telle largeur d'écran — faire
+     coïncider le nombre de mots des deux côtés ne suffit pas : le point de
+     retour à la ligne dépend de la largeur du panneau ET de la longueur de
+     chaque mot, donc deux textes de même longueur ne s'enroulent pas
+     forcément sur le même nombre de lignes selon l'écran (confirmé : aligné
+     à 1600/1920/1300/1024px, plus du tout sur un moniteur plus large/bas).
+     Une hauteur réservée fixe garantit que le CTA reste au même niveau des
+     deux côtés quel que soit l'écran, sans dépendre du hasard du retour à
+     la ligne. Ramenée de 9em à 6.5em (le paragraphe le plus long tient sur
+     4 lignes à 1.5 × 20px = 6em ; 6.5em garde une petite marge) pour que le
+     CTA se rapproche du texte plutôt que de laisser un vide sous les 3-4
+     lignes réellement affichées — ne pas redescendre sous 6em sans
+     revérifier qu'aucun des deux paragraphes ne dépasse 4 lignes. */
+  .services-duo .service-panel__text {
+    min-height: 6.5em;
+  }
+
+  /* Même logique pour le titre : "Sanitaire — Plomberie" et "Pompe à
+     Chaleur Air–Air" n'ont pas la même longueur — sur un panneau étroit
+     (écran plus bas/plus resserré), l'un peut passer sur 2 lignes avant
+     l'autre, ce qui décale tout ce qui suit (texte, CTA) même avec la
+     hauteur du paragraphe déjà fixée ci-dessus. Réserve 2 lignes dans tous
+     les cas (line-height 1.1, voir h1/h2/h3 dans base.css). Taille réduite
+     par rapport au h2 par défaut (clamp jusqu'à 40px) pour que le titre
+     prenne moins de place au-dessus du texte/CTA, maintenant que tout le
+     bloc est tassé en bas du panneau. */
+  .services-duo .service-panel__title {
+    font-size: 32px;
+    min-height: 2.2em;
+  }
+
+  /* Panneau droit en miroir du gauche : texte/CTA ancrés côté extérieur
+     (droite) plutôt que collés à la ligne de séparation centrale — les deux
+     blocs de texte s'écartent l'un de l'autre au lieu de se serrer au
+     milieu, plus équilibré à l'œil sur toute la largeur du diptyque. */
+  .services-duo #service-pac .service-panel__content {
+    align-items: flex-end;
+    text-align: right;
+  }
+}

@@ -1,0 +1,105 @@
+/* ============================================================
+   Autres prestations — ramonage + hottes.
+   Real card grid (rounded photo-cards, gradient scrim + title
+   overlay, per Wander reference) — a genuinely different layout
+   family from the alternating zigzag rows above, not a fourth
+   variant of the same pattern.
+   A soft warm mesh-gradient wash sits behind the section as the
+   mid-page transition moment (Enblox reference) — diffuse,
+   low-opacity pink/amber/rose blobs, never garish, kept well
+   under the text for contrast.
+   Deeper cream band = a background zone shift per scroll-design-guidelines.
+   ============================================================ */
+
+.autres {
+  position: relative;
+  background: var(--cream-deep);
+  padding-block: var(--sp-12);
+  overflow: hidden;
+}
+
+.autres__blob {
+  position: absolute;
+  inset: -15% -10% -35% -10%;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(38% 42% at 16% 22%, rgba(232, 166, 160, 0.40), transparent 70%),
+    radial-gradient(46% 50% at 84% 10%, rgba(233, 196, 106, 0.32), transparent 72%),
+    radial-gradient(42% 48% at 58% 82%, rgba(201, 141, 171, 0.24), transparent 70%);
+  filter: blur(70px);
+}
+
+.autres .container { position: relative; z-index: 1; }
+
+.autres__head {
+  max-width: 640px;
+  margin-bottom: var(--sp-8);
+}
+
+.autres__head h2 {
+  margin-top: var(--sp-2);
+  font-size: clamp(1.8rem, 3.6vw, 2.6rem);
+  line-height: 1.12;
+}
+
+.autres__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-6);
+}
+
+.autres__card {
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  transition: transform var(--dur-base) var(--ease-editorial);
+}
+
+.autres__card:hover { transform: translateY(-6px); }
+
+.autres__card-media {
+  position: relative;
+  aspect-ratio: 5 / 4;
+  overflow: hidden;
+}
+
+.autres__card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--dur-slow) var(--ease-editorial);
+}
+
+.autres__card:hover .autres__card-media img { transform: scale(1.045); }
+
+.autres__card-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(33, 29, 24, 0.75), rgba(33, 29, 24, 0) 58%);
+}
+
+.autres__card-title {
+  position: absolute;
+  left: var(--sp-3);
+  right: var(--sp-3);
+  bottom: var(--sp-3);
+  color: var(--on-ink);
+  font-size: clamp(1.1rem, 2vw, 1.45rem);
+  line-height: 1.15;
+}
+
+.autres__text {
+  margin: 0;
+  padding: var(--sp-3) var(--sp-3) var(--sp-4);
+  color: var(--ink-soft);
+}
+
+.autres__cta { margin-top: var(--sp-8); }
+
+@media (max-width: 760px) {
+  .autres__grid { grid-template-columns: 1fr; gap: var(--sp-6); }
+}

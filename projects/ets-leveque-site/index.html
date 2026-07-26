@@ -1,0 +1,616 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ets Lévêque — Chauffage, Plomberie, Électricité | Notre Dame de Sanilhac</title>
+<meta name="description" content="Ets Lévêque, votre chauffagiste à Notre Dame de Sanilhac : chauffage, sanitaire-plomberie, électricité générale, entretien-ramonage et dépannage sur Périgueux et ses alentours." />
+<link rel="icon" href="assets/img/logos/logo-ets-leveque-v3.png" />
+
+<link rel="preload" as="image" href="assets/hero-frames/frame_001.webp" fetchpriority="high" />
+
+<!-- Mobile uniquement (media filtre la préconnexion inutile sur desktop, où
+     le canvas remplace la <video> et le fichier n'est jamais lu) : démarre
+     le téléchargement de la vidéo hero pendant le parsing du <head>, avant
+     que le JS (DOMContentLoaded) ne mette preload="auto" et appelle play() —
+     un fichier de 5 Mo lancé seulement à ce moment-là expliquait le délai
+     perçu avant que la vidéo ne se lance vraiment. -->
+<link rel="preload" as="video" href="assets/video/hero-panneaux-solaires.mp4" media="(max-width: 768px)" fetchpriority="high" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,75..125,400..900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@800;900&display=swap"
+  rel="stylesheet"
+/>
+
+<link rel="stylesheet" href="css/tokens.css" />
+<link rel="stylesheet" href="css/base.css" />
+<link rel="stylesheet" href="css/header.css" />
+<link rel="stylesheet" href="css/scrollvid.css" />
+<link rel="stylesheet" href="css/hero.css" />
+<link rel="stylesheet" href="css/drone.css" />
+<link rel="stylesheet" href="css/stove.css" />
+<link rel="stylesheet" href="css/stats.css" />
+<link rel="stylesheet" href="css/gallery-duo.css" />
+<link rel="stylesheet" href="css/handwrite.css" />
+<link rel="stylesheet" href="css/reviews.css" />
+<link rel="stylesheet" href="css/partners.css" />
+<link rel="stylesheet" href="css/contact.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <a href="#" class="site-header__logo">
+    <img src="assets/img/logos/logo-ets-leveque-v3.png" alt="Ets Lévêque" width="344" height="200" />
+  </a>
+  <nav class="site-header__nav">
+    <div class="site-header__nav-item">
+      <a href="#service-sanitaire">Nos services</a>
+      <div class="site-header__dropdown">
+        <a href="#drone" data-scroll-target="#drone" data-scroll-progress="0.12">Énergies renouvelables</a>
+        <a href="#drone" data-scroll-target="#drone" data-scroll-progress="0.7">Électricité générale</a>
+        <a href="#poele">Entretien Ramonage</a>
+        <a href="#service-sanitaire">Sanitaire — Plomberie</a>
+        <a href="#service-pac">Pompe à chaleur Air-Air</a>
+      </div>
+    </div>
+    <a href="#chiffres">Chiffres clés</a>
+    <a href="#avis">Avis clients</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <div class="site-header__actions">
+    <a href="tel:0553466056" class="site-header__phone">05 53 46 60 56</a>
+    <a href="#contact" class="btn btn-pill">Devis gratuit</a>
+    <button
+      type="button"
+      class="site-header__burger"
+      aria-label="Ouvrir le menu"
+      aria-expanded="false"
+      aria-controls="mobile-nav"
+    >
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<div class="mobile-nav" id="mobile-nav">
+  <button type="button" class="mobile-nav__close" aria-label="Fermer le menu">&times;</button>
+  <nav class="mobile-nav__list">
+    <a href="#service-sanitaire" class="mobile-nav__top">Nos services</a>
+    <a href="#drone" data-scroll-target="#drone" data-scroll-progress="0.12" class="mobile-nav__sub">Énergies renouvelables</a>
+    <a href="#drone" data-scroll-target="#drone" data-scroll-progress="0.7" class="mobile-nav__sub">Électricité générale</a>
+    <a href="#poele" class="mobile-nav__sub">Entretien Ramonage</a>
+    <a href="#service-sanitaire" class="mobile-nav__sub">Sanitaire — Plomberie</a>
+    <a href="#service-pac" class="mobile-nav__sub">Pompe à chaleur Air-Air</a>
+    <a href="#chiffres" class="mobile-nav__top">Chiffres clés</a>
+    <a href="#avis" class="mobile-nav__top">Avis clients</a>
+    <a href="#contact" class="mobile-nav__top">Contact</a>
+  </nav>
+  <a href="#contact" class="btn btn-red mobile-nav__cta">Devis gratuit</a>
+  <a href="tel:0553466056" class="mobile-nav__phone">05 53 46 60 56</a>
+</div>
+
+<main>
+
+  <!-- PHASE 1 — HERO -->
+  <section
+    class="scrollvid hero"
+    id="hero"
+    data-frame-count="80"
+    data-frame-prefix="assets/hero-frames/frame_"
+    data-frame-ext="webp"
+  >
+    <div class="scrollvid__sticky">
+      <canvas class="scrollvid__canvas"></canvas>
+      <video
+        class="scrollvid__video"
+        src="assets/video/hero-panneaux-solaires.mp4"
+        muted
+        playsinline
+        preload="none"
+      ></video>
+      <div class="hero__overlay"></div>
+      <div class="hero__content">
+        <div class="hero__panel">
+          <p class="hero__eyebrow">Chauffage · Plomberie · Électricité · Énergies renouvelables</p>
+          <h1 class="hero__title">Votre confort thermique, notre expertise.</h1>
+          <p class="hero__subtitle" style="max-width: 46ch;">
+            Nous intervenons sur Périgueux et ses alentours, du dépannage d'urgence à l'installation
+            complète — chauffage, cuivre, énergie.
+          </p>
+        </div>
+        <div class="hero__actions">
+          <a href="#contact" class="btn btn-red">Nous contacter</a>
+          <a href="tel:0553466056" class="btn btn-ghost">05 53 46 60 56</a>
+        </div>
+      </div>
+      <span class="scrollvid__scroll-hint">Défiler</span>
+    </div>
+  </section>
+
+  <!-- PHASE 5 — PARTENAIRES (juste sous le hero) -->
+  <section class="partners" id="partenaires">
+    <div class="partners__marquee reveal">
+      <div class="partners__track">
+        <div class="partners__set">
+          <img src="assets/img/logos/viessmann-1.png" alt="Viessmann" width="350" height="280" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/mitszu.png" alt="Mitsubishi Electric" width="350" height="280" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/legrand-1.png" alt="Legrand" width="350" height="280" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/hargassner.png" alt="Hargassner" width="350" height="280" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/hoben.png" alt="Hoben" width="350" height="280" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/BWT.png" alt="BWT" width="350" height="280" loading="lazy" decoding="async" />
+        </div>
+        <div class="partners__set" aria-hidden="true">
+          <img src="assets/img/logos/viessmann-1.png" alt="" width="350" height="280" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/mitszu.png" alt="" width="350" height="280" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/legrand-1.png" alt="" width="350" height="280" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/hargassner.png" alt="" width="350" height="280" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/hoben.png" alt="" width="350" height="280" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/BWT.png" alt="" width="350" height="280" loading="lazy" decoding="async" />
+        </div>
+        <div class="partners__set" aria-hidden="true">
+          <img src="assets/img/logos/viessmann-1.png" alt="" width="350" height="280" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/mitszu.png" alt="" width="350" height="280" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/legrand-1.png" alt="" width="350" height="280" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/hargassner.png" alt="" width="350" height="280" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/hoben.png" alt="" width="350" height="280" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/BWT.png" alt="" width="350" height="280" loading="lazy" decoding="async" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VIDÉO DRONE — juste sous les logos partenaires -->
+  <section
+    class="scrollvid drone"
+    id="drone"
+    data-frame-count="80"
+    data-frame-prefix="assets/hero-frames-2/frame_"
+    data-frame-ext="webp"
+    data-fade-out-start="1"
+    data-fade-out-end="1.05"
+  >
+    <div class="scrollvid__sticky">
+      <canvas class="scrollvid__canvas"></canvas>
+      <video
+        class="scrollvid__video"
+        src="assets/video/drone-property.mp4"
+        muted
+        playsinline
+        preload="none"
+      ></video>
+      <div class="drone__overlay"></div>
+      <div class="scrollvid__chapters">
+        <div class="scrollvid__chapter" data-from="0.12">
+          <h2 class="scrollvid__chapter-title"><span class="word-mask"><span class="word">ÉNERGIES</span></span> <span class="word-mask"><span class="word">RENOUVELABLES</span></span></h2>
+          <p class="scrollvid__chapter-text">PAC, Chaudière biomasse, Poêle à granulés, Panneaux photovoltaïques</p>
+          <a href="https://ets-leveque.fr/nos-activites/" class="btn btn-glow scrollvid__chapter-cta">En savoir plus</a>
+        </div>
+        <div class="scrollvid__chapter" data-from="0.7">
+          <h2 class="scrollvid__chapter-title"><span class="word-mask"><span class="word">ÉLECTRICITÉ</span></span> <span class="word-mask"><span class="word">GÉNÉRALE</span></span></h2>
+          <p class="scrollvid__chapter-text">Mises aux normes électriques, bornes de recharge</p>
+          <a href="https://ets-leveque.fr/nos-activites/" class="btn btn-glow scrollvid__chapter-cta">En savoir plus</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHASE 4 — AVIS CLIENTS (juste après la vidéo drone) -->
+  <section class="reviews" id="avis">
+    <div class="container">
+      <div class="reviews__header reveal">
+        <div class="reviews__badge">Avis clients</div>
+        <h2 class="reviews__heading type-write">Ce que nos clients en disent</h2>
+        <p class="reviews__intro">
+          <span class="reviews__stars">★★★★☆</span> <span class="reviews__rating">4.3/5</span> — 114 avis Google
+        </p>
+      </div>
+
+      <div class="reviews__columns">
+
+        <div class="reviews__col">
+          <div class="reviews__col-track" style="animation-duration: 48s;">
+            <div class="reviews__set">
+              <div class="review-card">
+                <p class="review-card__stars">★★★★★</p>
+                <p class="review-card__text">"Sérieux, professionnels, diligents et courtois : quatre qualités essentielles qui ne sont plus si répandues."</p>
+                <div class="review-card__meta">
+                  <span class="review-card__avatar">DC</span>
+                  <div class="review-card__id">
+                    <div class="review-card__name">Didier C.</div>
+                    <div class="review-card__role">il y a 2 mois</div>
+                  </div>
+                </div>
+              </div>
+              <div class="review-card">
+                <p class="review-card__stars">★★★★☆</p>
+                <p class="review-card__text">"J'ai fait installé une climatisation air/air, très bon matériel et le personnel très professionnel. Merci"</p>
+                <div class="review-card__meta">
+                  <span class="review-card__avatar">CV</span>
+                  <div class="review-card__id">
+                    <div class="review-card__name">Cédric V.</div>
+                    <div class="review-card__role">il y a 2 mois</div>
+                  </div>
+                </div>
+              </div>
+              <div class="review-card">
+                <p class="review-card__stars">★★★★★</p>
+                <p class="review-card__text">"Entreprise contactée pour travaux de plomberie et d'électricité. Travail sérieux et soigné. Je recommande vivement cette entreprise."</p>
+                <div class="review-card__meta">
+                  <span class="review-card__avatar">ES</span>
+                  <div class="review-card__id">
+                    <div class="review-card__name">Eric S.</div>
+                    <div class="review-card__role">il y a un an</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="reviews__set" aria-hidden="true">
+              <div class="review-card">
+                <p class="review-card__stars">★★★★★</p>
+                <p class="review-card__text">"Sérieux, professionnels, diligents et courtois : quatre qualités essentielles qui ne sont plus si répandues."</p>
+                <div class="review-card__meta">
+                  <span class="review-card__avatar">DC</span>
+                  <div class="review-card__id">
+                    <div class="review-card__name">Didier C.</div>
+                    <div class="review-card__role">il y a 2 mois</div>
+                  </div>
+                </div>
+              </div>
+              <div class="review-card">
+                <p class="review-card__stars">★★★★☆</p>
+                <p class="review-card__text">"J'ai fait installé une climatisation air/air, très bon matériel et le personnel très professionnel. Merci"</p>
+                <div class="review-card__meta">
+                  <span class="review-card__avatar">CV</span>
+                  <div class="review-card__id">
+                    <div class="review-card__name">Cédric V.</div>
+                    <div class="review-card__role">il y a 2 mois</div>
+                  </div>
+                </div>
+              </div>
+              <div class="review-card">
+                <p class="review-card__stars">★★★★★</p>
+                <p class="review-card__text">"Entreprise contactée pour travaux de plomberie et d'électricité. Travail sérieux et soigné. Je recommande vivement cette entreprise."</p>
+                <div class="review-card__meta">
+                  <span class="review-card__avatar">ES</span>
+                  <div class="review-card__id">
+                    <div class="review-card__name">Eric S.</div>
+                    <div class="review-card__role">il y a un an</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reviews__col reviews__col--md">
+          <div class="reviews__col-track" style="animation-duration: 56s;">
+            <div class="reviews__set">
+              <div class="review-card">
+                <p class="review-card__stars">★★★★★</p>
+                <p class="review-card__text">"Enfin des professionnels, merci à cette équipe qui connaît son boulot… il en faudrait plus en France."</p>
+                <div class="review-card__meta">
+                  <span class="review-card__avatar">JD</span>
+                  <div class="review-card__id">
+                    <div class="review-card__name">Jacqueline D.</div>
+                    <div class="review-card__role">il y a 7 mois</div>
+                  </div>
+                </div>
+              </div>
+              <div class="review-card">
+                <p class="review-card__stars">★★★★★</p>
+                <p class="review-card__text">"Très bonne société ! Le travail est de qualité, propre et bien fait. Nous avons été accompagnés par Monsieur Meurat, très pro et toujours disponible, il suit ses chantiers de près."</p>
+                <div class="review-card__meta">
+                  <span class="review-card__avatar">OP</span>
+                  <div class="review-card__id">
+                    <div class="review-card__name">Oliv P.</div>
+                    <div class="review-card__role">il y a 9 mois</div>
+                  </div>
+                </div>
+              </div>
+              <div class="review-card">
+                <p class="review-card__stars">★★★★★</p>
+                <p class="review-card__text">"Rapide, efficace, tarif honnête. Je recommande sans hésiter pour tous vos travaux de chauffage."</p>
+                <div class="review-card__meta">
+                  <span class="review-card__avatar">BF</span>
+                  <div class="review-card__id">
+                    <div class="review-card__name">Bruno F.</div>
+                    <div class="review-card__role">il y a 7 mois</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="reviews__set" aria-hidden="true">
+              <div class="review-card">
+                <p class="review-card__stars">★★★★★</p>
+                <p class="review-card__text">"Enfin des professionnels, merci à cette équipe qui connaît son boulot… il en faudrait plus en France."</p>
+                <div class="review-card__meta">
+                  <span class="review-card__avatar">JD</span>
+                  <div class="review-card__id">
+                    <div class="review-card__name">Jacqueline D.</div>
+                    <div class="review-card__role">il y a 7 mois</div>
+                  </div>
+                </div>
+              </div>
+              <div class="review-card">
+                <p class="review-card__stars">★★★★★</p>
+                <p class="review-card__text">"Très bonne société ! Le travail est de qualité, propre et bien fait. Nous avons été accompagnés par Monsieur Meurat, très pro et toujours disponible, il suit ses chantiers de près."</p>
+                <div class="review-card__meta">
+                  <span class="review-card__avatar">OP</span>
+                  <div class="review-card__id">
+                    <div class="review-card__name">Oliv P.</div>
+                    <div class="review-card__role">il y a 9 mois</div>
+                  </div>
+                </div>
+              </div>
+              <div class="review-card">
+                <p class="review-card__stars">★★★★★</p>
+                <p class="review-card__text">"Rapide, efficace, tarif honnête. Je recommande sans hésiter pour tous vos travaux de chauffage."</p>
+                <div class="review-card__meta">
+                  <span class="review-card__avatar">BF</span>
+                  <div class="review-card__id">
+                    <div class="review-card__name">Bruno F.</div>
+                    <div class="review-card__role">il y a 7 mois</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reviews__col reviews__col--lg">
+          <div class="reviews__col-track" style="animation-duration: 52s;">
+            <div class="reviews__set">
+              <div class="review-card">
+                <p class="review-card__stars">★★★★★</p>
+                <p class="review-card__text">"Entreprise sérieuse, je recommande vivement. Nos 2 setters sont ravis aussi !"</p>
+                <div class="review-card__meta">
+                  <span class="review-card__avatar">MF</span>
+                  <div class="review-card__id">
+                    <div class="review-card__name">Muriel F.</div>
+                    <div class="review-card__role">il y a un an</div>
+                  </div>
+                </div>
+              </div>
+              <div class="review-card">
+                <p class="review-card__stars">★★★★★</p>
+                <p class="review-card__text">"Très réactifs, bon suivi du chantier et des délais d'intervention pour réparation. Félicitations pour les délais."</p>
+                <div class="review-card__meta">
+                  <span class="review-card__avatar">JG</span>
+                  <div class="review-card__id">
+                    <div class="review-card__name">Jean-Eric G.</div>
+                    <div class="review-card__role">Modifié il y a 5 ans</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="reviews__set" aria-hidden="true">
+              <div class="review-card">
+                <p class="review-card__stars">★★★★★</p>
+                <p class="review-card__text">"Entreprise sérieuse, je recommande vivement. Nos 2 setters sont ravis aussi !"</p>
+                <div class="review-card__meta">
+                  <span class="review-card__avatar">MF</span>
+                  <div class="review-card__id">
+                    <div class="review-card__name">Muriel F.</div>
+                    <div class="review-card__role">il y a un an</div>
+                  </div>
+                </div>
+              </div>
+              <div class="review-card">
+                <p class="review-card__stars">★★★★★</p>
+                <p class="review-card__text">"Très réactifs, bon suivi du chantier et des délais d'intervention pour réparation. Félicitations pour les délais."</p>
+                <div class="review-card__meta">
+                  <span class="review-card__avatar">JG</span>
+                  <div class="review-card__id">
+                    <div class="review-card__name">Jean-Eric G.</div>
+                    <div class="review-card__role">Modifié il y a 5 ans</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- VIDÉO POÊLE — juste après les avis clients -->
+  <section class="stove" id="poele">
+    <div class="stove__frame">
+      <video
+        class="stove__video video-inview"
+        src="assets/video/interieur-poele.mp4"
+        poster="assets/img/photos/interieur-poele-poster.webp"
+        muted
+        playsinline
+        preload="none"
+      ></video>
+      <div class="stove__overlay"></div>
+      <div class="stove__content video-inview-reveal">
+        <div class="stove__panel">
+          <h2 class="stove__title">Entretien ramonage</h2>
+          <p class="stove__text handwrite">Contrat d'entretien et débistrage de conduit pour vos appareils bois, fioul, gaz</p>
+          <a href="https://ets-leveque.fr/nos-activites/entretien-et-ramonage/" class="btn btn-glow stove__cta">En savoir plus</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHASE 2 — CHIFFRES CLÉS -->
+  <section class="stats" id="chiffres">
+    <div class="certs__marquee reveal">
+      <div class="certs__track">
+        <div class="certs__set">
+          <img src="assets/img/logos/rge-qualipac.png" alt="RGE QualiPAC" width="287" height="175" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/rge-qualisol.png" alt="RGE QualiSol" width="248" height="154" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/rge-qualibois.png" alt="RGE QualiBois" width="274" height="168" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/rge-chauffage-plus.png" alt="RGE Chauffage+" width="293" height="130" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/rge-pro-gaz.png" alt="Professionnel du Gaz Maintenance" width="297" height="188" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/rge-qualibat.png" alt="RGE Qualibat" width="274" height="165" loading="lazy" decoding="async" />
+        </div>
+        <div class="certs__set" aria-hidden="true">
+          <img src="assets/img/logos/rge-qualipac.png" alt="" width="287" height="175" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/rge-qualisol.png" alt="" width="248" height="154" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/rge-qualibois.png" alt="" width="274" height="168" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/rge-chauffage-plus.png" alt="" width="293" height="130" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/rge-pro-gaz.png" alt="" width="297" height="188" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/rge-qualibat.png" alt="" width="274" height="165" loading="lazy" decoding="async" />
+        </div>
+        <div class="certs__set" aria-hidden="true">
+          <img src="assets/img/logos/rge-qualipac.png" alt="" width="287" height="175" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/rge-qualisol.png" alt="" width="248" height="154" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/rge-qualibois.png" alt="" width="274" height="168" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/rge-chauffage-plus.png" alt="" width="293" height="130" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/rge-pro-gaz.png" alt="" width="297" height="188" loading="lazy" decoding="async" />
+          <img src="assets/img/logos/rge-qualibat.png" alt="" width="274" height="165" loading="lazy" decoding="async" />
+        </div>
+      </div>
+    </div>
+
+    <div class="stats__gradient">
+      <div class="container">
+        <div class="stats__header reveal">
+          <h2 class="word-blur-reveal">Notre entreprise en chiffres</h2>
+        </div>
+
+        <div class="meters">
+
+          <div class="meter reveal" data-target="39" data-unit="ans">
+            <div class="meter__readout"></div>
+            <span class="meter__label">Années d'expérience</span>
+          </div>
+
+          <div class="meter reveal" data-target="641">
+            <div class="meter__readout"></div>
+            <span class="meter__label">Communes visitées</span>
+          </div>
+
+          <div class="meter reveal" data-target="4595">
+            <div class="meter__readout"></div>
+            <span class="meter__label">Ramonages &amp; entretiens réalisés en 2025</span>
+          </div>
+
+          <div class="meter reveal" data-target="210">
+            <div class="meter__readout"></div>
+            <span class="meter__label">Salles de bain réalisées</span>
+          </div>
+
+          <div class="meter reveal" data-target="3990" data-unit="m">
+            <div class="meter__readout"></div>
+            <span class="meter__label">Mètres de cuivre déroulés en 2025</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NOS SERVICES — panneau unique regroupant Sanitaire/Plomberie et Pompe à
+       Chaleur : les deux visuels d'origine sont verticaux (9:16 — la vidéo
+       salle de bain filmée au téléphone, les photos réelles de chantier). Sur
+       desktop, diptyque plein cadre façon split-screen cinématique : chaque
+       panneau prend 50% de la largeur / 100% de la hauteur, média
+       edge-to-edge (object-fit:cover, pas de carte/coins arrondis/ombre),
+       texte en surimpression directe sur l'image avec le même traitement
+       (dégradé + text-shadow empilé) que hero/#poele — voir .services-duo
+       dans gallery-duo.css. Mobile garde l'empilement plein écran d'origine,
+       inchangé. -->
+  <section class="services-duo" id="services-duo">
+    <article class="service-panel" id="service-sanitaire">
+      <div class="service-panel__media">
+        <div class="service-panel__media-bg" style="background-image: url('assets/img/photos/realisation-sdb-travelling-poster.jpg');"></div>
+        <video
+          class="service-panel__media-fg"
+          src="assets/video/realisation-sdb-travelling.mp4"
+          poster="assets/img/photos/realisation-sdb-travelling-poster.jpg"
+          muted
+          playsinline
+          preload="none"
+        ></video>
+        <div class="service-panel__overlay"></div>
+      </div>
+      <div class="service-panel__content reveal">
+        <p class="service-panel__kicker">Nos services</p>
+        <h2 class="service-panel__title">Sanitaire — Plomberie</h2>
+        <p class="service-panel__text handwrite">Envie d'une nouvelle salle de bain ou besoin d'un adoucisseur d'eau ? Nous concevons, installons et entretenons vos équipements pour votre tranquillité.</p>
+        <a href="#contact" class="btn btn-glow service-panel__cta">En savoir plus</a>
+      </div>
+    </article>
+
+    <article class="service-panel service-panel--pac" id="service-pac">
+      <div class="service-panel__media">
+        <div class="service-panel__media-bg" style="background-image: url('assets/img/photos/realisation-installation-generale.jpg');"></div>
+        <div class="service-panel__media-fg">
+          <img class="service-panel__photo service-panel__photo--1" src="assets/img/photos/realisation-installation-generale.jpg" alt="Installation générale sur mesure réalisée par Ets Lévêque — placards" loading="lazy" width="1440" height="1800" />
+          <img class="service-panel__photo service-panel__photo--2" src="assets/img/photos/realisation-installation-generale-technique.jpg" alt="Installation générale sur mesure réalisée par Ets Lévêque — local technique" loading="lazy" width="1440" height="1800" />
+        </div>
+        <div class="service-panel__overlay"></div>
+      </div>
+      <div class="service-panel__content reveal">
+        <p class="service-panel__kicker">Nos services</p>
+        <h2 class="service-panel__title">Pompe à Chaleur Air–Air</h2>
+        <p class="service-panel__text handwrite">Besoin de chauffer l'hiver et de rafraîchir l'été sans exploser vos factures ? Nous installons des pompes à chaleur Air/Air fiables et économes.</p>
+        <a href="#contact" class="btn btn-glow service-panel__cta">En savoir plus</a>
+      </div>
+    </article>
+  </section>
+
+  <!-- PHASE 6 — CONTACT / FOOTER -->
+  <section class="contact" id="contact">
+    <div class="container">
+      <div class="contact__grid">
+        <div class="reveal">
+          <h2><span class="contact__heading-mask"><span class="contact__heading-line">Contactez-nous</span></span></h2>
+          <ul class="contact__list">
+            <li>
+              <span class="label">Adresse</span>
+              <span>3061 Route Nationale RN21, Les Farges, Notre Dame de Sanilhac, 24660 Sanilhac</span>
+            </li>
+            <li>
+              <span class="label">Téléphone</span>
+              <a href="tel:0553466056">05 53 46 60 56</a>
+            </li>
+            <li>
+              <span class="label">Email</span>
+              <a href="mailto:contact@ets-leveque.fr">contact@ets-leveque.fr</a>
+            </li>
+            <li>
+              <span class="label">Horaires</span>
+              <span>Lundi – Vendredi, 8h–12h / 13h30–16h30</span>
+            </li>
+          </ul>
+          <a href="tel:0553466056" class="btn btn-red btn-pulse">Devis gratuit</a>
+        </div>
+        <div class="contact__map reveal">
+          <iframe
+            title="Localisation Ets Lévêque"
+            loading="lazy"
+            src="https://www.google.com/maps?q=3061+Route+Nationale+RN21+Les+Farges,+24660+Notre+Dame+de+Sanilhac&output=embed">
+          </iframe>
+        </div>
+      </div>
+      <footer class="site-footer">
+        <span>© 2026 Ets Lévêque — Chauffage · Plomberie · Électricité</span>
+        <span>3061 Route Nationale RN21, 24660 Notre Dame de Sanilhac</span>
+      </footer>
+    </div>
+  </section>
+
+</main>
+
+<script src="js/debug-overlay.js" defer></script>
+<script src="js/mobile-nav.js" defer></script>
+<script src="js/hero-intro.js" defer></script>
+<script src="js/scroll-video.js" defer></script>
+<script src="js/stats.js" defer></script>
+<script src="js/reveal.js" defer></script>
+<script src="js/video-inview.js" defer></script>
+<script src="js/typewriter.js" defer></script>
+<script src="js/scroll-effects.js" defer></script>
+<script src="js/mobile-video-repaint.js" defer></script>
+<script src="js/service-panel-video.js" defer></script>
+<script src="js/service-panel-parallax.js" defer></script><script src="js/handwriting-type.js" defer></script>
+</body>
+</html>

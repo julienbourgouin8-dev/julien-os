@@ -1,0 +1,173 @@
+.services__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-8);
+  flex-wrap: wrap;
+}
+
+/* -- Panneau service : contenu + modules empilés dans une colonne, image
+   sticky dans l'autre — jamais un mur de texte qui fait disparaître la
+   photo (voir hero-patterns.md, garde-fou ajouté 2026-07-22). ---------- */
+.service-panel {
+  position: relative;
+  padding: var(--sp-8) 0;
+  border-top: 1px solid rgba(244, 246, 249, 0.08);
+}
+.service-panel:first-of-type { border-top: none; }
+
+.service-panel__row {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 0.85fr;
+  grid-template-rows: auto auto;
+  gap: var(--sp-6) var(--sp-8);
+  align-items: start;
+}
+.service-panel__content { grid-column: 1; grid-row: 1; }
+.service-panel__media {
+  grid-column: 2;
+  grid-row: 1 / -1;
+  position: sticky;
+  top: 110px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  aspect-ratio: 4 / 4.6;
+  box-shadow: 0 0 0 1px rgba(244, 246, 249, 0.1), 0 24px 60px -20px rgba(0, 0, 0, 0.65);
+}
+.service-panel__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.service-panel__row--media-left .service-panel__content { grid-column: 2; }
+.service-panel__row--media-left .service-panel__media { grid-column: 1; }
+.service-panel__row--media-left .service-panel__modules { grid-column: 2; }
+
+.service-panel__index {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 3.2rem;
+  font-weight: 700;
+  line-height: 0.8;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--accent, var(--blue-neon));
+  letter-spacing: -0.03em;
+  user-select: none;
+  margin-bottom: var(--sp-2);
+}
+@supports not ((-webkit-text-stroke: 1px black)) {
+  .service-panel__index { color: var(--accent, var(--blue-neon)); opacity: 0.4; }
+}
+
+.service-panel__title {
+  font-size: clamp(1.6rem, 1.1rem + 2vw, 2.3rem);
+  font-weight: 700;
+  line-height: 1.15;
+  max-width: 18ch;
+  margin: 0 0 var(--sp-3);
+}
+
+.service-card__kicker {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent, var(--blue-neon));
+  margin-bottom: var(--sp-2);
+}
+
+.service-card__text {
+  font-size: 0.98rem;
+  color: var(--text-muted);
+  max-width: 52ch;
+}
+.service-card__text + .service-card__text { margin-top: 0.7em; }
+
+.service-card__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  margin-top: var(--sp-3);
+}
+.service-card__chip {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  border: 1px solid rgba(244, 246, 249, 0.14);
+  border-radius: 999px;
+  padding: 0.4em 0.9em;
+}
+
+/* -- Modules (sous-sections verbatim : dépannage, entretien, PAC…) ------ */
+.service-panel__modules {
+  grid-column: 1;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  margin-top: var(--sp-2);
+}
+
+.service-module {
+  background: var(--bg-card);
+  border: 1px solid rgba(244, 246, 249, 0.08);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.service-module p { font-size: 0.94rem; color: var(--text-muted); }
+.service-module__title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.08rem;
+  line-height: 1.25;
+  color: var(--text);
+}
+.service-module__citation {
+  font-style: italic;
+  border-left: 2px solid var(--accent, var(--blue-neon));
+  padding-left: 12px;
+  font-size: 0.9rem;
+}
+.service-module ul {
+  margin: 0;
+  padding-left: 1.1em;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.94rem;
+  color: var(--text-muted);
+}
+
+.service-panel--chauffage { --accent: var(--red-neon); }
+.service-panel--plomberie { --accent: var(--blue-neon); }
+.service-panel--ramonage { --accent: var(--orange-neon); }
+.service-panel--hottes { --accent: var(--green-neon); }
+
+@media (max-width: 860px) {
+  .service-panel__row,
+  .service-panel__row--media-left {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+  }
+  .service-panel__row--media-left .service-panel__content,
+  .service-panel__row--media-left .service-panel__media,
+  .service-panel__row--media-left .service-panel__modules,
+  .service-panel__content,
+  .service-panel__media,
+  .service-panel__modules {
+    grid-column: 1;
+  }
+  .service-panel__content { grid-row: 1; order: 1; }
+  .service-panel__media {
+    grid-row: 2;
+    order: 2;
+    position: static;
+    aspect-ratio: 16 / 10;
+  }
+  .service-panel__modules { grid-row: 3; order: 3; }
+}

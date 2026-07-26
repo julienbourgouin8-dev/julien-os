@@ -1,0 +1,272 @@
+/* -- Hero plein écran : la photo occupe tout le viewport en fond, le texte
+   est superposé sur un scrim gauche (jamais une carte contenue à droite) -- */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  padding-top: calc(var(--sp-8) + 64px);
+  padding-bottom: var(--sp-6);
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.hero__grid {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+.hero__copy {
+  max-width: 620px;
+}
+
+.hero__nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-3) var(--sp-4);
+  backdrop-filter: blur(14px);
+  background: linear-gradient(to bottom, rgba(10, 12, 16, 0.85), rgba(10, 12, 16, 0));
+}
+
+.hero__nav-mark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+
+.hero__nav-mark span {
+  color: var(--blue-neon);
+}
+
+.hero__nav-phone {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  border: 1px solid rgba(244, 246, 249, 0.18);
+  padding: 0.6em 1.1em;
+  border-radius: 999px;
+  transition: border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+
+.hero__nav-phone:hover {
+  border-color: var(--blue-neon);
+  color: var(--blue-neon);
+}
+
+.hero__copy .eyebrow {
+  margin-bottom: var(--sp-3);
+}
+
+.hero__title {
+  font-size: var(--fs-hero);
+  font-weight: 800;
+  line-height: 0.96;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--sp-3);
+}
+
+.hero__title .word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+}
+
+.hero__title .word > span {
+  display: inline-block;
+  will-change: transform;
+}
+
+.hero__title-accent {
+  color: var(--blue-neon);
+  text-shadow: 0 0 36px rgba(47, 182, 255, 0.55);
+}
+
+.hero__strapline {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  margin-bottom: var(--sp-2);
+}
+
+.hero__lede {
+  margin-bottom: var(--sp-5);
+}
+
+.hero__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+}
+
+.hero__panel-frame {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.hero__panel-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 62% 40%;
+  transform: scale(1.5);
+  transform-origin: 62% 40%;
+}
+
+.hero__panel-gradient {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  /* scrim horizontal (texte lisible à gauche, photo qui respire à droite)
+     + un voile vertical léger pour la nav en haut et le scroll-cue en bas */
+  background:
+    linear-gradient(90deg, rgba(10, 12, 16, 0.96) 0%, rgba(10, 12, 16, 0.86) 30%, rgba(10, 12, 16, 0.4) 58%, rgba(10, 12, 16, 0.05) 78%, rgba(10, 12, 16, 0) 100%),
+    linear-gradient(180deg, rgba(10, 12, 16, 0.55) 0%, rgba(10, 12, 16, 0) 22%, rgba(10, 12, 16, 0) 70%, rgba(10, 12, 16, 0.55) 100%);
+}
+
+/* Pastilles de verre dépoli superposées directement sur la photo plein
+   écran, côté droit où l'image respire — façon Fluxora */
+.hero__pill {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15em;
+  padding: 1.1em 1.4em;
+  border-radius: var(--radius-sm);
+  background: rgba(16, 19, 26, 0.55);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid rgba(244, 246, 249, 0.14);
+  box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.55);
+}
+
+.hero__pill-value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.7rem;
+  color: var(--text);
+  line-height: 1;
+}
+
+.hero__pill-value .unit {
+  font-size: 1rem;
+  color: var(--blue-neon);
+  margin-left: 0.1em;
+}
+
+.hero__pill-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.hero__pill--top {
+  top: clamp(100px, 12vw, 148px);
+  right: clamp(24px, 4vw, 64px);
+}
+
+.hero__pill--bottom {
+  bottom: clamp(32px, 5vw, 72px);
+  right: clamp(24px, 4vw, 64px);
+  flex-direction: row;
+  align-items: center;
+}
+
+.hero__pill--bottom .hero__pill-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15em;
+}
+
+.hero__pill--bottom .hero__pill-stat + .hero__pill-stat {
+  border-left: 1px solid rgba(244, 246, 249, 0.16);
+  padding-left: var(--sp-3);
+}
+
+.hero__stars {
+  color: var(--orange-neon);
+  letter-spacing: 0.05em;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 640px) {
+  .hero__pill {
+    padding: 0.85em 1.05em;
+  }
+  .hero__pill-value {
+    font-size: 1.3rem;
+  }
+  .hero__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .hero__actions .btn {
+    justify-content: center;
+  }
+}
+
+.hero__scroll-cue {
+  position: absolute;
+  left: var(--sp-4);
+  bottom: var(--sp-4);
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.hero__scroll-cue-line {
+  width: 32px;
+  height: 1px;
+  background: var(--text-dim);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero__scroll-cue-line::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--blue-neon);
+  animation: scrollcue 1.8s ease-in-out infinite;
+}
+
+@keyframes scrollcue {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(0); }
+  100% { transform: translateX(100%); }
+}
+
+@media (max-width: 980px) {
+  .hero__scroll-cue {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero__panel-gradient {
+    background: linear-gradient(180deg, rgba(10, 12, 16, 0.78) 0%, rgba(10, 12, 16, 0.55) 42%, rgba(10, 12, 16, 0.6) 70%, rgba(10, 12, 16, 0.88) 100%);
+  }
+}

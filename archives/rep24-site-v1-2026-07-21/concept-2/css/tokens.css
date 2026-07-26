@@ -1,0 +1,71 @@
+/* ============================================================
+   R.E.P 24 — Concept 2 "Artisan Dordogne"
+   Design tokens — warm stone/cream, near-black ink, single blue accent.
+   Deliberate contrast with concept-1's cold technical tri-color coding:
+   one accent only, used sparingly (button, underline, kicker label).
+   ============================================================ */
+
+:root {
+  /* ---- Color ---- */
+  --cream:        #F5F1EA; /* base background */
+  --cream-deep:   #EBE3D3; /* secondary band (certifications, footer) */
+  --paper:        #FBF8F2; /* lightest, for cards/panels on cream-deep */
+  --ink:          #211D18; /* near-black warm ink — headings, dark bg */
+  --ink-soft:     #4A443C; /* body copy on light */
+  --ink-mute:     #8A8175; /* captions, mute labels on light */
+  --on-ink:       #F3EEE4; /* text on --ink background */
+  --on-ink-mute:  #B8AF9F; /* muted text on --ink background */
+  --blue:         #0088CC; /* real brand blue — the ONLY accent color */
+  --blue-deep:    #046A94; /* hover/pressed state of the accent */
+  --line:         rgba(33, 29, 24, 0.14);
+  --line-on-ink:  rgba(243, 238, 228, 0.16);
+  --shadow-soft:  0 24px 60px -24px rgba(33, 29, 24, 0.35);
+
+  /* ---- Type ---- */
+  --font-display: "Fraunces", "Iowan Old Style", serif;
+  --font-body:    "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+
+  --fs-kicker: 0.78rem;
+  --fs-body: 1.0625rem;
+  --fs-lead: 1.3rem;
+
+  /* ---- Spacing (8px base) ---- */
+  --sp-1: 8px;
+  --sp-2: 16px;
+  --sp-3: 24px;
+  --sp-4: 32px;
+  --sp-5: 40px;
+  --sp-6: 48px;
+  --sp-8: 64px;
+  --sp-10: 80px;
+  --sp-12: 96px;
+  --sp-16: 128px;
+
+  /* ---- Motion ---- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 280ms;
+  --dur-base: 720ms;
+  --dur-slow: 1100ms;
+
+  --radius-sm: 6px;
+  --radius-md: 18px;
+
+  /* Full-bleed viewport height — triple fallback (see mobile-reliability.md) */
+  --vh-safe: 100vh;
+}
+
+@supports (height: 100dvh) {
+  :root { --vh-safe: 100dvh; }
+}
+@supports (height: 100lvh) {
+  :root { --vh-safe: 100lvh; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur-base: 0ms;
+    --dur-slow: 0ms;
+  }
+}

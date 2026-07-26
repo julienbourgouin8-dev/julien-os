@@ -1,0 +1,75 @@
+:root {
+  /* ============================================================
+     R.E.P 24 — "Dark Signal" — tokens
+     Fond uni anthracite quasi-noir partout. Le bleu de marque réel
+     (#0088CC, extrait du CSS du vrai site) devient l'accent néon
+     principal. Rouge et orange choisis pour sonner "néon chaud" à
+     côté de ce bleu (chauffage/gaz) sans jamais devenir des teintes
+     génériques — cf. data.js brand comment (bleu=eau/plomberie,
+     rouge=chauffage, orange=gaz/énergie).
+     ============================================================ */
+
+  /* Fonds — un seul vrai "uni" par zone, jamais un dégradé complexe */
+  --bg: #0a0c10;              /* anthracite très sombre, quasi noir — base globale */
+  --bg-raise: #10131a;        /* légèrement plus clair, pour une section qui doit se distinguer sans casser l'uni (avis, contact) */
+  --bg-card: #12151d;         /* carte/panneau posé sur le fond, jamais transparent-glass */
+  --bg-environnement: #0c1712; /* vert profond désaturé — bloc dédié "environnement", pas une photo */
+  --bg-environnement-raise: #10201a;
+
+  /* Accents néon */
+  --blue: #0088cc;            /* bleu de marque réel, exact */
+  --blue-neon: #2fb6ff;       /* variante plus lumineuse du même bleu, pour glow/contours */
+  --red-neon: #ff5c45;        /* chauffage/gaz — chaud, confirmé visuellement sur le vrai site */
+  --orange-neon: #ffa53d;     /* gaz/énergie, cuivré */
+  --green-neon: #37d67a;      /* environnement/RGE — vert désaturé, cohérent avec --bg-environnement */
+
+  /* Texte */
+  --text: #f4f6f9;            /* clair sur sombre, jamais de gris sur gris */
+  --text-muted: #a3adba;
+  --text-dim: #6b7683;
+  --text-on-light: #10131a;   /* pour les plaquettes claires (logos partenaires) */
+
+  /* Plaquette claire (logos partenaires — jamais recolorés) */
+  --plate-bg: #f4f6f9;
+  --plate-bg-2: #ffffff;
+
+  /* Typo */
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+
+  --fs-hero: clamp(3.2rem, 7vw, 6.4rem);
+  --fs-section: clamp(2.2rem, 4.2vw, 3.6rem);
+  --fs-stat: clamp(3.2rem, 6vw, 4.8rem);
+  --fs-numeral: clamp(4.5rem, 10vw, 8rem);
+
+  /* Espacement */
+  --sp-1: 8px;
+  --sp-2: 16px;
+  --sp-3: 24px;
+  --sp-4: 32px;
+  --sp-5: 48px;
+  --sp-6: 64px;
+  --sp-8: 96px;
+  --sp-10: 128px;
+
+  --radius-sm: 10px;
+  --radius: 20px;
+  --radius-lg: 32px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 250ms;
+  --dur-base: 700ms;
+
+  --glow-blue: 0 0 40px rgba(47, 182, 255, 0.35);
+  --glow-blue-soft: 0 0 24px rgba(47, 182, 255, 0.2);
+  --glow-red: 0 0 32px rgba(255, 92, 69, 0.3);
+  --glow-orange: 0 0 32px rgba(255, 165, 61, 0.3);
+  --glow-green: 0 0 32px rgba(55, 214, 122, 0.3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur-base: 0ms;
+  }
+}

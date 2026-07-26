@@ -1,0 +1,97 @@
+/* Bloc couleur saturé façon Akina : un aplat rouge plein, en carte arrondie
+   flottante, pas un panneau charbon de plus — c'est la variété colorée qui
+   manquait sur le reste de la page. Les tokens --ink/--ink-muted/--ink-dim/
+   --line sont redéfinis localement : tout le reste de la section (eyebrow,
+   titres, liste, séparateurs) en hérite automatiquement via var(). */
+.certifications {
+  --ink: #FFF4EF;
+  --ink-muted: rgba(255, 244, 239, 0.78);
+  --ink-dim: rgba(255, 244, 239, 0.55);
+  --line: rgba(255, 244, 239, 0.22);
+  background: var(--red);
+  color: var(--ink);
+  border-radius: 32px;
+  margin: var(--sp-10) var(--sp-4) var(--sp-12);
+  padding: var(--sp-12) var(--sp-6) var(--sp-10);
+  box-shadow: 0 40px 70px -30px rgba(0, 0, 0, 0.55);
+}
+
+.certifications__intro {
+  max-width: 60ch;
+  color: var(--ink-muted);
+  font-size: 1.05rem;
+  margin: var(--sp-3) 0 var(--sp-6);
+}
+
+.certifications__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: var(--sp-8);
+}
+
+.certifications__list li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  padding: var(--sp-2) 0;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+}
+
+.certifications__index {
+  font-size: 0.75rem;
+  color: var(--ink-dim);
+  font-family: var(--font-body);
+  letter-spacing: 0.08em;
+}
+
+/* Marquee des deux vrais logos partenaires — jamais recolorés */
+.certifications__marquee {
+  margin-top: var(--sp-10);
+  width: 100%;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%);
+}
+
+.certifications__track {
+  display: flex;
+  width: max-content;
+  animation: certs-scroll 26s linear infinite;
+}
+
+.certifications__set {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: var(--sp-8);
+  padding-inline: var(--sp-8);
+}
+
+.certifications__set img {
+  height: 84px;
+  width: auto;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 8px;
+  padding: 10px 16px;
+}
+
+@keyframes certs-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-33.3333%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .certifications__track { animation: none; }
+}
+
+@media (max-width: 720px) {
+  .certifications { margin: var(--sp-6) var(--sp-2) var(--sp-8); padding: var(--sp-8) var(--sp-3) var(--sp-6); border-radius: 22px; }
+  .certifications__list { grid-template-columns: 1fr; column-gap: 0; }
+  .certifications__set img { height: 56px; }
+}

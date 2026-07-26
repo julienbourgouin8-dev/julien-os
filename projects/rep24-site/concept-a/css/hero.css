@@ -1,0 +1,227 @@
+/* -- Hero plein écran : la photo occupe tout le viewport, le texte est
+   superposé dessus (jamais une carte contenue dans le container) --------- */
+.hero {
+  position: relative;
+  height: 100svh;
+  min-height: 680px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: var(--ink);
+}
+
+.hero__frame {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.hero__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 38%;
+  transform: scale(1.5);
+  transform-origin: 50% 38%;
+}
+@media (min-width: 769px) {
+  .hero__photo { will-change: transform; }
+}
+
+/* Scrim : assombrit le haut (sous la nav) et le bas (sous le texte) pour
+   garder tout le contenu lisible sur une photo claire, sans jamais
+   assombrir le centre où la photo respire. */
+.hero__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(180deg,
+    rgba(15, 17, 15, 0.5) 0%,
+    rgba(15, 17, 15, 0.06) 22%,
+    rgba(15, 17, 15, 0) 46%,
+    rgba(15, 17, 15, 0.18) 64%,
+    rgba(15, 17, 15, 0.7) 100%);
+}
+
+.hero__content {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  padding-top: 64px;
+}
+
+.hero__eyebrow-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  margin-bottom: clamp(0.5rem, 1.5vw, 1rem);
+}
+
+.hero__eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.12em;
+  line-height: 1.5;
+  color: rgba(250, 246, 239, 0.82);
+  max-width: 220px;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+.hero__eyebrow--right { text-align: right; margin-left: auto; }
+
+/* -- Wordmark, posé directement sur la photo (technique Hotle/VANTA) ----
+   Taille réduite et bloc remonté par rapport à la V1 : le climatiseur
+   mural de la photo (le sujet du hero) se trouve pile dans la bande
+   verticale centrale du cadre — un wordmark trop grand + trop bas le
+   recouvrait entièrement (retour Julien, 2026-07-22). Plus petit et
+   décalé vers le haut, le texte laisse le climatiseur respirer juste
+   en dessous, dans la zone la plus claire de la photo. */
+.hero__wordmark-wrap {
+  text-align: center;
+  padding-inline: var(--sp-3);
+  margin-top: clamp(2.5rem, 9vw, 8rem);
+}
+
+.hero__wordmark {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(3rem, 11vw, 7.5rem);
+  line-height: 0.86;
+  letter-spacing: -0.01em;
+  color: var(--paper);
+  text-shadow: 0 10px 44px rgba(0, 0, 0, 0.3);
+  white-space: nowrap;
+  margin: 0;
+  display: inline-block;
+}
+.hero__wordmark .accent {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--blue-light, var(--blue));
+}
+/* Les 2 points de "R.E.P" reprennent, en miniature, les couleurs de marque
+   déjà posées sur .hero__mark (rouge/bleu/orange) — le "24" en bleu
+   complète la triade sans rien ajouter de plus lourd sur le wordmark. */
+.hero__wordmark .dot {
+  font-style: normal;
+}
+.hero__wordmark .dot--red { color: var(--red); }
+.hero__wordmark .dot--orange { color: var(--orange); }
+
+/* -- Pastilles de verre dépoli avec les stats, posées sur la photo ------ */
+.hero__glass {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 16px 22px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 20px 45px -20px rgba(0, 0, 0, 0.5);
+  color: var(--white);
+}
+.hero__glass-value {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  font-weight: 600;
+  line-height: 1;
+}
+.hero__glass-label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+/* Les deux pastilles restantes se répondent en bas de cadre, bien sous le
+   wordmark — jamais dans sa zone (voir capture Julien, 2026-07-22 : la
+   pastille avis chevauchait le "24" quand elle était placée en haut). */
+.hero__glass--experience { left: clamp(20px, 4vw, 56px); bottom: clamp(24px, 5vw, 64px); }
+.hero__glass--rating { right: clamp(20px, 4vw, 56px); bottom: clamp(24px, 5vw, 64px); align-items: flex-end; text-align: right; }
+
+.hero__glass-stars { color: var(--orange); font-size: 0.9rem; letter-spacing: 2px; }
+
+/* -- Petite marque à 3 barres, écho direct du vrai logo REP 24
+   (rouge/bleu/orange) — répond à Julien : les couleurs de marque
+   n'apparaissaient nulle part en dehors du petit logo du header. */
+.hero__mark {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+  margin-right: 8px;
+  vertical-align: middle;
+  transform: translateY(-1px);
+}
+.hero__mark i {
+  display: block;
+  width: 3px;
+  height: 13px;
+  border-radius: 2px;
+  font-style: normal;
+}
+.hero__mark i:nth-child(1) { background: var(--red); }
+.hero__mark i:nth-child(2) { background: var(--blue); height: 16px; }
+.hero__mark i:nth-child(3) { background: var(--orange); }
+
+.hero__cta-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  /* Ecarte la ligne de CTA du wordmark : comme .hero__content reste centré
+     verticalement (align-items:center sur .hero), grandir cet espace
+     recentre tout le bloc — le wordmark remonte legerement (plus de marge
+     de securite avec le climatiseur photo) pendant que les CTA descendent
+     vers les pastilles stats, comblant le vide visible en bas (retour
+     Julien, 2026-07-22). */
+  margin-top: calc(var(--sp-6) + 40px);
+}
+
+.hero__tagline {
+  text-align: center;
+  max-width: 560px;
+  margin: clamp(1.4rem, 3.5vw, var(--sp-5)) auto 0;
+  color: rgba(250, 246, 239, 0.8);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+  font-size: 0.94rem;
+  font-weight: 300;
+  letter-spacing: 0.01em;
+}
+
+@media (max-width: 640px) {
+  .hero { min-height: 720px; }
+  .hero__content { padding-top: 96px; }
+  .hero__glass { padding: 12px 16px; }
+  .hero__glass-value { font-size: 1.4rem; }
+  .hero__eyebrow { max-width: 108px; font-size: 0.6rem; line-height: 1.4; }
+  .hero__eyebrow-row { margin-bottom: 0.5rem; align-items: flex-start; }
+  /* Le wordmark en clamp(...,19vw,...) déborde du viewport en dessous de
+     640px (nowrap + 8 caractères ne tient plus dans la largeur de l'écran) —
+     taille dédiée mobile, toujours surdimensionnée mais qui reste dans le
+     cadre au lieu d'être tronquée. */
+  .hero__wordmark { font-size: clamp(2.6rem, 15.5vw, 4.6rem); letter-spacing: -0.01em; }
+  /* Sur mobile, l'image recadre différemment (portrait) mais le climatiseur
+     reste centré horizontalement dans le cadre — même logique qu'en desktop :
+     il faut assez de marge au-dessus du wordmark pour qu'il ne le recouvre
+     pas (retour Julien, 2026-07-22). Valeur réduite : le nouvel espacement
+     ajouté sous le wordmark (.hero__cta-row) recentre tout le bloc et
+     pousse le wordmark vers le bas — cette marge doit donc être plus
+     courte qu'avant pour garder le climatiseur bien dégagé (retour Julien,
+     2026-07-22, second passage). */
+  .hero__wordmark-wrap { margin-top: clamp(8rem, 42vw, 10.5rem); }
+  /* .hero__cta-row a grandi de +40px en base (voir règle desktop) pour
+     recentrer le bloc et combler le vide sous les boutons — sur mobile on
+     ne reprend qu'une partie de ce delta : le climatiseur y occupe
+     proportionnellement plus de hauteur de cadre, tout l'espace gagné doit
+     plutôt servir à repousser le wordmark loin en dessous (règle
+     ci-dessus) qu'à grandir cet écart-ci. */
+  .hero__cta-row { margin-top: calc(var(--sp-6) + 16px); }
+  .hero__glass--experience { bottom: 16px; left: 14px; }
+  .hero__glass--rating { bottom: 16px; right: 14px; }
+}

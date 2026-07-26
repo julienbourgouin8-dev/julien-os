@@ -1,0 +1,50 @@
+.marquee-band {
+  position: relative;
+  background: var(--ink);
+  color: var(--paper);
+  padding: var(--sp-4) 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.marquee-band__track {
+  display: inline-flex;
+  align-items: center;
+  animation: marquee-scroll 32s linear infinite;
+}
+
+.marquee-band__set {
+  display: inline-flex;
+  align-items: center;
+}
+
+.marquee-band__item {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1.6rem, 4.2vw, 3.4rem);
+  letter-spacing: -0.01em;
+  padding-inline: 0.6em;
+  color: var(--paper);
+  opacity: 0.92;
+}
+
+/* Alterne les 3 accents de marque (rouge/bleu/orange, écho du logo REP 24)
+   plutôt qu'un orange uniforme — retour Julien 2026-07-22 sur le manque de
+   couleurs de marque visibles ailleurs que le petit logo du header. */
+.marquee-band__dot {
+  font-style: normal;
+  padding-inline: 0.15em;
+}
+.marquee-band__dot--red { color: var(--red); }
+.marquee-band__dot--blue { color: var(--blue-light, var(--blue)); }
+.marquee-band__dot--orange { color: var(--orange); }
+
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-band__track { animation: none; }
+}

@@ -1,0 +1,60 @@
+/* ============================================================
+   Avis client — dark ink background (the one deliberate zone
+   shift to a dark section, per scroll-design-guidelines' "clair
+   → sombre → accent → clair"). Big editorial pull-quote treatment,
+   the real review verbatim, real author, real rating.
+   ============================================================ */
+
+.avis {
+  background: var(--ink);
+  color: var(--on-ink);
+  padding-block: var(--sp-16);
+  text-align: center;
+}
+
+.avis__inner {
+  max-width: 840px;
+}
+
+.avis__mark {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(5rem, 11vw, 8rem);
+  line-height: 0.6;
+  color: var(--blue);
+  margin-bottom: var(--sp-2);
+  user-select: none;
+}
+
+.avis__quote {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-style: italic;
+  font-size: clamp(1.5rem, 3.2vw, 2.5rem);
+  line-height: 1.35;
+  color: var(--on-ink);
+}
+
+.avis__meta {
+  margin-top: var(--sp-6);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-2) var(--sp-5);
+  font-family: var(--font-body);
+  font-style: normal;
+}
+
+.avis__author {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--on-ink);
+}
+
+.avis__rating {
+  color: var(--on-ink-mute);
+  font-size: 0.92rem;
+}
+
+.avis__rating strong { color: var(--blue); font-weight: 700; }

@@ -1,0 +1,226 @@
+/* ===========================================================================
+   quick-quote.css — section "devis rapide", insérée juste après la
+   présentation : capter la demande avant que le visiteur ne reparte, sans
+   attendre le formulaire complet du bas de page. Fond rouge plein (seule
+   couleur de marque encore inutilisée en fond de section pleine largeur) pour
+   marquer un vrai moment de conversion, distinct des sections service.
+   =========================================================================== */
+
+/* Fond rouge plein retiré (retour Julien 2026-07-22, cf. services.css) :
+   fond --paper texturé partagé (voir base.css), rouge de marque conservé
+   comme accent (kicker, points, bouton CTA, téléphone). */
+.quick-quote {
+  position: relative;
+  background: transparent;
+  color: var(--ink);
+  padding: var(--sp-16) 0;
+  overflow: hidden;
+}
+
+.quick-quote__grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: var(--sp-8);
+  align-items: start;
+}
+
+/* -- Colonne texte ---------------------------------------------------- */
+.quick-quote__kicker { color: var(--red-dark); }
+
+.quick-quote__heading {
+  font-size: var(--fs-2xl);
+  font-weight: 500;
+  max-width: 13ch;
+  margin: var(--sp-3) 0 var(--sp-3);
+  color: var(--ink);
+}
+
+.quick-quote__text {
+  font-size: 1.08rem;
+  color: var(--ink-soft);
+  max-width: 42ch;
+  margin-bottom: var(--sp-5);
+}
+
+.quick-quote__points {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-6);
+}
+.quick-quote__point {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 0.98rem;
+  color: var(--ink-soft);
+}
+.quick-quote__point-mark {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--red) 14%, transparent);
+  color: var(--red-dark);
+  font-size: 0.7rem;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.quick-quote__phone {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--ink-mute);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.quick-quote__phone a {
+  color: var(--red-dark);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--red) 40%, transparent);
+  text-underline-offset: 3px;
+}
+.quick-quote__phone a:hover { text-decoration-color: var(--red-dark); }
+
+/* -- Carte formulaire ---------------------------------------------------
+   Fond --white (pas --paper) pour que la carte se détache clairement du
+   fond --paper texturé de la section, maintenant que la section elle-même
+   n'est plus un aplat rouge derrière elle. */
+.quick-quote__form-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-6) var(--sp-5);
+  box-shadow: var(--shadow-card);
+  color: var(--ink);
+}
+
+.quick-quote__form { display: flex; flex-direction: column; }
+
+.quick-quote__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-2);
+}
+
+.quick-quote__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: var(--sp-3);
+}
+
+.quick-quote__label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.quick-quote__label sup {
+  color: var(--red);
+  font-size: 0.85em;
+}
+
+.quick-quote__input,
+.quick-quote__select,
+.quick-quote__textarea {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--ink);
+  background: var(--white);
+  border: 1.5px solid color-mix(in srgb, var(--ink) 15%, transparent);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  transition: border-color var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out);
+}
+.quick-quote__textarea {
+  resize: vertical;
+  min-height: 88px;
+  font-family: var(--font-body);
+  line-height: var(--lh-body);
+}
+.quick-quote__select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9' fill='none'%3E%3Cpath d='M1 1L7 7L13 1' stroke='%2312181d' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+}
+
+.quick-quote__input::placeholder,
+.quick-quote__textarea::placeholder {
+  color: var(--ink-mute);
+}
+
+.quick-quote__input:focus-visible,
+.quick-quote__select:focus-visible,
+.quick-quote__textarea:focus-visible {
+  outline: none;
+  border-color: var(--red);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--red) 16%, transparent);
+}
+
+.quick-quote__submit {
+  width: 100%;
+  margin-top: var(--sp-1);
+}
+
+.quick-quote__note {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-mute);
+  text-align: center;
+  margin-top: var(--sp-2);
+}
+
+/* -- Confirmation --------------------------------------------------------- */
+.quick-quote__success {
+  display: none;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  padding: var(--sp-4) 0;
+}
+.quick-quote__form-card.is-sent .quick-quote__form { display: none; }
+.quick-quote__form-card.is-sent .quick-quote__success { display: flex; }
+
+.quick-quote__success-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--green) 12%, transparent);
+  color: var(--green);
+  font-size: 1.2rem;
+}
+.quick-quote__success-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-md);
+  font-weight: 600;
+}
+.quick-quote__success-text {
+  font-size: 0.98rem;
+  color: var(--ink-soft);
+  max-width: 40ch;
+}
+
+@media (max-width: 900px) {
+  .quick-quote { padding: var(--sp-10) 0; }
+  .quick-quote__grid { grid-template-columns: 1fr; gap: var(--sp-6); }
+  .quick-quote__form-card { padding: var(--sp-5) var(--sp-3); }
+}
+
+@media (max-width: 480px) {
+  .quick-quote__row { grid-template-columns: 1fr; gap: 0; }
+}

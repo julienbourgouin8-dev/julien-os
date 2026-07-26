@@ -1,0 +1,576 @@
+[
+  {
+    "name": "Le Courant de l Isle",
+    "naf_trouve": "94.99Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Electriciens"
+  },
+  {
+    "name": "Thierry Elec 24",
+    "naf_trouve": "74.90A",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Electriciens"
+  },
+  {
+    "name": "ADF Solutions",
+    "naf_trouve": "71.12B",
+    "tranche_trouvee": "100 à 199 salariés",
+    "confidence": "top_relevance",
+    "metier": "Electriciens"
+  },
+  {
+    "name": "M.A.T Pro électricité générale",
+    "naf_trouve": "82.99Z",
+    "tranche_trouvee": "20 à 49 salariés",
+    "confidence": "single_result",
+    "metier": "Electriciens"
+  },
+  {
+    "name": "EMS",
+    "naf_trouve": "85.59A",
+    "tranche_trouvee": "1 à 2 salariés",
+    "confidence": "top_relevance",
+    "metier": "Electriciens"
+  },
+  {
+    "name": "Ogelec",
+    "naf_trouve": "33.20D",
+    "tranche_trouvee": "10 à 19 salariés",
+    "confidence": "top_relevance",
+    "metier": "Electriciens"
+  },
+  {
+    "name": "Roy Jean-Michel",
+    "naf_trouve": "68.20A",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Electriciens"
+  },
+  {
+    "name": "Chanc'elec",
+    "naf_trouve": "45.3A",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "single_result",
+    "metier": "Electriciens"
+  },
+  {
+    "name": "Amis Perchés",
+    "naf_trouve": "94.99Z",
+    "tranche_trouvee": "1 à 2 salariés",
+    "confidence": "top_relevance",
+    "metier": "Couvreurs"
+  },
+  {
+    "name": "SAS Lafaye Batiment",
+    "naf_trouve": "49.32Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "single_result",
+    "metier": "Couvreurs"
+  },
+  {
+    "name": "JL Bâtiment 24",
+    "naf_trouve": "70.22Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Couvreurs"
+  },
+  {
+    "name": "ATTILA Périgueux",
+    "naf_trouve": "94.99Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "single_result",
+    "metier": "Couvreurs"
+  },
+  {
+    "name": "Pro Services",
+    "naf_trouve": "82.99Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Couvreurs"
+  },
+  {
+    "name": "EI Chauvet",
+    "naf_trouve": "69.10Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Couvreurs"
+  },
+  {
+    "name": "Blanchard toiture",
+    "naf_trouve": "81.21Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "single_result",
+    "metier": "Couvreurs"
+  },
+  {
+    "name": "Lafleur Josue",
+    "naf_trouve": "81.21Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Couvreurs"
+  },
+  {
+    "name": "SCEP",
+    "naf_trouve": "56.10A",
+    "tranche_trouvee": "6 à 9 salariés",
+    "confidence": "top_relevance",
+    "metier": "Couvreurs"
+  },
+  {
+    "name": "ID-Travaux",
+    "naf_trouve": "71.12B",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Couvreurs"
+  },
+  {
+    "name": "SCZ",
+    "naf_trouve": "68.20B",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Couvreurs"
+  },
+  {
+    "name": "Le Peletier Luc",
+    "naf_trouve": "81.21Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Couvreurs"
+  },
+  {
+    "name": "Avatix",
+    "naf_trouve": "81.22Z",
+    "tranche_trouvee": "1 à 2 salariés",
+    "confidence": "top_relevance",
+    "metier": "Couvreurs"
+  },
+  {
+    "name": "Pouvy Rudy",
+    "naf_trouve": "81.21Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "single_result",
+    "metier": "Couvreurs"
+  },
+  {
+    "name": "Boisseau Patrice",
+    "naf_trouve": "66.22Z",
+    "tranche_trouvee": "3 à 5 salariés",
+    "confidence": "top_relevance",
+    "metier": "Couvreurs"
+  },
+  {
+    "name": "Toiture 24000 Périgueux",
+    "naf_trouve": "35.11Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Couvreurs"
+  },
+  {
+    "name": "Green Clean",
+    "naf_trouve": "81.21Z",
+    "tranche_trouvee": "1 à 2 salariés",
+    "confidence": "top_relevance",
+    "metier": "Couvreurs"
+  },
+  {
+    "name": "Artisans Couvreur Zingueur",
+    "naf_trouve": "94.11Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Couvreurs"
+  },
+  {
+    "name": "Renov Habitat Services",
+    "naf_trouve": "82.99Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Couvreurs"
+  },
+  {
+    "name": "Atelier Lannet",
+    "naf_trouve": "71.12B",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "single_result",
+    "metier": "Maçons"
+  },
+  {
+    "name": "Vidal SAS",
+    "naf_trouve": "68.20B",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Maçons"
+  },
+  {
+    "name": "SARL De Oliveira",
+    "naf_trouve": "70.22Z",
+    "tranche_trouvee": "10 à 19 salariés",
+    "confidence": "top_relevance",
+    "metier": "Maçons"
+  },
+  {
+    "name": "Bergès François",
+    "naf_trouve": "70.22Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Maçons"
+  },
+  {
+    "name": "Bernard Et Roussarie Marc",
+    "naf_trouve": "84.11Z",
+    "tranche_trouvee": "3 à 5 salariés",
+    "confidence": "single_result",
+    "metier": "Maçons"
+  },
+  {
+    "name": "Miquel Noël",
+    "naf_trouve": "68.20A",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Maçons"
+  },
+  {
+    "name": "Saleix Dominique",
+    "naf_trouve": "77.10",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Maçons"
+  },
+  {
+    "name": "Cedric BOS",
+    "naf_trouve": "81.21Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Maçons"
+  },
+  {
+    "name": "Lourenço Fernando",
+    "naf_trouve": "68.20A",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Maçons"
+  },
+  {
+    "name": "À Pierre Vue",
+    "naf_trouve": "35.11Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Maçons"
+  },
+  {
+    "name": "SA Bati Projet Dordogne",
+    "naf_trouve": "82.99Z",
+    "tranche_trouvee": "20 à 49 salariés",
+    "confidence": "single_result",
+    "metier": "Maçons"
+  },
+  {
+    "name": "SAPA 24",
+    "naf_trouve": "01.61Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Peintres"
+  },
+  {
+    "name": "El Elodie Juillet",
+    "naf_trouve": "96.02B",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "single_result",
+    "metier": "Peintres"
+  },
+  {
+    "name": "Ets Arnaud Jérôme",
+    "naf_trouve": "82.99Z",
+    "tranche_trouvee": "20 à 49 salariés",
+    "confidence": "single_result",
+    "metier": "Peintres"
+  },
+  {
+    "name": "A.S.L Entreprise",
+    "naf_trouve": "68.20B",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Peintres"
+  },
+  {
+    "name": "Entreprise AL",
+    "naf_trouve": "56.10A",
+    "tranche_trouvee": "3 à 5 salariés",
+    "confidence": "top_relevance",
+    "metier": "Peintres"
+  },
+  {
+    "name": "Constantin Eric",
+    "naf_trouve": "56.10C",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Peintres"
+  },
+  {
+    "name": "INTEX",
+    "naf_trouve": "46.42Z",
+    "tranche_trouvee": "3 à 5 salariés",
+    "confidence": "top_relevance",
+    "metier": "Peintres"
+  },
+  {
+    "name": "Périgord Peinture Plâtrerie",
+    "naf_trouve": "82.99Z",
+    "tranche_trouvee": "20 à 49 salariés",
+    "confidence": "single_result",
+    "metier": "Peintres"
+  },
+  {
+    "name": "Catherine Aerts - Wattiez",
+    "naf_trouve": "82.99Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Peintres"
+  },
+  {
+    "name": "Julien Mathieu Renovation",
+    "naf_trouve": "82.99Z",
+    "tranche_trouvee": "20 à 49 salariés",
+    "confidence": "single_result",
+    "metier": "Peintres"
+  },
+  {
+    "name": "Patrick Gibert",
+    "naf_trouve": "10.39B",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Peintres"
+  },
+  {
+    "name": "Debruge",
+    "naf_trouve": "55.20Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Peintres"
+  },
+  {
+    "name": "Lagarde Michel",
+    "naf_trouve": "68.20A",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Peintres"
+  },
+  {
+    "name": "Sas Pomeyrol",
+    "naf_trouve": "46.90Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Peintres"
+  },
+  {
+    "name": "Menuiserie Alu 24",
+    "naf_trouve": "47.59B",
+    "tranche_trouvee": "1 à 2 salariés",
+    "confidence": "top_relevance",
+    "metier": "Menuisiers"
+  },
+  {
+    "name": "SARL BERGES",
+    "naf_trouve": "69.11",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Menuisiers"
+  },
+  {
+    "name": "Les Ateliers Raynaud",
+    "naf_trouve": "68.20B",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Menuisiers"
+  },
+  {
+    "name": "le chant du bois",
+    "naf_trouve": "68.20B",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Menuisiers"
+  },
+  {
+    "name": "Mathieu et Cie",
+    "naf_trouve": "81.21",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Carreleurs"
+  },
+  {
+    "name": "Marbre And Co",
+    "naf_trouve": "23.70Z",
+    "tranche_trouvee": "1 à 2 salariés",
+    "confidence": "top_relevance",
+    "metier": "Carreleurs"
+  },
+  {
+    "name": "ADC",
+    "naf_trouve": "71.20B",
+    "tranche_trouvee": "6 à 9 salariés",
+    "confidence": "top_relevance",
+    "metier": "Carreleurs"
+  },
+  {
+    "name": "Bianchi Gasquet",
+    "naf_trouve": "01.3Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "single_result",
+    "metier": "Carreleurs"
+  },
+  {
+    "name": "SALEM Fabien",
+    "naf_trouve": "47.99A",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Carreleurs"
+  },
+  {
+    "name": "Christian le Carreleur",
+    "naf_trouve": "88.10A",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "single_result",
+    "metier": "Carreleurs"
+  },
+  {
+    "name": "Ets Arnaud Jérôme",
+    "naf_trouve": "82.99Z",
+    "tranche_trouvee": "20 à 49 salariés",
+    "confidence": "single_result",
+    "metier": "Plaquistes"
+  },
+  {
+    "name": "A.S.L Entreprise",
+    "naf_trouve": "68.20B",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Plaquistes"
+  },
+  {
+    "name": "L'rénovation",
+    "naf_trouve": "87.90A",
+    "tranche_trouvee": "500 à 999 salariés",
+    "confidence": "top_relevance",
+    "metier": "Plaquistes"
+  },
+  {
+    "name": "Malek Mohamed",
+    "naf_trouve": "53.20Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Plaquistes"
+  },
+  {
+    "name": "Herisson Batiment",
+    "naf_trouve": "68.20B",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Plaquistes"
+  },
+  {
+    "name": "raynaud dominique",
+    "naf_trouve": "02.20Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Plaquistes"
+  },
+  {
+    "name": "Lima Francisco",
+    "naf_trouve": "96.02B",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Plaquistes"
+  },
+  {
+    "name": "M Carré",
+    "naf_trouve": "46.21Z",
+    "tranche_trouvee": "100 à 199 salariés",
+    "confidence": "top_relevance",
+    "metier": "Plaquistes"
+  },
+  {
+    "name": "WorkS ingénierie",
+    "naf_trouve": "71.12B",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Chauffagistes Climaticiens"
+  },
+  {
+    "name": "HYDRO TEC'",
+    "naf_trouve": "28.12Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Chauffagistes Climaticiens"
+  },
+  {
+    "name": "SCGC",
+    "naf_trouve": "68.20B",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Chauffagistes Climaticiens"
+  },
+  {
+    "name": "Maître Génie Climatique",
+    "naf_trouve": "68.20B",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "single_result",
+    "metier": "Chauffagistes Climaticiens"
+  },
+  {
+    "name": "Perigord Assainissement",
+    "naf_trouve": "37.00Z",
+    "tranche_trouvee": "6 à 9 salariés",
+    "confidence": "top_relevance",
+    "metier": "Terrassiers"
+  },
+  {
+    "name": "Sarl Crouzet Et Fils",
+    "naf_trouve": "45.40Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Terrassiers"
+  },
+  {
+    "name": "ADTP",
+    "naf_trouve": "88.10C",
+    "tranche_trouvee": "500 à 999 salariés",
+    "confidence": "top_relevance",
+    "metier": "Terrassiers"
+  },
+  {
+    "name": "Célérier Philippe",
+    "naf_trouve": "82.11Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Terrassiers"
+  },
+  {
+    "name": "ACPN",
+    "naf_trouve": "68.20B",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "top_relevance",
+    "metier": "Terrassiers"
+  },
+  {
+    "name": "Sas passion TP",
+    "naf_trouve": "64.20Z",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "single_result",
+    "metier": "Terrassiers"
+  },
+  {
+    "name": "EURL T-M-P",
+    "naf_trouve": "96.02A",
+    "tranche_trouvee": "0 salarié",
+    "confidence": "top_relevance",
+    "metier": "Terrassiers"
+  },
+  {
+    "name": "Sarl Lacoste Tp",
+    "naf_trouve": "02.0B",
+    "tranche_trouvee": "non renseigné",
+    "confidence": "single_result",
+    "metier": "Terrassiers"
+  }
+]

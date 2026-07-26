@@ -1,0 +1,103 @@
+/* Section cinématique pinée — image fixe pendant que les paragraphes défilent dessus.
+   La hauteur de scroll supplémentaire est créée par ScrollTrigger (pinSpacing), pas par
+   une hauteur de section codée en dur ici. */
+
+.cinematic {
+  position: relative;
+  background: var(--bg);
+}
+
+.cinematic__pin {
+  position: relative;
+  height: 100vh;
+  height: 100dvh;
+  height: 100lvh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.cinematic__media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.cinematic__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 60% 40%;
+  transform: scale(1.05);
+  animation: cine-breathe 26s ease-in-out infinite alternate;
+  will-change: transform;
+}
+@keyframes cine-breathe {
+  from { transform: scale(1.05); }
+  to   { transform: scale(1.14); }
+}
+
+.cinematic__scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(11,13,16,0.92) 0%, rgba(11,13,16,0.72) 42%, rgba(11,13,16,0.25) 75%),
+    linear-gradient(180deg, rgba(11,13,16,0.5) 0%, rgba(11,13,16,0.35) 40%, rgba(11,13,16,0.75) 100%);
+}
+
+/* Même traitement que .service__numeral : un seul chiffre fantôme, fin,
+   positionné juste derrière le kicker + titre — plus un aplat qui occupe
+   le côté vide de la photo. */
+.cinematic__numeral {
+  position: absolute;
+  top: -0.42em;
+  left: -0.05em;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--fs-numeral);
+  line-height: 1;
+  color: var(--accent);
+  opacity: 0.24;
+  z-index: -1;
+  pointer-events: none;
+  user-select: none;
+}
+
+.cinematic__content {
+  position: relative;
+  z-index: 2;
+  max-width: 640px;
+}
+
+.cinematic__content .eyebrow { color: var(--accent); }
+
+.cinematic__chapters {
+  position: relative;
+  margin: var(--sp-4) 0 var(--sp-5);
+  min-height: 9em;
+}
+
+.cinematic__chapter {
+  position: absolute;
+  inset: 0;
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  line-height: 1.5;
+  color: var(--ink);
+  max-width: 46ch;
+  opacity: 0;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+}
+.cinematic__chapter.is-active { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cinematic__media img { animation: none; transform: scale(1); }
+}
+
+@media (max-width: 720px) {
+  .cinematic__numeral { display: none; }
+  .cinematic__scrim {
+    background:
+      linear-gradient(180deg, rgba(11,13,16,0.55) 0%, rgba(11,13,16,0.55) 20%, rgba(11,13,16,0.92) 75%, var(--bg) 100%);
+  }
+  .cinematic__content { max-width: none; }
+  .cinematic__chapters { min-height: 11em; }
+}

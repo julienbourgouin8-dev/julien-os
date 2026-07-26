@@ -1,0 +1,98 @@
+/* ===========================================================================
+   R.E.P 24 — Concept A "Wordmark Villa" — Design tokens
+   =========================================================================== */
+
+:root {
+  /* -- Couleurs de marque -----------------------------------------------
+     Bleu réel extrait du CSS du site rep-24.com (getComputedStyle). Rouge et
+     orange n'avaient pas de hex exact extractible (barres de séparation
+     visuelles seulement) — valeurs choisies pour sonner juste à côté du bleu
+     sans être criardes : rouge chaud (chauffage/gaz) et orange cuivré
+     (ramonage/feu/énergie), les deux légèrement désaturés pour rester
+     éditoriaux plutôt que "alerte". */
+  --blue: #0088cc;
+  --blue-dark: #006999;
+  --blue-ink: #04405c; /* texte bleu foncé sur fond clair */
+  --red: #d9432e;
+  --red-dark: #b8331f;
+  --orange: #e08a2c;
+  --orange-dark: #bd7015;
+  --green: #145c4b; /* section "environnement" — teal-green, même famille chromatique que le bleu de marque */
+  --green-dark: #0d4437;
+
+  --ink: #12181d; /* quasi-noir, texte principal + fond bloc certifications */
+  --ink-soft: #414d57;
+  --ink-mute: #7c8790;
+
+  --paper: #faf6ef; /* blanc cassé chaud — fond clair par défaut */
+  --paper-2: #f1e9da; /* tint plus soutenu — cartes/insets sur fond clair */
+  --white: #ffffff;
+
+  /* -- Typographie --------------------------------------------------------
+     Display éditorial (Fraunces, optical sizing + italique) pour le
+     wordmark géant et les titres ; grotesque propre (Manrope) pour le corps
+     et l'UI. Jamais de police système par défaut. */
+  --font-display: "Fraunces", serif;
+  --font-body: "Manrope", sans-serif;
+  --font-mono: "Space Mono", monospace;
+
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.9rem;
+  --fs-base: 1.05rem;
+  --fs-md: 1.3rem;
+  --fs-lg: 1.75rem;
+  /* Échelle de titres resserrée de ~20% (retour Julien 2026-07-22 : les
+     titres de section étaient démesurés, un titre normal s'étalait sur
+     4-5 lignes). Garder --fs-2xl nettement au-dessus du corps de texte
+     (~1.05rem) pour préserver la hiérarchie. */
+  --fs-xl: clamp(1.6rem, 1.1rem + 2vw, 2.6rem);
+  --fs-2xl: clamp(2.1rem, 1.3rem + 3.2vw, 3.6rem);
+
+  --lh-tight: 0.95;
+  --lh-snug: 1.15;
+  --lh-body: 1.6;
+
+  /* -- Espacement (base 8px) --------------------------------------------- */
+  --sp-1: 8px;
+  --sp-2: 16px;
+  --sp-3: 24px;
+  --sp-4: 32px;
+  --sp-5: 40px;
+  --sp-6: 48px;
+  --sp-8: 64px;
+  --sp-10: 80px;
+  --sp-12: 96px;
+  --sp-16: 128px;
+
+  /* -- Mouvement ----------------------------------------------------------- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 250ms;
+  --dur-base: 700ms;
+  --dur-slow: 1100ms;
+
+  --radius-sm: 12px;
+  --radius: 28px;
+  --radius-lg: 40px;
+  --shadow-soft: 0 24px 60px -24px rgba(18, 24, 29, 0.35);
+  --shadow-card: 0 30px 70px -30px rgba(18, 24, 29, 0.45);
+
+  /* -- Texture de fond unifiée ---------------------------------------------
+     Un seul fond --paper sur (quasiment) toute la page plutôt que des
+     sections en aplats de couleur qui alternent (retour Julien 2026-07-22).
+     Grille géométrique très discrète + halos de couleur de marque, posés
+     une fois sur <body> (voir base.css) pour rester cohérents sur toute la
+     hauteur de page plutôt que de se répéter différemment par section. */
+  --texture-grid-line: color-mix(in srgb, var(--ink) 5%, transparent);
+  --texture-wash-blue: color-mix(in srgb, var(--blue) 9%, transparent);
+  --texture-wash-red: color-mix(in srgb, var(--red) 7%, transparent);
+  --texture-wash-orange: color-mix(in srgb, var(--orange) 7%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur-base: 0ms;
+    --dur-slow: 0ms;
+  }
+}

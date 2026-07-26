@@ -1,0 +1,172 @@
+.stove {
+  height: 100vh;
+  /* dvh suit la hauteur réellement visible sur mobile (barre d'adresse
+     Safari), mais reste DYNAMIQUE : elle rétrécit/grandit avec la barre
+     d'adresse, donc rien ne garantit qu'elle corresponde à l'écran réel à
+     l'instant exact où ça compte (juste avant un scroll rapide, pendant
+     l'animation de la barre) — rapporté à plusieurs reprises comme des
+     bandes blanches encore visibles malgré ça, y compris avec un calcul JS
+     (window.visualViewport) tentant de suivre ce changement en direct.
+     100lvh (« large viewport height ») résout ça autrement : c'est la
+     hauteur du viewport quand la barre d'adresse est entièrement repliée —
+     la valeur la PLUS GRANDE possible. En s'y calant, .stove ne peut plus
+     jamais être plus courte que l'écran réel, quel que soit l'état de la
+     barre : au pire (barre visible), la section dépasse très légèrement le
+     bas de l'écran (quelques dizaines de px, imperceptible ici), mais elle
+     ne peut plus jamais laisser voir la section suivante prématurément. */
+  height: 100lvh;
+  position: relative;
+  background: var(--teal-deep);
+}
+
+.stove__frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--teal-deep);
+}
+
+/* Pendant le verrouillage de scroll (voir js/video-inview.js), le cadre se
+   fixe directement sur le viewport réel plutôt que de dépendre de la
+   hauteur calculée de .stove : sur iOS Safari, démarrer la lecture de la
+   vidéo fait disparaître la barre d'adresse, agrandissant le viewport en
+   direct pendant la lecture — un calcul JS figé n'arrivait jamais à
+   suivre ce timing exactement, laissant une bande blanche visible juste
+   pendant la lecture. position:fixed + inset:0 est recalculé nativement
+   par le navigateur à chaque frame, donc toujours exact quel que soit
+   l'état de la barre d'adresse, sans JS à synchroniser. */
+.stove__frame.is-locked {
+  position: fixed;
+  inset: 0;
+  width: auto;
+  height: auto;
+  z-index: 15;
+}
+
+.stove__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.stove__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(13, 59, 62, 0.25) 0%,
+    rgba(13, 59, 62, 0) 20%,
+    rgba(13, 59, 62, 0) 60%,
+    rgba(13, 59, 62, 0.75) 100%
+  );
+}
+
+.stove__content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--sp-6) var(--sp-3) var(--sp-10);
+}
+
+/* Pas de fond derrière ce bloc — contraste géré uniquement par le
+   text-shadow du titre/texte (voir plus bas). */
+.stove__panel {
+  align-self: flex-start;
+  max-width: 640px;
+}
+
+/* Apparition déclenchée au démarrage de la vidéo (voir js/video-inview.js),
+   même langage visuel que les chapitres de la vidéo drone : flou + léger
+   glissement vers le haut, fondu. */
+.stove__title,
+.stove__text,
+.stove__cta {
+  opacity: 0;
+  filter: blur(8px);
+  transform: translateY(16px);
+  transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out),
+    filter 700ms var(--ease-out);
+}
+
+.stove__title {
+  color: var(--white);
+  margin-bottom: var(--sp-2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 2px 12px rgba(0, 0, 0, 0.6),
+    0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* Contour serré plutôt que flou large : sur du petit corps, un flou
+   large devient bavé/illisible. */
+.stove__text {
+  font-size: var(--fs-md);
+  max-width: 44ch;
+  margin: 0;
+  color: var(--white);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.95), 0 1px 3px rgba(0, 0, 0, 0.8),
+    0 2px 8px rgba(0, 0, 0, 0.5);
+  transition-delay: 150ms;
+}
+
+.stove__cta {
+  display: inline-flex;
+  align-self: flex-start;
+  margin-top: var(--sp-4);
+  transition-delay: 300ms;
+}
+
+.stove__content.is-active .stove__title,
+.stove__content.is-active .stove__text,
+.stove__content.is-active .stove__cta {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stove__title,
+  .stove__text,
+  .stove__cta {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    transition: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .stove__content { padding: var(--sp-4) var(--sp-2) var(--sp-6); }
+
+  /* Le plan large (porte d'entrée ouverte de chaque côté, poêle au centre)
+     est pensé pour un cadre large (desktop plein écran) — recadré en
+     object-fit:cover sur un viewport mobile étroit/très haut, les deux
+     montants de porte noirs restent visibles sur les bords gauche/droit
+     ("bordures" rapportées). Recadré/agrandi via transform plutôt qu'en
+     retouchant l'export vidéo — pas de ré-encodage disponible ici.
+
+     scale() UNIFORME, pas scaleX seul : scaleX(1.3) a été essayé pour ne
+     recadrer que l'axe horizontal (éviter de rogner le tuyau/le sol en
+     plus des bordures) — mais un facteur différent par axe DÉFORME
+     l'image (le poêle et le tuyau, ronds/verticaux dans la vraie vidéo,
+     s'étirent visiblement à l'horizontale). Rapporté comme "déformée,
+     grossie" — pire que le problème initial. object-fit:cover ne peut
+     appliquer qu'un seul facteur d'échelle, identique sur les deux axes,
+     par construction : il n'existe donc aucun moyen de resserrer
+     uniquement les bords sans soit déformer (rejeté), soit recadrer aussi
+     un peu de haut/bas via un zoom uniforme. Un zoom uniforme trop fort
+     (2.2-2.6) lisait comme "beaucoup trop zoomé" sur le vrai appareil ;
+     1.2 restait encore "un peu trop gros". Valeur réduite à 1.12 — un
+     compromis : les bordures ne disparaissent pas complètement (un mince
+     reste peut subsister), mais le cadrage général reste proche de
+     l'original, sans déformation ni zoom excessif. Ne pas revenir à un
+     scaleX/scaleY asymétrique. */
+  .stove__video {
+    transform: scale(1.12);
+  }
+}
+

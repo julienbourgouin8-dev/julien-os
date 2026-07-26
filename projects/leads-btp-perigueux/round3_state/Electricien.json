@@ -1,0 +1,1166 @@
+{
+  "majorDimension": "ROWS",
+  "range": "Electricien!A1:H500",
+  "values": [
+    [
+      "Nom entreprise",
+      "Note Google",
+      "Nombre avis",
+      "Telephone",
+      "Tranche effectif",
+      "Site web",
+      "Email",
+      "Statut"
+    ],
+    [
+      "Lagorce Rénovation Dordogne",
+      "4.7",
+      "116",
+      "05 53 08 76 88",
+      "",
+      "https://lagorcerenovation.fr/",
+      "contact@lagorcerenovation.fr",
+      "Non contacté"
+    ],
+    [
+      "La ruche des énergies",
+      "5.0",
+      "103",
+      "05 64 72 36 45",
+      "",
+      "https://www.laruchedesenergies.com/",
+      "contact@laruchedesenergies.com",
+      "Non contacté"
+    ],
+    [
+      "Dokteur Store & Volet - Réparation Dordogne",
+      "5.0",
+      "85",
+      "05 56 04 24 24",
+      "",
+      "https://www.dokteur.store/dordogne/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SECURITE ACTIV",
+      "4.8",
+      "79",
+      "05 53 57 76 79",
+      "",
+      "http://www.securite-activ.fr/",
+      "contact@securiteactiv.fr",
+      "Non contacté"
+    ],
+    [
+      "PONDVILLE",
+      "4.8",
+      "77",
+      "07 60 01 09 52",
+      "non renseigné",
+      "http://pondville.fr/",
+      "pondville@hotmail.com",
+      "Non contacté"
+    ],
+    [
+      "E.R Gelec",
+      "5.0",
+      "62",
+      "07 85 34 23 90",
+      "",
+      "http://electriciendu24.fr/?utm_source=gmb",
+      "contact.ergelec@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Bernard Frères Sarl",
+      "4.8",
+      "57",
+      "05 53 08 66 70",
+      "10 à 19 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Djelec énergie",
+      "4.8",
+      "42",
+      "06 10 23 15 52",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SAS Marty Énergies",
+      "4.1",
+      "40",
+      "05 53 08 95 27",
+      "20 à 49 salariés",
+      "https://marty-energies-iokls7m.gamma.site/",
+      "contact@martyenergies.fr",
+      "Non contacté"
+    ],
+    [
+      "Cap'élec Energies",
+      "4.7",
+      "28",
+      "05 53 05 04 67",
+      "10 à 19 salariés",
+      "https://www.capelec24.fr/?utm_source=gmb",
+      "contact@capelec24.fr",
+      "Non contacté"
+    ],
+    [
+      "Entreprise Bivi Plaquiste Perigueux - Peinture - Électricien",
+      "5.0",
+      "27",
+      "06 19 90 35 37",
+      "",
+      "http://www.bivi.construction.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Lachaux électricité",
+      "5.0",
+      "26",
+      "06 79 30 02 73",
+      "non renseigné",
+      "https://lachauxelectricite.wixsite.com/lachaux-electricite",
+      "lachaux.electricite@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Ecoludom",
+      "4.9",
+      "25",
+      "06 65 51 97 83",
+      "non renseigné",
+      "https://ecoludom.fr/",
+      "contact@ecoludom.fr",
+      "Non contacté"
+    ],
+    [
+      "Electricien - E.G.N.G Nicolas Giraudeau",
+      "4.5",
+      "24",
+      "06 20 76 71 31",
+      "",
+      "http://www.egng-electricien.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Claudette Interim",
+      "4.8",
+      "23",
+      "05 53 35 17 01",
+      "",
+      "http://www.claudette-interim.fr/",
+      "contact@coteouest-jobsaisonnier.fr",
+      "Non contacté"
+    ],
+    [
+      "SV elec",
+      "5.0",
+      "21",
+      "06 04 07 71 43",
+      "1 à 2 salariés",
+      "https://www.facebook.com/profile.php?id=61550686238860",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Le Petit Electricien",
+      "4.8",
+      "21",
+      "06 21 06 86 65",
+      "",
+      "http://www.le-petit-electricien.fr/",
+      "sebastien-petit@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "Rémy BEQUE [ REM-S ]",
+      "5.0",
+      "19",
+      "07 56 98 99 53",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Telelec Datacom",
+      "4.9",
+      "17",
+      "05 53 07 30 30",
+      "20 à 49 salariés",
+      "http://www.telelec.fr/",
+      "contact@telelec.fr",
+      "Non contacté"
+    ],
+    [
+      "LB Dpanne",
+      "4.5",
+      "17",
+      "05 24 13 29 07",
+      "",
+      "https://www.lbdpanne.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "ERELEC",
+      "4.5",
+      "14",
+      "05 53 35 24 63",
+      "20 à 49 salariés",
+      "http://www.erelec.net/",
+      "contact@erelec.net",
+      "Non contacté"
+    ],
+    [
+      "SAS PÉRIG'ABITAT",
+      "5.0",
+      "14",
+      "09 87 77 76 79",
+      "",
+      "https://www.perigabitat.com/",
+      "perigabitat@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Le Courant de l Isle",
+      "5.0",
+      "14",
+      "06 10 29 13 57",
+      "",
+      "https://electricien-savignac.fr/",
+      "sylvain@electricien-savignac.fr",
+      "Non contacté"
+    ],
+    [
+      "JME",
+      "4.8",
+      "12",
+      "05 53 04 16 51",
+      "10 à 19 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "AES Energie 24",
+      "5.0",
+      "12",
+      "06 33 27 09 23",
+      "non renseigné",
+      "",
+      "aesenergie24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Bobinage Lacroix",
+      "5.0",
+      "12",
+      "06 78 52 06 13",
+      "",
+      "https://www.bobinage-lacroix.fr/",
+      "lacroix.bobinage@wanadoo.fr",
+      "Non contacté"
+    ],
+    [
+      "Beauvieux Electricité",
+      "4.2",
+      "11",
+      "05 53 08 96 23",
+      "10 à 19 salariés",
+      "http://www.beauvieux.fr/",
+      "electricite@beauvieux.fr",
+      "Non contacté"
+    ],
+    [
+      "ELEC-ENERGIE YANN LE SAINT",
+      "5.0",
+      "11",
+      "05 53 81 28 82",
+      "3 à 5 salariés",
+      "https://www.electricite-yann-le-saint.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Doc Habitat Elec",
+      "5.0",
+      "11",
+      "07 81 40 82 82",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "C'CLIM ELEC 24",
+      "4.6",
+      "11",
+      "06 31 68 41 03",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "CONSTRUCTIONS CHANSEAU 🏠☀️",
+      "4.0",
+      "11",
+      "05 53 04 27 27",
+      "",
+      "https://constructions-chanseau.com/",
+      "constructions.chanseau@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "Nunes Pedro",
+      "4.6",
+      "10",
+      "06 81 24 30 66",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Polelec",
+      "4.2",
+      "10",
+      "06 43 45 84 80",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "NABOULET ELEC 24",
+      "4.6",
+      "10",
+      "06 52 75 09 92",
+      "3 à 5 salariés",
+      "https://electricien-perigueux.fr/",
+      "nabouletelec24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "ElectroExpert",
+      "5.0",
+      "10",
+      "",
+      "non renseigné",
+      "http://electroexpert.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Thierry Elec 24",
+      "4.5",
+      "10",
+      "07 66 53 47 66",
+      "",
+      "https://www.thierryelec24.fr/",
+      "thierry.elec24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "B Electric",
+      "3.6",
+      "9",
+      "05 53 45 46 20",
+      "20 à 49 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Julien ALLARD ELECTRICITE",
+      "5.0",
+      "9",
+      "06 40 58 57 31",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "EVC Energies",
+      "5.0",
+      "9",
+      "06 50 93 50 88",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "GM Elec SARL",
+      "5.0",
+      "8",
+      "07 83 37 84 37",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "ADF Solutions",
+      "5.0",
+      "8",
+      "06 65 73 90 91",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Cofidur EMS",
+      "4.4",
+      "8",
+      "05 53 35 77 00",
+      "250 à 499 salariés",
+      "http://www.cofidur-ems.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Marina Bêta-lectrice & Design",
+      "5.0",
+      "8",
+      "07 66 90 51 07",
+      "",
+      "https://marina-betalectrice-design.com/",
+      "marina.betalectrice.design@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Semet Sarl",
+      "4.9",
+      "8",
+      "05 53 03 29 05",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Pouzet Elec",
+      "5.0",
+      "7",
+      "05 53 03 49 34",
+      "0 salarié",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Electricité - Services Périgourdins",
+      "5.0",
+      "7",
+      "06 37 12 24 01",
+      "",
+      "https://www.servicesperigourdins.fr/",
+      "servicesperigourdins@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "SDE 24, Syndicat Départemental d'Energies de la Dordogne",
+      "3.4",
+      "7",
+      "05 53 06 62 00",
+      "",
+      "http://www.sde24.fr/",
+      "accueil@sde24.fr",
+      "Non contacté"
+    ],
+    [
+      "DGelec",
+      "5.0",
+      "6",
+      "07 66 92 72 99",
+      "non renseigné",
+      "https://dgelec-perigueux.com/",
+      "DGelecEntreprise@laposte.net",
+      "Non contacté"
+    ],
+    [
+      "Dordogne Elec24",
+      "5.0",
+      "6",
+      "06 02 38 83 58",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Vpelec Eurl Joffrey",
+      "4.8",
+      "6",
+      "05 53 45 88 12",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Broquet Gilles",
+      "5.0",
+      "6",
+      "05 53 04 16 21",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Société ETEC",
+      "3.7",
+      "6",
+      "05 53 04 20 34",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "VP Elec",
+      "4.2",
+      "6",
+      "05 53 06 38 21",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Electricité Franck Fressingeas",
+      "5.0",
+      "5",
+      "06 51 84 73 49",
+      "non renseigné",
+      "http://elecff.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "WorkS ingénierie",
+      "4.8",
+      "5",
+      "05 33 09 31 17",
+      "non renseigné",
+      "http://www.works-ing.fr/",
+      "contact@works-ing.fr",
+      "Non contacté"
+    ],
+    [
+      "Elecpro24",
+      "5.0",
+      "5",
+      "07 60 34 09 99",
+      "non renseigné",
+      "https://www.facebook.com/share/1H2vYJbHa7/?mibextid=wwXIfr",
+      "mnapro24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "E.DAVID",
+      "5.0",
+      "5",
+      "07 64 88 97 20",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "LEFTY BATIMENT",
+      "5.0",
+      "4",
+      "06 74 10 44 84",
+      "1 à 2 salariés",
+      "https://www.facebook.com/profile.php?id=61586081221387",
+      "lefty.batiment@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "BASP'ELEC",
+      "5.0",
+      "4",
+      "05 53 08 65 89",
+      "",
+      "https://www.eiffageenergiesystemes.com/home",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Parcellier ETS",
+      "4.0",
+      "4",
+      "05 53 53 48 00",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Flash Elec 24",
+      "5.0",
+      "3",
+      "06 81 66 18 28",
+      "1 à 2 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Elec 24",
+      "5.0",
+      "3",
+      "06 14 78 48 57",
+      "3 à 5 salariés",
+      "https://elec24-perigueux.fr/",
+      "elec24@sfr.fr",
+      "Non contacté"
+    ],
+    [
+      "A.P.A.ELEC",
+      "5.0",
+      "3",
+      "06 60 70 49 08",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "ATELEC 24",
+      "5.0",
+      "3",
+      "05 53 07 14 92",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Allez Cie",
+      "3.3",
+      "3",
+      "05 53 53 78 78",
+      "",
+      "https://www.allez.fr/",
+      "contact@allez.fr",
+      "Non contacté"
+    ],
+    [
+      "Nicolas Patrick",
+      "5.0",
+      "3",
+      "05 53 07 51 55",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Dynamika",
+      "5.0",
+      "3",
+      "05 53 35 34 93",
+      "",
+      "http://dynamika.fr/",
+      "info@dynamika.fr",
+      "Non contacté"
+    ],
+    [
+      "EURL PASQUIE",
+      "5.0",
+      "2",
+      "06 74 60 89 38",
+      "1 à 2 salariés",
+      "http://electricien-chancelade-pasquie-hager.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "ÉlecNova24",
+      "5.0",
+      "2",
+      "06 51 15 39 29",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Monprofit Denis",
+      "5.0",
+      "2",
+      "09 62 62 01 04",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "DAEP ÉLECTRICITÉ",
+      "5.0",
+      "2",
+      "07 76 15 30 21",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "matt élec",
+      "5.0",
+      "2",
+      "06 30 84 84 87",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "C.Musa - Électricité & Services Bâtiment",
+      "5.0",
+      "2",
+      "06 21 15 50 59",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Artisan L'Ange 2 Services",
+      "5.0",
+      "2",
+      "07 60 59 05 13",
+      "1 à 2 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "M.A.T Pro électricité générale",
+      "5.0",
+      "2",
+      "06 09 21 93 46",
+      "",
+      "https://www.mat-pro-electricite.fr/",
+      "matlen.pro24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "MUSILEC SARL",
+      "5.0",
+      "2",
+      "06 56 89 79 32",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Bost Électricté",
+      "5.0",
+      "2",
+      "07 81 88 66 07",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Rénovelec",
+      "3.0",
+      "2",
+      "06 74 97 02 17",
+      "",
+      "",
+      "renovelec24@outlook.fr",
+      "Non contacté"
+    ],
+    [
+      "Dordogne Électricité Automatisme",
+      "5.0",
+      "1",
+      "05 53 09 82 46",
+      "non renseigné",
+      "https://www.dea-24.fr/contact",
+      "dea-24@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "Innovelec",
+      "5.0",
+      "1",
+      "05 53 50 22 51",
+      "1 à 2 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "AWelec'",
+      "5.0",
+      "1",
+      "06 42 03 34 96",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "EMS",
+      "5.0",
+      "1",
+      "06 88 12 05 59",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Ogelec",
+      "5.0",
+      "1",
+      "06 08 24 16 65",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Agence Fauché Périgueux",
+      "4.0",
+      "1",
+      "05 57 26 67 80",
+      "",
+      "https://www.fauche.com/agence/fauche-perigueux/",
+      "contact@fauche.com",
+      "Non contacté"
+    ],
+    [
+      "Soury Frederic",
+      "5.0",
+      "1",
+      "06 03 81 01 27",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "C.e.s.t.i",
+      "5.0",
+      "1",
+      "05 53 04 45 79",
+      "",
+      "http://www.cesti.fr/",
+      "contact@cesti.fr",
+      "Non contacté"
+    ],
+    [
+      "Fortes Rigobert",
+      "1.0",
+      "1",
+      "05 53 53 77 59",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Dordogne Energies",
+      "5.0",
+      "1",
+      "09 73 11 90 97",
+      "",
+      "https://dordognenergies.fr/",
+      "contact@dordognenergies.fr",
+      "Non contacté"
+    ],
+    [
+      "Enerconfort",
+      "5.0",
+      "1",
+      "",
+      "",
+      "https://enerconfort.com/",
+      "contact24@enerconfort.com",
+      "Non contacté"
+    ],
+    [
+      "Sem 24 Périgord Énergies",
+      "1.0",
+      "1",
+      "05 53 06 62 33",
+      "",
+      "https://www.perigord-energies.fr/",
+      "contact@perigord-energies.fr",
+      "Non contacté"
+    ],
+    [
+      "Moulin de Saltgourde",
+      "5.0",
+      "1",
+      "05 53 54 68 73",
+      "",
+      "http://moulin-saltgourde.fr/",
+      "contact@moulin-saltgourde.fr",
+      "Non contacté"
+    ],
+    [
+      "Roy Jean-Michel",
+      "0",
+      "0",
+      "05 53 09 59 90",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Chanc'elec",
+      "0",
+      "0",
+      "06 59 63 14 65",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Thuillier Eric",
+      "0",
+      "0",
+      "05 53 04 74 34",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "NTT Electricité",
+      "0",
+      "0",
+      "06 78 05 02 66",
+      "non renseigné",
+      "https://www.facebook.com/NTT-Electricit%C3%A9-107277024849120",
+      "alain075@hotmail.com",
+      "Non contacté"
+    ],
+    [
+      "SEIE (Ste d'Equipement et d'Installation Electriques)",
+      "0",
+      "0",
+      "05 53 07 04 56",
+      "10 à 19 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Sourzat Sebastien",
+      "",
+      "0",
+      "05 53 08 85 69",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Vivr'Éco - Chauffage, Plomberie, Électricité, Isolation à Périgueux, Bergerac, Boulazac",
+      "",
+      "0",
+      "06 07 14 63 54",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Ribeiro Dos Santos Francois Georges",
+      "",
+      "0",
+      "05 53 09 21 14",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "LTS Incendie & Désenfumage",
+      "",
+      "0",
+      "05 24 13 20 25",
+      "",
+      "https://lts-incendie.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SOCOTEC Équipements",
+      "",
+      "0",
+      "05 53 45 65 51",
+      "",
+      "https://www.socotec.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Sorbes Nicolas",
+      "",
+      "0",
+      "06 11 72 22 51",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "CME24",
+      "",
+      "0",
+      "06 98 97 14 11",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Menus Travaux Services",
+      "",
+      "0",
+      "06 31 07 95 63",
+      "",
+      "http://menustravauxservices.site-solocal.com/",
+      "menustravauxservices@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "S&C Dépan'élec 24",
+      "",
+      "0",
+      "06 98 51 27 12",
+      "",
+      "https://electricien-perigord.fr/",
+      "contact@electricien-perigord.fr",
+      "Non contacté"
+    ],
+    [
+      "Hasi Lulzim",
+      "",
+      "0",
+      "05 53 05 56 74",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "PCE Electricité",
+      "",
+      "0",
+      "06 59 08 44 28",
+      "",
+      "https://pce-electricite.fr/",
+      "paulchampot@hotmail.fr",
+      "Non contacté"
+    ],
+    [
+      "Alliance IG",
+      "",
+      "0",
+      "06 45 05 98 24",
+      "",
+      "http://allianceig.fr/",
+      "contact@alliance-ig.fr",
+      "Non contacté"
+    ],
+    [
+      "Came Electricite Generale",
+      "",
+      "0",
+      "01 53 09 82 46",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "CK Services 24",
+      "",
+      "0",
+      "06 62 42 29 00",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "DD HABITAT CONSEIL",
+      "",
+      "0",
+      "06 19 29 53 55",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "ASNAH Elec",
+      "",
+      "0",
+      "06 26 45 90 34",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Prioux Domotique Facile",
+      "",
+      "0",
+      "07 69 94 85 15",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Rg Concept",
+      "",
+      "0",
+      "",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Laurier Jean Pierre",
+      "",
+      "0",
+      "05 53 53 98 85",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ]
+  ]
+}

@@ -1,0 +1,101 @@
+.certifications {
+  background: var(--ink);
+  color: var(--paper);
+  padding: var(--sp-16) 0;
+}
+
+.certifications__head {
+  max-width: 640px;
+  margin-bottom: var(--sp-8);
+}
+.certifications__kicker { color: rgba(250, 246, 239, 0.6); }
+.certifications__heading {
+  font-size: var(--fs-2xl);
+  font-weight: 500;
+  color: var(--paper);
+  margin: var(--sp-3) 0 var(--sp-2);
+}
+.certifications__intro {
+  color: rgba(250, 246, 239, 0.7);
+  font-size: 1.02rem;
+}
+
+.certifications__grid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: var(--sp-8);
+  align-items: start;
+}
+
+.certifications__logos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-5);
+}
+.certifications__logos img {
+  height: 64px;
+  width: auto;
+  border-radius: 10px;
+  background: var(--white);
+  padding: 10px 16px;
+}
+
+.certifications__pictos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--sp-2);
+}
+.certification-picto {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  background: rgba(250, 246, 239, 0.06);
+  border: 1px solid rgba(250, 246, 239, 0.12);
+}
+.certification-picto img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  flex-shrink: 0;
+}
+.certification-picto span {
+  font-size: 0.82rem;
+  line-height: 1.35;
+  color: rgba(250, 246, 239, 0.88);
+}
+
+.certifications__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+.certifications__list li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  padding: 16px 0;
+  border-top: 1px solid rgba(250, 246, 239, 0.14);
+  font-size: 1.02rem;
+  color: rgba(250, 246, 239, 0.92);
+}
+.certifications__list li:last-child { border-bottom: 1px solid rgba(250, 246, 239, 0.14); }
+.certifications__list li::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--orange);
+  flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+  .certifications { padding: var(--sp-10) 0; }
+  .certifications__grid { grid-template-columns: 1fr; gap: var(--sp-6); }
+  .certifications__pictos { grid-template-columns: 1fr; }
+}

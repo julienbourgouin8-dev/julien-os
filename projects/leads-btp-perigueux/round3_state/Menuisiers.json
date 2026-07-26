@@ -1,0 +1,756 @@
+{
+  "majorDimension": "ROWS",
+  "range": "Menuisiers!A1:H500",
+  "values": [
+    [
+      "Nom entreprise",
+      "Note Google",
+      "Nombre avis",
+      "Telephone",
+      "Tranche effectif",
+      "Site web",
+      "Email",
+      "Statut"
+    ],
+    [
+      "Maison Plein Ciel Janneau Menuisier Créateur",
+      "4.7",
+      "200",
+      "05 53 54 87 49",
+      "",
+      "http://www.maisonpleinciel.fr/",
+      "pleinciel.habitat@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "ART ET FENETRES - Art et Habitat Trélissac",
+      "4.9",
+      "186",
+      "05 53 04 26 74",
+      "20 à 49 salariés",
+      "https://www.artetfenetres.com/revendeur/art-et-habitat/adresses-magasins/trelissac-24750.html",
+      "dpo@artetfenetres.fr",
+      "Non contacté"
+    ],
+    [
+      "Aperture",
+      "5.0",
+      "109",
+      "06 84 18 33 89",
+      "",
+      "https://apertureserrurerie.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Green House Menuiseries",
+      "4.9",
+      "83",
+      "05 53 13 61 33",
+      "",
+      "http://www.greenhouse-perigueux.fr/",
+      "greenhouse24000@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "DS MENUISERIES",
+      "4.8",
+      "76",
+      "05 53 13 60 78",
+      "",
+      "http://www.ds-menuiseries.fr/",
+      "ds-menuiseries@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "BONIS ENERGIES",
+      "4.8",
+      "75",
+      "05 53 08 34 15",
+      "10 à 19 salariés",
+      "https://www.bonis-energies.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Compagnons Fenêtriers du Périgord",
+      "4.4",
+      "50",
+      "05 53 05 57 14",
+      "",
+      "https://www.compagnons-fenetriers.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "TRYBA Boulazac",
+      "4.7",
+      "49",
+      "05 18 23 12 86",
+      "20 à 49 salariés",
+      "https://www.tryba.com/espace-conseil/24/tryba-boulazac/",
+      "privacy@tryba.fr",
+      "Non contacté"
+    ],
+    [
+      "Menuiserie Alu 24",
+      "4.8",
+      "46",
+      "05 53 35 45 50",
+      "",
+      "https://www.menuiserie-alu24.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Etablissements Jacques Dubois",
+      "4.9",
+      "32",
+      "05 53 53 45 25",
+      "",
+      "https://www.serrurerie-dubois-perigueux.com/",
+      "contact@serrureriemetallerie-dubois.fr",
+      "Non contacté"
+    ],
+    [
+      "E.C.H Menuiseries",
+      "5.0",
+      "28",
+      "06 82 91 92 72",
+      "non renseigné",
+      "https://ech-menuiseries.fr/",
+      "contact@ech-menuiseries.fr",
+      "Non contacté"
+    ],
+    [
+      "Les Vérandas du Périgord - Concept Alu",
+      "4.7",
+      "27",
+      "05 53 53 34 53",
+      "",
+      "https://lesverandasduperigord.fr/",
+      "verandasperigueux24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "thévenin sa - région Sud Ouest",
+      "3.8",
+      "26",
+      "02 38 41 74 00",
+      "250 à 499 salariés (groupe, confirmé SIRENE)",
+      "https://www.thevenin.fr/",
+      "contact@thevenin.fr",
+      "Non contacté"
+    ],
+    [
+      "Ouvertures Périgourdines",
+      "5.0",
+      "26",
+      "05 53 13 58 62",
+      "6 à 9 salariés",
+      "https://www.ouverturesperigourdines.fr/",
+      "contact@ouverturesperigourdines.fr",
+      "Non contacté"
+    ],
+    [
+      "LAURENT RIGAL Escaliers Bois",
+      "3.8",
+      "26",
+      "09 70 35 23 93",
+      "",
+      "http://www.escalier-dordogne-rigal.com/",
+      "laurent.rigal.escalier@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Menuisier Périgueux - O2M Olivier Merveille",
+      "5.0",
+      "23",
+      "06 17 71 45 51",
+      "",
+      "https://www.facebook.com/profile.php?id=100056657237880",
+      "merveille.olivier66@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "AMM 24",
+      "5.0",
+      "22",
+      "06 38 31 91 45",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Menuiserie Raynal Jean-Luc",
+      "4.7",
+      "21",
+      "05 53 04 20 75",
+      "6 à 9 salariés",
+      "https://www.menuiserie-raynal.fr/contact",
+      "jeanluc.raynal@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Menuiserie SALAVERT",
+      "4.8",
+      "20",
+      "05 53 05 40 27",
+      "",
+      "https://www.menuiseriesalavert.fr/",
+      "contact@menuiseriesalavert.fr",
+      "Non contacté"
+    ],
+    [
+      "ETS Jacques Dubois - Métallerie Dubois",
+      "5.0",
+      "17",
+      "05 53 53 21 08",
+      "",
+      "https://metallerie-dubois.fr/",
+      "j.dubois@serrureriemetallerie-dubois.fr",
+      "Non contacté"
+    ],
+    [
+      "Jeff M'enuiseries",
+      "4.8",
+      "16",
+      "06 48 05 10 89",
+      "non renseigné",
+      "https://jeff-menuiseries.fr/",
+      "jeff.menuiseries@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Prigonrieux Menuiserie",
+      "4.4",
+      "16",
+      "06 19 83 35 28",
+      "",
+      "http://www.prigonrieux-menuiserie.fr/",
+      "curci@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "Contamine Simon Ébénisterie Menuiserie",
+      "5.0",
+      "15",
+      "06 70 40 21 57",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "BL Menuiserie",
+      "4.1",
+      "14",
+      "05 33 09 28 48",
+      "non renseigné",
+      "https://www.bl-menuiserie.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SurMesure Bois - Menuiserie et Agencement",
+      "5.0",
+      "13",
+      "06 19 30 46 64",
+      "",
+      "https://www.surmesurebois.fr/",
+      "surmesurebois@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "BL Agencement",
+      "5.0",
+      "13",
+      "06 50 59 91 85",
+      "",
+      "https://blagencement.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Menuiserie Parade",
+      "4.7",
+      "13",
+      "05 53 07 07 30",
+      "",
+      "https://www.menuiserie-parade.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "GL Menuiserie Agencement - GAÉTAN LAMARQUE",
+      "5.0",
+      "13",
+      "06 13 35 02 00",
+      "",
+      "https://www.gaetanlamarque.fr/",
+      "contact@gaetanlamarque.fr",
+      "Non contacté"
+    ],
+    [
+      "Concept Pose",
+      "4.5",
+      "11",
+      "06 49 01 61 81",
+      "non renseigné",
+      "https://conceptpose.com/",
+      "mkirat@hotmail.fr",
+      "Non contacté"
+    ],
+    [
+      "David Jacquin élagage",
+      "4.5",
+      "11",
+      "06 78 10 03 95",
+      "",
+      "https://www.elagagedordogne.fr/",
+      "contact@elagagedordogne.fr",
+      "Non contacté"
+    ],
+    [
+      "SAS Bouteaud Menuiserie",
+      "5.0",
+      "10",
+      "06 61 06 83 99",
+      "",
+      "https://www.bouteaudmenuiserie.fr/",
+      "anthony-bouteaud@hotmail.fr",
+      "Non contacté"
+    ],
+    [
+      "Cham sur mesure",
+      "5.0",
+      "10",
+      "06 75 67 31 53",
+      "",
+      "https://chamsurmesure.com/",
+      "chamsurmesure@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Riou",
+      "2.9",
+      "10",
+      "05 53 09 59 15",
+      "",
+      "https://www.menuiserie-riou.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SARL BERGES",
+      "2.7",
+      "9",
+      "05 53 09 81 49",
+      "",
+      "http://www.sarlberges.com/",
+      "contact@sarlberges.com",
+      "Non contacté"
+    ],
+    [
+      "Dean Herve",
+      "4.5",
+      "8",
+      "06 07 30 60 39",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Nicolas Grégoire Menuiserie",
+      "5.0",
+      "7",
+      "07 70 00 89 85",
+      "non renseigné",
+      "http://ngmenuiserie.odoo.com/",
+      "nicolasgregoire24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "EMG - Ebénisterie Menuiserie Générale",
+      "5.0",
+      "7",
+      "05 53 54 90 66",
+      "",
+      "https://emg-24.fr/",
+      "contact@emg-24.fr",
+      "Non contacté"
+    ],
+    [
+      "Quincaillerie Angles Périgueux",
+      "4.4",
+      "7",
+      "05 53 02 50 32",
+      "",
+      "https://www.quincaillerie-angles.fr",
+      "perigueux@quincaillerie-angles.fr",
+      "Non contacté"
+    ],
+    [
+      "Makabois",
+      "4.6",
+      "7",
+      "06 22 86 45 75",
+      "",
+      "http://makabois.fr",
+      "",
+      "Non contacté"
+    ],
+    [
+      "G Menuiserie",
+      "5.0",
+      "6",
+      "06 80 84 98 30",
+      "non renseigné",
+      "https://gmenuiserie-perigueux.fr/",
+      "montepin.gregory@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "DIFF MAT-GROSFILLEX - Menuiseries Alu-Pvc-Bois-Fenêtres-Portes-Portails-Volets Roulants-Mobilier de jardin-PERIGUEUX-DORDOGNE",
+      "4.3",
+      "6",
+      "05 53 06 79 41",
+      "",
+      "https://www.menuiserie-diffmat-dordogne.fr/",
+      "mat.diff@wanadoo.fr",
+      "Non contacté"
+    ],
+    [
+      "Chassin Menuiserie Périgueux - Menuiserie ALU BOIS PVC | Agencement intérieur",
+      "5.0",
+      "6",
+      "07 80 44 50 11",
+      "",
+      "https://chassin-menuiserie.fr/",
+      "chassinchristian@yahoo.fr",
+      "Non contacté"
+    ],
+    [
+      "THIERRY SOULIER",
+      "2.6",
+      "5",
+      "05 53 03 49 62",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "sos habitat multiservices rénovation.",
+      "5.0",
+      "5",
+      "07 63 62 33 41",
+      "",
+      "http://shm24.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "F Line - Franck Dalla Santa",
+      "5.0",
+      "5",
+      "06 84 79 14 43",
+      "",
+      "http://www.f-line.fr/",
+      "franck.dallasanta@wanadoo.fr",
+      "Non contacté"
+    ],
+    [
+      "Menuiserie Design 24",
+      "5.0",
+      "4",
+      "05 53 09 11 89",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Menuiserie Desmarthon Frères",
+      "5.0",
+      "4",
+      "06 75 34 91 74",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "ADN Menuiserie Agencement",
+      "5.0",
+      "4",
+      "06 16 23 84 80",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Menuiserie Aluminium Serrurerie - Pvc",
+      "2.0",
+      "4",
+      "05 53 53 22 06",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "miroiterie verres et glaces services",
+      "3.0",
+      "4",
+      "06 49 43 44 77",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "L'Atelier Bois",
+      "5.0",
+      "4",
+      "06 11 71 51 96",
+      "",
+      "https://atelier-bois-menuisier.fr/",
+      "eric.rognon@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "Atelier Moulin Ebénisterie Menuiserie",
+      "5.0",
+      "3",
+      "07 45 01 34 26",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "FustEtBois",
+      "5.0",
+      "3",
+      "06 42 10 78 96",
+      "",
+      "https://fustetbois.fr/",
+      "fustetbois@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "CP Construction Rénovation",
+      "3.0",
+      "2",
+      "06 59 84 39 65",
+      "3 à 5 salariés",
+      "https://cpconstructionrenovation24.com/",
+      "sas.cpconstruction24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Artisans Du Bois",
+      "3.0",
+      "2",
+      "05 53 03 46 15",
+      "20 à 49 salariés",
+      "https://adb24.fr/",
+      "contact@adb24.fr",
+      "Non contacté"
+    ],
+    [
+      "L'atelier Palandre",
+      "5.0",
+      "2",
+      "06 58 50 95 82",
+      "non renseigné",
+      "https://atelierpalandre.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "BVA Menuiserie",
+      "2.5",
+      "2",
+      "05 53 53 60 21",
+      "",
+      "https://bois-verre-alu.com",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Yvette Intérieurs",
+      "5.0",
+      "2",
+      "06 40 65 33 07",
+      "",
+      "https://yvetteinterieurs24.wixsite.com/yvette-int",
+      "",
+      "Non contacté"
+    ],
+    [
+      "L'Atelier de Thierry",
+      "5.0",
+      "2",
+      "06 86 16 86 25",
+      "",
+      "http://www.relooking-thierry.fr/contact",
+      "",
+      "Non contacté"
+    ],
+    [
+      "A.M.S Fonteyne Benoit",
+      "5.0",
+      "2",
+      "06 23 80 60 85",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "JC ROBIN Menuisier Ebéniste Périgueux",
+      "5.0",
+      "2",
+      "06 98 62 63 53",
+      "",
+      "https://jc-robin.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Les Ateliers Raynaud",
+      "5.0",
+      "1",
+      "05 53 03 90 39",
+      "",
+      "http://www.ateliers-raynaud.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Bierne Christophe",
+      "5.0",
+      "1",
+      "05 53 03 44 50",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Chassin Menuiserie",
+      "5.0",
+      "1",
+      "",
+      "",
+      "https://chassin-menuiserie.fr/",
+      "chassinchristian@yahoo.fr",
+      "Non contacté"
+    ],
+    [
+      "Ergf",
+      "5.0",
+      "1",
+      "05 53 07 89 28",
+      "",
+      "https://ergfsarl.com",
+      "ergf@wanadoo.fr",
+      "Non contacté"
+    ],
+    [
+      "Les Créations de Sarah",
+      "5.0",
+      "1",
+      "06 25 14 76 83",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "BHP Multiservices",
+      "",
+      "0",
+      "06 68 64 58 42",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "le chant du bois",
+      "",
+      "0",
+      "05 53 05 15 39",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SARL OSS ATUR",
+      "",
+      "0",
+      "07 70 68 23 02",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Technal",
+      "",
+      "0",
+      "",
+      "",
+      "https://www.verandas-perigord.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Wintech",
+      "",
+      "0",
+      "05 53 07 02 02",
+      "",
+      "http://www.wintech-france.com/",
+      "contact@wintech-france.com",
+      "Non contacté"
+    ],
+    [
+      "Ebénisterie Damien PONCHEL",
+      "",
+      "0",
+      "06 75 70 28 99",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "CHARPENTE DU.BOIS",
+      "",
+      "0",
+      "05 53 04 05 81",
+      "",
+      "http://www.charpentedubois.fr/",
+      "pierre@charpentedubois.fr",
+      "Non contacté"
+    ],
+    [
+      "Batiment D",
+      "",
+      "0",
+      "",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ]
+  ]
+}

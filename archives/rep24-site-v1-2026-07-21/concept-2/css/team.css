@@ -1,0 +1,108 @@
+/* ============================================================
+   Team / présentation — centered, text-forward, no photo
+   (hero already carries the one team-adjacent photo). Big serif
+   stat counter gives this section its own identity vs. the
+   alternating photo rows that follow.
+   ============================================================ */
+
+.team {
+  background: var(--cream);
+  padding-block: var(--sp-16) var(--sp-12);
+}
+
+.team__inner {
+  max-width: 920px;
+  text-align: center;
+  margin-inline: auto;
+}
+
+.team__heading {
+  font-size: clamp(2rem, 4.4vw, 3.1rem);
+  line-height: 1.08;
+  margin-top: var(--sp-2);
+  max-width: 22ch;
+  margin-inline: auto;
+}
+
+.team__grid {
+  display: grid;
+  grid-template-columns: 1.2fr auto;
+  gap: var(--sp-10);
+  align-items: center;
+  text-align: left;
+  margin-top: var(--sp-8);
+  padding-top: var(--sp-8);
+  border-top: 1px solid var(--line);
+}
+
+.team__text p + p { margin-top: var(--sp-2); }
+.team__text { color: var(--ink-soft); font-size: 1.05rem; }
+
+.team__stat {
+  justify-self: center;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.team__stat-number {
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 9vw, 7rem);
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.team__stat-suffix {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-style: italic;
+  color: var(--blue);
+}
+
+.team__stat-label {
+  display: block;
+  margin-top: var(--sp-1);
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.team__atouts {
+  list-style: none;
+  margin: var(--sp-8) 0 0;
+  padding: var(--sp-4) 0 0;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-2) var(--sp-6);
+}
+
+.team__atouts li {
+  position: relative;
+  padding-left: 1.3em;
+  font-size: 0.92rem;
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+
+.team__atouts li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--blue);
+}
+
+@media (max-width: 760px) {
+  .team__grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: var(--sp-5);
+  }
+  .team__stat { justify-self: center; }
+}

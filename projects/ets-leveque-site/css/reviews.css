@@ -1,0 +1,283 @@
+/* Fond teal profond plutôt que la photo trop claire/délavée d'origine —
+   la photo d'équipe reste en dessous (juste texture/profondeur, très
+   discrète à travers le voile) plutôt que d'être retirée : on garde une
+   vraie photo dans le parcours (cf. section suivante) sans le côté
+   "délavé" pointé par l'audit. */
+.reviews {
+  padding: var(--sp-10) 0 var(--sp-12);
+  background:
+    linear-gradient(
+      color-mix(in srgb, var(--teal-deep) 88%, transparent),
+      color-mix(in srgb, var(--teal-deep) 88%, transparent)
+    ),
+    url("../assets/img/photos/equipe-ets-leveque-v4.jpg") center / cover no-repeat;
+  background-color: var(--teal-deep);
+  position: relative;
+  z-index: 3;
+  /* Recouvrement réduit au minimum (juste l'arrondi) : les avis n'arrivent
+     visuellement qu'une fois la vidéo drone terminée, pas pendant que le
+     texte "Électricité générale" est encore affiché/en train de s'effacer. */
+  margin-top: -48px;
+  /* Seulement les coins du haut : le bas de la section touche directement
+     la vidéo poêle qui suit, arrondir aussi le bas laisse un trou qui
+     révèle la vidéo drone en dessous (à cause du recouvrement négatif
+     ci-dessus). */
+  border-radius: 56px 56px 0 0;
+  box-shadow: 0 -60px 120px -30px rgba(13, 59, 62, 0.5);
+}
+
+@media (max-width: 768px) {
+  .reviews {
+    margin-top: -32px;
+    border-radius: 28px 28px 0 0;
+    padding-top: calc(var(--sp-10) + 32px);
+  }
+}
+
+.reviews__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 540px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.reviews__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
+  border: none;
+  color: var(--white);
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  box-shadow: 0 8px 20px -8px rgba(229, 69, 58, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Rideau qui glisse pour découvrir le badge — synchronisé sur le fondu du
+   conteneur .reveal parent (voir js/reveal.js), pas de JS dédié ici. */
+.reviews__badge::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--red-dark);
+  transform: translateX(0);
+  transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+}
+.reveal.is-visible .reviews__badge::after {
+  transform: translateX(101%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reviews__badge::after {
+    transform: translateX(101%);
+    transition: none;
+  }
+}
+
+.reviews__heading {
+  font-size: clamp(28px, 3.4vw + 14px, var(--fs-2xl));
+  letter-spacing: -0.02em;
+  margin-top: var(--sp-3);
+  margin-bottom: 0;
+  color: var(--white);
+}
+
+.reviews__intro {
+  text-align: center;
+  margin-top: var(--sp-3);
+  margin-bottom: 0;
+  color: var(--white);
+  opacity: 0.85;
+}
+
+.reviews__stars {
+  display: inline-block;
+  color: var(--red);
+  letter-spacing: 2px;
+  perspective: 400px;
+}
+
+/* Étoiles : rotation 3D lettre par lettre au scroll (voir js/scroll-effects.js
+   pour le découpage en spans ; le déclenchement réutilise le même
+   .reveal.is-visible que le reste du bloc). */
+.reviews__stars .flip-char {
+  display: inline-block;
+  opacity: 0;
+  transform: rotateY(90deg);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition-delay: calc(var(--i) * 90ms);
+}
+.reveal.is-visible .reviews__stars .flip-char {
+  opacity: 1;
+  transform: rotateY(0deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reviews__stars .flip-char {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* "4.3/5" : surligneur qui balaie le chiffre, même déclencheur. */
+.reviews__rating {
+  display: inline-block;
+  padding: 0 6px;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--red) 55%, transparent) 50%,
+    transparent 50%
+  );
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  transition: background-position 1s ease-in-out;
+  transition-delay: 550ms;
+}
+.reveal.is-visible .reviews__rating {
+  background-position: 0 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reviews__rating {
+    background-position: 0 0;
+    transition: none;
+  }
+}
+
+.reviews__columns {
+  display: flex;
+  justify-content: center;
+  gap: var(--sp-3);
+  margin-top: var(--sp-8);
+  max-height: 740px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 25%, #000 75%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, #000 25%, #000 75%, transparent 100%);
+}
+
+.reviews__col {
+  width: 320px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.reviews__col--md { display: none; }
+.reviews__col--lg { display: none; }
+
+.reviews__col-track {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding-bottom: var(--sp-3);
+  animation-name: reviews-scroll-up;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.reviews__set {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+@keyframes reviews-scroll-up {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+
+.review-card {
+  position: relative;
+  background: var(--white);
+  border: 1px solid rgba(23, 121, 125, 0.18);
+  border-radius: 24px;
+  padding: var(--sp-6);
+  box-shadow: 0 20px 40px -24px rgba(23, 121, 125, 0.35);
+  overflow: hidden;
+}
+
+.review-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--red) 0%, var(--red) 50%, var(--blue) 50%, var(--blue) 100%);
+}
+
+.review-card__stars {
+  color: #000;
+  letter-spacing: 2px;
+  font-size: var(--fs-sm);
+  margin-bottom: var(--sp-1);
+  text-align: center;
+}
+
+.review-card__text {
+  font-size: var(--fs-base);
+  color: var(--slate);
+  line-height: var(--lh-body);
+}
+
+.review-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-top: var(--sp-4);
+}
+
+.review-card__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--red-dark) 0%, var(--blue) 100%);
+  color: var(--white);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.review-card__id {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.review-card__name {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--slate);
+}
+
+.review-card__role {
+  color: var(--slate);
+  opacity: 0.6;
+}
+
+@media (min-width: 768px) {
+  .reviews__col--md { display: block; }
+}
+@media (min-width: 1100px) {
+  .reviews__col--lg { display: block; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reviews__col-track { animation: none; }
+}
+
+@media (max-width: 560px) {
+  .reviews__columns { max-height: 520px; }
+  .reviews__col { width: 100%; }
+}

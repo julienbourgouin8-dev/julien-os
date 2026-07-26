@@ -1,0 +1,43 @@
+/* Effet d'écriture manuscrite lettre par lettre, mécanisme partagé par
+   toutes les sections qui l'utilisent (voir js/handwriting-type.js) :
+   #poele et #services-duo. Chaque section applique elle-même la police/
+   taille dans son propre fichier CSS (stove.css, gallery-duo.css), scopée
+   à @media (min-width: 769px) — desktop uniquement, comme demandé ; ce
+   fichier ne définit que le mécanisme d'apparition lettre par lettre,
+   commun à toutes.
+
+   Découpage en deux niveaux (mot > lettre) plutôt qu'un split lettre par
+   lettre à plat : un span par mot en inline-block empêche toute coupure
+   au milieu d'un mot, tandis que les vrais caractères espace restent du
+   texte normal (pas de span) entre les mots — c'est ce qui permet au
+   texte de continuer à se retourner à la ligne naturellement selon la
+   largeur du panneau, comme n'importe quel paragraphe. Un span par
+   lettre à plat (y compris les espaces) empêcherait tout retour à la
+   ligne entre les spans adjacents. */
+.handwrite-word {
+  display: inline-block;
+}
+
+.handwrite-char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.1s ease, transform 0.1s ease;
+}
+
+.handwrite-char.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Filet de sécurité CSS : js/handwriting-type.js ne construit déjà pas les
+   spans du tout sous reduced-motion (le texte reste le nœud de texte
+   d'origine), donc cette règle ne devrait normalement jamais s'appliquer —
+   gardée par cohérence avec le reste du site (voir tokens.css). */
+@media (prefers-reduced-motion: reduce) {
+  .handwrite-char {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

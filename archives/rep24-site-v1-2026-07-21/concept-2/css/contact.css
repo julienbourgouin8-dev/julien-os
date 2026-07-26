@@ -1,0 +1,75 @@
+/* ============================================================
+   Contact / footer — split layout (CTA left, coordinates right),
+   closing on a thin dark strip to bookend the avis section above.
+   ============================================================ */
+
+.contact {
+  background: var(--cream);
+  padding-block: var(--sp-16) var(--sp-10);
+}
+
+.contact__inner {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: var(--sp-10);
+}
+
+.contact__main h2 {
+  margin-top: var(--sp-2);
+  font-size: clamp(2.1rem, 4.6vw, 3.4rem);
+  line-height: 1.08;
+  max-width: 14ch;
+}
+
+.contact__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-top: var(--sp-5);
+}
+
+.contact__details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  padding-top: var(--sp-2);
+  border-left: 1px solid var(--line);
+  padding-left: var(--sp-6);
+}
+
+.contact__label {
+  display: block;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 0.4em;
+}
+
+.contact__details p { color: var(--ink-soft); }
+.contact__details p + p { margin-top: 0.2em; }
+
+.contact__footer {
+  margin-top: var(--sp-12);
+  background: var(--ink);
+  color: var(--on-ink-mute);
+  padding-block: var(--sp-4);
+}
+
+.contact__footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 760px) {
+  .contact__inner { grid-template-columns: 1fr; gap: var(--sp-6); }
+  .contact__details {
+    border-left: none;
+    padding-left: 0;
+    border-top: 1px solid var(--line);
+    padding-top: var(--sp-4);
+  }
+}

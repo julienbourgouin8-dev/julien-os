@@ -1,0 +1,506 @@
+{
+  "majorDimension": "ROWS",
+  "range": "'Chauffagistes Climaticiens'!A1:H500",
+  "values": [
+    [
+      "Nom entreprise",
+      "Note Google",
+      "Nombre avis",
+      "Telephone",
+      "Tranche effectif",
+      "Site web",
+      "Email",
+      "Statut"
+    ],
+    [
+      "KARÉNOVE",
+      "4.8",
+      "99",
+      "05 53 05 24 24",
+      "10 à 19 salariés",
+      "https://karenove.fr/",
+      "contact@karenove.fr",
+      "Non contacté"
+    ],
+    [
+      "INTRA ENERGIES",
+      "5.0",
+      "74",
+      "05 54 54 09 59",
+      "non renseigné",
+      "https://www.intra-energies.fr/",
+      "contact@intra-energies.fr",
+      "Non contacté"
+    ],
+    [
+      "Domani - Rénovation énergétique globale",
+      "3.9",
+      "67",
+      "05 53 46 72 09",
+      "",
+      "http://www.domani.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "GAUME-ENERGIES",
+      "4.8",
+      "65",
+      "05 53 54 11 37",
+      "10 à 19 salariés",
+      "http://www.gaume-chauffage-dordogne.fr/",
+      "contact@gaume-energies.fr",
+      "Non contacté"
+    ],
+    [
+      "SODITHERM",
+      "4.5",
+      "44",
+      "05 53 04 80 60",
+      "",
+      "https://www.soditherm24.fr/",
+      "contacts@soditherm24.fr",
+      "Non contacté"
+    ],
+    [
+      "Chauff Clim Service",
+      "3.3",
+      "38",
+      "05 53 08 73 37",
+      "",
+      "https://chauffclim-service.fr/",
+      "contact@chauffclimservice.fr",
+      "Non contacté"
+    ],
+    [
+      "SCJ PLOMBERIE CHAUFFAGE CLIMATISATION POMPE A CHALEUR RECHERCHE DE FUITE BRANTOME BOURDEILLES NONTRON",
+      "4.8",
+      "35",
+      "06 84 05 99 56",
+      "",
+      "https://www.scj-plomberie.com/",
+      "contact@scj-plomberie.com",
+      "Non contacté"
+    ],
+    [
+      "SARL THERMIQUE SERVICE Axenergie",
+      "4.1",
+      "31",
+      "05 53 53 64 40",
+      "",
+      "https://www.axenergie.eu/agences/85-thermique-service",
+      "contact@thermique-service.fr",
+      "Non contacté"
+    ],
+    [
+      "Sbc 24",
+      "5.0",
+      "27",
+      "07 55 66 17 59",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "AST24",
+      "4.7",
+      "26",
+      "05 53 46 81 65",
+      "",
+      "http://ast24.site-solocal.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Entreprise Certaines",
+      "5.0",
+      "18",
+      "06 65 19 93 96",
+      "1 à 2 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "ETS Ribeiro",
+      "4.1",
+      "17",
+      "06 63 63 96 81",
+      "",
+      "http://www.recherchefuites.fr/?utm_source=gmb",
+      "etsribeiro24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Périgord Chauffage Sanitaire / Flammes & Cie",
+      "3.6",
+      "16",
+      "05 53 04 29 94",
+      "",
+      "https://www.perigordchauffage.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "BEAU ENERGIE",
+      "5.0",
+      "16",
+      "06 22 36 79 53",
+      "non renseigné",
+      "https://www.beauenergie.com/",
+      "beau.energie24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Sasu Rebiere Gregory",
+      "4.4",
+      "14",
+      "06 68 72 30 29",
+      "",
+      "http://energiesz.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "PARTEDIS Chauffage Sanitaire",
+      "4.1",
+      "12",
+      "05 53 35 91 00",
+      "500 à 999 salariés",
+      "http://www.partedis.com/agence/perigueux-chauffage-sanitaire/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SaniThermic24",
+      "5.0",
+      "11",
+      "06 62 53 03 35",
+      "",
+      "https://www.facebook.com/sanithermic24/",
+      "sanithermic24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Entreprise Loriette",
+      "5.0",
+      "11",
+      "06 20 51 79 51",
+      "",
+      "https://entreprise-loriette.fr/",
+      "loriettefabien@hotmail.fr",
+      "Non contacté"
+    ],
+    [
+      "sasu doudo nicolas / DNE plomberie chauffage",
+      "4.7",
+      "9",
+      "06 32 47 90 28",
+      "",
+      "https://www.dne-plomberie-chauffage.fr/",
+      "dneplomberie@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "Fluide Home",
+      "5.0",
+      "8",
+      "05 53 04 74 17",
+      "non renseigné",
+      "http://www.fluidehome.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "FLAM' & ENR",
+      "5.0",
+      "8",
+      "05 64 24 88 50",
+      "",
+      "https://www.seguin-perigueux.com/",
+      "contact@flam-enr.fr",
+      "Non contacté"
+    ],
+    [
+      "fred-dubouch",
+      "5.0",
+      "8",
+      "06 63 99 00 39",
+      "non renseigné",
+      "https://www.facebook.com/share/1BY44bukrm/",
+      "fred.dubouchpro@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "REY SERVICE ENERGIE 24",
+      "5.0",
+      "7",
+      "07 89 00 65 27",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Hydr'O",
+      "5.0",
+      "7",
+      "06 42 89 38 09",
+      "",
+      "https://hydro-plombier.fr/",
+      "hydro.magnierj@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Girard Energy",
+      "3.8",
+      "6",
+      "05 53 08 79 99",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "A.L'eau24",
+      "5.0",
+      "6",
+      "06 18 87 62 95",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Sarl Ravalet et Fils",
+      "4.0",
+      "5",
+      "05 53 08 19 36",
+      "",
+      "https://www.ravalet.fr/",
+      "contact@ravalet.fr",
+      "Non contacté"
+    ],
+    [
+      "SAS LAFAYE RAPHAEL",
+      "3.2",
+      "5",
+      "05 53 07 03 03",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Avenir Conseil Energétique",
+      "4.2",
+      "5",
+      "06 48 11 99 85",
+      "",
+      "https://www.avenir-conseil-energetique.fr/",
+      "francois@avenir-conseil-energetique.fr",
+      "Non contacté"
+    ],
+    [
+      "enr24",
+      "5.0",
+      "5",
+      "06 59 08 26 77",
+      "",
+      "https://enr24.fr/",
+      "contact.enr24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "TPC Services",
+      "5.0",
+      "4",
+      "06 01 78 34 61",
+      "",
+      "https://tpcservices.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "PARTEDIS Pièces Détachées - Périgueux",
+      "5.0",
+      "4",
+      "05 53 03 27 06",
+      "",
+      "http://www.partedis.com/agence/perigueux-pieces-detachees/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Mon Plombier",
+      "5.0",
+      "4",
+      "06 26 20 61 51",
+      "",
+      "https://www.monplombier24.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "EPP - Entreprise Périgueux plomberie",
+      "4.3",
+      "3",
+      "06 58 31 85 96",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Kergroach Christophe",
+      "5.0",
+      "3",
+      "05 53 09 32 11",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "ELEC-TECH",
+      "5.0",
+      "2",
+      "06 88 91 32 35",
+      "3 à 5 salariés",
+      "https://electech-48.webself.net/accueil",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Le Pemp Jonathan-Chauffage & Climatisation",
+      "5.0",
+      "2",
+      "06 08 81 70 13",
+      "",
+      "https://lustrous-fairy-e692b4.netlify.app/#contact",
+      "",
+      "Non contacté"
+    ],
+    [
+      "MVN",
+      "5.0",
+      "2",
+      "05 53 53 00 79",
+      "",
+      "https://www.mvnfrance.com/",
+      "yannick.pasquet@mvnfrance.com",
+      "Non contacté"
+    ],
+    [
+      "HYDRO TEC'",
+      "5.0",
+      "1",
+      "06 75 98 32 15",
+      "",
+      "",
+      "hydrotec.ben@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Terrail Energie",
+      "5.0",
+      "1",
+      "06 36 23 25 74",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SAS Ajm Cervices",
+      "4.0",
+      "1",
+      "06 30 92 74 52",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "GREEN POWER",
+      "5.0",
+      "1",
+      "06 27 17 82 10",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Coudray Serge",
+      "5.0",
+      "1",
+      "05 53 07 52 38",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Chauffage technique",
+      "5.0",
+      "1",
+      "05 53 54 40 30",
+      "",
+      "https://chauffage-technique.fr/",
+      "contact@chauffage-technique.fr",
+      "Non contacté"
+    ],
+    [
+      "SCGC",
+      "",
+      "0",
+      "06 85 94 16 01",
+      "",
+      "https://www.scgc-24.com/",
+      "joassim.laurent@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "DELCAMBRE ET SUCCESSEURS",
+      "",
+      "0",
+      "05 53 45 59 69",
+      "20 à 49 salariés",
+      "https://delcambre-successeurs.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Ocellis Energies",
+      "",
+      "0",
+      "05 64 37 50 63",
+      "20 à 49 salariés",
+      "https://ocellis-energies.fr/",
+      "contact@ocellis-energies.fr",
+      "Non contacté"
+    ],
+    [
+      "Maître Génie Climatique",
+      "",
+      "0",
+      "07 62 10 24 24",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Chauf'Froid Perigord",
+      "",
+      "0",
+      "05 54 07 15 41",
+      "",
+      "https://chauf-froid-perigord.fr/",
+      "contact@chauf-froid-perigord.fr",
+      "Non contacté"
+    ]
+  ]
+}

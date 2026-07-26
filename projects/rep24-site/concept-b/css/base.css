@@ -1,0 +1,187 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg);
+  scroll-behavior: auto; /* Lenis gère le smooth scroll */
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+}
+
+.container {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 var(--sp-4);
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 0 var(--sp-3);
+  }
+}
+
+section {
+  position: relative;
+  background: var(--bg);
+}
+
+.section-pad {
+  padding: var(--sp-10) 0;
+}
+
+@media (max-width: 768px) {
+  .section-pad {
+    padding: var(--sp-6) 0;
+  }
+}
+
+/* Label de section — "001 / Services" */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.eyebrow::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.5;
+}
+
+.eyebrow--blue { color: var(--blue-neon); }
+.eyebrow--red { color: var(--red-neon); }
+.eyebrow--orange { color: var(--orange-neon); }
+.eyebrow--green { color: var(--green-neon); }
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.section-title {
+  font-size: var(--fs-section);
+  font-weight: 700;
+  max-width: 16ch;
+}
+
+p {
+  color: var(--text-muted);
+}
+
+.lede {
+  font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+  color: var(--text-muted);
+  max-width: 46ch;
+}
+
+/* Boutons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: 1.05em 1.9em;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+  white-space: nowrap;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn-neon {
+  background: var(--blue);
+  color: #06121a;
+  box-shadow: var(--glow-blue-soft);
+}
+
+.btn-neon:hover {
+  box-shadow: var(--glow-blue);
+  background: var(--blue-neon);
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: rgba(244, 246, 249, 0.22);
+  color: var(--text);
+}
+
+.btn-ghost:hover {
+  border-color: var(--blue-neon);
+  color: var(--blue-neon);
+}
+
+/* Utilitaire reveal générique (fallback no-JS / reduced motion) */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Focus visible accessible sur fond sombre */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--blue-neon);
+  outline-offset: 3px;
+}
+
+/* Sélection */
+::selection {
+  background: var(--blue);
+  color: #06121a;
+}

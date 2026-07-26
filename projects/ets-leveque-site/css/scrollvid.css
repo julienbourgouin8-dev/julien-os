@@ -1,0 +1,92 @@
+/* Bloc générique "vidéo scrubbée au scroll" — réutilisé par le hero et la section drone */
+.scrollvid {
+  position: relative;
+}
+
+.scrollvid__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  /* dvh suit la hauteur réellement visible (barre d'adresse Safari qui
+     rétrécit/grandit) — sans ça, 100vh pouvait laisser une bande vide
+     entre la vidéo et la section suivante sur mobile. Gardé en 2e
+     déclaration : les navigateurs qui ne supportent pas dvh ignorent
+     cette ligne et gardent 100vh. */
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--teal-deep);
+  contain: paint;
+}
+
+.scrollvid__canvas,
+.scrollvid__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.scrollvid__scroll-hint {
+  position: absolute;
+  bottom: var(--sp-3);
+  right: var(--sp-3);
+  z-index: 2;
+  color: rgba(255, 255, 255, 0.75);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+}
+
+.scrollvid__scroll-hint::after {
+  content: "";
+  width: 1px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.4);
+  animation: scrollhint 1.6s var(--ease-out) infinite;
+}
+
+@keyframes scrollhint {
+  0% { transform: scaleY(0); transform-origin: top; opacity: 0; }
+  40% { transform: scaleY(1); transform-origin: top; opacity: 1; }
+  60% { transform: scaleY(1); transform-origin: bottom; opacity: 1; }
+  100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrollvid__scroll-hint::after { animation: none; }
+}
+
+/* Sur mobile, le canvas est retiré (voir js/scroll-video.js) et seule la
+   <video> reste — le will-change/translateZ(0) ci-dessus n'existe que pour
+   fluidifier le drawImage répété du canvas au scrub desktop, il ne sert à
+   rien pour une vidéo qui joue simplement toute seule. Sur un vrai iPhone,
+   le garder ici a un effet de bord confirmé : la vidéo décode et avance
+   bien (currentTime progresse, readyState atteint 4) mais reste visuellement
+   figée sur sa toute première frame, comme si le calque composité par
+   WebKit n'était jamais repeint après sa création — un bug connu de
+   promotion de calque forcée sur un <video> qui vient de démarrer en
+   autoplay. Le retirer laisse le navigateur gérer la vidéo comme un calque
+   vidéo natif normal, sans cette promotion GPU superflue. */
+@media (max-width: 768px) {
+  .scrollvid__video {
+    will-change: auto;
+    transform: none;
+  }
+
+  /* Filet de sécurité CSS, indépendant de js/scroll-video.js : si la
+     détection mobile en JS ne retirait pas le canvas pour une raison
+     quelconque, le garder visible ferait tourner le rendu desktop (frames
+     avancées par le scroll) au lieu de l'autoplay natif attendu sur mobile —
+     symptôme rapporté sur appareil réel. On le masque donc aussi côté CSS,
+     qui ne dépend d'aucun timing d'exécution JS. */
+  .scrollvid__canvas {
+    display: none !important;
+  }
+}

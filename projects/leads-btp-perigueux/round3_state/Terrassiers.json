@@ -1,0 +1,1496 @@
+{
+  "majorDimension": "ROWS",
+  "range": "Terrassiers!A1:H500",
+  "values": [
+    [
+      "Nom entreprise",
+      "Note Google",
+      "Nombre avis",
+      "Telephone",
+      "Tranche effectif",
+      "Site web",
+      "Email",
+      "Statut"
+    ],
+    [
+      "Perigord Assainissement",
+      "4.5",
+      "48",
+      "05 53 08 72 87",
+      "",
+      "https://www.perigord-assainissement.fr/",
+      "contact@perigordassainissement.com",
+      "Non contacté"
+    ],
+    [
+      "Bouijaud TP - Goudronnage",
+      "4.2",
+      "45",
+      "05 53 22 49 59",
+      "",
+      "http://bouijaud-enrobes.fr/",
+      "contact@bouijaud.com",
+      "Non contacté"
+    ],
+    [
+      "Lhomme et Fils TP",
+      "4.9",
+      "42",
+      "05 53 27 19 78",
+      "",
+      "https://www.lhomme-fils.fr/",
+      "secretariat@lhomme-fils.fr",
+      "Non contacté"
+    ],
+    [
+      "Bergeron Goudronnage EURL",
+      "4.9",
+      "37",
+      "05 53 04 78 92",
+      "non renseigné",
+      "https://bergerongoudronnage-eurl.fr/",
+      "eurl.goudronnage.particulier@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Eclancher Aménagement",
+      "5.0",
+      "35",
+      "05 53 58 18 52",
+      "",
+      "https://www.eclancher-amenagement.fr/",
+      "eclancher.amenagement@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "Sarl Lagarde & Laronze",
+      "3.0",
+      "32",
+      "05 53 50 26 22",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Sarl Crouzet Et Fils",
+      "4.7",
+      "30",
+      "05 53 03 29 91",
+      "",
+      "https://crouzet-et-fils.fr/",
+      "crouzet24@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "Sarlat Travaux Publics",
+      "4.6",
+      "27",
+      "05 53 59 15 98",
+      "10 à 19 salariés",
+      "https://www.sarlat-travaux-publics.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "ADTP",
+      "5.0",
+      "25",
+      "05 53 04 57 69",
+      "",
+      "https://adtpterrassement.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "2MTP - Les Allées de France",
+      "4.0",
+      "25",
+      "07 56 16 76 54",
+      "",
+      "https://linktr.ee/2mtp_lesalleesdefrance",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Serge Maury SARL",
+      "4.9",
+      "24",
+      "05 53 58 58 55",
+      "10 à 19 salariés",
+      "http://www.eurl-maury.fr/",
+      "contact@eurl-maury.fr",
+      "Non contacté"
+    ],
+    [
+      "TERRAQUI",
+      "5.0",
+      "24",
+      "05 53 13 30 29",
+      "non renseigné",
+      "https://terraqui.fr/",
+      "terraqui.info@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Laurière et Fils SA",
+      "3.8",
+      "21",
+      "05 53 82 80 00",
+      "200 à 249 salariés",
+      "http://www.groupe-lauriere.com/",
+      "info@groupe-lauriere.com",
+      "Non contacté"
+    ],
+    [
+      "DALLA VERDE TP",
+      "5.0",
+      "21",
+      "07 86 25 33 32",
+      "",
+      "https://www.dallaverdetp.fr/",
+      "dallaverdetp@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "JMA batipro terrassement _ piscine _ rénovation d' habitat",
+      "4.6",
+      "19",
+      "07 56 80 24 43",
+      "",
+      "https://jma-batipro.com/",
+      "jeanmariecoursac@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Célérier Philippe",
+      "4.8",
+      "19",
+      "09 61 28 40 46",
+      "",
+      "https://www.celerier-assainissement.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Entreprise TCTP",
+      "4.7",
+      "17",
+      "05 53 04 69 75",
+      "",
+      "https://tctp24.com/",
+      "contact@tctp24.fr",
+      "Non contacté"
+    ],
+    [
+      "Artisans à Domicile Dordogne Perigord",
+      "5.0",
+      "17",
+      "09 70 19 08 01",
+      "",
+      "http://www.artisans-domicile.fr/",
+      "coop24@artisans-domicile.fr",
+      "Non contacté"
+    ],
+    [
+      "SNPTP",
+      "3.7",
+      "16",
+      "05 53 35 96 74",
+      "",
+      "http://www.snptp.com/",
+      "contact@snptp.com",
+      "Non contacté"
+    ],
+    [
+      "Erctp",
+      "3.9",
+      "16",
+      "05 53 06 47 80",
+      "",
+      "http://www.erctp.fr/fr.html",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Muret",
+      "4.2",
+      "16",
+      "05 53 13 64 92",
+      "",
+      "http://www.muret-tp.com/",
+      "etude@muret-tp.com",
+      "Non contacté"
+    ],
+    [
+      "SAS LACHENEVRERIE Travaux Publics",
+      "4.7",
+      "16",
+      "05 53 59 19 15",
+      "",
+      "https://lachenevrerie.com/?utm_source=gmb",
+      "lachenevrerie@wanadoo.fr",
+      "Non contacté"
+    ],
+    [
+      "Christophe location Benne 24",
+      "4.9",
+      "16",
+      "07 80 58 76 33",
+      "",
+      "https://bennes-multiservices-dordogne.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "ACPN",
+      "5.0",
+      "15",
+      "06 35 37 89 27",
+      "",
+      "",
+      "acpnawrot@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Samuel Chaudoye",
+      "5.0",
+      "14",
+      "06 85 07 08 80",
+      "non renseigné",
+      "https://sites.google.com/view/chaudoye-samuel/accueil",
+      "sasam24380@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "SARL Lagarde & Laronze - Périgueux",
+      "3.9",
+      "13",
+      "05 53 46 11 37",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SARL BELLOT",
+      "4.8",
+      "13",
+      "06 50 70 75 90",
+      "",
+      "https://www.sarlbellot.fr/",
+      "contact@sarlbellot.fr",
+      "Non contacté"
+    ],
+    [
+      "Entreprise Guy",
+      "4.5",
+      "13",
+      "05 53 22 02 77",
+      "",
+      "",
+      "contact@entrepriseguy.fr",
+      "Non contacté"
+    ],
+    [
+      "TERR&O24",
+      "5.0",
+      "12",
+      "06 40 53 42 26",
+      "",
+      "https://terre-eau-24.fr/",
+      "contact@terre-eau-24.fr",
+      "Non contacté"
+    ],
+    [
+      "COUTY TERRASSEMENT",
+      "5.0",
+      "11",
+      "06 30 22 83 59",
+      "non renseigné",
+      "",
+      "charlelie.couty@hotmail.com",
+      "Non contacté"
+    ],
+    [
+      "Sas passion TP",
+      "4.6",
+      "11",
+      "06 28 82 57 39",
+      "",
+      "http://www.passion-tp.fr/terrassement",
+      "mazeau.gregoire24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Dessoubzdanes Dumont Travaux Publics (SARL)",
+      "4.5",
+      "11",
+      "05 53 52 82 90",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "NGE - ABTP BIARD",
+      "4.3",
+      "10",
+      "05 53 27 84 57",
+      "groupe NGE (national)",
+      "http://www.nge.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SLTP MONTAGUT",
+      "4.6",
+      "10",
+      "06 03 83 18 58",
+      "",
+      "https://www.sltp-montagut.fr/",
+      "lucas.montagut@hotmail.fr",
+      "Non contacté"
+    ],
+    [
+      "BERGERAC TP",
+      "4.6",
+      "10",
+      "05 53 61 81 22",
+      "",
+      "https://www.bergeractp.fr",
+      "",
+      "Non contacté"
+    ],
+    [
+      "DG2pierres Terrassement",
+      "5.0",
+      "10",
+      "06 45 73 46 97",
+      "",
+      "http://www.dg2pierresterrassement.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "AGRI VERT TP SAS",
+      "5.0",
+      "9",
+      "06 30 36 73 99",
+      "",
+      "https://www.agri-vert-tp.fr/",
+      "contact@simplebo.fr",
+      "Non contacté"
+    ],
+    [
+      "EURL Boutineau",
+      "5.0",
+      "9",
+      "06 75 73 48 41",
+      "",
+      "http://www.eurlboutineautp.com/",
+      "eurl.boutineau@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Nadal Yves Entr Générale Bâtiment",
+      "4.4",
+      "9",
+      "05 53 90 70 82",
+      "",
+      "http://www.nadal-yves-maconnerie.fr/",
+      "contact@sarlnadal.com",
+      "Non contacté"
+    ],
+    [
+      "Montastier SA",
+      "4.0",
+      "9",
+      "05 53 07 23 18",
+      "",
+      "http://www.montastier.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "TechAspir",
+      "4.6",
+      "9",
+      "05 53 90 51 25",
+      "",
+      "http://www.techaspir.com/",
+      "contact@techaspir.com",
+      "Non contacté"
+    ],
+    [
+      "ADTP Terrassement Assainissement aménagement extérieur",
+      "5.0",
+      "9",
+      "06 41 25 41 14",
+      "",
+      "https://adtpterrassement.fr/",
+      "chatellierdorian@outlook.fr",
+      "Non contacté"
+    ],
+    [
+      "Entreprise Garraud",
+      "3.9",
+      "8",
+      "05 45 60 65 65",
+      "20 à 49 salariés",
+      "https://www.garraudtp.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "HDTP.24",
+      "4.8",
+      "8",
+      "06 09 50 48 93",
+      "non renseigné",
+      "",
+      "hd.tp24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Vrtp",
+      "5.0",
+      "8",
+      "06 03 06 69 18",
+      "20 à 49 salariés",
+      "https://www.facebook.com/romain.vrtp.5",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Capponi T.p.",
+      "4.9",
+      "8",
+      "05 53 63 37 77",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "ATP AGRAFEUIL",
+      "4.4",
+      "8",
+      "05 53 06 94 91",
+      "",
+      "https://m.facebook.com/pages/category/Company/SAS-Agrafeuil-TP-1802098210016243/?locale2=fr_FR",
+      "a.tp-contact@agrafeuil.fr",
+      "Non contacté"
+    ],
+    [
+      "Andrieux et fils",
+      "3.5",
+      "8",
+      "05 53 81 20 63",
+      "",
+      "https://andrieuxetfils24.fr/",
+      "andrieux.maconnerie@laposte.net",
+      "Non contacté"
+    ],
+    [
+      "Alemps & Fils sarl",
+      "4.7",
+      "7",
+      "05 53 05 02 26",
+      "",
+      "https://www.alempsfils.fr/",
+      "eric.alemps1@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "Jb et fils tp",
+      "4.9",
+      "7",
+      "06 10 17 44 14",
+      "non renseigné",
+      "http://jbetfilstp24.fr/",
+      "jbouts2@live.fr",
+      "Non contacté"
+    ],
+    [
+      "C.T.P SARL",
+      "4.7",
+      "7",
+      "05 53 08 42 38",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "2TP Sud Ouest",
+      "5.0",
+      "7",
+      "06 49 01 82 20",
+      "",
+      "https://2tpsudouest.fr/",
+      "contact@2tpsudouest.fr",
+      "Non contacté"
+    ],
+    [
+      "Entreprise Chaminade TP",
+      "4.6",
+      "7",
+      "09 70 35 18 70",
+      "",
+      "http://www.terrassement-vrd-24.com/",
+      "contact@chaminadetp.fr",
+      "Non contacté"
+    ],
+    [
+      "Seignette Jean-Luc",
+      "4.6",
+      "7",
+      "05 53 24 86 81",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Thielens Guillaume",
+      "5.0",
+      "6",
+      "06 73 69 29 59",
+      "3 à 5 salariés",
+      "https://www.terrassement-tga.fr/",
+      "tgagri24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Cabirol-larme Jean Louis",
+      "4.0",
+      "6",
+      "05 53 35 17 17",
+      "0 salarié",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Canaud Guy",
+      "3.7",
+      "6",
+      "05 53 06 90 69",
+      "",
+      "https://canaud-terrassement-assainissement-24.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "FJTP33",
+      "5.0",
+      "6",
+      "06 07 27 03 05",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Cluzeau Belard TP",
+      "4.6",
+      "5",
+      "06 21 01 14 64",
+      "3 à 5 salariés",
+      "https://www.cluzeau-belard.com/",
+      "cluzeau-belard-tp@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "Desages Eurl",
+      "4.0",
+      "5",
+      "05 53 27 91 07",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "EURL T-M-P",
+      "5.0",
+      "5",
+      "06 82 72 24 02",
+      "",
+      "https://tmp-terrassement-87.fr/",
+      "tmp.batiment@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Antoine Puybaraud Services",
+      "5.0",
+      "5",
+      "06 01 43 84 06",
+      "non renseigné",
+      "https://demolition-dordogne.com/",
+      "contact@aps-demolition.com",
+      "Non contacté"
+    ],
+    [
+      "SAS Davaille Loïc",
+      "4.2",
+      "5",
+      "05 53 08 61 98",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SARL JTS",
+      "5.0",
+      "5",
+      "07 85 07 02 55",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "TAP 24",
+      "4.8",
+      "5",
+      "06 61 27 01 08",
+      "",
+      "https://www.facebook.com/Losmede.Lylian",
+      "tap24.losmede@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Lambert Jean-Pierre",
+      "2.6",
+      "5",
+      "05 53 55 26 60",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Aquitaine NTZ",
+      "5.0",
+      "5",
+      "06 76 19 15 25",
+      "",
+      "https://www.facebook.com/profile.php?id=100083221005612",
+      "aquitaine.ntz@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "DAVILA Thomas Terrassement",
+      "4.6",
+      "5",
+      "06 83 92 94 87",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Entreprise de TP - Cantero et fils",
+      "5.0",
+      "4",
+      "06 04 40 88 94",
+      "",
+      "https://cantero-et-fils.fr/",
+      "canteroetfils@laposte.net",
+      "Non contacté"
+    ],
+    [
+      "ZAGO TP",
+      "5.0",
+      "4",
+      "06 85 01 31 90",
+      "non renseigné",
+      "https://www.facebook.com/share/169jtzdDNN/",
+      "zago.tp@outlook.fr",
+      "Non contacté"
+    ],
+    [
+      "SLM",
+      "5.0",
+      "4",
+      "05 53 04 18 52",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Fs-terrassement assainissement piscine",
+      "5.0",
+      "4",
+      "06 62 76 45 53",
+      "",
+      "https://fs-terrassement24.fr/",
+      "fs-terrassement@outlook.fr",
+      "Non contacté"
+    ],
+    [
+      "SAS E.T.P. Estardier",
+      "4.0",
+      "4",
+      "05 53 51 45 90",
+      "",
+      "https://www.etpestardier.com/",
+      "etp.estardier@wanadoo.fr",
+      "Non contacté"
+    ],
+    [
+      "Estardier T.P. Michel",
+      "4.0",
+      "4",
+      "05 53 50 73 10",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "FJ Construction",
+      "5.0",
+      "4",
+      "07 85 54 01 58",
+      "",
+      "",
+      "fjconstruction24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "DURAND CTS",
+      "5.0",
+      "3",
+      "07 77 22 08 14",
+      "non renseigné",
+      "https://eurldurandcts24.fr/",
+      "durandcts@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "PRESTA TP",
+      "5.0",
+      "3",
+      "06 75 99 54 75",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Carbonnet Kéliane",
+      "5.0",
+      "3",
+      "06 72 37 23 14",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "ABL terrassement",
+      "5.0",
+      "3",
+      "07 64 09 83 17",
+      "non renseigné",
+      "https://www.facebook.com/profile.php?id=100083234623510",
+      "",
+      "Non contacté"
+    ],
+    [
+      "BDB Travaux Publics",
+      "4.7",
+      "3",
+      "07 60 68 04 83",
+      "",
+      "https://www.bdb-tp.fr/",
+      "secretariat@bdb-tp.fr",
+      "Non contacté"
+    ],
+    [
+      "Sarl bruno gomes",
+      "5.0",
+      "3",
+      "06 99 16 05 50",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "LTB Assainissement & Negoce",
+      "5.0",
+      "3",
+      "06 13 67 77 82",
+      "",
+      "http://www.facebook.com/LTB-assainissement-n%C3%A9goce-1439889912822736?utm_source=gmb",
+      "ltb.negoce@outlook.fr",
+      "Non contacté"
+    ],
+    [
+      "Terrefon Alain",
+      "4.3",
+      "3",
+      "05 53 05 76 38",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Lespinasse Philippe SARL",
+      "4.3",
+      "3",
+      "05 53 06 94 54",
+      "",
+      "",
+      "lespinasse.philippe@wanadoo.fr",
+      "Non contacté"
+    ],
+    [
+      "nicolas PUYADE Tp",
+      "5.0",
+      "3",
+      "06 84 66 25 62",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "GCTP SUD OUEST",
+      "5.0",
+      "2",
+      "05 53 06 29 49",
+      "10 à 19 salariés",
+      "https://gctp-groupe.fr/",
+      "contact@gctp-groupe.fr",
+      "Non contacté"
+    ],
+    [
+      "Breau TP",
+      "5.0",
+      "2",
+      "06 07 56 24 56",
+      "non renseigné",
+      "https://www.breautp.fr",
+      "",
+      "Non contacté"
+    ],
+    [
+      "FAURE LAURENT",
+      "5.0",
+      "2",
+      "06 33 71 34 05",
+      "3 à 5 salariés",
+      "https://openenergie.fr/",
+      "contact@openenergie.fr",
+      "Non contacté"
+    ],
+    [
+      "Lechat TP",
+      "5.0",
+      "2",
+      "06 70 61 63 53",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "ADUCIA TP",
+      "4.0",
+      "2",
+      "07 74 18 45 14",
+      "",
+      "https://tp-aducia.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Sarl Lacoste Tp",
+      "5.0",
+      "2",
+      "06 38 90 11 84",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Pro bâtiment aménagement - Terrassement / Assainissement / Couverture / Démolition",
+      "4.5",
+      "2",
+      "07 83 45 17 24",
+      "",
+      "https://pro-batiment-amenagement.fr/",
+      "contact@pba24.fr",
+      "Non contacté"
+    ],
+    [
+      "BERNIER CAMILLE",
+      "5.0",
+      "2",
+      "06 77 29 64 67",
+      "",
+      "https://www.dordogne-terassement.fr/?utm_medium=referral&utm_source=gmb&utm_campaign=lnk-gmb",
+      "camillebernier19@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Forest-TP24 - Terrassier Bergerac et alentours",
+      "4.5",
+      "2",
+      "06 26 05 05 22",
+      "",
+      "https://www.forest-tp24.fr/",
+      "dupeyron.forest24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "SAS SERRE : Terrassement, assainissement & aménagements extérieurs",
+      "5.0",
+      "2",
+      "06 82 22 76 30",
+      "",
+      "",
+      "sas.serre@outlook.fr",
+      "Non contacté"
+    ],
+    [
+      "Chauprade Sarl",
+      "5.0",
+      "2",
+      "05 53 50 60 11",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Deschamps Jean-Pierre",
+      "5.0",
+      "2",
+      "06 33 11 89 81",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Laporte Dominique",
+      "5.0",
+      "2",
+      "05 53 03 24 85",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "AUTEFORT NICOLAS BTP",
+      "3.0",
+      "2",
+      "06 07 71 65 36",
+      "",
+      "http://www.autefort-terrassement24.fr/",
+      "autefort.nicolas.btp@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "LOCATION DE MINIPELLE AVEC CHAUFFEUR",
+      "5.0",
+      "2",
+      "06 75 54 56 44",
+      "",
+      "https://www.scieriemobileperigord.fr/",
+      "scieriemobileperigord@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "PLP Lease",
+      "3.0",
+      "2",
+      "06 80 70 52 66",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SOCIETE DES ETABLISSEMENTS LOPEZ",
+      "5.0",
+      "1",
+      "05 53 80 38 29",
+      "1 à 2 salariés",
+      "https://www.facebook.com/Lopez-Christian-Ets-178756659662389/",
+      "sarllopez@hotmail.com",
+      "Non contacté"
+    ],
+    [
+      "Lafaye TP",
+      "5.0",
+      "1",
+      "06 22 20 26 46",
+      "",
+      "https://lafaye-tp-24.fr/",
+      "guillaume230282@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "baunat terrassement",
+      "5.0",
+      "1",
+      "06 85 32 30 94",
+      "non renseigné",
+      "http://baunatterrassement.fr/",
+      "baunatbastien@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "MKTP",
+      "5.0",
+      "1",
+      "06 62 65 39 87",
+      "non renseigné",
+      "https://www.mktp16.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "CJTP24",
+      "5.0",
+      "1",
+      "06 86 05 11 29",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Jégu Cottet",
+      "1.0",
+      "1",
+      "05 53 23 34 90",
+      "non renseigné",
+      "http://terrassements-jegucottet-dordogne.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Duverneuil Travaux Publics",
+      "1.0",
+      "1",
+      "06 50 94 28 84",
+      "",
+      "https://www.duverneuil-tp.fr/contact",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Beaupuy Terrassements Travaux Publics B.T.T.P",
+      "5.0",
+      "1",
+      "05 53 24 21 84",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Staelens Construction",
+      "5.0",
+      "1",
+      "06 45 41 90 12",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "STDE",
+      "5.0",
+      "1",
+      "06 07 85 37 24",
+      "",
+      "https://www.stde-dordogne.fr/",
+      "contact.stde@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "EURL THIERRY PERTUIT TP",
+      "5.0",
+      "1",
+      "06 84 84 62 95",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Davaille-lafaye",
+      "4.0",
+      "1",
+      "05 53 06 72 34",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Rouquiot Sarl",
+      "5.0",
+      "1",
+      "05 53 29 31 73",
+      "",
+      "https://www.rouquiot.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Delmares Fils Sarl",
+      "5.0",
+      "1",
+      "06 74 49 65 98",
+      "",
+      "http://www.maconnerie-delmares-issigeac.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "JFC24",
+      "5.0",
+      "1",
+      "06 02 12 17 93",
+      "",
+      "https://entreprise-chrobak.fr",
+      "sas.jfc24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Perspective services",
+      "5.0",
+      "1",
+      "06 34 87 20 11",
+      "",
+      "",
+      "perspective.services24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Cousseau Terrassement",
+      "5.0",
+      "1",
+      "06 09 65 29 99",
+      "",
+      "http://www.eurlcousseau.fr/",
+      "cousseau.herve@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "Services Octopus 24",
+      "",
+      "0",
+      "06 75 71 19 05",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "MESCLOP Lucas Terrassement",
+      "",
+      "0",
+      "06 46 77 88 61",
+      "",
+      "http://sarl-mesclop-terrassement.fr/",
+      "mesclop@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Dominique TP",
+      "",
+      "0",
+      "07 63 33 01 79",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Laffeach Michel",
+      "",
+      "0",
+      "",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Lesage Jean-Marie",
+      "",
+      "0",
+      "05 53 53 51 32",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Thomasson & Fils",
+      "",
+      "0",
+      "05 53 35 36 31",
+      "",
+      "https://www.thomasso-lacour.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "FTJ Nature",
+      "",
+      "0",
+      "06 11 94 86 35",
+      "",
+      "",
+      "Froyehono@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "ATC24",
+      "",
+      "0",
+      "06 16 27 49 88",
+      "",
+      "https://atc24.fr/",
+      "chabeaudiestephane24@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "FAURE TP 24",
+      "",
+      "0",
+      "06 83 55 93 74",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Service octopus 24",
+      "",
+      "0",
+      "07 69 95 18 66",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "GSTP24",
+      "",
+      "0",
+      "",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "ALKTP",
+      "",
+      "0",
+      "06 08 68 71 52",
+      "",
+      "https://www.alktp.fr/",
+      "contact@alktp.fr",
+      "Non contacté"
+    ],
+    [
+      "Allo Mini Pelle Castelvequoise",
+      "",
+      "0",
+      "06 05 46 29 60",
+      "",
+      "http://allominipelle.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "JGMS GUIMBAUD - TERRASSEMENT ET BROYAGE",
+      "",
+      "0",
+      "06 73 16 38 87",
+      "",
+      "https://jgms24.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "DTP24",
+      "",
+      "0",
+      "07 50 20 49 08",
+      "",
+      "https://dtp-24.fr/",
+      "dylandelsuc@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Cédric Patriarca Assainissement Terrassement EURL",
+      "",
+      "0",
+      "06 84 99 05 61",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "ATTARD BTP",
+      "",
+      "0",
+      "06 80 64 55 98",
+      "",
+      "https://attard-btp.com/",
+      "pierre.attard2@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "THDC Terrassement",
+      "",
+      "0",
+      "07 62 54 69 23",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Goudard Philippe",
+      "",
+      "0",
+      "05 53 51 38 26",
+      "",
+      "http://www.goudardterrassement.com/",
+      "goudard24290@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Jackson Terrassement",
+      "",
+      "0",
+      "05 45 78 35 81",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Les terrassiers du perigord",
+      "",
+      "0",
+      "07 80 40 63 86",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SILOG Location Centre Limousin",
+      "",
+      "0",
+      "05 56 39 15 68",
+      "",
+      "https://www.silog-location.fr/financement/centre-limousin/",
+      "information@silog-location.fr",
+      "Non contacté"
+    ],
+    [
+      "Phil õ Normes TP",
+      "",
+      "0",
+      "06 10 98 54 91",
+      "",
+      "https://www.phil-o-normes-tp.fr/",
+      "philonormes.tp@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Entreprise terrassement Manem Frederic",
+      "",
+      "0",
+      "06 87 15 60 19",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Costinha Manuel",
+      "",
+      "0",
+      "06 85 09 02 05",
+      "",
+      "https://www.costinha-dordogne.fr/?utm_medium=referral&utm_source=gmb&utm_campaign=lnk-gmb",
+      "maconneriecostinha@hotmail.fr",
+      "Non contacté"
+    ],
+    [
+      "FERLOUBET SERVICES",
+      "",
+      "0",
+      "06 62 73 99 75",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Lbtp",
+      "",
+      "0",
+      "07 87 65 02 16",
+      "",
+      "https://www.aquitaine-lbtp.com",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Arques Benoît",
+      "",
+      "0",
+      "06 28 27 00 30",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "CHIKIASTP",
+      "",
+      "0",
+      "06 35 55 17 92",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Canelli Julien",
+      "",
+      "0",
+      "",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ]
+  ]
+}

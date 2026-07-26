@@ -1,0 +1,1726 @@
+{
+  "majorDimension": "ROWS",
+  "range": "Couvreurs!A1:H500",
+  "values": [
+    [
+      "Nom entreprise",
+      "Note Google",
+      "Nombre avis",
+      "Telephone",
+      "Tranche effectif",
+      "Site web",
+      "Email",
+      "Statut"
+    ],
+    [
+      "TK Toiture : Couvreur Périgueux Dordogne 24",
+      "5.0",
+      "198",
+      "06 41 24 20 22",
+      "",
+      "https://tktoiture.fr/",
+      "tktoiture24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "abc 24: couvreur",
+      "4.9",
+      "120",
+      "06 15 78 71 89",
+      "",
+      "https://abc-24-couvreur-bergerac.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "CHOURY SARL",
+      "5.0",
+      "112",
+      "05 53 05 03 07",
+      "1 à 2 salariés",
+      "http://www.choury.fr/",
+      "contact@choury.fr",
+      "Non contacté"
+    ],
+    [
+      "L’ART DU TOIT Couvreur Bergerac",
+      "4.8",
+      "99",
+      "07 77 83 27 31",
+      "",
+      "https://l-art-du-toit-couvreur-bergerac.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Cs Couverture 24",
+      "5.0",
+      "99",
+      "06 24 63 76 32",
+      "",
+      "https://couverture-24.fr/",
+      "contact@couverture-24.fr",
+      "Non contacté"
+    ],
+    [
+      "Dylan Barreau Artisan EBD",
+      "4.9",
+      "73",
+      "07 50 82 15 37",
+      "",
+      "https://www.ebd-renovation.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Futur Bâtiment Couvreur Bergerac",
+      "4.9",
+      "72",
+      "06 04 46 03 10",
+      "",
+      "https://futur-batiment-24.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Euro Bâtiment couvreur certifié",
+      "4.4",
+      "66",
+      "06 95 06 51 03",
+      "",
+      "https://www.euro-batiment.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "DAL'ALU Alu Diffusion",
+      "4.8",
+      "65",
+      "05 53 24 20 52",
+      "",
+      "http://www.aludiffusion-isolationdiffusion.fr/?utm_source=gmb",
+      "contact@aludiffusion.com",
+      "Non contacté"
+    ],
+    [
+      "MaisonSûr Périgueux",
+      "4.2",
+      "60",
+      "0 800 00 04 17",
+      "",
+      "https://www.maisonsur.com/",
+      "contact@maisonsur.com",
+      "Non contacté"
+    ],
+    [
+      "Ent Steinbach Fils",
+      "5.0",
+      "53",
+      "07 68 17 69 93",
+      "non renseigné",
+      "https://steinbach-couverture.fr/",
+      "steinbachpro24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Amis Perchés",
+      "4.9",
+      "40",
+      "06 95 58 25 14",
+      "",
+      "http://www.amisperches.com/",
+      "amisperches@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Technitoit Périgueux",
+      "4.4",
+      "37",
+      "05 18 23 20 26",
+      "3 à 5 salariés",
+      "https://www.technitoit.com/agence/perigueux",
+      "durand.b@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "ETS. JINGUENAUD Sébastien Couvreur Bergerac Couverture Toiture",
+      "4.9",
+      "36",
+      "06 46 76 09 02",
+      "",
+      "https://artisan-couverture-bergerac.fr/",
+      "jinguenaudd.sebastien@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Entreprise Barreau - Couvreur Ramoneur Façadier",
+      "5.0",
+      "35",
+      "06 87 24 74 92",
+      "",
+      "http://www.barreau-batiment.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Construction Clément Virgo",
+      "4.9",
+      "35",
+      "05 53 53 40 59",
+      "6 à 9 salariés",
+      "",
+      "cclement.constructionvirgo@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Dylan ms Toiture peinture",
+      "4.8",
+      "33",
+      "06 56 83 84 74",
+      "",
+      "https://www.dylan-ms-toiture-peinture-nettoyage.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "MD Couvreur Charpentier",
+      "4.5",
+      "32",
+      "06 67 12 85 33",
+      "",
+      "https://www.md-couvreur-charpentier.fr/",
+      "douairecouvreur24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Blanchard William",
+      "5.0",
+      "31",
+      "06 32 26 64 04",
+      "",
+      "https://www.artisan-blanchard-24.fr/",
+      "blanchardtoiture@live.fr",
+      "Non contacté"
+    ],
+    [
+      "Secure toiture",
+      "5.0",
+      "30",
+      "07 80 64 32 87",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Atom Toiture Couvreur",
+      "5.0",
+      "29",
+      "07 59 12 54 04",
+      "",
+      "https://atomtoiture.fr/",
+      "contact@atomtoiture.fr",
+      "Non contacté"
+    ],
+    [
+      "Couvreur TeddyBatiment",
+      "4.9",
+      "29",
+      "06 98 61 00 45",
+      "",
+      "https://couvreur-tb-batiment.fr/",
+      "teddybatiment@hotmail.fr",
+      "Non contacté"
+    ],
+    [
+      "Entreprise CPA - Couvreur à Bergerac",
+      "4.4",
+      "28",
+      "07 62 42 51 41",
+      "",
+      "https://entreprise-cpa.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "FD Rénovation - Fargeas David",
+      "5.0",
+      "27",
+      "06 87 92 94 00",
+      "",
+      "https://fd-renovation.fr/",
+      "contact@fd-renovation.fr",
+      "Non contacté"
+    ],
+    [
+      "Sud-Ouest Couverture",
+      "5.0",
+      "27",
+      "07 74 91 57 24",
+      "",
+      "https://sudouestcouverture.fr/",
+      "couverturesudouest@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Duval Entreprise de Couverture Périgueux",
+      "5.0",
+      "25",
+      "07 49 69 60 90",
+      "",
+      "https://duval-couvreur.fr/",
+      "frantz.sf.renovation@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Technique Toit Façade Peintre en Bâtiment Bergerac",
+      "5.0",
+      "25",
+      "06 67 14 61 71",
+      "",
+      "https://ravalement-peinture-24.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Mathieu gremillet entreprise général du bâtiment couvreur rénovation toiture bergerac",
+      "5.0",
+      "24",
+      "06 86 87 66 10",
+      "",
+      "https://m-gremillet.fr/",
+      "mathieugremillet24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Phélip Frères",
+      "4.6",
+      "21",
+      "05 53 53 60 05",
+      "",
+      "http://www.phelip.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "RS Couverture Zinguerie",
+      "4.8",
+      "21",
+      "07 69 91 95 76",
+      "",
+      "https://www.rs-couverture-renovation.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "BTP CFA 24 PERIGUEUX",
+      "4.1",
+      "17",
+      "05 53 45 40 00",
+      "",
+      "https://www.btpcfa-aquitaine.fr/fr/perigueux-dordogne.html",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Général Toiture Façade",
+      "4.7",
+      "16",
+      "07 75 47 16 64",
+      "non renseigné",
+      "https://general-toiture-facade.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Samuel D Couverture 24 Périgueux",
+      "5.0",
+      "16",
+      "06 02 19 91 44",
+      "",
+      "https://samuel-dominique-couverture-24.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SAS Lafaye Batiment",
+      "4.3",
+      "16",
+      "05 53 90 72 66",
+      "",
+      "https://www.lafaye-sas.com/",
+      "lafayebatiment@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "Nettoyage Toiture, Dordogne",
+      "4.8",
+      "16",
+      "06 06 48 00 56",
+      "",
+      "https://nettoyage-toiture-dordogne.fr/",
+      "contact@nettoyage-toiture-dordogne.fr",
+      "Non contacté"
+    ],
+    [
+      "Olivier Gouttieres",
+      "4.3",
+      "15",
+      "06 11 27 28 56",
+      "1 à 2 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Revet Isol",
+      "4.1",
+      "15",
+      "05 53 81 16 48",
+      "",
+      "https://revet-isol.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Artisan Blanchard",
+      "5.0",
+      "14",
+      "07 61 71 70 90",
+      "non renseigné",
+      "https://www.blanchard-couvreur-dordogne.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "JL Bâtiment 24",
+      "5.0",
+      "14",
+      "07 85 47 74 24",
+      "",
+      "http://jl-batiment-24.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "ATTILA Périgueux",
+      "4.1",
+      "14",
+      "05 53 08 56 60",
+      "",
+      "http://www.attila.fr/nos-agences/attila-perigueux",
+      "contact@attila.fr",
+      "Non contacté"
+    ],
+    [
+      "Pro Services",
+      "5.0",
+      "14",
+      "06 64 80 70 83",
+      "",
+      "https://www.proservices24.fr/",
+      "davidsimon24@icloud.com",
+      "Non contacté"
+    ],
+    [
+      "RENOV HABITAT Couvreur Bergerac",
+      "4.9",
+      "14",
+      "06 03 94 15 98",
+      "",
+      "https://renov-habitat-24.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "EI Chauvet",
+      "5.0",
+      "13",
+      "07 49 05 94 61",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Couverture fontaine",
+      "4.4",
+      "13",
+      "05 53 08 84 52",
+      "",
+      "http://www.couverture-charpente-perigord.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Hiel Couvreur zingueur",
+      "5.0",
+      "13",
+      "06 52 09 83 46",
+      "",
+      "https://hiel-couvreur.fr/",
+      "contact@hiel.fr",
+      "Non contacté"
+    ],
+    [
+      "Couvreur Offmann Henri 24",
+      "4.2",
+      "12",
+      "06 29 95 22 59",
+      "",
+      "https://www.offmann-couverture-24.fr/",
+      "henrioffmann@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Thenon rénovation",
+      "4.9",
+      "12",
+      "06 50 20 50 33",
+      "",
+      "https://thenon-renovation.fr/",
+      "guillaume.leroy24@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "SVB 24 Spécialiste en Couverture, Peinture, revêtement de sols et murs sur Montpon Menesterol Bergerac Libourne Périgueux",
+      "4.6",
+      "12",
+      "06 74 93 99 10",
+      "",
+      "http://www.svbdordogne.com/",
+      "contactsvb24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "TM 24 - Couverture",
+      "4.6",
+      "11",
+      "06 45 00 81 81",
+      "3 à 5 salariés",
+      "https://tm24couverture.fr/",
+      "tm24couverture@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Lariviere",
+      "4.8",
+      "11",
+      "05 53 35 31 30",
+      "",
+      "https://www.lariviere.fr/trouver-votre-agence/lariviere-SEB/entry-439-lariviere-perigueux.html",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SAS Philibert",
+      "5.0",
+      "11",
+      "06 09 86 70 33",
+      "",
+      "http://www.philibert-toiture.fr/?utm_source=gmb",
+      "sas.philibert@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Dubois Turban - Couverture et Zinguerie",
+      "3.4",
+      "10",
+      "05 53 53 30 50",
+      "0 salarié",
+      "https://duboisturban.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "PR'o Bois 24",
+      "5.0",
+      "10",
+      "06 03 95 43 86",
+      "non renseigné",
+      "https://probois24.fr/",
+      "probois24660@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Blanchard toiture",
+      "5.0",
+      "10",
+      "06 41 16 83 90",
+      "",
+      "https://www.google.com/search?q=blanchard+toiture&ie=UTF-8&oe=UTF-8&hl=fr-fr&client=safari",
+      "",
+      "Non contacté"
+    ],
+    [
+      "ECOTECH CONSTRUCTION",
+      "4.2",
+      "10",
+      "06 79 25 57 73",
+      "",
+      "http://ecotech-construction.fr/",
+      "gillesbidault@free.fr",
+      "Non contacté"
+    ],
+    [
+      "Benicourt couvreur toitures",
+      "5.0",
+      "9",
+      "06 58 83 01 75",
+      "",
+      "https://www.couvreuretbatisseur.fr/",
+      "benicourt@couvreuretbatisseur.fr",
+      "Non contacté"
+    ],
+    [
+      "Rev Bois Habitat",
+      "4.9",
+      "8",
+      "06 70 32 82 95",
+      "1 à 2 salariés",
+      "https://www.rev-bois-habitat.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Lafleur Josue",
+      "5.0",
+      "8",
+      "06 27 76 64 20",
+      "",
+      "https://jlafleur-couverture.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Net'ToitureEco",
+      "4.9",
+      "8",
+      "06 41 54 99 22",
+      "",
+      "https://net-toitureeco.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SASU Yannick Sedran",
+      "4.9",
+      "7",
+      "06 72 72 52 88",
+      "",
+      "",
+      "yannick.sedran@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "Carré Couverture Zinguerie",
+      "4.4",
+      "7",
+      "06 01 01 26 33",
+      "1 à 2 salariés",
+      "http://www.carrecouverture.com/",
+      "carre.matthieu24@hotmail.fr",
+      "Non contacté"
+    ],
+    [
+      "SCEP",
+      "3.4",
+      "7",
+      "05 53 02 82 60",
+      "",
+      "https://www.facebook.com/SCEP-Soci%C3%A9t%C3%A9-Couverture-Etanch%C3%A9it%C3%A9-P%C3%A9rigourdine-251644205331132/",
+      "Contact@scep24.fr",
+      "Non contacté"
+    ],
+    [
+      "Johan Roques artisan couvreur menuisier",
+      "5.0",
+      "7",
+      "06 50 53 57 67",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "jose dos santos",
+      "5.0",
+      "7",
+      "06 31 66 78 48",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Blanca Ludovic",
+      "4.8",
+      "6",
+      "05 53 08 60 41",
+      "3 à 5 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Joseph Bâtiment",
+      "5.0",
+      "6",
+      "07 76 81 09 21",
+      "1 à 2 salariés",
+      "https://couvreur-maitre-du-toit.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Dordogne Couverture",
+      "5.0",
+      "6",
+      "07 68 61 19 68",
+      "non renseigné",
+      "http://dordognecouverture.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Home Clean Toiture",
+      "5.0",
+      "6",
+      "06 52 27 54 61",
+      "",
+      "http://homecleantoiture.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Rénov Dordogne",
+      "5.0",
+      "6",
+      "06 06 84 59 63",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "ID-Travaux",
+      "4.8",
+      "6",
+      "06 26 57 98 23",
+      "",
+      "https://ldtravaux.fr/",
+      "Ephraimdauher3009@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Testu Ludovic",
+      "4.7",
+      "6",
+      "06 33 64 00 73",
+      "3 à 5 salariés",
+      "https://www.testu-couverture.fr/",
+      "couverturezinguerie@live.fr",
+      "Non contacté"
+    ],
+    [
+      "Couverture, installation photovoltaïque, maçonnerie GRASSET SAS",
+      "5.0",
+      "6",
+      "05 53 56 35 47",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Bounias Couverture",
+      "5.0",
+      "6",
+      "07 67 51 21 26",
+      "",
+      "http://bouniascouverture.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Rehabat",
+      "4.3",
+      "6",
+      "05 53 56 16 34",
+      "",
+      "http://rehabat.site-solocal.com/?utm_source=gmb",
+      "sarl.rehabat@laposte.net",
+      "Non contacté"
+    ],
+    [
+      "Les Couvreurs du 24",
+      "4.6",
+      "5",
+      "06 16 29 90 84",
+      "1 à 2 salariés",
+      "https://www.lescouvreursdu24.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "AMR Eco Construction",
+      "5.0",
+      "5",
+      "06 74 04 28 09",
+      "non renseigné",
+      "http://amrecoconstruction.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Atelier St Joseph",
+      "5.0",
+      "5",
+      "06 67 89 05 94",
+      "1 à 2 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "CS Gouttière",
+      "5.0",
+      "5",
+      "06 74 90 93 35",
+      "non renseigné",
+      "https://csgouttiere.fr/",
+      "Sonny24350@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "SCZ",
+      "5.0",
+      "5",
+      "06 25 72 24 14",
+      "",
+      "",
+      "soumcouverturezinguerie@outlook.fr",
+      "Non contacté"
+    ],
+    [
+      "Nikonoff Bruno",
+      "5.0",
+      "5",
+      "06 26 68 87 84",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Entreprise Faye-Maçonnerie-Couvreur-Rénovation-Mise aux Normes Agricoles-Assainissement-Brantôme - Thiviers-Périgueux-Nontron",
+      "4.2",
+      "5",
+      "05 53 03 02 92",
+      "",
+      "http://www.entreprise-faye-quinsac.fr/",
+      "ent.faye.sarl@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "JP Renovation - Entreprise Couverture Couvreur Ribérac - Demoussage Toiture - Depannage Fuite de Toit - Entretien Façade",
+      "5.0",
+      "5",
+      "09 72 13 20 94",
+      "",
+      "https://entreprise-couverture-riberac.ovh/",
+      "info@entreprise-couverture-riberac.ovh",
+      "Non contacté"
+    ],
+    [
+      "Spécialiste de la Toiture 24 - Entreprise Michelet",
+      "5.0",
+      "4",
+      "07 68 81 30 15",
+      "",
+      "https://specialiste-de-la-toiture-24.fr/",
+      "contact@soscouverture24.fr",
+      "Non contacté"
+    ],
+    [
+      "Delta Toit Périgueux",
+      "5.0",
+      "4",
+      "06 52 48 65 28",
+      "",
+      "https://delta-toit.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SAS Rondineau - Couvreur Charpentier",
+      "4.3",
+      "4",
+      "06 77 26 87 49",
+      "",
+      "https://rondineau-couverture.fr/",
+      "sasurondineau@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Duverdier Stephane",
+      "5.0",
+      "4",
+      "05 53 02 50 63",
+      "1 à 2 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Le Peletier Luc",
+      "4.3",
+      "4",
+      "",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Bob Couverture",
+      "5.0",
+      "4",
+      "06 37 50 07 15",
+      "non renseigné",
+      "https://www.facebook.com/profile.php?id=61557370634859",
+      "bobcouverture@outlook.com",
+      "Non contacté"
+    ],
+    [
+      "Ideo Bois",
+      "5.0",
+      "4",
+      "06 84 15 54 63",
+      "",
+      "https://www.ideo-bois.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Artibat 24",
+      "4.0",
+      "4",
+      "05 53 03 82 66",
+      "",
+      "http://www.macon-24.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      ".",
+      "2.0",
+      "4",
+      "06 64 90 39 73",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "RMPB",
+      "5.0",
+      "4",
+      "05 53 07 48 05",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Le Petit Charpentier",
+      "5.0",
+      "4",
+      "05 53 91 28 09",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "EURL Sellay",
+      "5.0",
+      "4",
+      "07 83 19 58 03",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Clauzel Christophe",
+      "4.0",
+      "4",
+      "05 53 07 07 42",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Les Bois de Fer",
+      "5.0",
+      "4",
+      "06 80 57 88 17",
+      "",
+      "https://www.lesboisdefer.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "ENTREPRISE LOMBARD",
+      "5.0",
+      "4",
+      "07 88 48 15 53",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Bouet Frantz",
+      "4.3",
+      "3",
+      "05 53 06 05 27",
+      "3 à 5 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "EURL Sicaire",
+      "5.0",
+      "3",
+      "06 25 00 91 84",
+      "",
+      "https://eurlsicaire.wixsite.com/couverture",
+      "eurlsicaire@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Catterou Frédéric",
+      "3.7",
+      "3",
+      "05 53 53 08 49",
+      "10 à 19 salariés",
+      "http://www.charpentecatterou.fr/",
+      "contact@charpentecatterou.fr",
+      "Non contacté"
+    ],
+    [
+      "Rénove toitures : Couverture, Zinguerie, Démoussage, Étanchéité, Nettoyage de façade. Dordogne Périgueux Angoulême",
+      "5.0",
+      "3",
+      "06 41 92 89 37",
+      "",
+      "https://renovetoitures.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Latreille Daniel",
+      "3.7",
+      "3",
+      "05 53 54 35 60",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "M.Fargier Artisan",
+      "5.0",
+      "3",
+      "06 71 02 43 25",
+      "",
+      "https://fargier-artisan.fr/",
+      "fargier.michel24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Bongrand Suret Sarl Sarl",
+      "4.3",
+      "3",
+      "09 67 50 95 58",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Borde Jean-Pierre",
+      "3.7",
+      "3",
+      "05 53 91 11 94",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Pistre Didier",
+      "4.7",
+      "3",
+      "05 53 61 76 95",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "CHRISTOPHE DUVERGT",
+      "5.0",
+      "3",
+      "06 81 30 71 91",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Artisan bâtiment ct, couverture, charpente, placo, peinture",
+      "5.0",
+      "3",
+      "06 58 41 12 65",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SARL C.T.P Bat",
+      "3.7",
+      "3",
+      "06 20 95 33 58",
+      "",
+      "https://ctp-bat.fr/",
+      "ctpbat24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "AAB Travaux",
+      "5.0",
+      "2",
+      "06 41 52 90 12",
+      "",
+      "https://www.aab-travaux.fr/",
+      "contact@verycom.fr",
+      "Non contacté"
+    ],
+    [
+      "Avatix",
+      "5.0",
+      "2",
+      "03 70 88 94 97",
+      "",
+      "https://avatix.fr/",
+      "contact@avatix.fr",
+      "Non contacté"
+    ],
+    [
+      "SOS Couverture 24",
+      "5.0",
+      "2",
+      "06 10 17 07 71",
+      "",
+      "https://www.artisan-couvreur-24.fr/",
+      "sos.couverture.24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Da Cruz Guy",
+      "5.0",
+      "2",
+      "05 53 35 49 88",
+      "6 à 9 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Cassard entreprise",
+      "3.0",
+      "2",
+      "0 805 01 11 88",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Entreprise bordas",
+      "3.0",
+      "2",
+      "06 42 81 03 57",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Defois Patrick",
+      "1.0",
+      "2",
+      "05 53 06 77 92",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Viacroze Gérard",
+      "5.0",
+      "2",
+      "05 53 52 25 76",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Entreprise DAVID Rénovation",
+      "5.0",
+      "2",
+      "07 89 64 45 22",
+      "",
+      "https://etpdavidrenovation.fr/",
+      "etpdavidrenovation@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "hdservice24",
+      "5.0",
+      "2",
+      "07 88 75 39 95",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Couvreur charpentier 24",
+      "5.0",
+      "2",
+      "06 41 39 68 85",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "NOZIERE ET FRERES COUVREUR",
+      "5.0",
+      "2",
+      "06 10 11 71 69",
+      "",
+      "http://noziere-et-freres.e-monsite.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "S.A.S MARTINOT",
+      "3.0",
+      "2",
+      "06 77 09 62 79",
+      "",
+      "https://sasmartinot.fr/",
+      "sarl.martinot@outlook.fr",
+      "Non contacté"
+    ],
+    [
+      "Flament Eric Tony",
+      "5.0",
+      "2",
+      "05 53 27 07 11",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Entreprise J.Lafleur",
+      "5.0",
+      "1",
+      "05 33 06 46 89",
+      "",
+      "https://www.entreprise-j-lafleur.fr/",
+      "batirenove24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Couvreur Périgueux - Dordogne",
+      "5.0",
+      "1",
+      "05 25 45 04 57",
+      "",
+      "https://couvreur-dordogne24.fr/",
+      "admin@couvreur-dordogne24.fr",
+      "Non contacté"
+    ],
+    [
+      "GP Couverture Charpente",
+      "5.0",
+      "1",
+      "06 95 64 03 42",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Hautier Franck",
+      "5.0",
+      "1",
+      "06 78 54 18 55",
+      "non renseigné",
+      "https://www.hautier-couverture-zinguerie.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Carre Couverture Zinguerie (Beauronne)",
+      "5.0",
+      "1",
+      "05 24 13 10 58",
+      "1 à 2 salariés",
+      "http://carre-couverture-isolation.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Pouvy Rudy",
+      "5.0",
+      "1",
+      "06 41 97 33 34",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Pro Toiture - Demoussage - Zingueur",
+      "1.0",
+      "1",
+      "09 72 15 50 77",
+      "",
+      "https://pro-toiture.ovh/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Boisseau Patrice",
+      "4.0",
+      "1",
+      "05 53 09 75 36",
+      "",
+      "https://www.facebook.com/pages/category/Roofing-Service/Boisseau-Patrice-1921389061505655/",
+      "patriceboisseau.couverture@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Catterou Sacha",
+      "1.0",
+      "1",
+      "09 63 01 28 86",
+      "3 à 5 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Toits d'Hier et d'Aujourd'hui",
+      "5.0",
+      "1",
+      "05 53 08 25 52",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SMAC",
+      "1.0",
+      "1",
+      "05 53 04 70 50",
+      "",
+      "https://www.smac-sa.com/agence/smac-perigueux/?utm_source=gmb",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Desmoulin et Fils SARL",
+      "5.0",
+      "1",
+      "05 53 04 50 55",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Polard Pascal",
+      "3.0",
+      "1",
+      "05 53 91 34 69",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SCDF Grenee Frères",
+      "5.0",
+      "1",
+      "05 53 57 67 22",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Construction du Périgord Rey Patrick",
+      "4.0",
+      "1",
+      "05 53 52 72 09",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "GREMERET",
+      "5.0",
+      "1",
+      "05 53 56 07 11",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Rebinguet Frères",
+      "5.0",
+      "1",
+      "05 53 57 32 18",
+      "",
+      "http://www.rebinguet-sarl.fr/",
+      "rebinguet.sarl@wanadoo.fr",
+      "Non contacté"
+    ],
+    [
+      "CROB Charpente et Couverture",
+      "5.0",
+      "1",
+      "06 68 51 77 44",
+      "",
+      "http://www.crob-charpente.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Gaillard Philippe",
+      "5.0",
+      "1",
+      "05 53 81 84 74",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Seb'helle Toitures",
+      "5.0",
+      "1",
+      "06 84 82 97 80",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "DOUAIRE Jessy charpente couverture rénovation du bâtiment",
+      "5.0",
+      "1",
+      "06 67 50 40 33",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "TRADIBAT",
+      "5.0",
+      "1",
+      "05 53 02 14 73",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Toiture 24000 Périgueux",
+      "Aucun avis",
+      "0",
+      "",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Toiture 24 Périgueux",
+      "Aucun avis",
+      "0",
+      "05 64 34 03 85",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Pro de L'Habitat",
+      "Aucun avis",
+      "0",
+      "05 64 34 02 88",
+      "6 à 9 salariés",
+      "https://prodelhabitatcouvreurperigueux.fr/",
+      "courrier@prodelhabitatcouvreurperigueux.fr",
+      "Non contacté"
+    ],
+    [
+      "Saglam Batiment",
+      "Aucun avis",
+      "0",
+      "06 98 73 10 18",
+      "1 à 2 salariés",
+      "https://www.facebook.com/share/18DoyVAvyo/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "L'Atelier de Zinguerie",
+      "Aucun avis",
+      "0",
+      "06 72 75 67 09",
+      "0 salarié",
+      "http://www.latelier-de-zinguerie.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Green Clean",
+      "Aucun avis",
+      "0",
+      "06 27 61 29 19",
+      "",
+      "http://www.greenclean24.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Artisans Couvreur Zingueur",
+      "Aucun avis",
+      "0",
+      "",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "BJ Renov",
+      "Aucun avis",
+      "0",
+      "06 41 42 82 43",
+      "3 à 5 salariés",
+      "https://www.bj-renovation24.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Alu Diffusion",
+      "Aucun avis",
+      "0",
+      "05 53 03 71 03",
+      "3 à 5 salariés",
+      "https://www.isolation-diffusion24.fr/",
+      "contact@aludiffusion.com",
+      "Non contacté"
+    ],
+    [
+      "Renov Habitat Services",
+      "Aucun avis",
+      "0",
+      "06 27 13 56 87",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "BTP Gimenez",
+      "Aucun avis",
+      "0",
+      "06 02 53 06 81",
+      "non renseigné",
+      "https://btp-gimenez.fr/",
+      "contact@gimenez-btp.fr",
+      "Non contacté"
+    ],
+    [
+      "Les Toits d'Ans",
+      "Aucun avis",
+      "0",
+      "06 07 09 75 46",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Entreprise Denoix",
+      "",
+      "0",
+      "07 76 95 39 30",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "AQUITAINE BOIS CHARPENTE",
+      "",
+      "0",
+      "07 78 24 21 44",
+      "",
+      "https://aquitane-bois-charpente.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Charpente Couverture Zinguerie Razacoise",
+      "",
+      "0",
+      "",
+      "",
+      "https://charpentecouverturezinguerie.site-solocal.com",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Robert Yves",
+      "",
+      "0",
+      "05 53 07 63 00",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "MC Couverture 24",
+      "",
+      "0",
+      "05 33 06 09 50",
+      "",
+      "https://www.artisan-couvreur-dordogne.fr/",
+      "malkocaplot@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Theophile Couverture",
+      "",
+      "0",
+      "06 52 15 15 64",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Nettoyage Toiture Aquitaine",
+      "",
+      "0",
+      "07 71 14 48 06",
+      "",
+      "https://nettoyage-toiture-aquitaine.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Couverture Zinguerie Mirabeau Entretiens Parcs et Jardins",
+      "",
+      "0",
+      "07 87 46 36 38",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "ÉcoRénov Périgord",
+      "",
+      "0",
+      "07 67 66 45 80",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Jonathan Rey Charpente & Couverture",
+      "",
+      "0",
+      "06 37 52 65 77",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Couvreur Brive-la-Gaillarde Corrèze 19 Ussac Périgueux Souillac Robin Lagrenée",
+      "",
+      "0",
+      "07 63 31 65 32",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "JDMaconnerie",
+      "",
+      "0",
+      "07 82 20 67 80",
+      "",
+      "https://www.facebook.com/JDMaconnerie-102683298457596",
+      "jdmaconnerie24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "CHERON Gilles",
+      "",
+      "0",
+      "06 86 52 83 97",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Entreprise de rénovation à Périgueux",
+      "",
+      "0",
+      "06 43 98 92 05",
+      "",
+      "https://www.renovetvousperigueux.fr/contact/",
+      "renovetvous24@gmail.com",
+      "Non contacté"
+    ]
+  ]
+}

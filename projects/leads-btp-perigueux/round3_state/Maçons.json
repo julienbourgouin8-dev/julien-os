@@ -1,0 +1,1216 @@
+{
+  "majorDimension": "ROWS",
+  "range": "'Maçons'!A1:H500",
+  "values": [
+    [
+      "Nom entreprise",
+      "Note Google",
+      "Nombre avis",
+      "Telephone",
+      "Tranche effectif",
+      "Site web",
+      "Email",
+      "Statut"
+    ],
+    [
+      "Construction Horizontale Périgueux - Acteur de Procivis Nouvelle Aquitaine",
+      "4.8",
+      "61",
+      "05 53 35 73 13",
+      "",
+      "https://www.construction-horizontale.fr/?utm_source=gmb",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Bâtisseurs d'Ici DORDOGNE",
+      "4.5",
+      "61",
+      "05 53 02 22 22",
+      "",
+      "https://batisseursdici.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "MAISONS OMEGA",
+      "4.4",
+      "56",
+      "05 53 46 79 46",
+      "",
+      "https://www.maisons-omega.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "PERISOL | étude de sol dordogne G1 - G2 - G5 & ASSAINISSEMENT NON COLLECTIF",
+      "4.6",
+      "41",
+      "07 88 44 77 73",
+      "",
+      "https://www.perisol.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SARL PROCHAP 24 Chape liquide fluide",
+      "4.7",
+      "35",
+      "06 62 01 25 45",
+      "",
+      "http://prochap24.fr/",
+      "did.deg@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "ALPHA CONSTRUCTIONS BOULAZAC",
+      "4.8",
+      "33",
+      "05 53 09 46 75",
+      "",
+      "http://www.alpha-constructions.net/",
+      "contact@medimmoconso.fr",
+      "Non contacté"
+    ],
+    [
+      "IGC Construction Périgueux - Acteur de Procivis Nouvelle Aquitaine",
+      "3.4",
+      "33",
+      "05 53 35 70 10",
+      "",
+      "http://www.igc-construction.fr/?utm_source=gmb",
+      "",
+      "Non contacté"
+    ],
+    [
+      "LES DEMEURES OCCITANES - PERIGUEUX",
+      "2.7",
+      "26",
+      "05 53 02 51 51",
+      "",
+      "http://www.demeures-occitanes.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Déco Granit - Marbrerie/Carrelage/Maçonnerie",
+      "4.0",
+      "23",
+      "05 53 03 46 46",
+      "",
+      "http://www.decogranit-amg.fr/",
+      "contact@decogranit-amg.fr",
+      "Non contacté"
+    ],
+    [
+      "Maisons MAÏA",
+      "3.5",
+      "16",
+      "06 63 91 84 41",
+      "",
+      "https://www.maisons-maia.fr/",
+      "maisons.maia@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Travaux Renov 24 (E.I. Neyssensat Arnaud)",
+      "5.0",
+      "15",
+      "06 72 06 49 22",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Soltechnic",
+      "4.5",
+      "15",
+      "05 53 03 95 95",
+      "",
+      "https://www.soltechnic.com/",
+      "contact@soltechnic.net",
+      "Non contacté"
+    ],
+    [
+      "Constructions Savignacoises -Maître d'œuvre bâtiment-Rénovation-Assainissement -Pompe à chaleur-Excideuil-thiviers-Périgueux",
+      "3.7",
+      "15",
+      "05 33 06 06 47",
+      "",
+      "https://www.constructions-savignacoises.com/",
+      "constructions.savignacoises@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "LG Rénov Déco Jardin (Maçonnerie)",
+      "4.4",
+      "13",
+      "07 65 20 01 39",
+      "",
+      "https://www.lgrenovdecojardin.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Grandbains Périgueux (Boulazac)",
+      "5.0",
+      "13",
+      "05 53 08 09 10",
+      "",
+      "https://www.grandbains.fr/magasins/grandbains-perigueux-boulazac",
+      "contact@grandbains.fr",
+      "Non contacté"
+    ],
+    [
+      "Yildiz Aquitaine",
+      "4.0",
+      "12",
+      "06 65 63 38 63",
+      "6 à 9 salariés",
+      "",
+      "yildizaquitaine@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "In'Box Aménagement",
+      "4.9",
+      "12",
+      "05 53 46 16 83",
+      "",
+      "",
+      "contact@inbox-container.com",
+      "Non contacté"
+    ],
+    [
+      "AGEMA Boulazac",
+      "4.2",
+      "10",
+      "05 53 03 80 00",
+      "50 à 99 salariés",
+      "https://agema.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "BESSE & FLORIN Conception et Maîtrise d'Œuvre",
+      "4.6",
+      "10",
+      "05 53 05 37 36",
+      "",
+      "https://besse-florin.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "TB Abattage Élagage",
+      "5.0",
+      "10",
+      "05 64 34 03 56",
+      "",
+      "https://tb-abattage-elagage.fr/",
+      "contact@tb-abattage-elagage.fr",
+      "Non contacté"
+    ],
+    [
+      "Masson Jean-François",
+      "4.2",
+      "10",
+      "05 53 53 28 49",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Atelier Lannet",
+      "5.0",
+      "9",
+      "06 27 58 94 71",
+      "",
+      "https://atelierlannet.fr/",
+      "h.lannet@atelier-lannet.fr",
+      "Non contacté"
+    ],
+    [
+      "Agence MADAM - Architecte d'Intérieur -Décoratrice - Etalagiste -Périgueux-Bergerac-Sarlat-Dordogne",
+      "5.0",
+      "9",
+      "06 89 73 20 90",
+      "",
+      "https://agence-madam.com/",
+      "cecile@agence-madam.com",
+      "Non contacté"
+    ],
+    [
+      "ARCHIBALD",
+      "5.0",
+      "9",
+      "07 77 46 87 01",
+      "",
+      "https://www.instagram.com/archibaldeco/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Gustave Rideau",
+      "3.7",
+      "9",
+      "05 53 03 48 83",
+      "",
+      "https://www.gustaverideau.com/agences/perigueux-marsac-sur-lisle/?utm_campaign=marsacsurlisle&utm_medium=GMB&utm_source=google",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Les Beaux Chantiers",
+      "5.0",
+      "8",
+      "06 16 51 25 96",
+      "non renseigné",
+      "",
+      "contact@lesbeauxchantiers.fr",
+      "Non contacté"
+    ],
+    [
+      "Euro Batiment",
+      "2.6",
+      "8",
+      "05 53 03 25 27",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "CHARRON-LBI",
+      "4.5",
+      "8",
+      "05 53 53 29 58",
+      "",
+      "https://www.charron-lbi.fr/?utm_medium=referral&utm_source=gmb&utm_campaign=lnk-gmb",
+      "charronlbi@sfr.fr",
+      "Non contacté"
+    ],
+    [
+      "Vidal SAS",
+      "4.6",
+      "7",
+      "05 53 45 46 10",
+      "",
+      "https://vidalsas.com/",
+      "contact@vidalbtp.com",
+      "Non contacté"
+    ],
+    [
+      "Avry le Corvaisier",
+      "3.6",
+      "7",
+      "05 53 53 11 75",
+      "20 à 49 salariés",
+      "https://www.avry-lecorvaisier.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "MJ BTP",
+      "4.4",
+      "7",
+      "06 75 69 04 28",
+      "non renseigné",
+      "https://mjbtp24.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Nattura",
+      "3.3",
+      "7",
+      "05 53 03 99 04",
+      "",
+      "http://www.nattura.fr/?utm_source=gmb",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Virgo Bâtiment",
+      "5.0",
+      "6",
+      "05 53 08 85 18",
+      "non renseigné",
+      "https://virgo-batiment.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Bbd-pro",
+      "4.8",
+      "6",
+      "05 53 54 59 70",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Robert Chartier Application",
+      "4.0",
+      "6",
+      "05 53 54 00 46",
+      "",
+      "https://openenergie.fr/",
+      "contact@openenergie.fr",
+      "Non contacté"
+    ],
+    [
+      "Groupe Vigier (siège)",
+      "4.7",
+      "6",
+      "05 53 05 79 10",
+      "",
+      "http://www.groupevigier.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Renov Immo 24",
+      "4.2",
+      "5",
+      "06 24 86 67 21",
+      "1 à 2 salariés",
+      "https://www.renov-immo24.fr/",
+      "info@renov-immo24.fr",
+      "Non contacté"
+    ],
+    [
+      "Blanchard Maçonnerie",
+      "4.0",
+      "5",
+      "05 53 52 35 10",
+      "",
+      "https://www.blanchard-maconnerie.fr/",
+      "entreprises.blanchard@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "Bonneau Jean-Christophe",
+      "5.0",
+      "5",
+      "05 53 55 24 85",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "TDI Laser",
+      "5.0",
+      "5",
+      "05 53 07 11 32",
+      "",
+      "http://www.tdilaser.fr/",
+      "contact@tdilaser.com",
+      "Non contacté"
+    ],
+    [
+      "Trindade Batiment",
+      "5.0",
+      "4",
+      "05 24 13 42 37",
+      "20 à 49 salariés",
+      "https://trindade-batiment.com/",
+      "contact@trindade-batiment.com",
+      "Non contacté"
+    ],
+    [
+      "NGE - Agence Dordogne",
+      "3.8",
+      "4",
+      "05 53 07 18 62",
+      "",
+      "http://www.nge.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Dordogne rénovation 24",
+      "4.0",
+      "4",
+      "06 13 09 15 39",
+      "",
+      "https://dordognerenove24.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Ciafer Batiment",
+      "4.0",
+      "4",
+      "05 53 54 52 06",
+      "",
+      "http://www.ciafer-batiment.fr/",
+      "ciaferbatiment@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "Bernard Et Roussarie Marc",
+      "3.7",
+      "3",
+      "05 53 04 05 42",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Coursac BTP",
+      "5.0",
+      "3",
+      "05 53 54 67 98",
+      "10 à 19 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Dias Loureiro Jorge",
+      "3.7",
+      "3",
+      "05 53 08 59 33",
+      "1 à 2 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Dos Santos Adelino Pais",
+      "5.0",
+      "3",
+      "06 24 98 77 71",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "BC & D",
+      "2.3",
+      "3",
+      "05 53 06 78 49",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Profils Gouttières",
+      "5.0",
+      "3",
+      "06 17 98 27 64",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Constructions Conseils",
+      "3.0",
+      "3",
+      "06 99 11 05 25",
+      "",
+      "https://constructions-conseils.fr/contact/",
+      "contact@constructions-conseils.fr",
+      "Non contacté"
+    ],
+    [
+      "GF Constructions",
+      "3.0",
+      "2",
+      "05 53 53 04 03",
+      "3 à 5 salariés",
+      "http://www.gf-constructions.fr/",
+      "gfconstructions24@bbox.fr",
+      "Non contacté"
+    ],
+    [
+      "SARL De Oliveira",
+      "5.0",
+      "2",
+      "06 25 18 93 12",
+      "",
+      "http://mdeoliveirahoracio.site-solocal.com/",
+      "sarl.de.oliveira@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "Ts Maçonnerie Rénovation",
+      "5.0",
+      "2",
+      "06 52 68 24 70",
+      "1 à 2 salariés",
+      "http://tsmaconnerieetrenovation.site-solocal.com/",
+      "ts.maconnerie24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Entreprise Mezzolo",
+      "5.0",
+      "2",
+      "06 83 94 74 58",
+      "non renseigné",
+      "https://www.facebook.com/share/ytUavZe8fi8NHsYE/",
+      "entreprise.mezzolo@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "Miquel Noël",
+      "5.0",
+      "2",
+      "06 30 40 27 98",
+      "",
+      "http://www.maconnerie-boulazac.fr/",
+      "miquel-noel@hotmail.fr",
+      "Non contacté"
+    ],
+    [
+      "Saleix Dominique",
+      "4.5",
+      "2",
+      "05 53 04 27 34",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Groupe Ekobat",
+      "3.0",
+      "2",
+      "06 42 10 41 91",
+      "0 salarié",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Goursolle Christophe",
+      "1.0",
+      "2",
+      "05 53 03 29 12",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Benito Sa",
+      "3.0",
+      "2",
+      "05 53 13 66 17",
+      "",
+      "https://benito.fr/",
+      "contact@benito.fr",
+      "Non contacté"
+    ],
+    [
+      "Terren Périgord",
+      "5.0",
+      "2",
+      "05 53 09 24 13",
+      "",
+      "https://terren.fr/",
+      "contact@terren.fr",
+      "Non contacté"
+    ],
+    [
+      "Cédric Bricol’Tout",
+      "5.0",
+      "2",
+      "",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Venou Serge",
+      "4.5",
+      "2",
+      "05 53 08 36 01",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "LAJARTHE",
+      "5.0",
+      "2",
+      "05 53 52 52 62",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Sarl lrb Montage Bertil",
+      "4.5",
+      "2",
+      "05 47 45 52 76",
+      "",
+      "http://www.gedimat-maury.fr/LRB-Montage-constructions-metalliques.html",
+      "accueil@gedimat-maury.fr",
+      "Non contacté"
+    ],
+    [
+      "Baldo Jérôme",
+      "3.0",
+      "2",
+      "05 53 22 51 51",
+      "",
+      "https://www.maconnerie-baldo.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Andrade Batiment",
+      "1.0",
+      "1",
+      "05 53 08 12 99",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Maçon & Tradition",
+      "5.0",
+      "1",
+      "06 46 14 74 19",
+      "1 à 2 salariés",
+      "http://macon-et-tradition.fr/",
+      "maconettradition@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Batipro 24",
+      "5.0",
+      "1",
+      "05 53 05 01 95",
+      "3 à 5 salariés",
+      "http://www.batipro24-perigueux.fr/",
+      "batipro24@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "C.T Renov",
+      "5.0",
+      "1",
+      "07 53 59 10 28",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Lourenço Fernando",
+      "5.0",
+      "1",
+      "05 53 02 93 63",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SA Bati Projet Dordogne",
+      "5.0",
+      "1",
+      "06 43 36 10 34",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Julien Bleuze - Pierres Feuilles Ciseaux",
+      "5.0",
+      "1",
+      "06 14 92 66 89",
+      "non renseigné",
+      "https://pfc24650.wixsite.com/pfc24",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Construction de Almeida Et Fils",
+      "1.0",
+      "1",
+      "05 53 05 28 18",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Bati Rénovation",
+      "2.0",
+      "1",
+      "",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "TREPPENMEISTER CHANCELADE",
+      "5.0",
+      "1",
+      "05 53 62 35 52",
+      "",
+      "https://www.treppenmeister.com/fr/escalier-map-bois-dordogne-24/",
+      "contact@map-bois.com",
+      "Non contacté"
+    ],
+    [
+      "Hélio Maçonnerie",
+      "5.0",
+      "1",
+      "06 72 54 82 57",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Extension Maison Périgueux - Boulazac - Dordogne",
+      "5.0",
+      "1",
+      "05 33 09 12 33",
+      "",
+      "https://extension-alienor.fr/",
+      "infos@extension-alienor.fr",
+      "Non contacté"
+    ],
+    [
+      "Accibat",
+      "5.0",
+      "1",
+      "06 87 16 88 57",
+      "",
+      "https://www.accibat.com/",
+      "contact@accibat.com",
+      "Non contacté"
+    ],
+    [
+      "sos bricolage chateau xavier",
+      "5.0",
+      "1",
+      "06 43 86 25 79",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Ren'op",
+      "5.0",
+      "1",
+      "05 32 26 11 01",
+      "",
+      "https://www.renop.fr/",
+      "renop@renop.fr",
+      "Non contacté"
+    ],
+    [
+      "Maisons d'en France Sud Ouest - Acteur de Procivis Nouvelle Aquitaine",
+      "5.0",
+      "1",
+      "06 25 57 41 26",
+      "",
+      "https://maisonsdenfrance-sudouest.fr/?utm_source=gmb",
+      "contact@eenov.com",
+      "Non contacté"
+    ],
+    [
+      "AF RENOV'",
+      "5.0",
+      "1",
+      "07 88 37 42 88",
+      "",
+      "https://www.instagram.com/afrenov24/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Thomas Lherm – Concepteur de projets",
+      "5.0",
+      "1",
+      "06 86 35 38 73",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Labouroux",
+      "1.0",
+      "1",
+      "05 53 13 37 42",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "La Loggia",
+      "5.0",
+      "1",
+      "",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Marchive Jean Jacques",
+      "5.0",
+      "1",
+      "09 50 90 77 73",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "L’entreprise Juvenelle",
+      "5.0",
+      "1",
+      "05 53 02 46 45",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Chambon Jean-Luc",
+      "5.0",
+      "1",
+      "05 53 46 69 03",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Dagand Atlantique",
+      "",
+      "0",
+      "",
+      "10 à 19 salariés (groupe: 50 à 99)",
+      "https://dagand-atlantique.fr",
+      "info@dgdatl.fr",
+      "Non contacté"
+    ],
+    [
+      "Bergès François",
+      "",
+      "0",
+      "05 53 46 65 42",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Les Compagnons Macons",
+      "",
+      "0",
+      "05 53 04 05 17",
+      "non renseigné",
+      "http://www.compagnons-macons-perigourdins.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "ART RENOV Périgueux",
+      "",
+      "0",
+      "05 45 38 42 85",
+      "20 à 49 salariés",
+      "http://artrenov.fr/",
+      "info@artrenov.fr",
+      "Non contacté"
+    ],
+    [
+      "Bati Service PNR",
+      "",
+      "0",
+      "06 59 50 42 08",
+      "",
+      "https://bati-service-pnr.fr/contact/",
+      "bati.service.pnr@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Chassain Bâtiment",
+      "",
+      "0",
+      "05 53 04 27 26",
+      "3 à 5 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Jc 24",
+      "",
+      "0",
+      "06 36 23 11 50",
+      "3 à 5 salariés",
+      "https://jc24-maconnerie.fr/",
+      "joselopes24@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "CF Bat",
+      "",
+      "0",
+      "05 53 06 96 53",
+      "non renseigné",
+      "http://www.cfbat-maconnerie-dordogne.fr/",
+      "sarl.cfbat@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Maconnerie 24",
+      "",
+      "0",
+      "",
+      "3 à 5 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "À Pierre Vue",
+      "",
+      "0",
+      "06 77 29 26 39",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Gomes Pinto Fernando",
+      "",
+      "0",
+      "05 53 09 15 13",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Truchi Fabrice",
+      "",
+      "0",
+      "06 23 59 14 69",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Callais Wilfrid Norbert Raymond",
+      "",
+      "0",
+      "06 69 03 80 87",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Pinheiro Construction Rénovation",
+      "",
+      "0",
+      "06 73 58 33 43",
+      "1 à 2 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "HD PROJETS - Contractant Général",
+      "",
+      "0",
+      "05 53 53 52 93",
+      "",
+      "http://www.hdprojets.fr/",
+      "contact@hdprojets.fr",
+      "Non contacté"
+    ],
+    [
+      "SAS OSMAN",
+      "",
+      "0",
+      "06 70 16 25 72",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Entr Marquet",
+      "",
+      "0",
+      "05 53 04 82 61",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "MR ANGELO GIMENEZ",
+      "",
+      "0",
+      "06 21 70 21 41",
+      "",
+      "http://gimenez-nettoyage.fr/",
+      "contact@creacom-communication.fr",
+      "Non contacté"
+    ],
+    [
+      "SkPlombier",
+      "",
+      "0",
+      "06 51 32 54 94",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "ACJ ALMEIDA CARVALHO JOSE BTP",
+      "",
+      "0",
+      "06 03 38 46 51",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "vicomac",
+      "",
+      "0",
+      "06 35 13 76 67",
+      "",
+      "https://vicomac5.wixsite.com/monsite",
+      "vicomac@outlook.fr",
+      "Non contacté"
+    ],
+    [
+      "MARIN PROFILS",
+      "",
+      "0",
+      "05 53 53 78 02",
+      "",
+      "https://marinprofils.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "MTA BÂTIMENT",
+      "",
+      "0",
+      "06 31 00 34 45",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Waati Nooma",
+      "",
+      "0",
+      "07 50 36 91 26",
+      "",
+      "https://waatinooma.fr/nous-contacter",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Julien Lepic - Allo Artisans Maisons Tradimat",
+      "",
+      "0",
+      "06 26 11 21 07",
+      "",
+      "https://www.facebook.com/JulienLepicTradimat/",
+      "j.lepic-tradimat@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "Société Départementale de Carrières",
+      "",
+      "0",
+      "05 53 53 57 35",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "BatiPerigord",
+      "",
+      "0",
+      "05 53 05 91 75",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Vincent Boyer",
+      "",
+      "0",
+      "06 07 62 75 10",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Travaux de plâtrerie",
+      "",
+      "0",
+      "06 04 13 44 49",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Extension Maison Trélissac",
+      "",
+      "0",
+      "05 81 70 00 41",
+      "",
+      "https://extension-alienor.fr/",
+      "infos@extension-alienor.fr",
+      "Non contacté"
+    ],
+    [
+      "Entreprise Lavocat",
+      "",
+      "0",
+      "06 43 41 62 65",
+      "",
+      "https://m.facebook.com/LavocatAdrien",
+      "entreprise.lavocat@gmail.com",
+      "Non contacté"
+    ]
+  ]
+}

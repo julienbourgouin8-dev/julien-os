@@ -1,0 +1,159 @@
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: auto; /* Lenis gère le smooth scroll — éviter le double-smoothing */
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  line-height: var(--lh-body);
+  color: var(--ink);
+  overflow-x: hidden;
+
+  /* -- Fond unifié de la page -----------------------------------------
+     Une seule base --paper du haut en bas du site, avec une texture
+     géométrique discrète (grille fine) + trois halos de couleur de marque
+     (rouge/bleu/orange) très atténués, posée une fois ici plutôt que
+     comme fonds pleins répétés par section (voir tokens.css). Les
+     sections .service/.quick-quote/.stats/.reviews/.contact restent
+     transparentes pour laisser ce fond transparaître de façon cohérente
+     sur toute la hauteur ; .certifications, .marquee-band et le footer
+     restent la seule bande sombre volontaire du site (ancrage visuel,
+     pas une couleur de marque qui alterne). */
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--texture-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--texture-grid-line) 1px, transparent 1px),
+    radial-gradient(1100px 750px at 4% -6%, var(--texture-wash-blue), transparent 60%),
+    radial-gradient(950px 700px at 100% 20%, var(--texture-wash-red), transparent 55%),
+    radial-gradient(900px 650px at 20% 108%, var(--texture-wash-orange), transparent 55%);
+  background-size: 56px 56px, 56px 56px, auto, auto, auto;
+  background-attachment: fixed, fixed, fixed, fixed, fixed;
+  background-repeat: repeat, repeat, no-repeat, no-repeat, no-repeat;
+}
+
+/* background-attachment: fixed sur mobile est coûteux/incohérent (Safari
+   iOS le force souvent en scroll) : on repasse en scroll normal, la
+   texture reste identique visuellement, juste non figée au viewport. */
+@media (max-width: 900px) {
+  body { background-attachment: scroll; }
+}
+
+body.nav-open { overflow: hidden; }
+
+img { max-width: 100%; display: block; }
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  line-height: var(--lh-tight);
+  font-weight: 600;
+  margin: 0;
+}
+
+p { margin: 0; }
+
+a { color: inherit; text-decoration: none; }
+
+.container {
+  width: 100%;
+  max-width: 1320px;
+  margin-inline: auto;
+  padding-inline: clamp(24px, 5vw, 72px);
+}
+
+.section-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: inherit;
+  opacity: 0.72;
+}
+.section-kicker::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+/* -- Boutons ---------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 17px 34px;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out);
+}
+.btn-primary {
+  background: var(--ink);
+  color: var(--white);
+}
+.btn-primary:hover { background: var(--red); transform: translateY(-2px); }
+
+.btn-light {
+  background: var(--white);
+  color: var(--ink);
+}
+.btn-light:hover { background: var(--paper); transform: translateY(-2px); }
+
+.btn-ghost-dark {
+  background: transparent;
+  color: var(--ink);
+  border-color: color-mix(in srgb, var(--ink) 30%, transparent);
+}
+.btn-ghost-dark:hover { border-color: var(--ink); }
+
+.btn-ghost-light {
+  background: transparent;
+  color: var(--white);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+.btn-ghost-light:hover { border-color: var(--white); }
+
+a:focus-visible, button:focus-visible, .btn:focus-visible {
+  outline: 3px solid var(--red);
+  outline-offset: 3px;
+}
+
+/* -- Reveal générique (GSAP toggle la classe, voir js/reveal.js) ------- */
+.reveal { opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1 !important; transform: none !important; }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* -- Stars ---------------------------------------------------------------- */
+.stars {
+  display: inline-flex;
+  gap: 2px;
+  color: var(--orange);
+  font-size: 1.1em;
+  letter-spacing: 0.05em;
+}

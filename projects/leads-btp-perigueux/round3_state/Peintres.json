@@ -1,0 +1,1166 @@
+{
+  "majorDimension": "ROWS",
+  "range": "Peintres!A1:H500",
+  "values": [
+    [
+      "Nom entreprise",
+      "Note Google",
+      "Nombre avis",
+      "Telephone",
+      "Tranche effectif",
+      "Site web",
+      "Email",
+      "Statut"
+    ],
+    [
+      "Pomeyrol Peinture",
+      "4.9",
+      "99",
+      "05 53 09 88 52",
+      "6 à 9 salariés",
+      "http://www.pomeyrolpeinture.com/",
+      "contact@pomeyrolpeinture.com",
+      "Non contacté"
+    ],
+    [
+      "Déco 24 - Peinture & Décoration",
+      "5.0",
+      "46",
+      "05 53 05 82 06",
+      "1 à 2 salariés",
+      "https://www.deco-24.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SARL Bürer",
+      "4.7",
+      "40",
+      "06 10 59 13 93",
+      "",
+      "https://burer.fr/",
+      "burercedric@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Ets Jean H- peinture Bergerac- peintre en bâtiment Bergerac- artisan peintre Bergerac- Entreprise plaquiste",
+      "4.6",
+      "36",
+      "06 58 97 05 51",
+      "",
+      "https://www.perigord-commerce.com/commercants/artisans-services/artisans-services-arts-et-loisirs-peinture-platrerie-carrelage/ets-jean-h",
+      "webmaster@perigord-commerce.com",
+      "Non contacté"
+    ],
+    [
+      "Borie Alexandre",
+      "5.0",
+      "35",
+      "06 58 95 88 66",
+      "",
+      "https://borie-alexandre-artisan-peintre.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Verral Stéphane",
+      "5.0",
+      "31",
+      "05 53 06 16 28",
+      "3 à 5 salariés",
+      "https://verral-peinture.com/",
+      "stephane.verral@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "Mimos",
+      "4.2",
+      "24",
+      "",
+      "",
+      "https://www.mimos.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Modern'Décors",
+      "4.9",
+      "23",
+      "05 53 35 13 89",
+      "3 à 5 salariés",
+      "http://modern-decors.fr/",
+      "sarlmoderndecors@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "SAPA 24",
+      "4.4",
+      "23",
+      "05 53 46 61 33",
+      "",
+      "https://www.sapa-traitement.com/dordogne-24.html",
+      "contact@sapahabitat.com",
+      "Non contacté"
+    ],
+    [
+      "Village ACB (De Matha ACB)",
+      "4.6",
+      "22",
+      "05 53 08 53 28",
+      "",
+      "https://village-acb.fr/",
+      "contact@village-acb.fr",
+      "Non contacté"
+    ],
+    [
+      "Entreprise Pontou",
+      "4.6",
+      "18",
+      "05 53 08 31 08",
+      "10 à 19 salariés",
+      "https://www.pontoupeinture.com/",
+      "contact@pontoupeinture.com",
+      "Non contacté"
+    ],
+    [
+      "Sarl Boyer JP Et Fils",
+      "4.2",
+      "17",
+      "05 53 08 97 34",
+      "6 à 9 salariés",
+      "https://www.boyer-platrerie-peinture-dordogne.fr/",
+      "sarl.boyer.jpetfils@wanadoo.fr",
+      "Non contacté"
+    ],
+    [
+      "SPB - Peintre en Bâtiment & Décoration",
+      "5.0",
+      "17",
+      "07 62 61 31 03",
+      "",
+      "https://www.spb-peintre-decorateur.fr/",
+      "sas.spb24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Périgord Peinture Plâtrerie",
+      "5.0",
+      "17",
+      "06 51 82 34 21",
+      "",
+      "https://www.facebook.com/profile.php?id=61556082871027",
+      "entreprise.3P24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Boutique d'artisanat céramique, tableaux",
+      "4.9",
+      "16",
+      "05 53 09 44 79",
+      "",
+      "http://www.ateliermataguerre.fr/",
+      "th.villette@laposte.net",
+      "Non contacté"
+    ],
+    [
+      "Décap’ & Bio",
+      "5.0",
+      "15",
+      "06 27 72 26 26",
+      "",
+      "https://www.decapezbio.fr/",
+      "decapezbio@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Crea's Peinture...",
+      "5.0",
+      "15",
+      "06 38 23 11 65",
+      "",
+      "http://creaspeinture.blogspot.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "JMB Peinture",
+      "5.0",
+      "14",
+      "06 14 11 95 34",
+      "3 à 5 salariés",
+      "https://jmb-peinture.com/",
+      "jmbreme@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Artisan peintre Steimbach",
+      "5.0",
+      "14",
+      "06 58 22 56 73",
+      "",
+      "https://perigord-commerce.com/commercants/services-et-artisanat/services-artisanat-maconnerie-renovation/arnaud-steimbach-couverture-petite-maconnerie",
+      "webmaster@perigord-commerce.com",
+      "Non contacté"
+    ],
+    [
+      "El Elodie Juillet",
+      "5.0",
+      "12",
+      "06 50 81 37 73",
+      "",
+      "https://www.facebook.com/juilletcreations",
+      "juilletcreations@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Yohan Renov 24",
+      "5.0",
+      "12",
+      "06 52 18 17 34",
+      "non renseigné",
+      "http://www.facebook.com/yohanrenov24/",
+      "royer-yohan@hotmail.fr",
+      "Non contacté"
+    ],
+    [
+      "Ets Arnaud Jérôme",
+      "4.9",
+      "12",
+      "06 46 46 79 62",
+      "",
+      "http://www.travauxdinterieur.fr/",
+      "contact@travauxdinterieur.fr",
+      "Non contacté"
+    ],
+    [
+      "Au Grain Coloré",
+      "4.5",
+      "11",
+      "05 53 91 47 89",
+      "6 à 9 salariés",
+      "https://www.augraincolore.fr/",
+      "laboutique@augraincolore.fr",
+      "Non contacté"
+    ],
+    [
+      "PyM Peintre",
+      "5.0",
+      "11",
+      "06 89 54 44 52",
+      "",
+      "https://pympeintre.fr/",
+      "pym.artistepeintre@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "RENCO HABITAT",
+      "4.6",
+      "11",
+      "06 56 75 13 06",
+      "",
+      "http://rencohabitat.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Nicolas Ric",
+      "5.0",
+      "10",
+      "",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Artothèque",
+      "4.6",
+      "10",
+      "05 53 08 99 55",
+      "",
+      "https://www.flickr.com/photos/artexpotrelissac/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "BK Peinture",
+      "4.3",
+      "9",
+      "05 53 06 35 22",
+      "10 à 19 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Groupe Chort Bâtiment",
+      "4.2",
+      "9",
+      "05 53 82 83 77",
+      "",
+      "https://www.chort-batiment.com/",
+      "groupe@chort-batiment.com",
+      "Non contacté"
+    ],
+    [
+      "Artplus Périgueux",
+      "5.0",
+      "9",
+      "07 81 63 87 96",
+      "",
+      "https://artplusperigueux.fr/",
+      "artplusperigueux@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Espace 23 Coworking",
+      "5.0",
+      "9",
+      "05 33 12 02 23",
+      "",
+      "https://espace23-coworking.fr/",
+      "contact@espace23-coworking.fr",
+      "Non contacté"
+    ],
+    [
+      "Moreau Déco",
+      "5.0",
+      "8",
+      "06 87 64 32 00",
+      "1 à 2 salariés",
+      "http://www.moreau-deco.fr/",
+      "moreaudeco24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "SASU Alexis Mapas",
+      "5.0",
+      "8",
+      "06 19 91 31 72",
+      "3 à 5 salariés",
+      "http://www.mapas-peinture.fr/",
+      "mapas.peinture@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Lagorce Jointeur",
+      "4.9",
+      "8",
+      "06 43 64 55 01",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "A.B Peinture",
+      "5.0",
+      "8",
+      "06 16 24 42 94",
+      "non renseigné",
+      "http://ab-peinture-chabrac.com/",
+      "arthurbrunet222@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Atelier-Calligraphie",
+      "5.0",
+      "8",
+      "06 98 30 47 79",
+      "",
+      "http://www.atelier-calligraphie.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "BW Second Oeuvre",
+      "5.0",
+      "7",
+      "06 37 49 00 24",
+      "3 à 5 salariés",
+      "https://www.bw-secondoeuvre.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Entreprise Générale d'Application de Peinture",
+      "3.4",
+      "7",
+      "05 53 03 97 15",
+      "10 à 19 salariés",
+      "https://www.egap.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Eggs58Studio",
+      "5.0",
+      "7",
+      "07 63 33 34 61",
+      "",
+      "https://www.facebook.com/ineggswetrust/",
+      "eggs.contact@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Iml Travaux Rénovations SAS",
+      "5.0",
+      "6",
+      "06 65 26 55 42",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "A.S.L Entreprise",
+      "4.3",
+      "6",
+      "06 44 71 63 29",
+      "",
+      "http://www.asl-entreprise24.fr/",
+      "asl.entreprise@outlook.fr",
+      "Non contacté"
+    ],
+    [
+      "IPPR Rougier SARL",
+      "2.0",
+      "6",
+      "05 53 09 15 74",
+      "",
+      "http://www.ippr-rougier.com/",
+      "ippr.rougier@wanadoo.fr",
+      "Non contacté"
+    ],
+    [
+      "L'Artesan boutique partagée",
+      "5.0",
+      "6",
+      "",
+      "",
+      "https://www.instagram.com/lartesan.boutique.partagee/profilecard/?igsh=b3A4Zzh3amt4ZXpx",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Decoloft 24",
+      "4.7",
+      "6",
+      "06 25 08 53 99",
+      "",
+      "http://decoloft24.design/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Is Sangare Peinture",
+      "5.0",
+      "5",
+      "07 53 91 53 92",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "FR HABITAT Peinture Coulounieix Chamiers 24",
+      "5.0",
+      "5",
+      "06 16 90 28 07",
+      "",
+      "https://www.peinture-toiture-24.fr/",
+      "fr.habitat24@yahoo.com",
+      "Non contacté"
+    ],
+    [
+      "Entreprise AL",
+      "5.0",
+      "5",
+      "06 65 65 15 62",
+      "",
+      "https://entrepriseal-peintre-perigueux.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "S.T.A.P. Dordogne",
+      "5.0",
+      "5",
+      "05 53 07 11 37",
+      "10 à 19 salariés",
+      "https://stapdordogne.fr/",
+      "contact@stapdordogne.fr",
+      "Non contacté"
+    ],
+    [
+      "Rigau E.I",
+      "5.0",
+      "5",
+      "06 32 16 59 40",
+      "",
+      "http://www.peinturerigau.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Azevedo Decors",
+      "5.0",
+      "5",
+      "06 80 73 57 97",
+      "3 à 5 salariés",
+      "https://azevedo-decors.fr/",
+      "contact@azevedo-decors.fr",
+      "Non contacté"
+    ],
+    [
+      "Constantin Eric",
+      "3.4",
+      "5",
+      "09 82 85 32 18",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SEBASTIEN COLPIN PHOTOGRAPHIE",
+      "4.2",
+      "5",
+      "06 98 44 24 29",
+      "",
+      "https://photosdesebastiencolpin.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SARL PPA / NADAUD Frères",
+      "5.0",
+      "5",
+      "05 53 56 24 48",
+      "",
+      "http://www.ppa-nadaud.fr/",
+      "contact@ppa-nadaud.fr",
+      "Non contacté"
+    ],
+    [
+      "HPB33",
+      "5.0",
+      "4",
+      "06 26 88 39 70",
+      "",
+      "https://hpb-peinture.fr/",
+      "herouard.picot.bastien@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Peinture du Périgord ARTISAN PEINTRE EN DÉCORS.",
+      "5.0",
+      "4",
+      "06 38 80 61 38",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Lacotte Peinture",
+      "5.0",
+      "3",
+      "07 70 03 82 21",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Carney Philip",
+      "3.7",
+      "3",
+      "05 53 53 92 33",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "pablO",
+      "5.0",
+      "3",
+      "06 74 38 01 00",
+      "",
+      "https://atelierdepablo.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Stephane bricolage 24",
+      "5.0",
+      "3",
+      "06 26 21 87 95",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "L'Atelier des Bourdaines",
+      "5.0",
+      "3",
+      "06 38 67 11 05",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Peintre en dordogne",
+      "5.0",
+      "3",
+      "07 85 74 22 26",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Lagorce et Fils",
+      "2.3",
+      "3",
+      "05 53 90 21 34",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Express Artisan",
+      "3.0",
+      "2",
+      "06 76 10 80 71",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Rénov'24 - Frédéric Bertin",
+      "3.0",
+      "2",
+      "07 80 66 92 27",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Sas Pomeyrol",
+      "5.0",
+      "2",
+      "06 22 75 41 98",
+      "",
+      "http://pomeyrolpeinture.com/",
+      "contact@pomeyrolpeinture.com",
+      "Non contacté"
+    ],
+    [
+      "BEAUX-ARTS DU PERIGORD",
+      "3.0",
+      "2",
+      "07 68 88 65 66",
+      "",
+      "http://beaux-arts-perigord.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "AS Bati Travaux",
+      "5.0",
+      "2",
+      "06 50 50 77 62",
+      "",
+      "https://as-bati-travaux.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Mes Deux Mondes et L'ART",
+      "3.0",
+      "2",
+      "05 53 05 53 61",
+      "",
+      "http://mesdeuxmondes.com/",
+      "info@mesdeuxmondes.com",
+      "Non contacté"
+    ],
+    [
+      "périg'art",
+      "5.0",
+      "2",
+      "05 53 54 76 55",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "COMPTOIR DES STYLES",
+      "5.0",
+      "2",
+      "",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Style renov 24",
+      "5.0",
+      "2",
+      "06 72 11 36 06",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Joĕl Joubert",
+      "1.0",
+      "2",
+      "06 07 97 13 35",
+      "",
+      "https://artisan-plaquiste-peintre-dordogne.fr/",
+      "joubert.joel.entreprise@wanadoo.fr",
+      "Non contacté"
+    ],
+    [
+      "Artisant Guette Nicolas plaquiste peintre",
+      "5.0",
+      "2",
+      "06 26 89 32 79",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Artirenov24",
+      "5.0",
+      "1",
+      "06 81 66 67 33",
+      "3 à 5 salariés",
+      "https://artirenov24.fr/",
+      "contact@artirenov.fr",
+      "Non contacté"
+    ],
+    [
+      "Peinture LM",
+      "5.0",
+      "1",
+      "07 88 70 98 04",
+      "10 à 19 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Julien Mathieu Renovation",
+      "5.0",
+      "1",
+      "06 83 85 28 00",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Attention Peinture Fraîche",
+      "5.0",
+      "1",
+      "06 35 18 87 18",
+      "1 à 2 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Aude Bâtiment",
+      "5.0",
+      "1",
+      "06 23 45 71 20",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Debruge",
+      "5.0",
+      "1",
+      "07 68 97 04 39",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Christophe Boucher",
+      "5.0",
+      "1",
+      "06 12 45 37 85",
+      "",
+      "http://atelierchristopheb.wixsite.com/ooohladeco",
+      "atelier.christophe.boucher@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Artno artiste peintre abstrait - Plasticien - Périgueux - Dordogne",
+      "5.0",
+      "1",
+      "06 89 23 28 19",
+      "",
+      "https://artno-peintre-abstrait.fr/",
+      "artno@artno-peintre-abstrait.fr",
+      "Non contacté"
+    ],
+    [
+      "Custom art Shop",
+      "5.0",
+      "1",
+      "06 46 18 98 47",
+      "",
+      "https://www.custom-art-shop.fr/",
+      "contact@custom-art-shop.fr",
+      "Non contacté"
+    ],
+    [
+      "RL peinture 24",
+      "5.0",
+      "1",
+      "06 06 47 86 61",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Pierre Marcou Peinture",
+      "5.0",
+      "1",
+      "",
+      "",
+      "https://www.pierre-marcou-peinture-19.fr/",
+      "pierremarcoupeinture@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "BIM'Art",
+      "5.0",
+      "1",
+      "05 53 04 23 16",
+      "",
+      "https://www.boulazacislemanoire.fr/wp-signup.php?new=boulazacislemanoire.fr&fbclid=IwVERDUARrCpNleHRuA2FlbQIxMABzcnRjBmFwcF9pZAwzNTA2ODU1MzE3MjgAAR43VJx9WmoyMvNAttpHq2qtqHisv1X-Qg5BDSSPFqDxYJj22M_XHeIR_zW_UQ_aem_kUgcSR7oWF8BJGokr1kpGA",
+      "cabinet.maire@boulazacislemanoire.fr",
+      "Non contacté"
+    ],
+    [
+      "Rzepiak Jonathan",
+      "5.0",
+      "1",
+      "05 53 90 08 72",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Platriers Peintres Associés",
+      "",
+      "0",
+      "",
+      "20 à 49 salariés",
+      "https://www.ppa-nadaud.fr",
+      "contact@ppa-nadaud.fr",
+      "Non contacté"
+    ],
+    [
+      "Catherine Aerts - Wattiez",
+      "",
+      "0",
+      "06 31 71 41 60",
+      "",
+      "https://www.catherine-aerts-wattiez.com/contact",
+      "c.aerts@hushmail.com",
+      "Non contacté"
+    ],
+    [
+      "Bingol Constructions",
+      "",
+      "0",
+      "06 35 36 61 70",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "J.P.C Peinture et Decors",
+      "",
+      "0",
+      "06 07 54 33 76",
+      "non renseigné",
+      "https://jpc-peinture-decors.com",
+      "jpc.peinture.decors@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "HB Peinture",
+      "",
+      "0",
+      "07 64 16 97 19",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Patrick Gibert",
+      "",
+      "0",
+      "06 74 50 99 57",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Entreprise Fongauffier Guillaume",
+      "",
+      "0",
+      "06 65 44 65 29",
+      "",
+      "https://www.facebook.com/Entreprise-Fongauffier-Guillaume-100190429124894/",
+      "fongauffierguillaume@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "France Decoration Peinture",
+      "",
+      "0",
+      "07 75 77 10 89",
+      "3 à 5 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "J2P.Renov.Deco",
+      "",
+      "0",
+      "06 24 64 17 94",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Rapide Peinture & Plus",
+      "",
+      "0",
+      "06 98 84 10 90",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Bintha Peintures",
+      "",
+      "0",
+      "06 21 69 23 44",
+      "1 à 2 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "M.Rénovation",
+      "",
+      "0",
+      "06 69 99 65 24",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Lagarde Michel",
+      "",
+      "0",
+      "05 53 07 84 38",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Dutheil Boris",
+      "",
+      "0",
+      "06 79 66 28 88",
+      "1 à 2 salariés",
+      "",
+      "borisdutheil24@yahoo.com",
+      "Non contacté"
+    ],
+    [
+      "David Peinture",
+      "",
+      "0",
+      "06 22 65 72 48",
+      "1 à 2 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "JM Home Renov",
+      "",
+      "0",
+      "06 30 45 12 31",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Jean Fargier Rénovation",
+      "",
+      "0",
+      "07 80 63 76 06",
+      "",
+      "https://jeanfargier1.wixsite.com/artisan-peintre",
+      "jeanfargier1@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "BTG PRO",
+      "",
+      "0",
+      "06 30 87 07 59",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Jérémie d’Angelo - Artiste",
+      "",
+      "0",
+      "06 66 66 43 61",
+      "",
+      "https://www.jeremiedangelo.com/",
+      "contact@jeremiedangelo.com",
+      "Non contacté"
+    ],
+    [
+      "Isol & Decors Platrerie - Peinture",
+      "",
+      "0",
+      "",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Ck déco",
+      "",
+      "0",
+      "06 87 67 25 09",
+      "",
+      "https://www.facebook.com/profile.php?id=61551178905463",
+      "ckdeco24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "EI Albin MANIERE",
+      "",
+      "0",
+      "06 38 90 89 30",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Rebiere Guillaume",
+      "",
+      "0",
+      "06 80 65 36 14",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "PPI24",
+      "",
+      "0",
+      "",
+      "",
+      "http://www.ppi24.fr/",
+      "jeremybroussillou24420@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "L&D PLAQUISTE JOINTEUR",
+      "",
+      "0",
+      "06 31 85 81 11",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SAS Nicolas",
+      "",
+      "0",
+      "06 86 72 42 91",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "LEMERCIER Plâtrerie/Peinture",
+      "",
+      "0",
+      "06 83 29 56 40",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SARL MAJEK PEINTURES",
+      "",
+      "0",
+      "06 83 15 28 76",
+      "",
+      "https://www.majek-peintures.fr/",
+      "contact@majek-peintures.fr",
+      "Non contacté"
+    ],
+    [
+      "Thomas BOULESTEIX Plaquiste Peintre",
+      "",
+      "0",
+      "",
+      "",
+      "",
+      "sastpms@gmail.com",
+      "Non contacté"
+    ]
+  ]
+}

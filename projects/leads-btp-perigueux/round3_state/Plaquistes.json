@@ -1,0 +1,916 @@
+{
+  "majorDimension": "ROWS",
+  "range": "Plaquistes!A1:H500",
+  "values": [
+    [
+      "Nom entreprise",
+      "Note Google",
+      "Nombre avis",
+      "Telephone",
+      "Tranche effectif",
+      "Site web",
+      "Email",
+      "Statut"
+    ],
+    [
+      "Plaquiste Zone Habitat",
+      "4.7",
+      "58",
+      "06 87 59 68 86",
+      "",
+      "https://osplaquiste.fr/",
+      "olivier.simoes24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Le Grand Périgueux",
+      "2.9",
+      "51",
+      "05 53 35 86 00",
+      "",
+      "https://www.grandperigueux.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Dudognon plaquiste",
+      "5.0",
+      "43",
+      "07 86 32 90 57",
+      "",
+      "https://dudognon-plaquiste.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "LM batiment (plaquiste, isolation, peinture, sol souple",
+      "4.9",
+      "40",
+      "07 83 84 88 54",
+      "",
+      "https://www.lmbatiment33.fr/",
+      "contact@lmbatiment33.fr",
+      "Non contacté"
+    ],
+    [
+      "Entreprise Olivier Simoes Plaquiste",
+      "4.8",
+      "33",
+      "06 03 05 34 71",
+      "",
+      "https://osplaquiste.fr/",
+      "olivier.simoes24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "ncai plaquiste peintre",
+      "4.9",
+      "28",
+      "06 82 35 33 50",
+      "",
+      "http://www.entreprise-platrerie-plaquiste-bordeaux.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Plaquiste , peintre",
+      "5.0",
+      "26",
+      "06 75 97 39 49",
+      "",
+      "https://plaquistepeintre47.business.site/?utm_source=gmb&utm_medium=referral",
+      "",
+      "Non contacté"
+    ],
+    [
+      "JNB Plaquiste",
+      "5.0",
+      "24",
+      "06 49 98 62 80",
+      "",
+      "https://www.facebook.com/profile.php?id=100063595982575",
+      "boutyjeannoel@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Plazer Concept plaquiste / carreleur",
+      "4.7",
+      "22",
+      "06 23 75 58 35",
+      "",
+      "",
+      "etsplazer@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "BIGUET & FILS | Plaquiste-Peintre-Isolation",
+      "5.0",
+      "22",
+      "05 45 93 23 41",
+      "",
+      "https://www.biguetetfils.fr/",
+      "contact@biguetetfils.fr",
+      "Non contacté"
+    ],
+    [
+      "VMG Plaquiste",
+      "5.0",
+      "21",
+      "07 67 14 69 79",
+      "",
+      "https://vmg-plaquiste.fr/",
+      "vmgplaquiste@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Plaquiste - Jointeur - Peintre - Pierre Olivié",
+      "4.9",
+      "20",
+      "06 15 51 88 67",
+      "",
+      "http://plaquiste33.com//pierre-olivie-artisan-plaquiste.business.site/?utm_source=gmb&utm_medium=referral",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Design Plaquiste",
+      "5.0",
+      "19",
+      "07 84 72 61 47",
+      "",
+      "https://designplaquiste.com/?et_fb=1&PageSpeed=off",
+      "contact@designplaquiste.com",
+      "Non contacté"
+    ],
+    [
+      "VALIANI ET FILS",
+      "3.4",
+      "18",
+      "05 53 04 08 00",
+      "10 à 19 salariés",
+      "http://valiani-sarl.fr/",
+      "valiani.sarl@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "Plaquiste-Peintre THEO BATI",
+      "5.0",
+      "18",
+      "06 46 52 50 22",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "PGB plâtrier plaquiste Bordeaux",
+      "4.5",
+      "17",
+      "07 69 87 36 50",
+      "",
+      "http://platrier-plaquiste-bordeaux.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Dimitri Grelier Plaquiste Peintre",
+      "4.8",
+      "16",
+      "06 84 79 94 95",
+      "",
+      "https://dgpp.fr/",
+      "contact@dgpp.fr",
+      "Non contacté"
+    ],
+    [
+      "NOVA HOME Plaquiste - Peintre",
+      "4.9",
+      "16",
+      "06 69 51 77 02",
+      "",
+      "https://novahome.site/",
+      "novahome.gh2@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "SARL JFS - Plaquiste - Plâtrerie sèche et isolation",
+      "5.0",
+      "16",
+      "06 13 93 11 64",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "JND Innovation",
+      "4.9",
+      "16",
+      "06 26 04 42 13",
+      "",
+      "https://www.jndinnovation.com/",
+      "contact@jndinnovation.com",
+      "Non contacté"
+    ],
+    [
+      "WENOVE Plaquiste - Menuiserie extérieure COGNAC",
+      "5.0",
+      "15",
+      "06 37 15 08 10",
+      "",
+      "https://wenove.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SARL ECOPLACK - Votre artisan plaquiste - isolation biosourcée RGE- enduits argile chaux plâtre",
+      "5.0",
+      "14",
+      "06 61 00 37 71",
+      "",
+      "http://www.ecoplack.fr/",
+      "ecoplack.angot@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "Delord Pierre-Marc",
+      "4.9",
+      "13",
+      "06 79 40 47 17",
+      "",
+      "https://www.delord-travaux.fr/",
+      "contact@hrz.fr",
+      "Non contacté"
+    ],
+    [
+      "Olivier MARTINY",
+      "4.6",
+      "11",
+      "05 53 57 23 17",
+      "3 à 5 salariés",
+      "https://www.plaquiste24.com/",
+      "contact@plaquiste24.com",
+      "Non contacté"
+    ],
+    [
+      "Jean Louis Et Fils",
+      "4.5",
+      "10",
+      "06 79 65 94 08",
+      "",
+      "https://www.jeanlouisetfils.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Primoc bâtiment 24",
+      "4.4",
+      "9",
+      "06 05 58 83 76",
+      "",
+      "http://www.primocbatiment24.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SARL DAVID PARIZEL - PLAQUISTE - JOINTEUR - CARRELEUR",
+      "5.0",
+      "8",
+      "07 60 58 05 21",
+      "",
+      "https://davidparizel-plaquiste-carreleur-barbezieux.fr/",
+      "david.parizel@hotmail.fr",
+      "Non contacté"
+    ],
+    [
+      "L'Artisan Plâtrier Frédéric Ingouf",
+      "5.0",
+      "7",
+      "07 77 88 02 87",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Plâtrerie Funerot",
+      "5.0",
+      "7",
+      "06 33 84 02 38",
+      "non renseigné",
+      "https://www.platreriefunerot.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Lamaze Sarl",
+      "5.0",
+      "7",
+      "05 53 30 21 17",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "EURL Desnoyers Jordy Plaquiste Peintre Isolation",
+      "4.7",
+      "7",
+      "06 68 78 62 10",
+      "",
+      "https://www.jordy-desnoyers.com/",
+      "contact@jordy-desnoyers.com",
+      "Non contacté"
+    ],
+    [
+      "Fab' renov 86 - Plaquiste - Enduiseur",
+      "5.0",
+      "7",
+      "06 67 64 84 14",
+      "",
+      "https://fabrenov86.fr/",
+      "fabrenov86@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Entreprise DSR'INOV",
+      "5.0",
+      "6",
+      "06 33 50 60 86",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "L'rénovation",
+      "5.0",
+      "6",
+      "06 84 56 55 91",
+      "",
+      "http://www.l-renovation.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Artisan plaquiste Roux Valentin",
+      "5.0",
+      "5",
+      "06 29 48 72 15",
+      "",
+      "https://roux-valentin1.odoo.com/",
+      "rouxvalentin@yahoo.fr",
+      "Non contacté"
+    ],
+    [
+      "Trémouille Olivier",
+      "4.2",
+      "5",
+      "05 53 30 28 98",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "plaquiste, carreleur, plafiste, Bat Tendance Angoulême",
+      "3.4",
+      "5",
+      "06 61 75 56 46",
+      "",
+      "https://www.bat-tendance16.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Sudrie Et Fils SARL",
+      "4.5",
+      "4",
+      "05 53 07 12 34",
+      "",
+      "https://www.platrerie-dordogne-sudrieetfils.fr",
+      "contact@sas-sudrie.fr",
+      "Non contacté"
+    ],
+    [
+      "Malek Mohamed",
+      "4.0",
+      "4",
+      "05 53 23 41 75",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Carmi renov",
+      "4.8",
+      "4",
+      "06 12 77 19 16",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "AMS 24",
+      "5.0",
+      "4",
+      "06 59 91 05 91",
+      "",
+      "https://ams24.fr/contact/",
+      "a.m.s.bf.24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "EURL JSF",
+      "5.0",
+      "4",
+      "06 23 86 00 82",
+      "",
+      "https://www.jsf-eurl.fr/?utm_source=gmb",
+      "",
+      "Non contacté"
+    ],
+    [
+      "AMZ BATIMENT",
+      "5.0",
+      "4",
+      "05 45 65 69 63",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Plaquiste HM platrerie",
+      "5.0",
+      "4",
+      "06 45 36 48 82",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "UNGURIANU CALIN",
+      "5.0",
+      "4",
+      "07 86 37 29 64",
+      "",
+      "https://ungurianucalin.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Ent CORTES plaquiste peintre",
+      "4.0",
+      "4",
+      "06 62 59 53 98",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "STEIN WILFRIED",
+      "5.0",
+      "3",
+      "06 76 73 68 19",
+      "non renseigné",
+      "http://stein-wilfried-plaquiste.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "plaquiste herraiz emeric",
+      "5.0",
+      "3",
+      "07 63 95 07 56",
+      "",
+      "https://www.google.com/search?q=Plaquiste+Herraiz+Emeric&stick=H4sIAAAAAAAA_-NgU1I1qLBIMTRJsTRLTkpJMzVPSjW1MqgwNLU0NDFMMjQ0M0w0tkw2W8QqEZCTWFiaWVySquCRWlSUmFml4JqbWpSZDACa3V3gRAAAAA&hl=fr&mat=Ce9jye_ZYxhWElcB8pgkaMBRAXLSRIwUrDUyD461-tjnMyuddSrc72H9GbR8LgzoTgG5ynARFhgwl5MAHlyaWY6EV79fvZYr32Unx77RQzWj7pFN72CtXFRBUXZg0q1bJ44&authuser=0",
+      "",
+      "Non contacté"
+    ],
+    [
+      "raynaud dominique",
+      "5.0",
+      "3",
+      "06 08 97 57 44",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Lafon Serge Eurl",
+      "5.0",
+      "3",
+      "05 53 08 55 31",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "ANDREU David",
+      "5.0",
+      "3",
+      "06 07 96 93 36",
+      "3 à 5 salariés",
+      "http://andreudavid.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Tostivint / AMMC Plaquiste",
+      "5.0",
+      "3",
+      "06 29 03 40 62",
+      "",
+      "https://sas-tostivint.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "EURL Thierry F - Plaquiste",
+      "2.3",
+      "3",
+      "06 23 38 71 53",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "MR RENOVATION SASU",
+      "5.0",
+      "3",
+      "06 14 25 78 34",
+      "",
+      "http://www.mr-renovation24.fr/",
+      "mr-renovation24290@outlook.fr",
+      "Non contacté"
+    ],
+    [
+      "Iso Exter",
+      "5.0",
+      "3",
+      "06 18 59 88 53",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Boudeau Christian",
+      "5.0",
+      "3",
+      "05 53 51 53 88",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Pierre Martra",
+      "5.0",
+      "2",
+      "05 53 05 83 45",
+      "6 à 9 salariés",
+      "https://isolationplatreriepeinturemartrabrantome.fr/",
+      "martra.pierre@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "Barraud Jean-Marc",
+      "4.0",
+      "2",
+      "05 53 55 19 87",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Blida Mokhtar",
+      "1.0",
+      "2",
+      "05 53 09 42 11",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Barré Benoit plaquiste plâtrerie",
+      "5.0",
+      "2",
+      "06 71 90 65 50",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "CARNIEL GUILLAUME Plâtrier Plaquiste",
+      "5.0",
+      "2",
+      "06 70 41 29 31",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Plaquiste - jointeur - Mr Aliot Maxime",
+      "5.0",
+      "2",
+      "06 83 36 77 05",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "DESMOULIN LIONEL",
+      "4.0",
+      "1",
+      "06 66 19 04 12",
+      "non renseigné",
+      "http://desmoulinlionel.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Sqp plaquiste jointeur",
+      "5.0",
+      "1",
+      "06 51 87 62 51",
+      "",
+      "https://sqpplaquistejointeur.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Nadal Dominique",
+      "5.0",
+      "1",
+      "05 53 54 76 50",
+      "10 à 19 salariés",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Rongieras Jérôme",
+      "5.0",
+      "1",
+      "06 17 78 48 95",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Art Plaquiste 24",
+      "5.0",
+      "1",
+      "06 23 08 52 23",
+      "",
+      "http://bougrerdavy.site-solocal.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Plaquiste Nicolas Caperau",
+      "5.0",
+      "1",
+      "06 12 42 81 16",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Jérôme Barafort - Jointeur Plaquiste Plâtrier",
+      "5.0",
+      "1",
+      "06 78 16 34 27",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "AD RENOV'",
+      "5.0",
+      "1",
+      "07 71 58 44 97",
+      "non renseigné",
+      "https://www.facebook.com/profile.php?id=61552285371904",
+      "ad_renov@outlook.com",
+      "Non contacté"
+    ],
+    [
+      "Iso Btp Anouvong Francois",
+      "5.0",
+      "1",
+      "06 27 80 06 95",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Malek Mustapha",
+      "4.0",
+      "1",
+      "06 16 69 65 26",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Placo-Isolation-Ferchichi",
+      "5.0",
+      "1",
+      "06 74 97 36 01",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "ENTREPRISE COUBRIS",
+      "5.0",
+      "1",
+      "06 14 81 18 67",
+      "",
+      "https://www.plaquiste-coubris-24.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "CPC 16 (Charente Plaquiste Carreleur)",
+      "5.0",
+      "1",
+      "07 69 34 65 34",
+      "",
+      "",
+      "cpc.bonifait@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "TS Platrerie",
+      "5.0",
+      "1",
+      "06 16 11 47 58",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "EIRL MARCHAND SERGE PLAQUISTE",
+      "5.0",
+      "1",
+      "06 27 87 92 48",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "AH - Plaquiste - Jointeur",
+      "5.0",
+      "1",
+      "07 76 05 34 79",
+      "",
+      "",
+      "anthoh47300@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Eric-Les-Bons-Travaux Artisan Plaquiste, Menuisier Angoulême-Ruelle sur Touvre",
+      "5.0",
+      "1",
+      "07 80 99 01 53",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Lima Francisco",
+      "",
+      "0",
+      "05 53 08 46 45",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "M Carré",
+      "",
+      "0",
+      "06 58 09 42 57",
+      "",
+      "https://www.mcarre-peinture.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Tewette Plaquiste",
+      "",
+      "0",
+      "06 51 99 15 56",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Entreprise Siesky Pascal",
+      "",
+      "0",
+      "06 89 88 39 87",
+      "",
+      "http://sieskypascal-perigueux.site-solocal.com/?utm_source=gmb",
+      "sieskyp@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Aed plaquiste",
+      "",
+      "0",
+      "",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Michel Lasserre et Fils",
+      "",
+      "0",
+      "06 28 79 27 66",
+      "",
+      "https://www.dordogne-platrier.com/",
+      "michel.lasserre24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "SB Plaquiste Jointeur Peintre",
+      "",
+      "0",
+      "06 16 04 16 51",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "PLAQUISTE",
+      "",
+      "0",
+      "",
+      "",
+      "https://www.viteundevis.com/in/?pid=1401&c=77",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Arrange ta grange Plaquiste",
+      "",
+      "0",
+      "06 59 83 00 89",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Plaquiste Lucien Armagnac",
+      "",
+      "0",
+      "06 43 49 93 17",
+      "",
+      "",
+      "armagnaclucien@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "EI Da Silva Muge Alexandre",
+      "",
+      "0",
+      "07 85 53 62 20",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ]
+  ]
+}

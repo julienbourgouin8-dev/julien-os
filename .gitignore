@@ -4,5 +4,8 @@
 *.log
 __pycache__/
 node_modules/
+.venv/
+.playwright-mcp/
+.obsidian/
 .claude/settings.local.json
 audits/

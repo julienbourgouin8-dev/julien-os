@@ -1,0 +1,56 @@
+:root {
+  /* Fond — charbon sombre, jamais le blanc daté du site d'origine */
+  --bg: #12151A;
+  --bg-alt: #0B0D10;
+  --bg-raised: #191D24;
+  --line: rgba(255, 255, 255, 0.09);
+
+  /* Texte */
+  --ink: #EDEEF0;
+  --ink-muted: #9BA0A8;
+  --ink-dim: #666B72;
+
+  /* Signature à 3 fluides — bleu (eau/plomberie), rouge (chauffage), ambre (gaz/énergie) */
+  --blue: #2CA6E0;
+  --blue-dim: color-mix(in srgb, var(--blue) 16%, var(--bg));
+  --red: #D6402C;
+  --red-dim: color-mix(in srgb, var(--red) 16%, var(--bg));
+  --amber: #F2A93B;
+  --amber-dim: color-mix(in srgb, var(--amber) 16%, var(--bg));
+
+  /* Typographie */
+  --font-display: "Space Grotesk", "Archivo", sans-serif;
+  --font-body: "Inter", sans-serif;
+
+  --fs-hero: clamp(6.5rem, 19.5vw, 17rem);
+  --fs-section: clamp(2.75rem, 6vw, 4.75rem);
+  --fs-marquee: clamp(3rem, 11vw, 8rem);
+  --fs-numeral: clamp(5rem, 9vw, 8.5rem);
+
+  /* Espacement — base 8px */
+  --sp-1: 8px;
+  --sp-2: 16px;
+  --sp-3: 24px;
+  --sp-4: 32px;
+  --sp-5: 40px;
+  --sp-6: 48px;
+  --sp-8: 64px;
+  --sp-10: 80px;
+  --sp-12: 96px;
+  --sp-16: 128px;
+
+  /* Mouvement */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 250ms;
+  --dur-base: 700ms;
+
+  --radius: 6px;
+  --container-w: 1320px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur-base: 0ms;
+  }
+}

@@ -1,0 +1,486 @@
+{
+  "majorDimension": "ROWS",
+  "range": "Carreleurs!A1:H500",
+  "values": [
+    [
+      "Nom entreprise",
+      "Note Google",
+      "Nombre avis",
+      "Telephone",
+      "Tranche effectif",
+      "Site web",
+      "Email",
+      "Statut"
+    ],
+    [
+      "MAISONS ALIENOR PERIGUEUX - BOULAZAC🏡 CONSTRUCTEUR DE MAISONS INDIVIDUELLES",
+      "4.2",
+      "107",
+      "05 53 04 34 35",
+      "",
+      "https://www.maisons-alienor.fr/",
+      "contact@cyl-com.fr",
+      "Non contacté"
+    ],
+    [
+      "Envie de salle de bain Marsac sur l'Isle - Périgueux",
+      "4.7",
+      "74",
+      "05 53 06 68 40",
+      "",
+      "https://www.cedeo.fr/salle-expo/cedeo-la-salle-de-bain-perigueux-5777",
+      "",
+      "Non contacté"
+    ],
+    [
+      "RUGGIERI.J carreleur platrier plaquiste",
+      "4.7",
+      "36",
+      "06 50 00 32 12",
+      "",
+      "http://m.facebook.com/ruggierij-artisan-carreleur-plaquiste-288184371902995/?ref=bookmarks",
+      "ruggieri.j@artisan16.fr",
+      "Non contacté"
+    ],
+    [
+      "Rêves et Confort",
+      "4.9",
+      "30",
+      "05 53 04 13 90",
+      "",
+      "https://reves-et-confort.fr/",
+      "revesetconfort@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "ENTREPRISE DE CARRELAGE DE SOUSA FRERES",
+      "4.7",
+      "26",
+      "05 53 09 03 93",
+      "",
+      "https://www.desousafreres.fr/",
+      "desousafreres@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "ESPACE AUBADE Carbonel Trélissac",
+      "3.7",
+      "23",
+      "05 53 35 97 27",
+      "",
+      "https://www.espace-aubade.fr/magasins/carbonel-trelissac.html",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Brice Multiservices 24",
+      "5.0",
+      "15",
+      "06 61 94 08 37",
+      "",
+      "",
+      "briceoulhen16@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "ASKO FRÈRES 24",
+      "5.0",
+      "14",
+      "07 87 23 43 99",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Bouthier Pascal - Carreleur & Pose de Sols",
+      "4.7",
+      "14",
+      "05 53 04 98 08",
+      "",
+      "http://www.bouthier-sols.fr/",
+      "contact@bouthiersarl.fr",
+      "Non contacté"
+    ],
+    [
+      "De Sousa Fils",
+      "5.0",
+      "12",
+      "06 89 55 78 70",
+      "10 à 19 salariés",
+      "https://www.desousafreres.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "sanchis carrelage et resine",
+      "4.9",
+      "10",
+      "07 89 28 33 19",
+      "non renseigné",
+      "",
+      "sanchis.ceramique@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "FRANCEPIERRE Dordogne – Usine & Stock",
+      "4.1",
+      "9",
+      "06 07 55 03 38",
+      "",
+      "http://pierrededordogne.fr/",
+      "contact@francepierre.fr",
+      "Non contacté"
+    ],
+    [
+      "SG Carrelage",
+      "5.0",
+      "8",
+      "07 83 78 68 29",
+      "non renseigné",
+      "https://sgcarrelage-perigueux.fr/",
+      "geoffrey.senzier@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Mathieu et Cie",
+      "3.9",
+      "7",
+      "05 53 53 47 02",
+      "",
+      "https://mathieuetcie.com/",
+      "sarl-mathieu@wanadoo.fr",
+      "Non contacté"
+    ],
+    [
+      "Noël-Mouney Carrelage-Peinture",
+      "4.0",
+      "7",
+      "05 53 62 34 12",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "CARRELÈA",
+      "5.0",
+      "5",
+      "07 66 96 79 79",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Marbre And Co",
+      "4.8",
+      "5",
+      "05 53 09 58 84",
+      "",
+      "https://marbreandco.fr/",
+      "marbreandco@hotmail.com",
+      "Non contacté"
+    ],
+    [
+      "J.C.A Rénovation",
+      "5.0",
+      "5",
+      "06 81 86 04 51",
+      "",
+      "https://jca-renovation.fr/",
+      "j.c.a.entreprise24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "ADC",
+      "5.0",
+      "4",
+      "06 76 22 14 23",
+      "",
+      "https://adc-carrelage24.fr/",
+      "alexducloux@hotmail.fr",
+      "Non contacté"
+    ],
+    [
+      "Aslan Carrelage",
+      "5.0",
+      "4",
+      "06 18 58 04 99",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Carreleur Sols Et Murs Piscine Parquet",
+      "5.0",
+      "4",
+      "07 69 06 31 47",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Labarrere Entreprise",
+      "3.5",
+      "4",
+      "06 73 57 39 91",
+      "",
+      "",
+      "bodymanu33@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Sarl Perigord Carrelage",
+      "2.3",
+      "3",
+      "",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "CARRELAGE ROBERT SYLVAIN",
+      "4.0",
+      "3",
+      "06 37 77 88 00",
+      "",
+      "https://carrelage-robert-sylvain.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Amaro Anibal",
+      "5.0",
+      "2",
+      "06 86 78 12 19",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Parjadis Francis",
+      "5.0",
+      "2",
+      "06 72 81 67 37",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Showroom Point.P - Périgueux",
+      "3.0",
+      "2",
+      "05 53 45 55 55",
+      "",
+      "https://www.pointp.fr/infos-showroom/perigueux-point-p-6206",
+      "",
+      "Non contacté"
+    ],
+    [
+      "GRINGET ARTISAN PLAQUISTE / CARRELEUR",
+      "5.0",
+      "2",
+      "06 19 70 60 21",
+      "",
+      "https://artisan-gringet.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Perisol Carrelage",
+      "5.0",
+      "1",
+      "07 45 18 05 68",
+      "non renseigné",
+      "http://www.instagram.com/perisolcarrelage",
+      "",
+      "Non contacté"
+    ],
+    [
+      "B.S.F Carrelage",
+      "5.0",
+      "1",
+      "07 68 96 05 32",
+      "non renseigné",
+      "http://www.bsf-carrelage.com/",
+      "bsf.carrelage.24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Bianchi Gasquet",
+      "5.0",
+      "1",
+      "06 77 11 11 48",
+      "",
+      "https://bianchi-gasquet.fr/",
+      "entreprise.bianchi.gasquet@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "AB Carrelage",
+      "5.0",
+      "1",
+      "07 50 46 09 24",
+      "non renseigné",
+      "http://www.ab-carrelage.fr/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SBSM Carrelage",
+      "3.0",
+      "1",
+      "05 53 35 00 60",
+      "",
+      "https://www.sbsm-carrelage.com/",
+      "",
+      "Non contacté"
+    ],
+    [
+      "JMB Maçonnerie Générale",
+      "5.0",
+      "1",
+      "06 26 73 49 22",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Karsan Carrelage",
+      "5.0",
+      "1",
+      "",
+      "",
+      "",
+      "tuncay.ay@live.fr",
+      "Non contacté"
+    ],
+    [
+      "M&M Carrelage et rénovation",
+      "5.0",
+      "1",
+      "06 88 28 36 17",
+      "",
+      "",
+      "mmcarrelage24@gmail.com",
+      "Non contacté"
+    ],
+    [
+      "Manuel Ormaechea",
+      "",
+      "0",
+      "06 89 77 30 06",
+      "non renseigné",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "PARJADIS MICKAËL Carreleur",
+      "",
+      "0",
+      "07 88 44 62 99",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "SALEM Fabien",
+      "",
+      "0",
+      "05 53 04 27 88",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "GOURSOLLE DÉCO",
+      "",
+      "0",
+      "06 83 42 33 32",
+      "non renseigné",
+      "",
+      "goursolle.deco@orange.fr",
+      "Non contacté"
+    ],
+    [
+      "Christian le Carreleur",
+      "",
+      "0",
+      "06 81 58 66 11",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Tshani service CARRELAGES PROFESSIONNELS",
+      "",
+      "0",
+      "",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "BATIDECOR - Jouenne Alain - Entreprise de coordination de chantier en Dordogne",
+      "",
+      "0",
+      "06 61 47 73 67",
+      "",
+      "https://www.batidecor.fr/",
+      "ajouenne@sfr.fr",
+      "Non contacté"
+    ],
+    [
+      "Renovaconcept",
+      "",
+      "0",
+      "07 87 66 80 36",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Carbonel",
+      "",
+      "0",
+      "",
+      "",
+      "",
+      "perigueux@j-carbonel.fr",
+      "Non contacté"
+    ],
+    [
+      "SAS GW gros oeuvre et multi",
+      "",
+      "0",
+      "06 09 93 31 77",
+      "",
+      "",
+      "",
+      "Non contacté"
+    ],
+    [
+      "Alex multi services 24",
+      "",
+      "0",
+      "06 23 28 10 99",
+      "",
+      "",
+      "alex.multiservices24@gmail.com",
+      "Non contacté"
+    ]
+  ]
+}

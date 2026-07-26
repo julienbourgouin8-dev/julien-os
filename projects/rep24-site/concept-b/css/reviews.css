@@ -1,0 +1,120 @@
+.reviews {
+  background: var(--bg-raise);
+  overflow: hidden;
+}
+
+.reviews__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-6);
+  flex-wrap: wrap;
+}
+
+.reviews__summary {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5em;
+}
+
+.reviews__summary-score {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.reviews__summary-stars {
+  color: var(--orange-neon);
+  letter-spacing: 0.08em;
+}
+
+.reviews__summary-count {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.reviews__marquee {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+.reviews__track {
+  display: flex;
+  gap: var(--sp-3);
+  width: max-content;
+  animation: reviews-scroll 70s linear infinite;
+  padding: 0 var(--sp-3);
+}
+
+.reviews__marquee:hover .reviews__track {
+  animation-play-state: paused;
+}
+
+@keyframes reviews-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.review-card {
+  flex: 0 0 380px;
+  background: var(--bg-card);
+  border: 1px solid rgba(47, 182, 255, 0.22);
+  border-radius: var(--radius);
+  padding: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  box-shadow: 0 0 18px rgba(47, 182, 255, 0.08);
+  transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.review-card:hover {
+  border-color: rgba(47, 182, 255, 0.6);
+  box-shadow: var(--glow-blue-soft);
+}
+
+.review-card__stars {
+  color: var(--blue-neon);
+  letter-spacing: 0.1em;
+  font-size: 0.95rem;
+}
+
+.review-card__text {
+  font-size: 0.92rem;
+  color: var(--text);
+  line-height: 1.55;
+  white-space: pre-line;
+}
+
+.review-card__meta {
+  margin-top: auto;
+  padding-top: var(--sp-2);
+  border-top: 1px solid rgba(244, 246, 249, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--sp-2);
+}
+
+.review-card__author {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--text);
+}
+
+.review-card__when {
+  font-size: 0.76rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .review-card {
+    flex-basis: 300px;
+  }
+}

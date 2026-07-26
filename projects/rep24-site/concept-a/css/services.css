@@ -1,0 +1,263 @@
+.service {
+  position: relative;
+  padding: var(--sp-16) 0;
+  /* Pas d'overflow:hidden ici : même overflow-x seul suffit à désactiver
+     position:sticky sur .service__media (tout ancêtre avec un axe non
+     "visible" casse le sticky, la spec force alors l'autre axe à passer en
+     "auto"). Le numéro fantôme déborde légèrement (top:-3%) mais reste
+     discret (opacité ~7-8%) — accepté plutôt que de sacrifier le sticky. */
+}
+
+/* -- Thèmes de fond --------------------------------------------------------
+   Plus d'aplats pleins qui alternent (retour Julien 2026-07-22) : les 4
+   sections partagent le même fond --paper texturé posé sur <body> (voir
+   base.css). Chaque service garde son identité par une seule variable
+   --accent, utilisée pour le kicker, le numéro fantôme, la bordure des
+   badges et l'accent des modules — jamais comme fond de section entier.
+   Mapping des couleurs déjà établi ailleurs sur le site : chauffage=rouge,
+   plomberie=bleu, environnement=vert, ramonage/hottes=orange. */
+.service--paper,
+.service--blue,
+.service--green,
+.service--orange {
+  background: transparent;
+  color: var(--ink);
+}
+.service--paper { --accent: var(--red); --accent-dark: var(--red-dark); }
+.service--blue { --accent: var(--blue); --accent-dark: var(--blue-dark); }
+.service--green { --accent: var(--green); --accent-dark: var(--green-dark); }
+.service--orange { --accent: var(--orange); --accent-dark: var(--orange-dark); }
+
+.service__kicker { color: var(--accent-dark); }
+
+.service__lead { color: var(--ink-soft); }
+
+/* -- Numéro fantôme géant ------------------------------------------------- */
+.service__ghost {
+  position: absolute;
+  /* Ancré près du haut de la rangée (kicker/titre), pas centré sur toute la
+     rangée — sinon sa position dérive selon la longueur du texte (paragraphe
+     de 3 vs 5 lignes) et peut finir par chevaucher les badges en bas. */
+  top: -3%;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(11rem, 30vw, 26rem);
+  line-height: 1;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+}
+/* Teinte du numéro fantôme dans la couleur d'accent de la section, très
+   diluée dans le fond --paper — reste discret tout en gardant l'identité
+   de couleur maintenant que le fond plein a disparu. */
+.service__ghost { color: color-mix(in srgb, var(--accent) 11%, transparent); }
+
+.service--ghost-left .service__ghost { left: clamp(-2rem, -2vw, 1rem); }
+.service--ghost-right .service__ghost { right: clamp(-3rem, -3vw, 0rem); text-align: right; }
+.service--ghost-center .service__ghost { left: 50%; transform: translateX(-50%); }
+
+/* -- Layout : contenu + modules empilés dans une colonne, image sticky
+   dans l'autre — jamais un mur de texte sans l'image qui l'accompagne --- */
+.service__row {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 0.92fr;
+  grid-template-rows: auto auto;
+  gap: clamp(32px, 5vw, 80px);
+  align-items: start;
+}
+.service__content { position: relative; grid-column: 1; grid-row: 1; }
+.service__media { grid-column: 2; grid-row: 1 / -1; position: sticky; top: 110px; }
+.service--media-left .service__media { order: -1; }
+
+.service__kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.service__kicker::before { content: ""; width: 28px; height: 1px; background: currentColor; opacity: 0.6; }
+
+.service__title {
+  /* Taille réduite ~20% (retour Julien 2026-07-22) + max-width élargi :
+     l'ancien plafond de 15ch (une unité relative à la taille de police,
+     donc qui ne change pas le nombre de lignes même avec un font-size plus
+     petit) était la vraie cause des titres à 4-5 lignes, pas la taille de
+     police seule. Laisser le titre utiliser la largeur réelle de la colonne
+     .service__content (~600-650px desktop) suffit à tenir en 2-3 lignes. */
+  font-size: clamp(1.5rem, 1rem + 2.1vw, 2.4rem);
+  font-weight: 500;
+  margin: var(--sp-3) 0 var(--sp-3);
+  max-width: 30ch;
+}
+
+.service__lead {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  font-size: 1.04rem;
+  max-width: 52ch;
+  margin-bottom: var(--sp-3);
+}
+
+.service__badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: var(--sp-3) 0 var(--sp-2);
+}
+.service__badge {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--ink) 15%);
+  color: var(--accent-dark);
+}
+
+/* -- Média posé, cadre arrondi + ombre (jamais plein cadre de section) --
+   position: sticky déjà déclaré plus haut avec le placement grid — ne pas
+   le réécrire ici en position:relative, ça écraserait le sticky. */
+.service__media-frame {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  aspect-ratio: 4 / 4.4;
+  position: relative;
+}
+.service__media-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.service__media-tag {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--white);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Section 04 (ramonage + hottes) — deux images empilées côte à côte */
+.service__media--duo {
+  display: grid;
+  gap: var(--sp-2);
+}
+.service__media--duo .service__media-frame { aspect-ratio: 4 / 2.6; }
+
+/* Section 03 (environnement) — bloc teinté d'accent sans photo, badge RGE
+   posé dessus. Autrefois un panneau translucide pensé pour un fond vert
+   plein ; maintenant un léger lavis de --accent sur le fond --paper pour
+   garder une identité de couleur sans réintroduire un aplat plein. */
+.service__badge-panel {
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--accent) 8%, var(--paper));
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+  padding: var(--sp-6) var(--sp-5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-3);
+  text-align: center;
+  aspect-ratio: 4 / 4.4;
+}
+.service__badge-panel img {
+  height: 84px;
+  width: auto;
+  border-radius: 10px;
+  background: var(--white);
+  padding: 10px 14px;
+}
+.service__badge-panel-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-dark);
+}
+
+/* -- Modules (sous-sections verbatim : dépannage, entretien, PAC…) ------
+   Empilés dans la colonne 1 du .service__row, sous .service__content —
+   l'image en colonne 2 reste sticky à côté pendant que ce mur de texte
+   défile, jamais un bloc plein-largeur qui fait disparaître la photo. */
+.service__modules {
+  position: relative;
+  z-index: 1;
+  grid-column: 1;
+  grid-row: 2;
+  margin-top: var(--sp-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.service-module {
+  border-radius: var(--radius-sm);
+  padding: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  /* Fond neutre identique aux 4 sections (cohérence du fond unifié) +
+     liseré dans la couleur d'accent de la section pour garder une
+     identité sans revenir à un aplat de couleur plein. */
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+  border-left: 3px solid color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.service-module__title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.12rem;
+  line-height: 1.25;
+}
+.service-module__text {
+  font-size: 0.94rem;
+  opacity: 0.92;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.service-module__citation {
+  font-style: italic;
+  border-left: 2px solid currentColor;
+  padding-left: 12px;
+  opacity: 0.85;
+  font-size: 0.9rem;
+}
+.service-module ul {
+  margin: 0;
+  padding-left: 1.1em;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.94rem;
+}
+
+@media (max-width: 900px) {
+  .service { padding: var(--sp-10) 0; }
+  /* Pas assez de largeur pour une colonne sticky à côté du texte — l'image
+     redevient un bloc normal dans le flux (contenu, puis image, puis
+     modules), comme avant le passage au sticky desktop. */
+  .service__row { grid-template-columns: 1fr; grid-template-rows: auto auto auto; }
+  .service__content { grid-row: 1; }
+  .service__media { grid-column: 1; grid-row: 2; position: static; margin-bottom: var(--sp-4); }
+  .service--media-left .service__media { order: 0; }
+  .service__modules { grid-row: 3; margin-top: var(--sp-6); }
+  .service__ghost { font-size: 34vw; }
+}

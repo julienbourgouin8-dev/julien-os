@@ -1,0 +1,46 @@
+.reviews {
+  background: var(--bg);
+  padding: var(--sp-16) 0;
+  text-align: center;
+}
+
+.reviews__inner {
+  max-width: 780px;
+}
+
+.reviews__rating {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-1);
+  margin-bottom: var(--sp-6);
+}
+
+.reviews__stars {
+  font-size: 1.75rem;
+  letter-spacing: 0.15em;
+  color: var(--amber);
+}
+
+.reviews__meta {
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.reviews__quote p {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  line-height: 1.35;
+  color: var(--ink);
+  margin-bottom: var(--sp-3);
+}
+
+.reviews__quote cite {
+  display: block;
+  font-style: normal;
+  font-size: 0.9rem;
+  color: var(--ink-muted);
+  letter-spacing: 0.04em;
+}
