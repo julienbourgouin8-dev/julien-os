@@ -10,13 +10,13 @@ Read `references/3ms-framework.md` once. It's how Julien thinks about AI work. M
 
 ## Your skills
 
-- `/onboard` — already run if you're seeing this filled in. Re-run any time to refresh from an edited `aios-intake.md`.
-- `/audit` — Four-Cs gap report. Run on Day 7, then weekly. Watch your score climb.
-- `/level-up` — Weekly 3Ms interview. Find one automation, scope it, ship it. One per week.
-- `site-revamp` — rebuild a real existing BTP client site (ETS Lévesque is the reference) into a premium scroll-animated site, real content preserved verbatim. The offer skill — always a real client, never invented.
-- `showcase-reel` — fast, code-only stylized demo site for weekly Instagram content, no real client, no AI-generated video (stays cheap). Captures itself as a vertical MP4 ready to post.
-- `visual-craft` — growing technique library for image retouching/compositing, animating a still photo (Ken Burns zoom, parallax), and section copywriting. Not invoked alone — loaded by `site-revamp`/`showcase-reel` when a section needs real photo/motion treatment. Julien brings a reference he liked, we reverse-engineer the principle and add it here, one technique at a time.
-- `video-teardown` — give it a YouTube URL, it downloads + detects scene changes (variable spacing, not fixed-interval screenshots) + correlates with the transcript, then feeds `visual-craft`. Automates what was previously done by hand with manual screenshots. Never keeps video/frames — cleans up after each analysis.
+Skills self-register via their `SKILL.md` frontmatter `description` — Claude Code
+surfaces the full list automatically every session. Don't hand-maintain a catalog here;
+it only duplicates the frontmatter and drifts out of sync (that's already happened once
+with `wiki/`/`projects/` going undocumented — same root cause). Current skills, by name
+only: `/onboard`, `/audit`, `/level-up`, `site-revamp`, `showcase-reel`, `visual-craft`,
+`video-teardown`, `lead-gen`, `frontend-design`. To see what each does, read its
+`SKILL.md` or just ask.
 
 ## Where things live
 
@@ -26,31 +26,48 @@ Read `references/3ms-framework.md` once. It's how Julien thinks about AI work. M
 - `connections.md` — registry of every system your AIOS can reach
 - `decisions/log.md` — append-only record of decisions and why
 - `archives/` — old stuff. Don't delete. Move here.
-- `projects/` — working directories for real client/personal builds (e.g.
-  `ets-leveque-site`, `leads-btp-perigueux`, `rep24-site`). Includes `site-adeline`, a
-  personal e-commerce side-project unrelated to the BTP mission — don't treat it as part
-  of the 90-day plan above.
+- `projects/` — working directories for real client/personal builds. Read
+  `projects/_index.md` first — one line per folder, its category and purpose. Includes
+  `site-adeline`, a personal e-commerce side-project unrelated to the BTP mission — don't
+  treat it as part of the 90-day plan above.
 - `wiki/` — a separate "second brain" for business/content/automation knowledge, governed
   by its own `wiki/CLAUDE.md` (not this file). Read that file when working inside `wiki/`.
 
 See `EXPANSIONS.md` for what to add as you grow.
 
+## Memory & precedence
+
+Four stores. Don't duplicate facts across them — each has one job:
+
+- **`CLAUDE.md`** (this file) — standing rules, routing, tool preferences. Rarely changes.
+- **`context/*.md`** — canonical facts about Julien and the business (identity, 90-day
+  priorities, ICP). Wins for any business fact.
+- **Auto-memory** (`~/.claude/projects/.../memory/`) — durable cross-session feedback and
+  process lessons. Should point at `context/`/`decisions/log.md` rather than restating
+  their numbers, so it can't go stale on its own.
+- **`decisions/log.md`** — architectural/process decisions and why. On-demand only, not
+  auto-loaded.
+
+**If a memory note and `context/` disagree on a fact, `context/` is right** — treat the
+memory as stale and flag it rather than trusting it blindly.
+
+## API keys
+
+Any future integration's key goes in `.env` at the project root (already gitignored).
+**Never ask Julien for a key mid-task — check `.env` first.** If a new integration needs
+one that isn't there yet, add a placeholder line with a comment on where to get it, then
+tell Julien to drop the real key in.
+
 ## Knowledge base
 
-Julien Bourgouin, 18 ans, vient d'avoir le bac, gymnaste de haut niveau en équipe de France
-(champion de France élite 2026 : concours général, anneaux, barre fixe). Autodidacte en IA depuis
-2 ans. Offre : implémenter l'IA/automatisation dans des entreprises pour leur faire gagner du temps
-sur l'administratif et générer du revenu. Cible actuelle : PME BTP (plomberie) autour de Périgueux,
-via refonte de site gratuite en porte d'entrée puis implémentation IA gratuite, en échange de
-testimonials/recommandations avant de faire payer. Premier prospect : ETS Lévesque.
+Julien Bourgouin, 18 ans, gymnaste de haut niveau en équipe de France, autodidacte en IA.
+Offre : implémenter l'IA/automatisation dans des PME BTP pour leur faire gagner du temps
+et générer du revenu, via refonte de site gratuite en porte d'entrée. Premier prospect :
+ETS Lévesque.
 
-Priorités des 90 jours (détail dans `context/priorities.md`) :
-1. Décrocher une mission gratuite chez ETS Lévesque (ou le prospect BTP suivant) — contact repris
-   semaine du 20 juillet 2026, démarrage visé en septembre (août mort dans le BTP).
-2. Faire ses preuves d'ici fin septembre 2026 : livrer un gain mesurable documenté + 1 témoignage.
-3. Premier client payant d'ici ~mi-octobre 2026 (délai flexible selon Lévesque).
-
-Détails complets dans `context/about-me.md` et `context/about-business.md`.
+Détails complets et à jour (identité, business, ICP, priorités 90 jours) : `context/about-me.md`,
+`context/about-business.md`, `context/priorities.md`, `context/icp-btp-segments.md`. `context/`
+est la source de vérité — ne pas recopier ses faits ici.
 
 ## Voice
 

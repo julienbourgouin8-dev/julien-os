@@ -181,3 +181,45 @@ n'est ni partagée ni garantie).
 **Owner:** Julien.
 
 ---
+
+## 2026-07-26 — CLAUDE.md durci après comparaison avec l'AIOS de Nate Herk
+
+**Decision:** suite à une vidéo YouTube de Nate Herk détaillant l'organisation de son
+AIOS (transcription + captures de son `CLAUDE.md` et de son arborescence), quatre
+changements structurels adoptés dans `CLAUDE.md` :
+1. Section `## Your skills` réduite à une liste de noms + une règle ("les skills
+   s'auto-enregistrent via leur frontmatter, Claude Code les affiche déjà
+   automatiquement chaque session — ne pas maintenir un catalogue à la main qui
+   duplique et dérive").
+2. Nouvelle section `## Memory & précédence` : les 4 sources (CLAUDE.md, `context/`,
+   mémoire auto, `decisions/log.md`) ont chacune un rôle, et en cas de désaccord entre
+   une mémoire et `context/`, `context/` a raison.
+3. Nouvelle section `## API keys` : toute clé future va dans `.env`, jamais demandée à
+   Julien en cours de tâche, placeholder créé si absente.
+4. `## Knowledge base` réduit à un résumé de 3 lignes + pointeurs vers `context/*.md`
+   au lieu de recopier en entier l'identité/les priorités 90 jours (qui vivaient déjà
+   dans `context/about-me.md`/`priorities.md`) — la duplication était un vrai risque
+   de "clash" (une source mise à jour, pas l'autre).
+Créé aussi `projects/_index.md` (une ligne par dossier de `projects/`, catégorie + but),
+sur le même principe que son `projects/_index.md` à 55 dossiers, mais appliqué dès 4
+dossiers plutôt que d'attendre que ça devienne nécessaire.
+
+**Why:** Nate gère une échelle très différente (multi-business, équipe, 55 dossiers de
+projets) et une partie de sa vidéo ne s'applique pas ici (cache hiérarchisé de wiki à
+plusieurs centaines de pages, séparation `OtherWorlds`/`projects`, ClickUp) — ignoré
+volontairement pour ne pas copier une solution à un problème qu'on n'a pas encore. Mais
+quatre de ses principes sont génériques, pas liés à l'échelle, et corrigeaient des trous
+réels déjà repérés le même jour dans l'audit de fichiers/dossiers (le catalogue de
+skills dupliquait déjà ce que le harness affiche seul ; aucune règle de précédence
+n'existait entre mémoire et `context/` ; `projects/`/`wiki/` avaient déjà été trouvés
+non documentés plus tôt dans la session).
+
+**Alternatives considered :** copier tout le système de Nate tel quel (écarté — plusieurs
+pièces répondent à un problème d'échelle que nous n'avons pas, les copier aurait été de
+la sur-ingénierie prématurée) ; garder `## Knowledge base` tel quel pour l'aspect
+narratif/motivant de voir sa mission en ouvrant `CLAUDE.md` (écarté par Julien après
+clarification — il a choisi l'option la plus simple, réduire à un pointeur).
+
+**Owner:** Julien.
+
+---
