@@ -41,8 +41,9 @@ métier, qui a pris tout le temps de la session car fait en séquence) :
 tour d'appels d'outils avec N invocations `Agent`, pas N tours
 successifs). Chaque agent :
 
-- Prend `subagent_type: general-purpose` (a besoin des outils navigateur +
-  fichiers), `run_in_background: true` (défaut).
+- Prend `subagent_type: lead-gen-scraper` (agent formalisé dans
+  `.claude/agents/lead-gen-scraper.md`, pinné sur Sonnet — pas besoin d'Opus
+  pour du scraping mécanique), `run_in_background: true` (défaut).
 - Est responsable de **toute l'Étape 1** (ci-dessous) pour son métier
   seul : toutes les communes de la zone, scroll complet, filtrage
   catégorie, dédoublonnage interne, récupération des URLs de site. Le

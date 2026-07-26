@@ -155,6 +155,14 @@ marcher dessus sur les fichiers partagés (`data.js`/`engine.js` du contenu
 réel commun : lecture seule pour tous les agents, jamais d'écriture
 concurrente).
 
+**Utiliser `subagent_type: site-builder`** (agent formalisé le 2026-07-26
+dans `.claude/agents/site-builder.md`, **pinné sur Sonnet dans son propre
+fichier** — plus besoin de compter uniquement sur l'instruction de prompt
+ci-dessous pour empêcher un agent de construire sur Opus, le pin de modèle
+l'empêche structurellement). Lui donner dans le prompt la direction
+artistique déjà figée (nom du concept, palette, typo, scénario de scroll) —
+il exécute, il n'invente pas la direction créative.
+
 ## Étape 2 — Répartition des modèles (Opus / Sonnet)
 
 L'interview, les concepts et la direction artistique (palette, typo, layout,
@@ -166,6 +174,13 @@ Une fois les concepts validés et la direction artistique arrêtée, repasse sur
 Sonnet 5 (`/model sonnet`) pour la phase construction : extraction de frames,
 CSS, JS, câblage scroll, vérification. La construction mécanique n'a pas
 besoin du modèle le plus cher — les décisions de goût, si.
+
+**Si la construction passe par des agents (mode volume, plusieurs versions
+en parallèle), utiliser `subagent_type: site-builder`** plutôt que
+`general-purpose` — son `model: sonnet` est fixé dans sa propre définition
+(`.claude/agents/site-builder.md`), donc il tourne sur Sonnet même si le
+thread principal est sur Opus au moment de l'appel. C'est une garantie
+structurelle, pas juste une consigne de prompt.
 
 **Contrainte dure, pas une suggestion** (corrigé le 2026-07-21 après un
 dérapage réel où des agents Opus avaient écrit toute la construction au lieu
