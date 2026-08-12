@@ -1,0 +1,267 @@
+@import "tailwindcss";
+
+:root {
+  /* Couleur mesurée directement sur une capture d'écran RÉELLE du site (pas
+     sur le fichier hero-v4.jpg source) — le rendu Next.js Image (crop
+     object-cover + compression) affiche une teinte plus claire que les
+     pixels bruts du fichier ne le laissaient penser. Si le hero change,
+     re-mesurer sur un screenshot, pas sur le fichier source. */
+  --color-paper: #f3f3ee;
+  --color-ink: #241b15;
+  --color-teal: #2f5f63;
+  --color-teal-dark: #182f31;
+  --color-rust: #ad4a34;
+  --color-mustard: #d6a23c;
+  --color-line: #ded0ba;
+  /* Bleu échantillonné directement sur le sac du hero — accent unique
+     (wordmark + CTA), pour que la couleur de marque soit littéralement
+     celle du produit plutôt qu'un choix arbitraire de palette. */
+  --color-denim: #4f6c8f;
+  --color-denim-dark: #3c5470;
+}
+
+@theme inline {
+  --color-paper: var(--color-paper);
+  --color-ink: var(--color-ink);
+  --color-teal: var(--color-teal);
+  --color-teal-dark: var(--color-teal-dark);
+  --color-rust: var(--color-rust);
+  --color-mustard: var(--color-mustard);
+  --color-line: var(--color-line);
+  --color-denim: var(--color-denim);
+  --color-denim-dark: var(--color-denim-dark);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-script: var(--font-script);
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body), sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-display), serif;
+}
+
+.font-script {
+  font-family: var(--font-script), cursive;
+}
+
+/* Hero one-shot entrance: image settles from oversized to resting size,
+   fades the wordmark/tagline in just after — see visual-craft/motion-recipes.md */
+@keyframes hero-settle {
+  from {
+    transform: scale(1.15);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Bouton CTA du hero : arrive après la tagline (hero-rise), pas en même
+   temps — un petit "pop" plus court/snappy plutôt qu'une simple montée,
+   pour que ça se lise comme deux temps distincts. */
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(6px);
+  }
+  70% {
+    transform: scale(1.03) translateY(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.hero-pop {
+  display: inline-flex;
+  animation: pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.hero-media {
+  animation: hero-settle 1.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero-rise {
+  animation: rise-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* "Écriture" effect: each word wipes in like ink spreading under a pen,
+   left to right, softened by a blur that resolves as it settles. Splitting
+   per-letter broke the display font's italic ligatures (swashy i/l), so
+   this stays per-word — the smallest unit that keeps glyph shaping intact. */
+@keyframes write-on {
+  from {
+    clip-path: inset(0 100% 0 0);
+    filter: blur(6px);
+  }
+  60% {
+    filter: blur(2px);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    filter: blur(0);
+  }
+}
+
+.write-on {
+  display: inline-block;
+  animation: write-on 0.9s cubic-bezier(0.45, 0, 0.2, 1) both;
+}
+
+/* Reveal-on-scroll: JS toggles [data-revealed] once the element enters view */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-reveal][data-revealed="true"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Running-stitch underline: a dashed SVG path that draws itself in.
+   Signature motif — reused under the wordmark and every section eyebrow. */
+.stitch-path {
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  transition: stroke-dashoffset 1.1s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+[data-revealed="true"] .stitch-path,
+.hero-rise .stitch-path {
+  stroke-dashoffset: 0;
+}
+
+/* Mood-board tilt on product cards — see visual-craft/hero-patterns.md
+   (collage flottant): each card sits at a slight, alternating angle,
+   like a fabric swatch pinned by hand, and settles flat on hover. */
+.tilt-card {
+  transform: rotate(var(--tilt, 0deg));
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.group:hover .tilt-card {
+  transform: rotate(0deg) translateY(-6px);
+}
+
+/* Carte des marchés (MapLibre) — pins et popup redessinés pour matcher la
+   marque plutôt que le chrome par défaut de la lib (boîte blanche carrée,
+   flèche épaisse). */
+.marche-pin {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: var(--color-denim);
+  border: 2.5px solid var(--color-paper);
+  box-shadow: 0 2px 8px rgba(36, 27, 21, 0.35);
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.25s ease-out;
+}
+
+.marche-pin:hover {
+  transform: scale(1.15);
+}
+
+.marche-pin--active {
+  background: var(--color-teal);
+  transform: scale(1.35);
+  box-shadow: 0 4px 14px rgba(36, 27, 21, 0.45);
+}
+
+.maplibregl-popup.marche-popup .maplibregl-popup-content {
+  padding: 0;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 18px 30px rgba(36, 27, 21, 0.28);
+  background: var(--color-paper);
+}
+
+.maplibregl-popup.marche-popup .maplibregl-popup-tip {
+  border-top-color: var(--color-paper);
+}
+
+.marche-popup-card img {
+  display: block;
+  width: 100%;
+  height: 6.5rem;
+  object-fit: cover;
+}
+
+.marche-popup-body {
+  padding: 0.75rem 1rem 1rem;
+  text-align: left;
+}
+
+.marche-popup-date {
+  margin: 0;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-teal);
+}
+
+.marche-popup-name {
+  margin: 0.15rem 0 0;
+  font-family: var(--font-display), serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--color-ink);
+}
+
+.marche-popup-place {
+  margin: 0.15rem 0 0;
+  font-size: 0.8rem;
+  color: color-mix(in srgb, var(--color-ink) 65%, transparent);
+}
+
+.maplibregl-ctrl-top-right .maplibregl-ctrl {
+  margin: 0.75rem 0.75rem 0 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tilt-card {
+    transition: none;
+  }
+
+  .hero-media,
+  .hero-rise,
+  .hero-pop,
+  .write-on {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+    clip-path: none !important;
+    filter: none !important;
+  }
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .stitch-path {
+    transition: none;
+    stroke-dashoffset: 0;
+  }
+}

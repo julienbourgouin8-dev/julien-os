@@ -182,6 +182,74 @@ n'est ni partagée ni garantie).
 
 ---
 
+## 2026-08-04 — Test parallèle "désinsectiseurs" pendant le creux BTP d'août
+
+**Decision:** pendant qu'ETS Lévesque reste sans réponse et que le BTP est
+mort en août (congés du secteur), lancer un test de prospection sur un
+métier hors BTP identifié comme actif en ce moment : les désinsectiseurs
+(guêpes/frelons), zone Périgueux + communes limitrophes. Détail du
+raisonnement et des autres métiers explorés : `context/expansion-niches.md`.
+Première étape : reconnaissance rapide sur Google Maps pour compter le
+nombre réel de désinsectiseurs dans la zone avant de lancer tout le
+pipeline d'enrichissement (`lead-gen`) — risque identifié que ce soit un
+marché trop petit en volume comparé au BTP.
+
+**Why:** le plan 90 jours (`context/priorities.md`) reste concentré sur
+BTP/ETS Lévesque, mais août est structurellement mort pour ce secteur —
+ce temps mort ne coûte rien à la mission principale s'il sert à tester un
+nouveau front plutôt qu'à attendre. Les désinsectiseurs sont le seul métier
+de la liste explorée avec une demande confirmée et forte pile en ce moment
+(pic de population des nids en août-septembre), contrairement aux autres
+pistes (pisciniers : pas avant fin septembre ; serruriers/déménageurs :
+hypothèses non vérifiées).
+
+**Alternatives considered:** attendre simplement la reprise BTP en
+septembre sans rien tester (écarté par Julien — "on doit avancer et
+essayer de nouvelles choses") ; démarrer directement sur pisciniers ou
+serruriers (écarté, demande pas confirmée pour août) ; lancer tout de
+suite le pipeline complet d'enrichissement sans vérifier la taille du
+marché (écarté, risque de perdre du temps sur un métier trop rare
+localement).
+
+**Owner:** Julien.
+
+---
+
+## 2026-08-04 — Premier envoi réel désinsectiseurs : ton "honnête, sans pitch" + compte principal
+
+**Decision:** envoi de 12 emails réels (sur les 22 leads "Zone 25km" de
+`context/expansion-niches.md`) avec un email volontairement non-commercial
+— pas d'offre annoncée dès le début, question ouverte sur les tâches
+administratives, promesse de travail gratuit tant qu'on n'a pas trouvé de
+solution ensemble, aucune mention du mot "IA". Construit itérativement en
+chat (une dizaine d'allers-retours de correction de ton avec Julien) plutôt
+que repris d'un template existant. Envoyé depuis le compte principal
+`julienbourgouinai@gmail.com` (pas un compte secondaire de volume), à la
+demande explicite de Julien malgré la règle habituelle qui réserve ce
+compte aux réponses (voir `references/gws-cli-api.md` § Multi-compte).
+Un lead (AB3D) exclu de l'envoi : l'email trouvé par scraping
+(`contact@distinguez-vous.com`) ne correspond pas à son domaine propre —
+suspicion d'email d'agence web plutôt que de l'entreprise elle-même,
+marqué "à vérifier" dans le sheet plutôt qu'envoyé à l'aveugle.
+
+**Why:** Julien voulait tester un ton radicalement différent de la
+prospection classique — parler "comme il parle", chercher une réponse
+honnête plutôt qu'une conversion, sans jouer la carte IA/technique. Le
+compte principal a été choisi consciemment par Julien après que je lui ai
+présenté le compromis (cohérence de marque personnelle vs. protection de
+la réputation d'envoi) — son choix, pas une dérive silencieuse.
+
+**Alternatives considered:** compte secondaire de volume (recommandé par
+moi, écarté par Julien) ; envoyer aussi à AB3D avec l'email trouvé
+(écarté, risque de contacter la mauvaise personne) ; attendre d'avoir une
+solution SMS/WhatsApp avant d'envoyer quoi que ce soit (écarté par Julien
+— l'email disponible aujourd'hui ne doit pas attendre l'outil SMS, encore
+à construire).
+
+**Owner:** Julien.
+
+---
+
 ## 2026-07-26 — CLAUDE.md durci après comparaison avec l'AIOS de Nate Herk
 
 **Decision:** suite à une vidéo YouTube de Nate Herk détaillant l'organisation de son
@@ -255,6 +323,309 @@ précisément ce qui a causé la confusion, un template n'est pas une source can
 fusionner les deux voies en une seule description vague (écarté — elles ont des mécaniques
 et des métriques de suivi différentes, taux de clic n'a pas de sens pour la Voie B qui n'a
 pas de lien, seul le taux de réponse compte).
+
+**Owner:** Julien.
+
+---
+
+## 2026-07-30 — MVP devis-vocal : périmètre, stack et démo, actés après étude de marché
+
+**Decision:** Lancement du chantier `projects/devis-vocal/` — matérialisation produit de la
+promesse "devis générés automatiquement pendant le rendez-vous" déjà envoyée en cold email
+(Voie B). Trois décisions structurantes actées et déjà mises en œuvre :
+
+1. **Stack 100% locale au MVP, pas d'API payante.** whisper.cpp (Metal) + Ollama (qwen3:8b +
+   bge-m3) tournent sur le Mac de Julien (M4, 16 Go). Le téléphone n'est qu'un micro/écran.
+   Mesuré en conditions réelles le jour même : Whisper transcrit à ~4,5x le temps réel ;
+   qwen3:8b répond en ~9 s/bloc une fois chaud (`OLLAMA_KEEP_ALIVE=-1` nécessaire).
+2. **PWA vanilla (HTML/CSS/JS), pas React Native/Expo.** Argument calendaire : ~6 semaines
+   avant la démo de septembre, Julien n'a jamais fait de React Native. Couvre Android ET
+   iPhone pour 0 € (pas de compte Apple Developer nécessaire), contrairement à une app native.
+3. **Devis uniquement, jamais la facturation au MVP.** La réforme française de facturation
+   électronique (réception obligatoire 1er sept. 2026, émission TPE obligatoire 1er sept.
+   2027, transit par Plateforme Agréée) ne s'applique qu'aux factures — rester sur le devis
+   annule 100% de cette charge réglementaire.
+
+Plan complet : `~/.claude/plans/j-aimerais-cr-er-une-application-zazzy-cat.md`.
+`context/about-business.md` et `projects/_index.md` mis à jour le jour même.
+
+**Why:** une étude de marché faite avant de coder a montré que le "devis vocal" n'est plus un
+différenciateur — Obat (leader FR, 18M€ levés), Vertuoza et Notim le proposent déjà en
+production. Le plan a donc été construit sur ce qui reste défendable : la bibliothèque de
+prix reconstruite depuis les VRAIS anciens devis PDF de l'artisan (pas des prix génériques
+Batiprix/Batichiffrage), la vitesse de correction sur l'écran de validation, et la règle
+"aucun prix jamais deviné par l'IA". Le choix 100% local vient d'une contrainte déjà connue
+(Julien a refusé par le passé d'enregistrer une CB pour une API cloud, cf. décision Places
+API du 2026-07-20) et d'un calendrier serré (le BTP est mort en août, démo visée en
+septembre) qui interdit un détour par une stack payante à monter.
+
+**Alternatives considered :** Expo/React Native pour l'app (écarté — 2-3 semaines
+d'apprentissage sur un terrain jamais pratiqué, risque calendaire trop élevé) ; API cloud
+(Deepgram/Claude) dès le MVP (écarté pour le MVP — contraire à la contrainte 0 € déjà
+actée ; à rouvrir explicitement après la démo si la précision locale est insuffisante, cf.
+tripwire à 60% de précision en semaine 2 du plan) ; inclure la facturation dès le MVP
+(écarté — coût réglementaire 2026-2027 sans valeur différenciante).
+
+**Owner:** Julien.
+
+---
+
+## 2026-07-31 — Agent téléphonique : qualification + notification, jamais un devis généré par téléphone
+
+**Decision:** Recadrage du rôle de l'agent IA téléphonique (deuxième lame commerciale,
+hors MVP `devis-vocal`) après une objection de Julien pendant une session de travail.
+Version corrigée, actée :
+
+- **Travaux sur mesure (majorité des cas)** : l'IA qui décroche le téléphone qualifie
+  l'appel (nom, prénom, adresse, motif, détection d'urgence) et pousse une **notification**
+  à l'artisan avec ces infos pré-remplies. Elle ne génère PAS de devis. Le devis complet
+  reste produit par l'artisan après visite technique, via la dictée terrain (le MVP actuel,
+  inchangé).
+- **Prestations standardisées à prix quasi-fixe** (détartrage chaudière, débouchage,
+  ramonage, entretien annuel) : exception — un mini-devis/prix peut être donné directement
+  au téléphone, puisqu'aucune inconnue technique n'entre en jeu.
+- Le schéma SQLite du MVP (`projects/devis-vocal/data/schema.sql`) encaisse ce futur usage
+  sans modification : un appel entrant devient simplement un `client` + un `devis` en
+  statut brouillon créés automatiquement plutôt que saisis à la main, sur les mêmes tables.
+
+**Why:** ma première formulation ("l'IA transforme l'appel en brouillon de devis prêt à
+valider") était trop optimiste — un devis BTP correct demande une connaissance technique
+terrain (mesures, état réel de l'installation, ce qui doit vraiment être remplacé) qu'un
+appel téléphonique ne peut pas fournir. Julien l'a repéré immédiatement : "l'IA n'a pas les
+connaissances du professionnel du BTP". C'est exactement la même règle que celle déjà
+actée pour le devis vocal terrain (`decisions/log.md`, 2026-07-30) : ne jamais deviner un
+prix ou un poste qu'on ne connaît pas réellement. L'appliquer aussi à l'agent téléphonique
+évite de vendre une promesse technique intenable, et recentre la valeur réelle sur ce qui
+compte le plus : ne pas perdre un client (surtout en urgence) faute d'avoir décroché.
+
+**Alternatives considered :** garder la formulation "appel → devis" comme argument
+commercial simplifié en sachant qu'elle est technique fausse (écarté — contraire à la
+règle de confiance déjà actée, et un client qui découvre que le "devis" reçu par téléphone
+ne correspond pas à la réalité du chantier casse la confiance dès le premier contact) ;
+faire de la qualification téléphonique un module séparé du devis vocal, sans lien de
+données (écarté — le schéma existant montre que les deux flux (appel entrant, dictée
+terrain) peuvent remplir les mêmes tables `client`/`devis`, pas la peine de dupliquer).
+
+**Owner:** Julien.
+
+---
+
+## 2026-07-31 — Positionnement devis-vocal : agence maintenant, SaaS self-serve plus tard
+
+**Decision:** Après étude de marché élargie (taille du marché, taux d'équipement,
+concurrence, coûts réels), trois points actés sur le modèle économique de
+`devis-vocal` :
+
+1. **Mode agence au démarrage, pas de SaaS en libre-service.** Installation en
+   personne (récupération des PDF, construction de la bibliothèque, paramétrage),
+   pas un signup autonome. Raison : 76 % des BTP ont déjà un logiciel de
+   facturation (Baromètre France Num 2025) mais seulement 13-16 % ont choisi un
+   outil spécialisé métier — la majorité utilise ce qu'un tiers (comptable,
+   Excel) leur a mis entre les mains, donc ce public ne s'auto-onboarde pas sur
+   un nouvel outil. La distribution qui marche dans ce marché est humaine
+   (Tolteck via Point P, Notim via la CAPEB/CNATP), pas digitale.
+2. **Prix visé : 39-49€/mois (repère Obat "Pro"), ou un hybride setup unique
+   (150-300€) + abonnement plus bas (~25-35€/mois).** Pas le prix d'entrée
+   Tolteck (19-25€) — celui-là suppose l'autonomie totale du client, qu'on n'a
+   pas en mode agence.
+3. **Différenciateur reconfirmé après vérification directe chez Obat** : leur
+   bibliothèque de prix ne s'enrichit que par saisie manuelle, copie, scraping
+   de catalogues fournisseurs, ou aide à la migration Excel — **aucun import
+   automatique depuis d'anciens devis PDF**. Le vrai actif défendable n'est pas
+   "une bibliothèque qui s'améliore avec le temps" (ça, tout le monde l'a), c'est
+   **la bibliothèque personnalisée dès le jour 1**, construite depuis les
+   anciens PDF du client, plus la détection de dispersion de prix — deux choses
+   absentes chez Obat.
+
+**Coûts réels validés (recherche fournisseurs, juillet 2026)** — à mesurer à
+nouveau si le volume change fortement :
+- Devis vocal (STT Groq Whisper turbo + extraction Claude Sonnet 5) :
+  ~0,02 €/devis, donc ~0,30€/mois/client à 15-20 devis/mois. Marge logicielle
+  ~90%+ dès quelques clients.
+- Agent téléphonique (Retell/Vapi/ElevenLabs, si un jour construit) :
+  ~4 à 15 €/mois/client selon plateforme et volume — nettement plus cher que
+  le devis (temps réel vs traitement différé). Mange une vraie part de la
+  marge si bundlé dans le même abonnement, à modéliser avant de fixer un prix
+  définitif incluant ce module.
+- Auto-hébergement Whisper sur un VPS GPU : écarté, ne devient rentable qu'à
+  >5000h d'audio/mois — hors de portée à cette échelle.
+
+**Why:** un fondateur solo de 18 ans sans budget marketing, sans reconnaissance
+de marque, ne peut pas gagner une bataille self-serve contre Obat (18M€ levés)
+ou Tolteck (30 000 clients, distribué par Point P). Le seul avantage qu'il a
+que les gros ne peuvent pas répliquer à son échelle, c'est l'installation en
+personne et la relation de confiance — donc en faire le point de départ,
+pas un vestige à abandonner dès que possible.
+
+**Alternatives considered :** viser le prix d'entrée Tolteck pour maximiser le
+volume de signups (écarté — suppose une acquisition digitale qu'on n'a pas, et
+un onboarding autonome qui ne colle pas au profil du client cible) ; bundler
+l'agent téléphonique dans l'abonnement devis dès le lancement (écarté pour
+l'instant — deuxième lame commerciale distincte, coût par minute nettement
+supérieur au devis, à vendre et pricer séparément une fois prouvé).
+
+**Owner:** Julien.
+
+---
+
+## 2026-08-02 — devis-vocal : identité visuelle "chantier" (charbon/orange), abandon de la piste bleu/SaaS-IA
+
+**Decision:** troisième refonte de l'identité visuelle de SoloBTP en une
+semaine. Palette finale : fond sable chaud, charbon (quasi-noir) pour les
+bandeaux de lot et le texte fort, orange sécurité chantier (`#D9480F`) comme
+seule couleur d'action/accent. Police unique Archivo (plus de mélange
+Plus Jakarta Sans + Instrument Serif italique). Barre d'onglets mobile
+repensée : fond charbon sombre, onglet actif en pastille orange pleine
+(remplace un simple changement de couleur de texte, jugé pas assez visible).
+Suppression des pastilles "eyebrow" au-dessus des titres d'onglet.
+
+**Why:** parcours en 3 temps. (1) Palette orange/bandeau navy inspirée
+d'Obat/Vertuoza/Notim après recherche marché — cohérente mais Julien l'a
+jugée "pas terrible" sans rejet formel. (2) Rebrand complet sur une capture
+d'une landing page IA générique ("Larka") — bleu vif, pastilles pilule,
+logo en serif italique. Julien : "j'aime pas les onglets, l'onglet devis
+est pas clair, les couleurs sont pas sur le thème... n'aie pas peur de tout
+changer." Diagnostic : le bleu + pastilles + serif italique sont des
+conventions de landing page SaaS/IA, pas d'un outil de chantier utilisé sur
+un téléphone plein de poussière — la référence Larka avait été suivie trop
+littéralement plutôt qu'adaptée au sujet réel. (3) Palette construite sur le
+vocabulaire du métier (gilet/cône orange, charbon, sable) plutôt que sur une
+capture d'écran d'un secteur différent.
+
+**Alternatives considered :** garder le bleu et juste foncer la couleur
+active des onglets (écarté — ne réglait pas le vrai problème, qui était le
+thème entier perçu comme hors sujet, pas juste un contraste insuffisant) ;
+revenir à l'esthétique "carnet autocopiant" du tout début (écartée à
+l'époque parce que non inspirée du marché — mais la nouvelle palette
+récupère l'intuition tactile/matérielle de cette première piste sans
+recopier l'esthétique papier/tampon).
+
+**Owner:** Julien.
+
+---
+
+## 2026-08-02 — devis-vocal : retour au bleu (identité v4) + Dashboard, Appels, filtres statut, "+" Créer
+
+**Decision:** l'entrée du même jour ci-dessus ("identité chantier
+charbon/orange") est en partie corrigée quelques heures plus tard : Julien a
+confirmé vouloir garder le bleu et les motifs décoratifs (formes floues en
+dégradé) de la référence Larka, y compris pour une app et pas seulement un
+site — "même si c'est un site web, je veux une belle refonte moderne". Le
+diagnostic initial ("le bleu est hors sujet pour un outil de chantier")
+était donc erroné ; le vrai problème était la clarté de la barre d'onglets
+(contraste insuffisant sur l'onglet actif), corrigée entre-temps et
+conservée. Palette v4 : fond bleu très pâle, bleu vif (`#3D5FE0`) en accent,
+bandeau dégradé avec formes floues sur le Dashboard, cartes avec ombre
+douce. Même passage : ajout d'un onglet **Dashboard** (premier de la barre,
+KPI + graphique CA en SVG fait main + devis récents), pilules de filtre par
+statut sur l'onglet Devis (Tous/Brouillon/Envoyé/Accepté/Refusé), un onglet
+**Appels** (aperçu du futur agent téléphonique — liste appelants + fiche
+détail avec résumé et carte de localisation stylisée maison, montrant
+distance/temps depuis la position de l'artisan) et un bouton flottant **"+"
+Créer** (devis/facture/client) qui remplace l'onglet Factures dans la barre
+principale — Factures reste accessible depuis ce menu.
+
+**Why:** la palette et les motifs décoratifs n'étaient jamais le problème
+réel signalé — Julien n'avait pas explicitement rejeté le bleu la première
+fois, il avait rejeté le manque de clarté des onglets et un manque général
+de polish. Un revirement complet de palette a été fait sur une inférence,
+pas sur un rejet explicite du bleu — cf. `feedback_ground_design_refs_in_subject`
+en mémoire (leçon : ne pas sur-interpréter une critique vague). L'onglet
+Appels reste un aperçu honnête (mention explicite dans l'UI) : l'agent
+téléphonique reste hors périmètre MVP, cf. entrée 2026-07-31 sur le
+"deuxième lame commerciale".
+
+**Alternatives considered :** garder l'identité charbon/orange et juste
+répondre "non, on garde le bleu" sans repasser derrière (écarté — Julien a
+donné une direction visuelle concrète avec captures à l'appui, autant
+l'exécuter proprement plutôt que de discuter la couleur en abstrait) ;
+fusionner Factures et Devis en un seul écran avec toutes les données
+mélangées (écarté — la contrainte réglementaire sur la facturation reste
+valable, seul l'accès depuis la nav a changé, pas le contenu).
+
+**Owner:** Julien.
+
+---
+
+## 2026-08-06 — Désinsectiseurs "Plus loin" : pitch commercial explicite + double canal email/formulaire
+
+**Decision:** contact des 12 leads jamais contactés de l'onglet "Plus loin"
+(sheet "Leads Désinsectiseurs - Périgueux") avec un nouveau template —
+pitch commercial explicite dès la première ligne, à l'opposé du ton
+"honnête, sans pitch" testé le 2026-08-04 sur l'onglet "Zone 25km". Accroche
+personnalisée par entreprise : une impression globale tirée de l'ensemble
+de leurs avis Google (pas la paraphrase d'un avis isolé), avec un prénom
+cité quand il revient plusieurs fois dans les avis (ex. "Rémi" pour Captain
+Nuisible, "M. Berland" pour Framo). Double canal : email planifié via Gmail
+(compte principal, `Schedule send`, étalé de 13h00 à 21h15 le jour même) +
+soumission du même message via le formulaire de contact du site pour
+chaque lead qui en a un. 11 formulaires soumis avec succès sur 13 tentés.
+Deux exceptions :
+- **MaisonSûr Périgueux** : le site (maisonsur.com) a révélé que ce n'est
+  pas un artisan désinsectiseur mais un groupe de rénovation habitat
+  multi-métiers (25 ans, 6 agences, 100+ salariés) — email envoyé avec une
+  accroche réécrite sur leur échelle/ancienneté (pas sur les avis, mitigés
+  à 4,1★/60 avec un litige grave signalé), mais leur formulaire "Nous
+  contacter" s'est avéré être un formulaire de demande de bilan gratuit
+  pour propriétaires (code postal obligatoire) — pas utilisé pour ne pas
+  polluer leur pipeline de leads avec un faux client.
+- **VA Nuisibles 3D** : formulaire rempli mais bloqué par une question
+  anti-bot ("combien font cinq plus neuf ?") — pas résolue, conformément à
+  la règle qui interdit de contourner les CAPTCHAs. À terminer manuellement
+  par Julien si souhaité.
+- **Hygien'air** exclu du lot : site mort (`hygien-air-24.fr`,
+  ERR_NAME_NOT_RESOLVED) et pas d'email dans le sheet — combiné à un avis
+  1★ signalant le gérant injoignable pendant 3 mois, ça sent l'entreprise
+  en sommeil.
+
+**Why:** Julien a explicitement demandé ce pitch et ce double canal (voix,
+2026-08-06), avec deux corrections en cours de route : (1) l'accroche
+initiale ("félicitations pour vos avis 5 étoiles" générique) jugée creuse
+pour les cas à avis mitigés — remplacée par une accroche neutre basée sur
+des faits vérifiables plutôt qu'un compliment forcé ; (2) cette accroche
+neutre elle-même jugée insuffisante ensuite — Julien voulait une impression
+de synthèse tirée de l'ensemble des avis (façon "on sent beaucoup de
+gentillesse dans vos avis"), pas un résumé/paraphrase d'un avis isolé.
+Les avis ont été vérifiés un par un sur Google Maps avant rédaction pour
+éviter de complimenter aveuglément une entreprise avec un vrai problème de
+réputation.
+
+**Alternatives considered :** garder le ton "honnête, sans pitch" du
+2026-08-04 pour ce nouveau lot aussi (écarté par Julien, changement de
+direction assumé) ; envoyer aussi ce nouveau pitch aux leads déjà
+contactés de "Zone 25km" avec l'ancien ton (écarté — aucun overlap, pas
+nécessaire) ; résoudre le captcha de VA Nuisibles pour boucler les 13/13
+(écarté — règle explicite contre le contournement de CAPTCHA).
+
+**Owner:** Julien.
+
+---
+
+## 2026-08-12 — Site CréA'deline déployé sur Vercel (v1)
+
+**Decision:** déployer `projects/site-adeline/app` en production sur
+Vercel (compte gratuit de Julien), projet renommé `creadeline` pour une
+URL propre : **https://creadeline.vercel.app**. Désactivé la "Deployment
+Protection" (`ssoProtection`) du projet, activée par défaut sur les
+sous-domaines `.vercel.app` — sans ça, tout visiteur tombe sur un mur de
+login Vercel avant de voir le site, inutilisable pour un site public.
+
+**Why:** Julien a explicitement demandé le déploiement avec un nom de
+domaine gratuit et une URL à donner. Vercel choisi (pas de config de
+déploiement existante trouvée ailleurs dans le repo pour deviner une
+autre plateforme) car c'est le standard pour Next.js, gratuit sans carte
+bancaire, et l'authentification a pu se faire via une session navigateur
+déjà connectée (aucun identifiant saisi par Claude). La désactivation de
+la protection SSO n'était pas prévue — découverte en testant l'URL après
+coup (redirection 302 vers `vercel.com/sso-api`), corrigée via l'API
+Vercel (`PATCH /v9/projects/creadeline` avec `ssoProtection: null`).
+
+**Alternatives considered :** Netlify (écarté, pas de raison de
+préférer à Vercel pour un projet Next.js) ; laisser le nom de projet par
+défaut `app` (donnait une URL moche `app-sandy-eight-84.vercel.app`,
+renommé en `creadeline` pour une URL lisible) ; acheter un vrai nom de
+domaine (`creadeline.fr` ou similaire) — pas fait, en attente d'une
+décision de Julien, le sous-domaine gratuit suffit pour la v1.
 
 **Owner:** Julien.
 
