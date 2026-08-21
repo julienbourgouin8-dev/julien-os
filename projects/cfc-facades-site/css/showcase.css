@@ -1,0 +1,59 @@
+/* Séquence de 4 sections plein cadre (2 images + 2 scroll-vidéo) qui
+   remplace "Nos prestations" + "Nos réalisations" — demande explicite de
+   Julien. Chaque section = un seul média, aucun texte superposé. */
+
+.showcase-image {
+  position: relative;
+  height: 100vh;
+  min-height: 560px;
+  overflow: hidden;
+}
+
+.showcase-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: showcase-kenburns 16s ease-in-out infinite alternate;
+}
+
+@keyframes showcase-kenburns {
+  from { transform: scale(1); }
+  to { transform: scale(1.06); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .showcase-image img {
+    animation: none;
+  }
+}
+
+/* Sections scroll-scrubbées : hauteur >> 100vh pour donner de la course au
+   scroll, wrapper interne collé (sticky) à 100vh pendant que ça défile. */
+.scrollvid {
+  position: relative;
+  height: 280vh;
+}
+
+.scrollvid__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--ink);
+}
+
+.scrollvid__canvas,
+.scrollvid__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .scrollvid {
+    height: 220vh;
+  }
+}

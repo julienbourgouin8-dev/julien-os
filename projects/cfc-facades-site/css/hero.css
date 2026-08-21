@@ -1,0 +1,120 @@
+.hero {
+  position: relative;
+  height: 100vh;
+  min-height: 640px;
+  overflow: hidden;
+}
+
+.hero__media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.hero__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Titre positionné en haut à droite, sur le ciel — position/taille/police
+   fidèles à la référence de Julien, aucun autre élément dans le hero. */
+.hero__content {
+  position: absolute;
+  top: 22vh;
+  right: var(--sp-6);
+  z-index: 1;
+  max-width: 46vw;
+  text-align: left;
+}
+
+.hero__title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3.6vw, 50px);
+  font-weight: 700;
+  line-height: 1.12;
+  color: var(--white);
+}
+
+/* Rideau au chargement — chaque ligne est masquée par son propre cache
+   (overflow hidden), le texte glisse depuis en-dessous avec un léger flou
+   qui se résorbe en même temps (pas un simple slide plat). La 2e ligne
+   part juste avant que la 1re ait fini, pour un enchaînement plus fluide
+   qu'une succession stricte. */
+.hero__title-line {
+  display: block;
+  overflow: hidden;
+}
+
+.hero__title-line__inner {
+  display: inline-block;
+  transform: translateY(115%);
+  filter: blur(6px);
+  opacity: 0;
+  animation: title-curtain-up 0.95s var(--ease-premium) forwards;
+}
+
+.hero__title-line--1 .hero__title-line__inner {
+  animation-delay: 0.45s;
+}
+
+.hero__title-line--2 .hero__title-line__inner {
+  animation-delay: 0.68s;
+}
+
+@keyframes title-curtain-up {
+  to {
+    transform: translateY(0);
+    filter: blur(0);
+    opacity: 1;
+  }
+}
+
+/* Signature de marque — un trait rouge se déploie sous le titre une fois
+   le texte posé, pour ancrer la couleur cFc dès la première seconde plutôt
+   que d'attendre le logo/bouton. */
+.hero__title-accent {
+  display: block;
+  width: 64px;
+  height: 4px;
+  margin-top: var(--sp-3);
+  background: var(--red);
+  border-radius: 2px;
+  transform-origin: left;
+  transform: scaleX(0);
+  animation: title-accent-grow 0.6s var(--ease-premium) 1.5s forwards;
+}
+
+@keyframes title-accent-grow {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__title-line__inner {
+    transform: none;
+    filter: none;
+    opacity: 1;
+    animation: none;
+  }
+
+  .hero__title-accent {
+    transform: scaleX(1);
+    animation: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero__content {
+    right: var(--sp-3);
+    left: var(--sp-3);
+    max-width: none;
+    top: 26vh;
+    text-align: left;
+  }
+
+  .hero__title {
+    font-size: clamp(32px, 8vw, 44px);
+  }
+}

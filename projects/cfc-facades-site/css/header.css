@@ -1,0 +1,385 @@
+/* Header — flotte directement sur la photo du hero (fidèle à la référence de
+   Julien), fond transparent. Logo et actions restent nus sur la photo ; la
+   nav, elle, a sa propre pilule sombre arrondie (voir .site-header__nav plus
+   bas) — fix lisibilité demandé le 2026-08-21, remplace l'ancien essai de
+   lueur blanche derrière le texte. */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: var(--header-h);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  transition: background var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+}
+
+/* Dès qu'on quitte le hero, la nav a besoin de son propre fond — sinon elle
+   se superpose au contenu qui défile derrière (texte sur texte, illisible).
+   Sur le hero elle reste transparente, fidèle à la référence. */
+.site-header.is-scrolled {
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 1px 0 rgba(29, 29, 27, 0.08);
+}
+
+.site-header__inner {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--sp-4);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--sp-4);
+  transform: translateY(10px);
+}
+
+/* Position calculée au pixel près sur la slide de référence de Julien
+   (1.png, cadre 1376×768) : boîte blanche du logo à x=42.5..169, y=21.5..158.5
+   → left 42px / top 22px / hauteur 137px, indépendant du container centré
+   (max-width 1280) puisque sur la référence le logo est plus proche du bord
+   de la fenêtre que la nav ne l'est du container. Positionné en dehors de
+   .site-header__inner pour ne pas être poussé par ce centrage. */
+.site-header__logo {
+  position: absolute;
+  top: 22px;
+  left: 42px;
+  z-index: 2;
+  transition: top var(--dur-fast) var(--ease-out), left var(--dur-fast) var(--ease-out);
+}
+
+.site-header__logo img {
+  height: 137px;
+  width: auto;
+  display: block;
+  transition: height var(--dur-fast) var(--ease-out);
+  /* "Focus pull" au chargement — le logo arrive flou et légèrement réduit
+     puis se stabilise net, comme une mise au point de caméra plutôt qu'un
+     simple fade. Un seul passage, rien lié au scroll. */
+  opacity: 0;
+  filter: blur(10px);
+  transform: scale(0.9);
+  animation: logo-focus-in 0.85s var(--ease-premium) 0.1s forwards;
+}
+
+@keyframes logo-focus-in {
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header__logo img {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    animation: none;
+  }
+}
+
+/* Une fois scrollé (fond blanc opaque), on réduit pour ne pas flotter par-
+   dessus le contenu des sections suivantes — la référence ne couvre que
+   l'état hero, ce comportement scrollé est une adaptation nécessaire. */
+.site-header.is-scrolled .site-header__logo {
+  top: 14px;
+  left: 32px;
+}
+
+.site-header.is-scrolled .site-header__logo img {
+  height: 44px;
+}
+
+.site-header__logo-spacer {
+  width: 190px;
+  min-width: 190px;
+}
+
+/* Barre verre dépoli (2026-08-21, v10) — vraiment transparente (fond blanc
+   à ~14% + blur), fine, toujours dépliée (plus de pastille "Menu" qui
+   s'agrandit au survol — Julien a préféré la barre affichée directement).
+   Elle n'a pas de couleur à elle : sur le hero elle prend une teinte
+   bleutée parce que le ciel est bleu derrière, exactement comme la réf de
+   Julien paraît jaune juste parce que SON fond est orange. Un simple liseré
+   clair marque le bord, pas d'anneau rouge/jaune. */
+.site-header__nav {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-self: center;
+  width: fit-content;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 8px 24px -16px rgba(0, 0, 0, 0.4);
+  /* Le verre se "condense" au chargement — flou et opacité montent ensemble
+     depuis rien, plutôt qu'un simple slide, pour que la matière du panneau
+     (le blur) fasse elle-même partie de l'apparition. */
+  opacity: 0;
+  transform: scale(0.9);
+  backdrop-filter: blur(0px) saturate(160%);
+  -webkit-backdrop-filter: blur(0px) saturate(160%);
+  animation: nav-materialize 0.9s var(--ease-premium) 0.35s forwards;
+}
+
+@keyframes nav-materialize {
+  to {
+    opacity: 1;
+    transform: scale(1);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header__nav {
+    opacity: 1;
+    transform: none;
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    animation: none;
+  }
+}
+
+/* Une fois le header passé en fond blanc opaque (scroll), le verre dépoli
+   se teinterait de blanc sur blanc — texte bascule en ink pour rester
+   lisible ; sur le hero il reste blanc avec une légère ombre portée pour
+   se détacher de la photo. */
+.site-header__nav-links a {
+  color: var(--white);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+}
+
+.site-header.is-scrolled .site-header__nav-links a {
+  color: var(--ink);
+  text-shadow: none;
+}
+
+.site-header__nav-links {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  width: max-content;
+  padding-left: var(--sp-3);
+  padding-right: var(--sp-3);
+}
+
+.site-header__nav-links a {
+  font-family: var(--font-display);
+  font-size: var(--fs-base);
+  font-weight: 700;
+  white-space: nowrap;
+  padding: 13px 0;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.site-header__nav-links a .chevron {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+.site-header__nav-links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 100%;
+  bottom: -2px;
+  height: 2px;
+  background: var(--red);
+  transition: right var(--dur-fast) var(--ease-out);
+}
+
+.site-header__nav-links a:hover::after {
+  right: 0;
+}
+
+/* Sous-menus déroulants — mêmes intitulés/ordre que le vrai site
+   cfc-facades.com (voir CLAUDE.md), affichés au survol/focus de chaque
+   catégorie une fois la barre dépliée. */
+.site-header__dropdown-wrap {
+  position: relative;
+}
+
+.site-header__dropdown {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, 8px);
+  min-width: 260px;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  padding: var(--sp-1) 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out), visibility var(--dur-fast);
+}
+
+.site-header__dropdown-wrap:hover .site-header__dropdown,
+.site-header__dropdown-wrap:focus-within .site-header__dropdown {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+}
+
+.site-header__dropdown a {
+  display: block;
+  width: 100%;
+  padding: 14px 20px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  color: var(--ink);
+  white-space: normal;
+  border-bottom: 1px solid var(--mist-dark);
+}
+
+.site-header__dropdown a:last-child {
+  border-bottom: none;
+}
+
+.site-header__dropdown a::after {
+  display: none;
+}
+
+.site-header__dropdown a:hover {
+  color: var(--red);
+  background: var(--mist);
+}
+
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  min-width: max-content;
+  margin-right: -64px;
+}
+
+/* Reflet qui balaie le bouton "Demander un devis" par intermittence — attire
+   l'œil sur le seul vrai call-to-action du header sans être un hover, il
+   tourne tout seul. */
+.site-header__actions .btn-red {
+  position: relative;
+  overflow: hidden;
+  /* Arrive juste après la barre de menu (voir .site-header__nav) avec un
+     léger overshoot (`--ease-pop`) — le CTA "pop" plutôt que de simplement
+     glisser, pour se distinguer du geste plus posé du reste du header. */
+  opacity: 0;
+  transform: scale(0.4);
+  animation: btn-pop-in 0.6s var(--ease-pop) 0.6s forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header__actions .btn-red {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}
+
+@keyframes btn-pop-in {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.site-header__actions .btn-red::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(115deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  transform: skewX(-20deg);
+  animation: btn-shine 3.4s ease-in-out infinite;
+  animation-delay: 1.4s;
+  pointer-events: none;
+}
+
+@keyframes btn-shine {
+  0% { left: -60%; }
+  22% { left: 130%; }
+  100% { left: 130%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header__actions .btn-red::after {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .site-header__logo img {
+    height: 64px;
+  }
+
+  .site-header__nav-links {
+    gap: var(--sp-2);
+  }
+}
+
+@media (max-width: 700px) {
+  .site-header__nav {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .site-header__nav-links-wrap {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: calc(100vw - 2 * var(--sp-4));
+  }
+
+  .site-header__nav-links {
+    flex-direction: column;
+    align-items: flex-start;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    border-radius: var(--radius-lg);
+    padding: var(--sp-2) var(--sp-3);
+    box-shadow: var(--shadow-soft);
+    width: max-content;
+  }
+
+  /* Panneau assez opaque à cette taille pour rester un bloc lisible — le
+     texte repasse en ink dessus, quel que soit l'état de scroll du header. */
+  .site-header__nav-links a {
+    color: var(--ink);
+    text-shadow: none;
+  }
+
+  .site-header__dropdown {
+    position: static;
+    transform: none;
+    box-shadow: none;
+    margin-top: var(--sp-1);
+    display: none;
+  }
+
+  .site-header__dropdown-wrap:hover .site-header__dropdown,
+  .site-header__dropdown-wrap:focus-within .site-header__dropdown {
+    display: block;
+  }
+}
+
+@media (max-width: 480px) {
+  .site-header__actions .btn-red {
+    display: none;
+  }
+}

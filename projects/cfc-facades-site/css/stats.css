@@ -1,0 +1,143 @@
+#chiffres {
+  /* Le header est fixed (84px) : il faut au moins ça en padding-top sinon le
+     contenu démarre caché dessous, pas juste "un peu haut". */
+  padding: calc(var(--header-h) + 20px) 0 var(--sp-4);
+}
+
+#chiffres .section-head {
+  margin-bottom: var(--sp-3);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--sp-4);
+  padding: var(--sp-2) 0 var(--sp-6);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.stat__value {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 6vw, 72px);
+  font-weight: 900;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.stat__value .stat__suffix {
+  color: var(--red);
+}
+
+.stat__label {
+  font-size: var(--fs-sm);
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--sp-4);
+  }
+}
+
+.about {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-8);
+  align-items: center;
+}
+
+.about__media {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  aspect-ratio: 4 / 3;
+}
+
+.about__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.about__media::before {
+  content: "";
+  position: absolute;
+  top: -24px;
+  left: -24px;
+  width: 96px;
+  height: 96px;
+  background: var(--yellow);
+  border-radius: 50%;
+  z-index: -1;
+}
+
+.about__text h2 {
+  font-size: var(--fs-2xl);
+  margin: var(--sp-2) 0 var(--sp-3);
+}
+
+.about__text p {
+  color: var(--ink-soft);
+  margin-bottom: var(--sp-2);
+  max-width: 520px;
+}
+
+/* Vrai bouton cliquable (pas juste un lien texte+icône), remonté et aligné
+   à droite du bloc de texte — demande explicite de Julien. */
+.about__cta {
+  margin-top: var(--sp-1);
+  margin-left: auto;
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 14px 24px;
+  border-radius: 999px;
+  background: var(--red);
+  color: var(--white);
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  box-shadow: 0 12px 24px -10px rgba(227, 6, 19, 0.55);
+  transition: transform var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+
+.about__cta:hover {
+  background: var(--red-dark);
+  transform: translateY(-2px);
+}
+
+.about__cta svg {
+  width: 18px;
+  height: 18px;
+  color: var(--red);
+  background: var(--yellow);
+  border-radius: 50%;
+  padding: 4px;
+  flex-shrink: 0;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.about__cta:hover svg {
+  transform: translateX(3px);
+}
+
+@media (max-width: 900px) {
+  .about {
+    grid-template-columns: 1fr;
+    gap: var(--sp-4);
+  }
+
+  .about__media::before {
+    display: none;
+  }
+}
