@@ -6,6 +6,13 @@ __pycache__/
 node_modules/
 .venv/
 .playwright-mcp/
+scripts/playwright/.profiles/
 .obsidian/
 .claude/settings.local.json
 audits/
+wiki/.youtube-index/
+projects/site-adeline/data/*.db
+projects/site-adeline/data/*.db-shm
+projects/site-adeline/data/*.db-wal
+projects/site-adeline/data/uploads/*
+!projects/site-adeline/data/uploads/.gitkeep

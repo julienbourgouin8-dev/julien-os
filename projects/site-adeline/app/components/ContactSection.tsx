@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import WriteOnHeading from "@/components/WriteOnHeading";
+import { resetConsent } from "@/lib/consent";
 
 // TODO Julien : adresse mail exacte d'Adeline pas encore confirmée (carte
 // de visite coupée sur "deline1001@y..."). Volontairement vide pour
 // l'instant plutôt que de deviner — le formulaire ouvre le client mail du
 // visiteur pré-rempli (sujet + message), mais SANS destinataire tant que
 // l'adresse réelle n'est pas donnée. Renseigner ici dès que tu l'as.
-const CONTACT_EMAIL = "";
+export const CONTACT_EMAIL = "";
 
 function FacebookIcon({ className }: { className?: string }) {
   return (
@@ -225,6 +227,24 @@ export default function ContactSection() {
           © {new Date().getFullYear()} CréA&apos;deline. Pièces uniques faites
           main, sur commande, en Charente.
         </p>
+        <div className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-ink/40">
+          <Link href="/mentions-legales" className="underline-offset-2 hover:text-ink hover:underline">
+            Mentions légales
+          </Link>
+          <Link href="/confidentialite" className="underline-offset-2 hover:text-ink hover:underline">
+            Confidentialité
+          </Link>
+          <Link href="/cookies" className="underline-offset-2 hover:text-ink hover:underline">
+            Cookies
+          </Link>
+          <button
+            type="button"
+            onClick={resetConsent}
+            className="underline-offset-2 hover:text-ink hover:underline"
+          >
+            Gérer les cookies
+          </button>
+        </div>
       </div>
     </footer>
   );

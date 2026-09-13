@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Fraunces, Jost, Caveat } from "next/font/google";
 import ScrollToTopOnLoad from "@/components/ScrollToTopOnLoad";
+import PostHogProvider from "@/components/PostHogProvider";
+import CookieConsent from "@/components/CookieConsent";
+import { CartProvider } from "@/lib/cart/CartProvider";
 import "./globals.css";
 
 const display = Fraunces({
@@ -34,8 +37,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${display.variable} ${body.variable} ${script.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <ScrollToTopOnLoad />
-        {children}
+        <PostHogProvider>
+          <CartProvider>
+            <ScrollToTopOnLoad />
+            {children}
+          </CartProvider>
+        </PostHogProvider>
+        <CookieConsent />
       </body>
     </html>
   );

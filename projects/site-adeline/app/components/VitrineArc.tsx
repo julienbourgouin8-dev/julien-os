@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from "react";
 import WriteOnHeading from "@/components/WriteOnHeading";
 
-const IMAGE = "/brand/vitrine-composite.jpg";
+const IMAGE = "/brand/vitrine-composite-v4.jpg";
 
 type Hotspot = {
   name: string;
@@ -11,6 +11,9 @@ type Hotspot = {
   // légendes Facebook (assets/facebook/taxonomie-produits.md) — jamais
   // inventée, voir ce fichier si une pièce change.
   category: string;
+  // slug correspondant dans lib/categories.ts — mène au catalogue
+  // /boutique/[categorySlug] de cette catégorie.
+  categorySlug: string;
   // boîte englobante de la pièce dans l'image composite, en % de l'image
   left: number;
   top: number;
@@ -19,67 +22,74 @@ type Hotspot = {
   video?: string;
 };
 
-// Coordonnées relevées à l'œil sur vitrine-composite.jpg (2752×1536).
-// Les zones de SURVOL (hitbox) ci-dessous sont volontairement plus larges
-// que la pièce visible : elles se touchent bord à bord (aucun trou entre
-// deux pièces) et partagent une bande verticale commune assez haute pour
-// couvrir toutes les tailles. Les crops visuels statiques (staticCropStyle)
-// utilisent eux les coordonnées réelles de la pièce, pas la hitbox.
-const HIT_TOP = 14;
-const HIT_HEIGHT = 52;
+// Coordonnées mesurées par script (seuillage pixel vs fond, voir historique
+// de session) sur vitrine-composite-v4.jpg. Les zones DE SURVOL ci-dessous
+// sont volontairement plus larges que la pièce visible : elles se touchent
+// bord à bord (aucun trou entre deux pièces). Les crops visuels statiques
+// (staticCropStyle) utilisent eux les coordonnées réelles de la pièce, pas
+// la zone de survol.
+const HIT_TOP = 7.1;
+const HIT_HEIGHT = 62.0;
 const hotspots: Hotspot[] = [
   {
     name: "Sac savane",
-    category: "Sacs",
-    left: 6.0,
-    top: 18.8,
-    width: 16.5,
-    height: 43.0,
+    category: "Sac et sacoche",
+    categorySlug: "sac-et-sacoche",
+    left: 2.9,
+    top: 15.1,
+    width: 16.8,
+    height: 52.7,
     video: "/products/videos/sac-savane-360-v3.mp4",
   },
   {
-    // même tissu "Paris" (baisers/tour Eiffel) que sur sa photo promo
-    // légendée "Sacoche 'book'" — confirmé, pas un sac.
-    name: "Sacoche \"book\"",
-    category: "Sacoches ordinateur",
-    left: 23.0,
-    top: 25.1,
-    width: 18.75,
-    height: 34.5,
-    video: "/products/videos/sac-paris-360-v2.mp4",
+    // bouillotte (housse fleece + tissu imprimé) — remplace la sacoche
+    // "book" à cet emplacement sur la nouvelle photo.
+    name: "Bouillotte",
+    category: "Accessoires",
+    categorySlug: "accessoires",
+    left: 21.8,
+    top: 20.1,
+    width: 15.6,
+    height: 47.7,
+    video: "/products/videos/bouillotte-360.mp4",
+  },
+  {
+    // trousse de toilette effet python noir — remplace la pochette éventail
+    // à cet emplacement sur la nouvelle photo.
+    name: "Trousse python",
+    category: "Toilette",
+    categorySlug: "toilette",
+    left: 38.8,
+    top: 26.1,
+    width: 25.5,
+    height: 41.7,
+    video: "/products/videos/trousse-python-360.mp4",
   },
   {
     name: "Lunch box",
-    category: "Accessoires du quotidien",
-    left: 42.0,
-    top: 28.2,
-    width: 19.25,
-    height: 30.5,
+    category: "Repas",
+    categorySlug: "repas",
+    left: 64.9,
+    top: 23.9,
+    width: 20.4,
+    height: 40.6,
     video: "/products/videos/lunch-box-360-v2.mp4",
   },
   {
-    name: "Pochette éventail",
-    category: "Pochettes",
-    left: 61.5,
-    top: 37.6,
-    width: 19.25,
-    height: 20.2,
-    video: "/products/videos/pochette-eventail-360-v2.mp4",
-  },
-  {
     name: "Trousse papillons",
-    category: "Trousses",
-    left: 84.25,
-    top: 35.8,
-    width: 6.5,
-    height: 26.4,
+    category: "École",
+    categorySlug: "ecole",
+    left: 85.8,
+    top: 35.7,
+    width: 8.3,
+    height: 31.3,
     video: "/products/videos/trousse-papillons-360-v2.mp4",
   },
 ];
 
-// Hitbox par pièce : bord gauche/droit étendu jusqu'à mi-chemin de la pièce
-// voisine (0 → première, 100 → dernière), bande verticale commune généreuse.
-// Élimine tout trou "mort" entre deux pièces (ex : pochette ↔ trousse).
+// Zone de survol par pièce : bord gauche/droit étendu jusqu'à mi-chemin de
+// la pièce voisine (0 → première, 100 → dernière), bande verticale commune
+// généreuse. Élimine tout trou "mort" entre deux pièces.
 function hitboxStyle(i: number): CSSProperties {
   const prev = hotspots[i - 1];
   const cur = hotspots[i];
@@ -109,50 +119,29 @@ function staticCropStyle(spot: Hotspot): CSSProperties {
   };
 }
 
-const CLOSE_DELAY = 180;
-const FLY_MS = 520;
-const SWAP_MS = 160;
-
-// Taille cible de la pièce en vol, au centre de l'écran (inclut la vidéo
-// ET le bandeau catégorie/nom/CTA en dessous, dans la même carte).
-function targetSize() {
-  const w = Math.min(window.innerWidth * 0.4, 420);
-  const h = Math.min(window.innerHeight * 0.72, 640);
-  return { w, h };
-}
-
-const IDLE_TRANSFORM = "translate(-50%, -50%) scale(0.001)";
+// Délai avant fermeture au survol — laisse le temps de glisser la souris de
+// la pièce vers la carte (ou vers une pièce voisine) sans que ça clignote
+// fermé entre les deux.
+const CLOSE_DELAY = 200;
+// Distance de glissement (px) à partir de laquelle un drag sur la carte
+// compte comme "pièce suivante/précédente".
+const SWIPE_THRESHOLD = 50;
 
 export default function VitrineArc() {
-  // État centralisé : UN SEUL panneau flottant partagé par toutes les
-  // pièces, pas un par pièce. Sans ça, passer directement d'une pièce à
-  // une autre rejouait l'animation de retour de l'ancienne EN MÊME TEMPS
-  // que l'arrivée de la nouvelle (le "backup" signalé, pas joli). Le vol
-  // vers/depuis le centre ne se joue plus qu'à l'ouverture depuis rien et
-  // à la fermeture complète (curseur qui quitte toute la zone) — passer
-  // d'une pièce à l'autre ne fait que basculer le contenu, panneau immobile.
+  // Survol pour ouvrir/glisser d'une pièce à l'autre, clic gardé en plus
+  // pour le tactile. La carte reste centrée à l'écran (fixe) comme avant —
+  // mais pour la pièce que la carte recouvre elle-même (impossible à
+  // atteindre en glissant la souris sur la bande, quelle que soit la
+  // stratégie de z-index), on glisse DIRECTEMENT SUR LA CARTE (drag gauche/
+  // droite) pour passer à la pièce suivante/précédente. Le drag ne dépend
+  // jamais de ce qu'il y a derrière la carte, donc ça marche pour toutes les
+  // pièces, y compris celle du milieu.
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const [flown, setFlown] = useState(false);
-  const [originTransform, setOriginTransform] = useState(IDLE_TRANSFORM);
-  const [size, setSize] = useState({ w: 420, h: 640 });
-
-  // pieceRefs suit la position VISUELLE réelle de chaque pièce (le crop
-  // statique) — sert à calculer l'origine du vol et le filet de sécurité
-  // scroll. triggerRefs suit la hitbox de survol, volontairement plus
-  // large et distincte, pour ne pas fausser ces calculs.
-  const pieceRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const triggerRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+  const [open, setOpen] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const activeIndexRef = useRef<number | null>(null);
-  const flownRef = useRef(false);
-
-  useEffect(() => {
-    activeIndexRef.current = activeIndex;
-  }, [activeIndex]);
-  useEffect(() => {
-    flownRef.current = flown;
-  }, [flown]);
+  const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dragStartX = useRef<number | null>(null);
+  const dragHandled = useRef(false);
 
   const cancelClose = () => {
     if (closeTimer.current) {
@@ -161,91 +150,69 @@ export default function VitrineArc() {
     }
   };
 
-  const computeOrigin = (i: number) => {
-    const el = pieceRefs.current[i];
-    if (!el) return null;
-    const r = el.getBoundingClientRect();
-    const t = targetSize();
-    const scale = Math.min(r.width / t.w, r.height / t.h);
-    const dx = r.left + r.width / 2 - window.innerWidth / 2;
-    const dy = r.top + r.height / 2 - window.innerHeight / 2;
-    return { t, transform: `translate(-50%, -50%) translate(${dx}px, ${dy}px) scale(${scale})` };
+  const cancelOpen = () => {
+    if (openTimer.current) {
+      clearTimeout(openTimer.current);
+      openTimer.current = null;
+    }
   };
 
-  const open = (i: number) => {
+  const openPiece = (i: number) => {
+    cancelOpen();
     cancelClose();
-    // les vidéos sont montées en permanence (jamais démontées) et lancées
-    // au premier survol — idempotent, ne relance pas si déjà en lecture.
-    // C'est ça qui permet un crossfade instantané sans jamais recharger,
-    // donc plus de flash "double fenêtre" au changement de pièce.
-    videoRefs.current[i]?.play().catch(() => {});
+    setActiveIndex(i);
+    setOpen(true);
+  };
 
-    if (activeIndexRef.current === i && flownRef.current) return;
-
-    if (!flownRef.current) {
-      // rien n'est ouvert : calcule le point de départ (position réelle de
-      // la pièce) puis relâche vers le centre au frame suivant.
-      const origin = computeOrigin(i);
-      if (!origin) return;
-      setSize(origin.t);
-      setOriginTransform(origin.transform);
-      setActiveIndex(i);
-      requestAnimationFrame(() => requestAnimationFrame(() => setFlown(true)));
-    } else {
-      // déjà au centre : on bascule juste QUEL contenu est visible (fondu
-      // croisé entre vidéos déjà en lecture), le panneau ne bouge pas.
-      setActiveIndex(i);
-    }
+  // Survol : ouverture retardée d'un court instant plutôt qu'immédiate.
+  // Sans ce délai, un vrai geste de souris qui VOYAGE vers la carte (pour
+  // cliquer "Découvrir", par ex. depuis "Sac savane" tout à gauche jusqu'au
+  // centre de l'écran) traverse physiquement d'autres zones de survol en
+  // chemin (ex. "Bouillotte") — chacune bascule la pièce affichée avant même
+  // que la souris n'arrive à destination. Un survol volontaire (on s'arrête
+  // sur une pièce) dépasse toujours ce délai ; un simple passage en chemin
+  // vers ailleurs, non.
+  const HOVER_INTENT_DELAY = 130;
+  const scheduleOpen = (i: number) => {
+    cancelOpen();
+    openTimer.current = setTimeout(() => openPiece(i), HOVER_INTENT_DELAY);
   };
 
   const scheduleClose = () => {
+    cancelOpen();
     cancelClose();
-    closeTimer.current = setTimeout(() => {
-      // recalcule l'origine à partir de la pièce ACTUELLEMENT affichée,
-      // pour que le retour vise le bon point de départ.
-      const i = activeIndexRef.current;
-      if (i !== null) {
-        const origin = computeOrigin(i);
-        if (origin) setOriginTransform(origin.transform);
-      }
-      setFlown(false);
-    }, CLOSE_DELAY);
+    closeTimer.current = setTimeout(() => setOpen(false), CLOSE_DELAY);
   };
 
-  // filet de sécurité scroll : le panneau est `position: fixed`, donc
-  // scroller la page ne le bouge pas — si la souris ne bouge pas pendant
-  // qu'on scrolle, rien ne ferme la pièce. Une première version attendait
-  // que la pièce d'origine sorte ENTIÈREMENT du viewport (avec marge) —
-  // pour une section plus haute que l'écran, ça pouvait demander de
-  // scroller une pleine hauteur d'écran avant fermeture, donc "reste trop
-  // longtemps" en pratique. Fix : on ferme dès qu'un petit DELTA de scroll
-  // (peu importe la position géométrique de la pièce) a eu lieu depuis
-  // l'ouverture — ça capture directement l'intention "je pars d'ici".
-  const scrollOriginRef = useRef<number | null>(null);
-  useEffect(() => {
-    if (!flown) {
-      scrollOriginRef.current = null;
-      return;
-    }
-    scrollOriginRef.current = window.scrollY;
-    const SCROLL_CLOSE_THRESHOLD = 80;
-    const checkScroll = () => {
-      if (scrollOriginRef.current === null) return;
-      if (Math.abs(window.scrollY - scrollOriginRef.current) > SCROLL_CLOSE_THRESHOLD) {
-        cancelClose();
-        setFlown(false);
-      }
-    };
-    window.addEventListener("scroll", checkScroll, { passive: true });
-    return () => window.removeEventListener("scroll", checkScroll);
-  }, [flown]);
-
-  const targetTransform = "translate(-50%, -50%) scale(1)";
   const active = activeIndex !== null ? hotspots[activeIndex] : null;
+
+  const goRelative = (delta: number) => {
+    setActiveIndex((i) => {
+      const base = i ?? 0;
+      return (base + delta + hotspots.length) % hotspots.length;
+    });
+  };
+
+  const onDragStart = (e: ReactPointerEvent) => {
+    dragStartX.current = e.clientX;
+    dragHandled.current = false;
+  };
+  const onDragMove = (e: ReactPointerEvent) => {
+    if (dragStartX.current === null || dragHandled.current) return;
+    const delta = e.clientX - dragStartX.current;
+    if (Math.abs(delta) > SWIPE_THRESHOLD) {
+      goRelative(delta < 0 ? 1 : -1);
+      dragHandled.current = true;
+    }
+  };
+  const onDragEnd = () => {
+    dragStartX.current = null;
+    dragHandled.current = false;
+  };
 
   return (
     <div className="relative w-full">
-      <div className="relative w-full" style={{ aspectRatio: "2752 / 1536" }}>
+      <div className="relative w-full" style={{ aspectRatio: "2438 / 1254" }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={IMAGE}
@@ -269,12 +236,7 @@ export default function VitrineArc() {
 
         {hotspots.map((spot, i) => (
           <div key={spot.name}>
-            {/* image visible au repos — reste SOUS le voile pour s'assombrir
-                normalement avec le reste de la scène quand une pièce est ouverte. */}
             <div
-              ref={(el) => {
-                pieceRefs.current[i] = el;
-              }}
               aria-hidden
               className="pointer-events-none absolute"
               style={{ left: `${spot.left}%`, top: `${spot.top}%`, width: `${spot.width}%`, height: `${spot.height}%` }}
@@ -282,103 +244,134 @@ export default function VitrineArc() {
               <div className="h-full w-full" style={staticCropStyle(spot)} />
             </div>
 
-            {/* zone de survol invisible, au-dessus (z-[60]) de tous les
-                panneaux : plus large que la pièce elle-même et jointive avec
-                les voisines (voir hitboxStyle) pour qu'il n'y ait aucun trou
-                mort entre deux pièces et que le survol reste réactif même en
-                bord de zone. */}
+            {/* zone de survol/clic : plus large que la pièce elle-même et
+                jointive avec les voisines (voir hitboxStyle). Survol ouvre
+                après un court délai (voir scheduleOpen) — pas instantané —
+                pour distinguer un vrai arrêt sur cette pièce d'un simple
+                passage en chemin vers ailleurs (la carte, un bouton...).
+                Clic gardé en plus pour le tactile, qui n'a pas de survol,
+                et immédiat (pas de délai) pour rester réactif au tap. */}
             <button
-              ref={(el) => {
-                triggerRefs.current[i] = el;
-              }}
               type="button"
-              onMouseEnter={() => open(i)}
-              onMouseLeave={scheduleClose}
+              onClick={() => openPiece(i)}
+              onMouseEnter={() => scheduleOpen(i)}
+              onMouseLeave={() => {
+                cancelOpen();
+                scheduleClose();
+              }}
+              aria-label={`Découvrir ${spot.category}`}
               className="absolute z-[60] cursor-pointer border-0 bg-transparent p-0"
               style={hitboxStyle(i)}
             />
           </div>
         ))}
+      </div>
 
-        {/* voile qui assombrit la scène */}
-        <div
-          aria-hidden
-          className="fixed inset-0 z-40 bg-ink transition-opacity ease-out"
-          style={{ opacity: flown ? 0.5 : 0, pointerEvents: "none", transitionDuration: `${FLY_MS}ms` }}
-        />
+      {/* préchargement — vidéos hors écran (pas dans la carte), montées dès
+          l'arrivée sur la page pour que le navigateur commence à les
+          télécharger tout de suite, plutôt qu'au premier survol. */}
+      <div aria-hidden className="pointer-events-none absolute h-0 w-0 overflow-hidden">
+        {hotspots.map((spot) =>
+          spot.video ? <video key={spot.video} src={spot.video} preload="auto" muted playsInline /> : null,
+        )}
+      </div>
 
-        {/* panneau unique partagé — bascule de contenu sans bouger tant
-            qu'on reste dans la zone ; ne vole vers/depuis le centre qu'à
-            l'ouverture initiale et à la fermeture complète. */}
-        <div
-          onMouseEnter={cancelClose}
-          onMouseLeave={scheduleClose}
-          className="fixed left-1/2 top-1/2 z-50 will-change-transform"
-          style={{
-            width: size.w,
-            height: size.h,
-            transform: flown ? targetTransform : originTransform,
-            opacity: flown ? 1 : 0,
-            pointerEvents: flown ? "auto" : "none",
-            transition: `transform ${FLY_MS}ms cubic-bezier(0.16,1,0.3,1), opacity ${flown ? 200 : 260}ms ease-out`,
-            filter: flown
-              ? "drop-shadow(0 34px 40px rgba(36,27,21,0.38))"
-              : "drop-shadow(0 6px 10px rgba(36,27,21,0.15))",
-          }}
-        >
-          <div className="flex h-full w-full flex-col overflow-hidden rounded-2xl">
-            <div className="relative min-h-0 flex-1 overflow-hidden bg-paper">
-              {/* les 5 vidéos sont TOUJOURS montées, dès le premier rendu —
-                  pas seulement une fois qu'une pièce est ouverte. Avant ce
-                  correctif, elles n'existaient que sous `{active && ...}`,
-                  donc au tout premier survol de la session `open()` appelait
-                  `.play()` sur des refs encore `null` (le panneau ne s'était
-                  pas encore re-rendu) : no-op silencieux, la vidéo restait à
-                  jamais en pause. Montées en permanence, les refs sont
-                  toujours valides, y compris pour ce tout premier survol. */}
-              {hotspots.map((spot, i) =>
-                spot.video ? (
+      {open && active && (
+        <>
+          {/* fond assombri — ferme au clic (utile au tactile). z-40, sous les
+              zones de survol des pièces (z-[60]) : cliquer directement sur
+              une AUTRE pièce visible bascule toujours dessus sans repasser
+              par une fermeture. */}
+          <div aria-hidden onClick={() => setOpen(false)} className="fixed inset-0 z-40 bg-ink/60" />
+
+          <div className="pointer-events-none fixed inset-0 z-[70] flex items-center justify-center p-6">
+            <div
+              onMouseEnter={cancelClose}
+              onMouseLeave={scheduleClose}
+              onClick={(e) => e.stopPropagation()}
+              className="pointer-events-auto relative flex w-[min(90vw,640px)] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
+            >
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                aria-label="Fermer"
+                className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-ink shadow-sm transition-transform hover:scale-105"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M6 6l12 12M18 6L6 18" />
+                </svg>
+              </button>
+
+              {/* flèches, toujours cliquables — et zone vidéo glissable
+                  (drag gauche/droite) : les deux font passer à la pièce
+                  suivante/précédente SANS dépendre de la bande de survol
+                  derrière la carte, donc ça marche même pour la pièce que la
+                  carte recouvre elle-même. */}
+              <button
+                type="button"
+                onClick={() => goRelative(-1)}
+                aria-label="Pièce précédente"
+                className="absolute left-3 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-ink shadow-sm transition-transform hover:scale-105"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M15 6l-6 6 6 6" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                onClick={() => goRelative(1)}
+                aria-label="Pièce suivante"
+                className="absolute right-3 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-ink shadow-sm transition-transform hover:scale-105"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M9 6l6 6-6 6" />
+                </svg>
+              </button>
+
+              {/* zone vidéo à ratio FIXE (16/9) et fond blanc — chaque vidéo
+                  a un format natif légèrement différent, donc avec un cadre
+                  fixe + object-contain, le très léger espace résiduel (quasi
+                  invisible) est blanc comme le panneau. Glissable au doigt/
+                  souris (cursor grab) pour changer de pièce. Un seul
+                  <video>, remonté (key={active.video}) à chaque changement —
+                  `autoPlay` natif, pas d'appel `.play()` en JS. */}
+              <div
+                className="relative aspect-[16/9] w-full shrink-0 cursor-grab touch-pan-y bg-white active:cursor-grabbing"
+                onPointerDown={onDragStart}
+                onPointerMove={onDragMove}
+                onPointerUp={onDragEnd}
+                onPointerLeave={onDragEnd}
+              >
+                {active.video && (
                   <video
-                    key={spot.video}
-                    ref={(el) => {
-                      videoRefs.current[i] = el;
-                    }}
-                    src={spot.video}
+                    key={active.video}
+                    src={active.video}
+                    autoPlay
                     muted
                     loop
                     playsInline
-                    preload="none"
-                    className="absolute inset-0 h-full w-full scale-[1.04] object-cover transition-opacity ease-out"
-                    style={{
-                      opacity: activeIndex === i ? 1 : 0,
-                      transitionDuration: `${SWAP_MS}ms`,
-                    }}
+                    className="pointer-events-none absolute inset-0 h-full w-full object-contain"
                   />
-                ) : null,
-              )}
-            </div>
-            {active && (
-              <div
-                className="shrink-0 bg-paper px-6 py-5 text-center transition-opacity ease-out"
-                style={{ opacity: flown ? 1 : 0, transitionDuration: `${SWAP_MS}ms` }}
-              >
+                )}
+              </div>
+
+              <div className="shrink-0 bg-white px-6 py-5 text-center">
                 <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-teal">
                   {active.category}
                 </p>
                 <p className="mt-1 font-display text-lg italic text-ink">{active.name}</p>
                 <a
-                  href="#creations"
+                  href={`/boutique/${active.categorySlug}`}
                   className="group mt-4 inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-denim px-6 py-2.5 text-xs font-semibold text-paper shadow-[0_8px_20px_rgba(79,108,143,0.35)] transition-transform hover:-translate-y-0.5"
-                  style={{ pointerEvents: flown ? "auto" : "none" }}
                 >
                   Découvrir nos créations
                   <span className="transition-transform group-hover:translate-x-1">→</span>
                 </a>
               </div>
-            )}
+            </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 }

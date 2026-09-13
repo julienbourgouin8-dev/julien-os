@@ -1,5 +1,7 @@
 import Image from "next/image";
+import Link from "next/link";
 import VitrineArc from "@/components/VitrineArc";
+import CartBadge from "@/components/CartBadge";
 import Marches from "@/components/Marches";
 import ContactSection from "@/components/ContactSection";
 
@@ -16,10 +18,10 @@ export default function Home() {
       <main className="flex-1">
         {/* HERO — nav + photo + texte fusionnés dans un seul bloc */}
         <section id="hero" className="relative scroll-mt-0 overflow-hidden bg-paper">
-          <div className="relative w-full" style={{ aspectRatio: "3016 / 1536" }}>
+          <div className="relative w-full" style={{ aspectRatio: "2752 / 2236", maxHeight: "100vh" }}>
             <div className="hero-media absolute inset-0">
               <Image
-                src="/brand/hero-v4.jpg"
+                src="/brand/hero-v8.png"
                 alt="Sac cabas, portefeuille et pochette assortis, en simili cuir bleu et écru, CréA'deline"
                 fill
                 priority
@@ -50,31 +52,21 @@ export default function Home() {
               <a href="#contact" className="absolute -translate-x-1/2 transition-colors hover:text-rust" style={{ left: "66%" }}>
                 Contact
               </a>
-              <a
-                href="#vitrine"
-                aria-label="Panier (bientôt)"
-                className="absolute right-6 flex items-center gap-2 transition-colors hover:text-rust sm:right-10"
-              >
-                Panier
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                  <path d="M6 8h12l-1 12H7L6 8Z" />
-                  <path d="M9 8V6a3 3 0 0 1 6 0v2" />
-                </svg>
-              </a>
+              <CartBadge className="absolute right-6 flex items-center gap-2 transition-colors hover:text-rust sm:right-10" />
             </nav>
 
             {/* icône boutique seule, visible même sous le breakpoint sm où
                 la nav texte est masquée */}
-            <a
+            <Link
               href="#vitrine"
-              aria-label="Boutique (bientôt)"
+              aria-label="Boutique"
               className="absolute right-6 top-4 text-ink transition-colors hover:text-rust sm:hidden"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
                 <path d="M6 8h12l-1 12H7L6 8Z" />
                 <path d="M9 8V6a3 3 0 0 1 6 0v2" />
               </svg>
-            </a>
+            </Link>
 
             {/* wordmark — posé dans la boucle des anses, effet d'écriture par mot
                 (pas lettre par lettre : ça cassait les ligatures de l'italique) */}

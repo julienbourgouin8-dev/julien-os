@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "mehari-spin-demo",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "serve", "-l", "8099", "/Users/julien/julien-os/projects/navarro-location-voiture"],
+      "port": 8099
+    },
+    {
+      "name": "site-adeline-app",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "/Users/julien/julien-os/projects/site-adeline/app", "run", "dev"],
+      "port": 3000
+    }
+  ]
+}

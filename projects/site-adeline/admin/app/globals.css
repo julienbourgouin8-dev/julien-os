@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+:root {
+  /* Mêmes tokens que le site public (projects/site-adeline/app/app/globals.css)
+     — deux apps séparées, même identité visuelle CréA'deline. Si la palette
+     change sur le site public, la reporter ici aussi (pas de partage de
+     fichier CSS entre les deux projets, chacun a son propre déploiement). */
+  --color-paper: #f3f3ee;
+  --color-ink: #241b15;
+  --color-teal: #2f5f63;
+  --color-teal-dark: #182f31;
+  --color-rust: #ad4a34;
+  --color-mustard: #d6a23c;
+  --color-line: #ded0ba;
+  --color-denim: #4f6c8f;
+  --color-denim-dark: #3c5470;
+}
+
+@theme inline {
+  --color-paper: var(--color-paper);
+  --color-ink: var(--color-ink);
+  --color-teal: var(--color-teal);
+  --color-teal-dark: var(--color-teal-dark);
+  --color-rust: var(--color-rust);
+  --color-mustard: var(--color-mustard);
+  --color-line: var(--color-line);
+  --color-denim: var(--color-denim);
+  --color-denim-dark: var(--color-denim-dark);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-script: var(--font-script);
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body), sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-display), serif;
+}
+
+.font-script {
+  font-family: var(--font-script), cursive;
+}

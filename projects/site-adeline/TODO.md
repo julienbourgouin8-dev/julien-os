@@ -92,16 +92,25 @@ Gratuit ou payant, à quel prix, quel niveau de ressemblance avec Shopify ?
     croissance) — **pas pertinent de self-host à notre échelle**, le tier cloud gratuit
     suffit largement pour une petite marque.
 
-### Verdict tracking
+### Verdict tracking (tranché le 2026-08-13)
 
-Deux choix "100% gratuit sans compromis" :
-1. **Umami self-hosted** (VPS 5$/mois pour l'hébergement du VPS lui-même, logiciel gratuit)
-2. **PostHog cloud** (gratuit tant qu'on reste sous 1M events/mois — énorme marge pour une
-   petite marque, pas de serveur à gérer)
+**PostHog cloud** comme moteur de données (gratuit sous 1M events/mois — marge énorme pour
+une petite marque, zéro serveur à gérer, autocapture des clics, visiteurs quasi temps réel).
 
-PostHog cloud est probablement le plus simple à démarrer (zéro infra), et donne en un seul
-outil l'équivalent visite + comportement + conversion du dashboard Shopify, au lieu
-d'assembler plusieurs outils.
+Décision de Julien : pas de lien vers le dashboard PostHog externe — un seul dashboard visible,
+celui de notre propre `/admin`. Donc PostHog reste la source des événements, mais les
+graphiques sont dessinés dans nos propres pages (via l'API PostHog), à côté du tableau
+produits. Principe retenu pour la suite : un seul dashboard, mais chaque fonctionnalité peut
+s'appuyer sur l'outil le plus adapté en dessous (pas d'obligation de tout regrouper dans un
+seul vendor par principe).
+
+**Construit ET vérifié bout en bout le 2026-08-13** (même jour, juste après Supabase/admin/
+boutique) : événements réels envoyés depuis le site public, remontés et graphés dans le
+dashboard admin (visiteurs/14j, pages populaires/30j, visiteurs en direct). Détail complet
+(architecture, clés PostHog EU, palette de graphique, bug corrigé) dans `PROGRESS.md`.
+**Panier abandonné : toujours impossible à mesurer tant que le panier/Stripe n'existe pas**
+(§1) — le compte PostHog est prêt à recevoir cet événement dès que le panier sera codé, pas
+de nouvel outil à introduire à ce moment-là.
 
 ---
 
@@ -143,6 +152,17 @@ affiché au client.
 
 ## 4. Admin produit façon Shopify — comment le coder simplement
 
+**Construit ET vérifié bout en bout le 2026-08-13** (projet Supabase réel, test complet
+navigateur : login → ajout produit avec photo → visible sur la boutique publique — détail dans
+`PROGRESS.md`). Alternative Payload CMS (admin auto-généré depuis un schéma) comparée et
+écartée par Julien : cohérent avec l'objectif "apprendre chaque brique" plutôt que déléguer la
+partie CRUD/upload à un framework tout fait. Dashboard d'accueil (stats, activité récente)
+ajouté dans la foulée suite à un retour de Julien : la simple liste produits derrière un login
+ne "faisait pas assez app". Puis **admin extrait en app Next.js séparée** (`projects/site-adeline/admin/`,
+son propre déploiement) suite à une deuxième correction de Julien — il voulait une app à part
+depuis le début, pas des routes `/admin` dans le site vitrine. Détail complet (architecture
+deux-apps, pièges rencontrés) dans `PROGRESS.md`.
+
 Besoin exprimé : pouvoir ajouter des articles, gérer les quantités en stock, uploader des
 images et une description, sans que ce soit aussi complexe que de coder tout à la main —
 comme sur Shopify où on remplit juste les champs et la plateforme génère la page produit.
@@ -171,12 +191,13 @@ relations DB.
 
 ---
 
-## 5. Hébergement — Netlify
+## 5. Hébergement — Vercel (corrigé le 2026-08-13, ce paragraphe prévoyait Netlify au départ)
 
-- Plan gratuit Netlify confirmé : domaine custom + SSL automatique (Let's Encrypt) inclus,
-  aucune limite de bande passante sur le domaine custom, hébergement Next.js sans souci.
-  300 credits/mois inclus, largement suffisant pour un site à faible trafic.
-- **Le nom de domaine lui-même n'est jamais gratuit.** Netlify permet de connecter
+- Le site tourne en fait sur **Vercel** (compte gratuit de Julien), pas Netlify — décidé et
+  déployé dès la v1 vitrine, voir `PROGRESS.md`. Même deal côté gratuité : domaine custom +
+  SSL automatique inclus, hébergement Next.js natif (c'est l'éditeur de Next.js), pas de
+  limite de bande passante bloquante à ce volume.
+- **Le nom de domaine lui-même n'est jamais gratuit.** Vercel permet de connecter
   gratuitement un domaine qu'on achète ailleurs (Namecheap, OVH...), environ 10-15€/an pour
   un .com ou .fr. Aucune plateforme n'offre un vrai domaine gratuit à vie.
 - **C'est le seul coût récurrent certain de tout le projet.**
@@ -234,17 +255,21 @@ relations DB.
 ## 8. To-do d'exécution
 
 - [ ] Choisir et acheter le nom de domaine
-- [ ] Setup Next.js + déploiement Netlify
-- [ ] Setup Supabase (DB produits + storage images + auth admin), prévoir le champ
-      poids/dimensions par produit dès la conception du schéma
-- [ ] Construire la page admin : formulaire ajout produit (nom, description, prix, stock,
-      upload image), édition, archivage
+- [x] Setup Next.js + déploiement Vercel (2026-08 — Netlify prévu au départ, changé pour
+      Vercel, voir §5)
+- [x] Setup Supabase (DB produits + storage images + auth admin) — schéma dans
+      `app/supabase/schema.sql`, 2026-08-13. Le champ poids/dimensions par produit
+      **n'est pas encore dans le schéma** — à ajouter avant la phase shipping/Sendcloud (§3)
+- [x] Construire la page admin : formulaire ajout produit (nom, description, prix, stock,
+      upload image), édition, archivage, + tableau de bord d'accueil (stats, activité
+      récente) — 2026-08-13, testé bout en bout avec le vrai projet Supabase de Julien
 - [ ] Intégrer Stripe Checkout + webhook `checkout.session.completed`,
       activer `shipping_address_collection`
 - [ ] Décrémenter le stock via le webhook (transaction DB atomique anti-oversell)
 - [ ] Intégrer Sendcloud : génération de label au paiement confirmé, email tracking au
       client
-- [ ] Trancher Umami vs PostHog, puis brancher sur le storefront
+- [x] Phase E analytics : PostHog branché (tranché le 2026-08-13, voir §2) + graphiques dans
+      `admin/` — construit et vérifié bout en bout le 2026-08-13
 - [ ] State machine statut commande (payé → préparation → expédié → livré → remboursé)
 - [ ] Emails transactionnels via Brevo (confirmation commande, notif expédition)
 - [ ] Pages légales FR : CGV, mentions légales, politique de confidentialité RGPD, droit
