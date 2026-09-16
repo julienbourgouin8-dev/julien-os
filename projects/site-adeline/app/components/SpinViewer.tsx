@@ -16,10 +16,11 @@ type SpinViewerProps = {
 const PX_PER_FRAME = 6;
 
 // Ms entre deux frames en rotation automatique (retour Julien 2026-09-16 :
-// "essaye de laisser tourner par elle-même" puis "accélère, c'est un peu
-// long" — la vidéo source faisait un tour complet en ~10s, ici on va
-// nettement plus vite). ~35 frames × 55ms ≈ 1.9s par tour.
-const AUTO_ROTATE_MS = 55;
+// d'abord "accélère, c'est un peu long" [essai à 55ms → ~1.9s/tour], puis
+// "ça tombe beaucoup trop vite" — 55ms était finalement trop rapide en
+// sens inverse. La vidéo source faisait un tour complet en ~10s ;
+// ~35 frames × 140ms ≈ 4.9s par tour, entre les deux essais précédents.
+const AUTO_ROTATE_MS = 140;
 
 // Idée de Julien (2026-09-16) : remplacer la vidéo qui tourne toute seule
 // par une rotation pilotée au doigt — glisser horizontalement fait
