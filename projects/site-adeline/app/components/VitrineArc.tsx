@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from "react";
 import WriteOnHeading from "@/components/WriteOnHeading";
+import SpinViewer from "@/components/SpinViewer";
 
 const IMAGE = "/brand/vitrine-composite-v4.jpg";
 
@@ -20,6 +21,11 @@ type Hotspot = {
   width: number;
   height: number;
   video?: string;
+  // Frames pré-découpées du même clip 360 (voir SpinViewer + script
+  // d'extraction, historique de session 2026-09-16) pour la version
+  // mobile empilée : glisser au doigt fait tourner le produit au lieu
+  // de la vidéo qui tourne seule.
+  spin?: { basePath: string; frameCount: number };
 };
 
 // Coordonnées mesurées par script (seuillage pixel vs fond, voir historique
@@ -40,6 +46,7 @@ const hotspots: Hotspot[] = [
     width: 16.8,
     height: 52.7,
     video: "/products/videos/sac-savane-360-v3.mp4",
+    spin: { basePath: "/products/spin/sac-savane", frameCount: 35 },
   },
   {
     // bouillotte (housse fleece + tissu imprimé) — remplace la sacoche
@@ -52,6 +59,7 @@ const hotspots: Hotspot[] = [
     width: 15.6,
     height: 47.7,
     video: "/products/videos/bouillotte-360.mp4",
+    spin: { basePath: "/products/spin/bouillotte", frameCount: 38 },
   },
   {
     // trousse de toilette effet python noir — remplace la pochette éventail
@@ -64,6 +72,7 @@ const hotspots: Hotspot[] = [
     width: 25.5,
     height: 41.7,
     video: "/products/videos/trousse-python-360.mp4",
+    spin: { basePath: "/products/spin/trousse-python", frameCount: 34 },
   },
   {
     name: "Lunch box",
@@ -74,6 +83,7 @@ const hotspots: Hotspot[] = [
     width: 20.4,
     height: 40.6,
     video: "/products/videos/lunch-box-360-v2.mp4",
+    spin: { basePath: "/products/spin/lunch-box", frameCount: 35 },
   },
   {
     name: "Trousse papillons",
@@ -84,6 +94,7 @@ const hotspots: Hotspot[] = [
     width: 8.3,
     height: 31.3,
     video: "/products/videos/trousse-papillons-360-v2.mp4",
+    spin: { basePath: "/products/spin/trousse-papillons", frameCount: 35 },
   },
 ];
 
@@ -281,7 +292,47 @@ export default function VitrineArc() {
         />
       </div>
 
-      <div className="relative w-full" style={{ aspectRatio: "2438 / 1254" }}>
+      {/* Version mobile (retour Julien 2026-09-16 : le présentoir/hotspots
+          est un dispositif pensé pour la souris — survol pour glisser
+          d'une pièce à l'autre — qui n'a pas vraiment de sens au doigt,
+          où le clic est le seul geste. Remplacé sous `sm` par les 5
+          catégories empilées, chacune avec sa propre pièce qu'on peut
+          faire tourner au doigt (SpinViewer, glisser horizontal = frame
+          suivante/précédente, glisser vertical = scroll normal de la
+          page), son nom et son CTA — plus besoin du panneau/hover, le
+          lien "Découvrir" mène directement au catalogue de la catégorie. */}
+      <div className="flex flex-col gap-10 px-4 pb-10 sm:hidden">
+        {hotspots.map((spot) =>
+          spot.spin ? (
+            <div key={spot.name} className="flex flex-col items-center text-center">
+              <div className="w-full max-w-[22rem] overflow-hidden rounded-2xl bg-paper shadow-[0_12px_30px_rgba(36,27,21,0.12)]">
+                <SpinViewer
+                  basePath={spot.spin.basePath}
+                  frameCount={spot.spin.frameCount}
+                  alt={spot.name}
+                  className="aspect-square w-full"
+                />
+              </div>
+              <p className="mt-2 flex items-center gap-1.5 text-[0.65rem] text-ink/40">
+                <span aria-hidden>↔</span> Glisser pour faire tourner
+              </p>
+              <p className="mt-3 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-teal">
+                {spot.category}
+              </p>
+              <p className="mt-1 font-display text-xl italic text-ink">{spot.name}</p>
+              <a
+                href={`/boutique/${spot.categorySlug}`}
+                className="group mt-4 inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-denim px-6 py-2.5 text-xs font-semibold text-paper shadow-[0_8px_20px_rgba(79,108,143,0.35)] transition-transform hover:-translate-y-0.5"
+              >
+                Découvrir {spot.category}
+                <span className="transition-transform group-hover:translate-x-1">→</span>
+              </a>
+            </div>
+          ) : null,
+        )}
+      </div>
+
+      <div className="relative hidden w-full sm:block" style={{ aspectRatio: "2438 / 1254" }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={IMAGE}

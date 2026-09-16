@@ -6,6 +6,9 @@ const LINKS = [
   { href: "#vitrine", label: "Créations" },
   { href: "#marches", label: "Marchés" },
   { href: "#contact", label: "Contact" },
+  // TODO Julien : même destination provisoire que la nav desktop hero
+  // (page.tsx) — pas de section "À propos" sur le site pour l'instant.
+  { href: "#apropos", label: "À propos" },
 ];
 
 // Menu hamburger mobile — remplace l'icône "Boutique" isolée (qui pointait
@@ -24,9 +27,9 @@ export default function MobileMenu() {
         onClick={() => setOpen((v) => !v)}
         className="relative z-50 flex h-6 w-6 flex-col items-center justify-center gap-[5px] text-ink sm:hidden"
       >
-        <span className={`h-[1.5px] w-5 bg-current transition-transform ${open ? "translate-y-[6.5px] rotate-45" : ""}`} />
-        <span className={`h-[1.5px] w-5 bg-current transition-opacity ${open ? "opacity-0" : ""}`} />
-        <span className={`h-[1.5px] w-5 bg-current transition-transform ${open ? "-translate-y-[6.5px] -rotate-45" : ""}`} />
+        <span className={`h-[2.5px] w-5 rounded-full bg-current transition-transform ${open ? "translate-y-[6.5px] rotate-45" : ""}`} />
+        <span className={`h-[2.5px] w-5 rounded-full bg-current transition-opacity ${open ? "opacity-0" : ""}`} />
+        <span className={`h-[2.5px] w-5 rounded-full bg-current transition-transform ${open ? "-translate-y-[6.5px] -rotate-45" : ""}`} />
       </button>
 
       {open && (

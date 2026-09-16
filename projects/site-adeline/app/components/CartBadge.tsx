@@ -22,7 +22,7 @@ export default function CartBadge({ className, hideLabel }: { className?: string
           proprement l'animation côté flyToCart plutôt que de viser dans le
           vide. */}
       <span data-cart-icon className="relative inline-flex">
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <path d="M6 8h12l-1 12H7L6 8Z" />
           <path d="M9 8V6a3 3 0 0 1 6 0v2" />
         </svg>
