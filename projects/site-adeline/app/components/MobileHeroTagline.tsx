@@ -55,6 +55,24 @@ export default function MobileHeroTagline() {
     if (stored) setKnobs(stored);
     const params = new URLSearchParams(window.location.search);
     setShowPanel(params.get("tune") === "1");
+
+    // Deuxième façon de piloter les réglages (retour Julien 2026-09-16 :
+    // le panneau sur la page mange trop d'écran sur téléphone) : depuis
+    // `public/dev-iphone.html`, ouvert dans VS Code (Simple Browser), qui
+    // affiche cette page dans un iframe à la largeur exacte d'un iPhone et
+    // pilote les curseurs dans sa propre barre latérale — donc le rendu
+    // garde toute la hauteur de l'écran. La page parente écrit dans le
+    // localStorage de l'iframe (persistance au reload) ET poste un message
+    // pour une mise à jour instantanée pendant qu'on bouge un curseur (un
+    // write localStorage ne déclenche pas l'événement `storage` dans la
+    // fenêtre qui l'a fait elle-même).
+    function onMessage(e: MessageEvent) {
+      if (e.data && e.data.type === "hero-tagline-tune" && e.data.knobs) {
+        setKnobs(e.data.knobs as Knobs);
+      }
+    }
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
   }, []);
 
   const update = (key: keyof Knobs, patch: Partial<Knob>) => {

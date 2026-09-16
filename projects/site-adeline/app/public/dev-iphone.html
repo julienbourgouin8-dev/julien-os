@@ -86,12 +86,62 @@
       /* ---------- scène ---------- */
       .stage {
         flex: 1 1 auto;
+        display: flex;
+        align-items: stretch;
+        overflow: hidden;
+        padding: 14px;
+        gap: 14px;
+      }
+      .phone-wrap {
+        flex: 1 1 auto;
         display: grid;
         place-items: center;
         overflow: hidden;
-        padding: 14px;
+        min-width: 0;
       }
       .phone-scale { transform-origin: center center; }
+
+      /* ---------- panneau de réglage tagline (retour Julien 2026-09-16 :
+         le panneau embarqué dans la page mange trop d'écran sur téléphone —
+         ici il vit à côté du téléphone, jamais dessus). Piloté depuis le
+         script en bas : écrit dans le localStorage de l'iframe + poste un
+         message pour une mise à jour live pendant qu'on tire un curseur. */
+      .tuner {
+        flex: 0 0 260px;
+        display: none;
+        flex-direction: column;
+        gap: 10px;
+        overflow-y: auto;
+        padding: 4px 4px 14px;
+      }
+      .tuner.open { display: flex; }
+      .tuner h3 {
+        margin: 0;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+      }
+      .tuner-group {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px 12px;
+      }
+      .tuner-group + .tuner-group { margin-top: 0; }
+      .tuner-row { margin-bottom: 8px; }
+      .tuner-row:last-child { margin-bottom: 0; }
+      .tuner-row label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-bottom: 3px;
+      }
+      .tuner-row output { font-variant-numeric: tabular-nums; color: var(--text); }
+      .tuner-row input[type="range"] { width: 100%; }
+      .tuner-actions { display: flex; gap: 8px; }
+      .tuner-actions button { flex: 1; }
 
       /* Coque : dimensions en points CSS d'un iPhone 15/16 par défaut,
          surchargées par le sélecteur d'appareil. */
@@ -202,43 +252,61 @@
       <input id="url" value="/" spellcheck="false" title="Chemin à afficher" />
       <button id="go">Aller</button>
       <button id="reload" class="ghost" title="Recharger l'iframe">↻</button>
+      <button id="toggleTuner" class="ghost" title="Régler la tagline du hero mobile">Régler tagline</button>
       <span class="swatch" title="Couleur du canvas lue dans la page — c'est elle qu'iOS peint dans la barre d'état">
         <i id="chip"></i><span id="chipLabel">—</span>
       </span>
     </div>
 
     <div class="stage">
-      <div class="phone-scale" id="scale">
-        <div class="phone" id="phone" style="--w: 393px; --h: 852px; --status-h: 59px">
-          <div class="screen">
-            <div class="statusbar" id="statusbar">
-              <span id="clock">9:41</span>
-              <div class="island" id="island"></div>
-              <span class="status-icons">
-                <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor">
-                  <rect x="0" y="8" width="3" height="4" rx="1" />
-                  <rect x="5" y="5.5" width="3" height="6.5" rx="1" />
-                  <rect x="10" y="3" width="3" height="9" rx="1" />
-                  <rect x="15" y="0" width="3" height="12" rx="1" />
-                </svg>
-                <svg width="26" height="13" viewBox="0 0 26 13" fill="none">
-                  <rect x="0.5" y="0.5" width="21" height="12" rx="3.5" stroke="currentColor" opacity=".4" />
-                  <rect x="2" y="2" width="15" height="9" rx="2" fill="currentColor" />
-                  <path d="M23 4.5v4a2.6 2.6 0 0 0 0-4Z" fill="currentColor" opacity=".4" />
-                </svg>
-              </span>
-            </div>
+      <div class="phone-wrap">
+        <div class="phone-scale" id="scale">
+          <div class="phone" id="phone" style="--w: 393px; --h: 852px; --status-h: 59px">
+            <div class="screen">
+              <div class="statusbar" id="statusbar">
+                <span id="clock">9:41</span>
+                <div class="island" id="island"></div>
+                <span class="status-icons">
+                  <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor">
+                    <rect x="0" y="8" width="3" height="4" rx="1" />
+                    <rect x="5" y="5.5" width="3" height="6.5" rx="1" />
+                    <rect x="10" y="3" width="3" height="9" rx="1" />
+                    <rect x="15" y="0" width="3" height="12" rx="1" />
+                  </svg>
+                  <svg width="26" height="13" viewBox="0 0 26 13" fill="none">
+                    <rect x="0.5" y="0.5" width="21" height="12" rx="3.5" stroke="currentColor" opacity=".4" />
+                    <rect x="2" y="2" width="15" height="9" rx="2" fill="currentColor" />
+                    <path d="M23 4.5v4a2.6 2.6 0 0 0 0-4Z" fill="currentColor" opacity=".4" />
+                  </svg>
+                </span>
+              </div>
 
-            <iframe id="frame" src="/" title="Aperçu du site"></iframe>
+              <iframe id="frame" src="/" title="Aperçu du site"></iframe>
 
-            <div class="safaribar" id="safaribar">
-              <div class="pill round">‹</div>
-              <div class="pill url" id="urlPill">creadeline.vercel.app</div>
-              <div class="pill round">⋯</div>
-              <div class="home-indicator"></div>
+              <div class="safaribar" id="safaribar">
+                <div class="pill round">‹</div>
+                <div class="pill url" id="urlPill">creadeline.vercel.app</div>
+                <div class="pill round">⋯</div>
+                <div class="home-indicator"></div>
+              </div>
             </div>
           </div>
         </div>
+      </div>
+
+      <div class="tuner" id="tuner">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h3 style="margin:0;">Tagline hero mobile</h3>
+          <div class="tuner-actions" style="flex:0 0 auto; gap:6px;">
+            <button id="tunerReset" class="ghost">Réinit.</button>
+            <button id="tunerCopy">Copier</button>
+          </div>
+        </div>
+        <div id="tunerGroups"></div>
+        <p class="hint" style="padding:0;">
+          Modifie les curseurs, regarde le résultat dans le téléphone à
+          gauche, puis "Copier" pour renvoyer les valeurs.
+        </p>
       </div>
     </div>
 
@@ -261,12 +329,14 @@
       const urlPill = document.getElementById("urlPill");
 
       /* Mise à l'échelle pour que la coque tienne dans le panneau VS Code,
-         quelle que soit sa largeur. */
+         quelle que soit sa largeur. Mesurée sur `.phone-wrap` (pas
+         `.stage`) pour que l'ouverture du panneau de réglage à droite ne
+         rétrécisse pas le téléphone. */
       function fit() {
-        const stage = document.querySelector(".stage");
+        const wrap = document.querySelector(".phone-wrap");
         const w = phone.offsetWidth;
         const h = phone.offsetHeight;
-        const k = Math.min((stage.clientWidth - 28) / w, (stage.clientHeight - 28) / h, 1);
+        const k = Math.min((wrap.clientWidth - 28) / w, (wrap.clientHeight - 28) / h, 1);
         scale.style.transform = `scale(${k})`;
       }
 
@@ -327,8 +397,132 @@
       document.getElementById("reload").addEventListener("click", () => {
         frame.contentWindow.location.reload();
       });
-      frame.addEventListener("load", paintChrome);
+      frame.addEventListener("load", () => {
+        paintChrome();
+        tunerLoadFromFrame();
+      });
       window.addEventListener("resize", fit);
+
+      /* ---------- panneau de réglage tagline ----------
+         Miroir du composant client `MobileHeroTagline` (mêmes clés de
+         localStorage/mêmes formes de données) : on pilote son état sans
+         toucher au code React, en écrivant dans le localStorage de
+         l'iframe (persistance au reload) et en postant un message pour
+         une mise à jour instantanée pendant qu'on tire un curseur — un
+         write localStorage ne déclenche pas l'événement `storage` dans la
+         fenêtre qui l'a fait elle-même, donc on ne peut pas compter sur
+         lui ici. */
+      const TUNER_STORAGE_KEY = "hero-tagline-tune-v1";
+      const TUNER_DEFAULTS = {
+        des: { top: 16, x: 0, size: 1.875 },
+        qui: { top: 42, x: 0, size: 1.875 },
+        vous: { top: 88, x: 0, size: 1.875 },
+      };
+      const TUNER_LABELS = {
+        des: "Des créations",
+        qui: "qui",
+        vous: "vous correspondent",
+      };
+      let tunerKnobs = structuredClone(TUNER_DEFAULTS);
+
+      const tunerPanel = document.getElementById("tuner");
+      const tunerGroups = document.getElementById("tunerGroups");
+
+      function tunerBuildUI() {
+        tunerGroups.innerHTML = "";
+        for (const key of Object.keys(TUNER_DEFAULTS)) {
+          const group = document.createElement("div");
+          group.className = "tuner-group";
+          group.style.marginTop = "10px";
+          group.innerHTML = `
+            <h3 style="margin-bottom:6px;">${TUNER_LABELS[key]}</h3>
+            <div class="tuner-row">
+              <label><span>Position verticale</span><output data-out="${key}.top"></output></label>
+              <input type="range" min="0" max="100" step="0.5" data-knob="${key}.top" />
+            </div>
+            <div class="tuner-row">
+              <label><span>Position horizontale</span><output data-out="${key}.x"></output></label>
+              <input type="range" min="-30" max="30" step="0.5" data-knob="${key}.x" />
+            </div>
+            <div class="tuner-row">
+              <label><span>Taille</span><output data-out="${key}.size"></output></label>
+              <input type="range" min="1" max="3.5" step="0.05" data-knob="${key}.size" />
+            </div>
+          `;
+          tunerGroups.appendChild(group);
+        }
+        tunerGroups.querySelectorAll("input[type=range]").forEach((input) => {
+          input.addEventListener("input", () => {
+            const [key, prop] = input.dataset.knob.split(".");
+            tunerKnobs[key][prop] = Number(input.value);
+            tunerSyncUI();
+            tunerPush();
+          });
+        });
+      }
+
+      function tunerSyncUI() {
+        for (const key of Object.keys(tunerKnobs)) {
+          for (const prop of ["top", "x", "size"]) {
+            const val = tunerKnobs[key][prop];
+            const input = tunerGroups.querySelector(`input[data-knob="${key}.${prop}"]`);
+            const out = tunerGroups.querySelector(`output[data-out="${key}.${prop}"]`);
+            if (input) input.value = val;
+            if (out) out.textContent = prop === "size" ? val.toFixed(2) + "rem" : val.toFixed(1) + "%";
+          }
+        }
+      }
+
+      // Écrit dans le localStorage DE L'IFRAME (même origine) pour que la
+      // valeur survive à un rechargement, et pousse un message pour un
+      // rendu instantané sans reload.
+      function tunerPush() {
+        try {
+          frame.contentWindow.localStorage.setItem(TUNER_STORAGE_KEY, JSON.stringify(tunerKnobs));
+        } catch {
+          // autre origine (site déployé chargé sans passer par ce même host) : tant pis pour la persistance, le postMessage suffit pour le live.
+        }
+        frame.contentWindow.postMessage({ type: "hero-tagline-tune", knobs: tunerKnobs }, "*");
+      }
+
+      // Relit les valeurs déjà sauvegardées dans l'iframe à chaque
+      // chargement, pour repartir de là où Julien s'était arrêté.
+      function tunerLoadFromFrame() {
+        try {
+          const raw = frame.contentWindow.localStorage.getItem(TUNER_STORAGE_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed.des && parsed.qui && parsed.vous) tunerKnobs = parsed;
+          }
+        } catch {
+          // autre origine : on garde les valeurs en mémoire
+        }
+        tunerSyncUI();
+      }
+
+      document.getElementById("toggleTuner").addEventListener("click", () => {
+        tunerPanel.classList.toggle("open");
+        fit();
+      });
+      document.getElementById("tunerReset").addEventListener("click", () => {
+        tunerKnobs = structuredClone(TUNER_DEFAULTS);
+        tunerSyncUI();
+        tunerPush();
+      });
+      document.getElementById("tunerCopy").addEventListener("click", async () => {
+        const btn = document.getElementById("tunerCopy");
+        try {
+          await navigator.clipboard.writeText(JSON.stringify(tunerKnobs, null, 2));
+          const original = btn.textContent;
+          btn.textContent = "Copié !";
+          setTimeout(() => (btn.textContent = original), 1200);
+        } catch {
+          alert(JSON.stringify(tunerKnobs, null, 2));
+        }
+      });
+
+      tunerBuildUI();
+      tunerSyncUI();
 
       // Le rechargement à chaud de Next repeint sans événement `load` : on
       // relit la couleur périodiquement pour rester synchro pendant l'édition.
