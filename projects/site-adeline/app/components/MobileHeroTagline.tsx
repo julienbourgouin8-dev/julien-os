@@ -20,11 +20,21 @@ type Knobs = {
 // dev-iphone.html le 2026-09-16 (copiées-collées depuis le bouton
 // "Copier"), plus fidèles que le calcul géométrique initial puisque
 // jugées directement à l'œil sur le rendu réel.
+// x recalculés sur des mesures directes de `hero-mobile-v9.png` (retour
+// Julien 2026-09-16 : "vois si tu peux un peu mieux centrer") : la
+// pointe des anses tombe exactement à 50% de la largeur, et le groupe
+// complet portefeuille+sac+pochette est centré à ~50% aussi (2%-97%) —
+// seul le corps du sac est très légèrement à droite (~51,5%, mesuré sur
+// les bords du corps crème). "Des créations" est juste au-dessus de la
+// pointe des anses → x réduit de 3.5 à 1.5 (3.5 était too much vu que le
+// repère du dessus est à 50% pile). "qui" est dans la boucle elle-même,
+// où l'écart entre les deux anses n'est pas centré à 50% mais glisse
+// vers ~52.3% à cette hauteur (mesuré directement) → x monté à 2.3.
 const DEFAULTS: Knobs = {
-  des: { top: 21, x: 3.5, size: 2.3 },
-  qui: { top: 46.5, x: 1.5, size: 2.3 },
+  des: { top: 21, x: 1.5, size: 2.3 },
+  qui: { top: 46.5, x: 2.3, size: 2.3 },
   vous: { top: 92, x: 1.5, size: 2.1 },
-  logo: { top: 0, x: 0, size: 1.875 },
+  logo: { top: 0, x: 1, size: 2.3 },
 };
 
 const STORAGE_KEY = "hero-tagline-tune-v1";
