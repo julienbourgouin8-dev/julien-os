@@ -100,10 +100,15 @@ export default function MobileHeroTagline() {
   // Le logo texte du header ("CréA'deline") est rendu par `page.tsx`, pas
   // par ce composant — il n'y a pas de prop/contexte entre les deux, donc
   // le réglage passe par des variables CSS sur la racine du document, que
-  // le logo consomme via `var(--tag-logo-x, 0%)` etc.
+  // le logo consomme via `var(--tag-logo-x, 0vw)` etc. En `vw`, pas `%` :
+  // `translateX(%)` se base sur la largeur de L'ÉLÉMENT (le logo est
+  // petit, ~110px, donc 20% ne déplaçait que ~22px — quasi invisible,
+  // d'où le "ça ne fonctionne pas" de Julien) alors que `vw` se base sur
+  // la largeur de l'écran, comme pour les autres lignes de la tagline
+  // (dont le bloc englobant fait toute la largeur).
   useEffect(() => {
     const root = document.documentElement;
-    root.style.setProperty("--tag-logo-x", `${knobs.logo.x}%`);
+    root.style.setProperty("--tag-logo-x", `${knobs.logo.x}vw`);
     root.style.setProperty("--tag-logo-size", fluidRem(knobs.logo.size));
   }, [knobs.logo.x, knobs.logo.size]);
 

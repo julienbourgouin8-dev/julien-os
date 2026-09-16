@@ -176,7 +176,7 @@ export default function Home() {
                 href="#hero"
                 className="font-script font-bold text-ink"
                 style={{
-                  transform: "translateX(var(--tag-logo-x, 0%))",
+                  transform: "translateX(var(--tag-logo-x, 0vw))",
                   fontSize: "var(--tag-logo-size, 1.875rem)",
                 }}
               >
