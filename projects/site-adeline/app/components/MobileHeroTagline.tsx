@@ -8,24 +8,46 @@ type Knobs = {
   des: Knob;
   qui: Knob;
   vous: Knob;
+  // Logo texte du header ("CréA'deline", retour Julien 2026-09-16 :
+  // "il faut qu'on décale aussi le logo"). `top` est inutilisé (il vit
+  // dans la rangée hamburger/panier, pas de position verticale libre) —
+  // gardé dans le type pour réutiliser le même panneau de curseurs,
+  // simplement pas affiché pour ce groupe.
+  logo: Knob;
 };
 
-// Valeurs par défaut = celles calculées/validées avec Julien le 2026-09-16
-// (voir historique dans page.tsx avant l'introduction de ce composant).
+// Valeurs par défaut = réglées par Julien lui-même via le panneau de
+// dev-iphone.html le 2026-09-16 (copiées-collées depuis le bouton
+// "Copier"), plus fidèles que le calcul géométrique initial puisque
+// jugées directement à l'œil sur le rendu réel.
 const DEFAULTS: Knobs = {
-  des: { top: 16, x: 0, size: 1.875 },
-  qui: { top: 42, x: 0, size: 1.875 },
-  vous: { top: 88, x: 0, size: 1.875 },
+  des: { top: 21, x: 3.5, size: 2.3 },
+  qui: { top: 46.5, x: 1.5, size: 2.3 },
+  vous: { top: 92, x: 1.5, size: 2.1 },
+  logo: { top: 0, x: 0, size: 1.875 },
 };
 
 const STORAGE_KEY = "hero-tagline-tune-v1";
+
+// Taille fluide : la valeur réglée (en rem) n'est exacte qu'à la largeur
+// de référence (l'iPhone 15/16 sur lequel Julien règle habituellement,
+// 390px) — en `rem` fixe, "vous correspondent" en grande taille passe à
+// la ligne sur un écran plus étroit (repéré sur iPhone SE, 320px). En
+// vw entre un plancher et la valeur réglée (jamais plus grand que ce que
+// Julien a choisi), le texte suit la largeur de l'écran comme le fait
+// déjà le grand wordmark desktop (`clamp(...)` dans page.tsx).
+const REF_WIDTH = 390;
+function fluidRem(rem: number): string {
+  const vw = ((rem * 16) / REF_WIDTH) * 100;
+  return `clamp(${(rem * 0.72).toFixed(3)}rem, ${vw.toFixed(3)}vw, ${rem.toFixed(3)}rem)`;
+}
 
 function loadStored(): Knobs | null {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
-    if (!parsed.des || !parsed.qui || !parsed.vous) return null;
+    if (!parsed.des || !parsed.qui || !parsed.vous || !parsed.logo) return null;
     return parsed as Knobs;
   } catch {
     return null;
@@ -75,7 +97,17 @@ export default function MobileHeroTagline() {
     return () => window.removeEventListener("message", onMessage);
   }, []);
 
-  const update = (key: keyof Knobs, patch: Partial<Knob>) => {
+  // Le logo texte du header ("CréA'deline") est rendu par `page.tsx`, pas
+  // par ce composant — il n'y a pas de prop/contexte entre les deux, donc
+  // le réglage passe par des variables CSS sur la racine du document, que
+  // le logo consomme via `var(--tag-logo-x, 0%)` etc.
+  useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty("--tag-logo-x", `${knobs.logo.x}%`);
+    root.style.setProperty("--tag-logo-size", fluidRem(knobs.logo.size));
+  }, [knobs.logo.x, knobs.logo.size]);
+
+  const update = <K extends keyof Knobs>(key: K, patch: Partial<Knobs[K]>) => {
     setKnobs((prev) => {
       const next = { ...prev, [key]: { ...prev[key], ...patch } };
       try {
@@ -114,7 +146,7 @@ export default function MobileHeroTagline() {
         style={{
           top: `${knobs.des.top}%`,
           transform: `translate(${knobs.des.x}%, -50%)`,
-          fontSize: `${knobs.des.size}rem`,
+          fontSize: fluidRem(knobs.des.size),
         }}
       >
         Des{" "}
@@ -127,7 +159,7 @@ export default function MobileHeroTagline() {
         style={{
           top: `${knobs.qui.top}%`,
           transform: `translate(${knobs.qui.x}%, -50%)`,
-          fontSize: `${knobs.qui.size}rem`,
+          fontSize: fluidRem(knobs.qui.size),
         }}
       >
         qui
@@ -141,7 +173,7 @@ export default function MobileHeroTagline() {
       >
         <p
           className="font-display font-medium italic leading-tight text-ink"
-          style={{ fontSize: `${knobs.vous.size}rem` }}
+          style={{ fontSize: fluidRem(knobs.vous.size) }}
         >
           vous <span className="text-denim">correspondent</span>
         </p>
@@ -181,6 +213,7 @@ export default function MobileHeroTagline() {
               ["des", "Des créations"],
               ["qui", "qui"],
               ["vous", "vous correspondent"],
+              ["logo", "Logo header"],
             ] as const
           ).map(([key, label]) => (
             <div key={key} className="mb-4 border-b border-ink/10 pb-3 last:border-0 last:pb-0">
@@ -188,19 +221,23 @@ export default function MobileHeroTagline() {
                 {label}
               </p>
 
-              <label className="mb-1 flex items-center justify-between font-sans text-xs">
-                <span>Position verticale</span>
-                <span className="tabular-nums">{knobs[key].top.toFixed(1)}%</span>
-              </label>
-              <input
-                type="range"
-                min={0}
-                max={100}
-                step={0.5}
-                value={knobs[key].top}
-                onChange={(e) => update(key, { top: Number(e.target.value) })}
-                className="mb-2 w-full"
-              />
+              {key !== "logo" && (
+                <>
+                  <label className="mb-1 flex items-center justify-between font-sans text-xs">
+                    <span>Position verticale</span>
+                    <span className="tabular-nums">{knobs[key].top.toFixed(1)}%</span>
+                  </label>
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    step={0.5}
+                    value={knobs[key].top}
+                    onChange={(e) => update(key, { top: Number(e.target.value) })}
+                    className="mb-2 w-full"
+                  />
+                </>
+              )}
 
               <label className="mb-1 flex items-center justify-between font-sans text-xs">
                 <span>Position horizontale</span>

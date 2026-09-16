@@ -414,15 +414,20 @@
          lui ici. */
       const TUNER_STORAGE_KEY = "hero-tagline-tune-v1";
       const TUNER_DEFAULTS = {
-        des: { top: 16, x: 0, size: 1.875 },
-        qui: { top: 42, x: 0, size: 1.875 },
-        vous: { top: 88, x: 0, size: 1.875 },
+        des: { top: 21, x: 3.5, size: 2.3 },
+        qui: { top: 46.5, x: 1.5, size: 2.3 },
+        vous: { top: 92, x: 1.5, size: 2.1 },
+        logo: { top: 0, x: 0, size: 1.875 },
       };
       const TUNER_LABELS = {
         des: "Des créations",
         qui: "qui",
         vous: "vous correspondent",
+        logo: "Logo header",
       };
+      // Pas de position verticale pertinente pour le logo (il vit dans la
+      // rangée hamburger/panier) — seulement décalage horizontal + taille.
+      const TUNER_NO_VERTICAL = new Set(["logo"]);
       let tunerKnobs = structuredClone(TUNER_DEFAULTS);
 
       const tunerPanel = document.getElementById("tuner");
@@ -434,12 +439,15 @@
           const group = document.createElement("div");
           group.className = "tuner-group";
           group.style.marginTop = "10px";
-          group.innerHTML = `
-            <h3 style="margin-bottom:6px;">${TUNER_LABELS[key]}</h3>
-            <div class="tuner-row">
+          const verticalRow = TUNER_NO_VERTICAL.has(key)
+            ? ""
+            : `<div class="tuner-row">
               <label><span>Position verticale</span><output data-out="${key}.top"></output></label>
               <input type="range" min="0" max="100" step="0.5" data-knob="${key}.top" />
-            </div>
+            </div>`;
+          group.innerHTML = `
+            <h3 style="margin-bottom:6px;">${TUNER_LABELS[key]}</h3>
+            ${verticalRow}
             <div class="tuner-row">
               <label><span>Position horizontale</span><output data-out="${key}.x"></output></label>
               <input type="range" min="-30" max="30" step="0.5" data-knob="${key}.x" />

@@ -166,7 +166,20 @@ export default function Home() {
               style={{ paddingTop: "max(1rem, env(safe-area-inset-top))" }}
             >
               <MobileMenu />
-              <a href="#hero" className="font-script text-3xl font-bold text-ink">
+              {/* Décalage/taille pilotés par `MobileHeroTagline` via des
+                  variables CSS (retour Julien 2026-09-16 : "il faut qu'on
+                  décale aussi le logo") — les deux composants ne
+                  partagent pas de props/contexte, `--tag-logo-*` est le
+                  seul canal entre eux. Fallbacks = rendu d'avant (centré,
+                  text-3xl) si jamais ce composant venait à disparaître. */}
+              <a
+                href="#hero"
+                className="font-script font-bold text-ink"
+                style={{
+                  transform: "translateX(var(--tag-logo-x, 0%))",
+                  fontSize: "var(--tag-logo-size, 1.875rem)",
+                }}
+              >
                 CréA&apos;deline
               </a>
               <CartBadge className="text-ink transition-colors hover:text-rust" />
