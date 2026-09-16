@@ -30,25 +30,48 @@ const PX_PER_FRAME = 6;
 // être saccadé au seek sur mobile (Safari en particulier) selon
 // l'espacement des keyframes, alors que basculer entre des images déjà
 // décodées est instantané — c'est le choix que font les vrais viewers
-// 360 produit.
+// 360 produit. En WebP (retour Julien 2026-09-16 : "faut qu'on
+// optimise, ça va rajouter du poids à la page") plutôt que jpg — ~35%
+// plus léger à qualité équivalente, 5 produits × ~35 frames ≈ 3.1 Mo
+// au lieu de 4.8 Mo au total.
 export default function SpinViewer({ basePath, frameCount, alt, className }: SpinViewerProps) {
   const [frame, setFrame] = useState(0);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const draggingRef = useRef(false);
   const startXRef = useRef(0);
   const startFrameRef = useRef(0);
 
-  const frameSrc = (i: number) => `${basePath}/frame-${String(i + 1).padStart(3, "0")}.jpg`;
+  const frameSrc = (i: number) => `${basePath}/frame-${String(i + 1).padStart(3, "0")}.webp`;
 
-  // Précharge toutes les frames dès le montage — le lot pèse quelques
-  // centaines de Ko par produit (jpg 720px), rien qui justifie un
-  // chargement progressif pour l'instant.
+  // Ne précharge les frames 2..N (la 1ère se charge normalement via
+  // <img loading="lazy">) que quand la vignette approche de l'écran —
+  // avec 5 produits sur la page, précharger les 5 lots d'un coup au
+  // montage téléchargerait ~3 Mo même pour les catégories jamais vues
+  // (retour Julien : optimiser le poids de la page). `rootMargin: 400px`
+  // laisse une marge confortable pour que le lot soit prêt avant que la
+  // visiteuse n'atteigne vraiment la carte et n'essaie de la faire
+  // tourner.
   useEffect(() => {
-    const images: HTMLImageElement[] = [];
-    for (let i = 0; i < frameCount; i++) {
-      const img = new window.Image();
-      img.src = frameSrc(i);
-      images.push(img);
-    }
+    const el = containerRef.current;
+    if (!el) return;
+    let cancelled = false;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0]?.isIntersecting) return;
+        for (let i = 1; i < frameCount; i++) {
+          if (cancelled) return;
+          const img = new window.Image();
+          img.src = frameSrc(i);
+        }
+        observer.disconnect();
+      },
+      { rootMargin: "400px 0px" },
+    );
+    observer.observe(el);
+    return () => {
+      cancelled = true;
+      observer.disconnect();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [basePath, frameCount]);
 
@@ -73,6 +96,7 @@ export default function SpinViewer({ basePath, frameCount, alt, className }: Spi
 
   return (
     <div
+      ref={containerRef}
       className={`touch-pan-y select-none ${className ?? ""}`}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
@@ -83,6 +107,7 @@ export default function SpinViewer({ basePath, frameCount, alt, className }: Spi
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={frameSrc(frame)}
+        loading="lazy"
         alt={alt}
         draggable={false}
         className="pointer-events-none h-full w-full object-cover"
