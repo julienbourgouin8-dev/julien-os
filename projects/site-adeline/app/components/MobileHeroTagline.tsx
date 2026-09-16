@@ -1,0 +1,225 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+type Knob = { top: number; x: number; size: number };
+
+type Knobs = {
+  des: Knob;
+  qui: Knob;
+  vous: Knob;
+};
+
+// Valeurs par défaut = celles calculées/validées avec Julien le 2026-09-16
+// (voir historique dans page.tsx avant l'introduction de ce composant).
+const DEFAULTS: Knobs = {
+  des: { top: 16, x: 0, size: 1.875 },
+  qui: { top: 42, x: 0, size: 1.875 },
+  vous: { top: 88, x: 0, size: 1.875 },
+};
+
+const STORAGE_KEY = "hero-tagline-tune-v1";
+
+function loadStored(): Knobs | null {
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed.des || !parsed.qui || !parsed.vous) return null;
+    return parsed as Knobs;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Tagline éclatée du hero mobile ("Des créations" / "qui" / "vous
+ * correspondent" + CTA). Panneau de réglage ajouté le 2026-09-16 (retour
+ * Julien : les allers-retours "screenshot → je mesure → je code → je
+ * déploie → tu regardes" étaient trop lents) — avec `?tune=1` dans l'URL,
+ * Julien ajuste lui-même position/taille directement sur son téléphone,
+ * les valeurs sont sauvegardées en localStorage (donc persistent au
+ * reload) et un bouton "Copier" les met dans le presse-papier pour me les
+ * renvoyer. Sans `?tune=1`, le panneau ne s'affiche jamais et les valeurs
+ * réglées restent actives (juste sans les curseurs) — une fois les
+ * chiffres validés, ils doivent être recopiés en dur dans page.tsx et ce
+ * composant peut redevenir statique.
+ */
+export default function MobileHeroTagline() {
+  const [knobs, setKnobs] = useState<Knobs>(DEFAULTS);
+  const [showPanel, setShowPanel] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    const stored = loadStored();
+    if (stored) setKnobs(stored);
+    const params = new URLSearchParams(window.location.search);
+    setShowPanel(params.get("tune") === "1");
+  }, []);
+
+  const update = (key: keyof Knobs, patch: Partial<Knob>) => {
+    setKnobs((prev) => {
+      const next = { ...prev, [key]: { ...prev[key], ...patch } };
+      try {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      } catch {
+        // pas grave si localStorage est indisponible (navigation privée...)
+      }
+      return next;
+    });
+  };
+
+  const reset = () => {
+    setKnobs(DEFAULTS);
+    try {
+      window.localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // idem
+    }
+  };
+
+  const copyValues = async () => {
+    const text = JSON.stringify(knobs, null, 2);
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // clipboard indisponible (contexte non sécurisé, permission refusée...)
+    }
+  };
+
+  return (
+    <>
+      <p
+        className="absolute inset-x-0 -translate-y-1/2 px-6 text-center font-display font-medium italic leading-tight text-ink sm:hidden"
+        style={{
+          top: `${knobs.des.top}%`,
+          transform: `translate(${knobs.des.x}%, -50%)`,
+          fontSize: `${knobs.des.size}rem`,
+        }}
+      >
+        Des{" "}
+        <span className="not-italic font-sans font-bold text-denim">
+          créations
+        </span>
+      </p>
+      <p
+        className="absolute inset-x-0 -translate-y-1/2 text-center font-display italic text-ink sm:hidden"
+        style={{
+          top: `${knobs.qui.top}%`,
+          transform: `translate(${knobs.qui.x}%, -50%)`,
+          fontSize: `${knobs.qui.size}rem`,
+        }}
+      >
+        qui
+      </p>
+      <div
+        className="absolute inset-x-0 -translate-y-1/2 px-6 text-center sm:hidden"
+        style={{
+          top: `${knobs.vous.top}%`,
+          transform: `translate(${knobs.vous.x}%, -50%)`,
+        }}
+      >
+        <p
+          className="font-display font-medium italic leading-tight text-ink"
+          style={{ fontSize: `${knobs.vous.size}rem` }}
+        >
+          vous <span className="text-denim">correspondent</span>
+        </p>
+        <a
+          href="#vitrine"
+          className="hero-pop group mt-4 inline-flex items-center gap-2 rounded-full bg-denim px-8 py-3.5 text-sm font-semibold text-paper shadow-[0_8px_20px_rgba(79,108,143,0.35)] transition-transform hover:-translate-y-0.5"
+        >
+          Voir les créations
+          <span className="transition-transform group-hover:translate-x-1">→</span>
+        </a>
+      </div>
+
+      {showPanel && (
+        <div className="fixed inset-x-0 bottom-0 z-50 max-h-[60vh] overflow-y-auto rounded-t-2xl border-t border-ink/10 bg-white/95 p-4 text-ink shadow-[0_-8px_30px_rgba(0,0,0,0.25)] backdrop-blur sm:hidden">
+          <div className="mb-3 flex items-center justify-between">
+            <p className="font-sans text-sm font-bold">Réglage tagline</p>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={reset}
+                className="rounded-full border border-ink/20 px-3 py-1 text-xs font-semibold"
+              >
+                Réinitialiser
+              </button>
+              <button
+                type="button"
+                onClick={copyValues}
+                className="rounded-full bg-denim px-3 py-1 text-xs font-semibold text-paper"
+              >
+                {copied ? "Copié !" : "Copier"}
+              </button>
+            </div>
+          </div>
+
+          {(
+            [
+              ["des", "Des créations"],
+              ["qui", "qui"],
+              ["vous", "vous correspondent"],
+            ] as const
+          ).map(([key, label]) => (
+            <div key={key} className="mb-4 border-b border-ink/10 pb-3 last:border-0 last:pb-0">
+              <p className="mb-2 font-sans text-xs font-semibold uppercase tracking-wide text-ink/70">
+                {label}
+              </p>
+
+              <label className="mb-1 flex items-center justify-between font-sans text-xs">
+                <span>Position verticale</span>
+                <span className="tabular-nums">{knobs[key].top.toFixed(1)}%</span>
+              </label>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                step={0.5}
+                value={knobs[key].top}
+                onChange={(e) => update(key, { top: Number(e.target.value) })}
+                className="mb-2 w-full"
+              />
+
+              <label className="mb-1 flex items-center justify-between font-sans text-xs">
+                <span>Position horizontale</span>
+                <span className="tabular-nums">{knobs[key].x.toFixed(1)}%</span>
+              </label>
+              <input
+                type="range"
+                min={-30}
+                max={30}
+                step={0.5}
+                value={knobs[key].x}
+                onChange={(e) => update(key, { x: Number(e.target.value) })}
+                className="mb-2 w-full"
+              />
+
+              <label className="mb-1 flex items-center justify-between font-sans text-xs">
+                <span>Taille</span>
+                <span className="tabular-nums">{knobs[key].size.toFixed(2)}rem</span>
+              </label>
+              <input
+                type="range"
+                min={1}
+                max={3.5}
+                step={0.05}
+                value={knobs[key].size}
+                onChange={(e) => update(key, { size: Number(e.target.value) })}
+                className="w-full"
+              />
+            </div>
+          ))}
+
+          <p className="mt-1 font-sans text-[0.65rem] text-ink/50">
+            Réglages sauvegardés sur cet appareil. Appuie sur "Copier" et
+            renvoie-moi les valeurs pour que je les fixe dans le code.
+          </p>
+        </div>
+      )}
+    </>
+  );
+}

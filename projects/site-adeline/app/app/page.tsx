@@ -2,6 +2,7 @@ import Image from "next/image";
 import VitrineArc from "@/components/VitrineArc";
 import CartBadge from "@/components/CartBadge";
 import MobileMenu from "@/components/MobileMenu";
+import MobileHeroTagline from "@/components/MobileHeroTagline";
 import Marches from "@/components/Marches";
 import ContactSection from "@/components/ContactSection";
 
@@ -172,73 +173,21 @@ export default function Home() {
             </div>
 
             {/* Tagline éclatée autour du sac, mobile uniquement (retour Julien
-                2026-09-16, test Canva "5.png", puis deux retours en fin de
-                journée : sa maquette Canva est faite à la main donc pas
-                fiable au pixel — recalculé ici directement sur la géométrie
-                réelle de `hero-mobile-v9.png` plutôt que calé sur sa
-                maquette). Repères mesurés sur le fichier (1536×2752, en %
-                de la hauteur, valables tels quels en % du conteneur car
-                celui-ci est dimensionné exactement sur le ratio de l'image) :
-                bas du header ≈8%, pointe de la boucle des anses ≈24.5%, haut
-                du sac (là où les anses s'enfoncent dans le tissu) ≈51.5%,
-                bas du sac ≈76%, bas du conteneur =100%. Chaque ligne est
-                centrée (top:%+ -translate-y-1/2, indépendant de la
-                line-height) au milieu de l'espace qui lui correspond, plutôt
-                que positionnée par son bord haut :
-                - "Des créations" : centré entre le header et la pointe de la
-                  boucle → (8+24.5)/2 ≈16%.
-                - "qui" : la boucle est un triangle qui s'évase vers le bas
-                  (l'anse est étroite en haut, large juste au-dessus du sac),
-                  donc le milieu OPTIQUE (centre de masse pondéré par la
-                  largeur réelle de l'espace entre les deux anses, mesurée à
-                  chaque hauteur) n'est PAS le milieu linéaire entre pointe et
-                  sac (38%, testé — retour Julien : "pas centré par rapport
-                  aux lanières") mais plus bas, ≈42% (centroïde calculé sur
-                  les largeurs mesurées : 90px à 28%, 210px à 38%, 336px à
-                  48%...). text-3xl conservé (l'écart mesuré à 42% fait
-                  ~16% de la largeur, confortable).
-                - "vous correspondent" + bouton : le groupe entier centré
-                  entre le bas du sac et le bas du conteneur →
-                  (76+100)/2=88%.
-                Tailles remontées à text-3xl partout (retour Julien : "plus
-                grosses"). Un seul mot par ligne passe en text-denim, comme
-                "créations" dans la première ligne : "correspondent" dans la
-                dernière — "vous" et "qui" restent en text-ink (retour
-                Julien après un essai tout en bleu : seul le mot-écho de
-                "créations" doit être bleu, pas la ligne entière).
-                Le bloc tagline desktop (plus bas, à droite du sac) reste
-                inchangé — ceci le remplace seulement sous `sm`. */}
-            <p
-              className="absolute inset-x-0 -translate-y-1/2 px-6 text-center font-display text-3xl font-medium italic leading-tight text-ink sm:hidden"
-              style={{ top: "16%" }}
-            >
-              Des{" "}
-              <span className="not-italic font-sans font-bold text-denim">
-                créations
-              </span>
-            </p>
-            <p
-              className="absolute inset-x-0 -translate-y-1/2 text-center font-display text-3xl italic text-ink sm:hidden"
-              style={{ top: "42%" }}
-            >
-              qui
-            </p>
-            <div
-              className="absolute inset-x-0 -translate-y-1/2 px-6 text-center sm:hidden"
-              style={{ top: "88%" }}
-            >
-              <p className="font-display text-3xl font-medium italic leading-tight text-ink">
-                vous{" "}
-                <span className="text-denim">correspondent</span>
-              </p>
-              <a
-                href="#vitrine"
-                className="hero-pop group mt-4 inline-flex items-center gap-2 rounded-full bg-denim px-8 py-3.5 text-sm font-semibold text-paper shadow-[0_8px_20px_rgba(79,108,143,0.35)] transition-transform hover:-translate-y-0.5"
-              >
-                Voir les créations
-                <span className="transition-transform group-hover:translate-x-1">→</span>
-              </a>
-            </div>
+                2026-09-16). Repères mesurés sur `hero-mobile-v9.png`
+                (1536×2752, en % de la hauteur = % du conteneur puisque
+                celui-ci est dimensionné exactement sur le ratio de
+                l'image) : bas du header ≈8%, pointe de la boucle des anses
+                ≈24.5%, haut du sac ≈51.5%, bas du sac ≈76%. Valeurs par
+                défaut = position/taille validées avec Julien ce jour-là
+                (détail du calcul dans l'historique git de ce fichier).
+                Extrait dans `MobileHeroTagline` (retour Julien : les
+                allers-retours screenshot→mesure→code→déploiement étaient
+                trop lents) — avec `?tune=1` dans l'URL sur le site déployé,
+                Julien règle lui-même position/taille de chaque ligne via
+                des curseurs, il m'envoie les valeurs copiées et je les fixe
+                ici. Le bloc tagline desktop (plus bas, à droite du sac)
+                reste inchangé — ceci le remplace seulement sous `sm`. */}
+            <MobileHeroTagline />
 
             {/* wordmark desktop — posé dans la boucle des anses, effet
                 d'écriture par mot (pas lettre par lettre : ça cassait les
