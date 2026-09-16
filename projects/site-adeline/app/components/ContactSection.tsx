@@ -223,11 +223,7 @@ export default function ContactSection() {
           </a>
         </div>
 
-        <p className="mt-10 text-xs text-ink/40">
-          © {new Date().getFullYear()} CréA&apos;deline. Pièces uniques faites
-          main, sur commande, en Charente.
-        </p>
-        <div className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-ink/40">
+        <div className="mt-10 flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-ink/40">
           <Link href="/mentions-legales" className="underline-offset-2 hover:text-ink hover:underline">
             Mentions légales
           </Link>

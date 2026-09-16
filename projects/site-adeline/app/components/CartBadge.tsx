@@ -6,7 +6,7 @@ import { useCart } from "@/lib/cart/useCart";
 // Remplace le lien statique "Panier (bientôt)" dans Header.tsx et la nav
 // hero — compteur live + petit "pulse" (voir .cart-bump dans globals.css)
 // rejoué en changeant la `key` du <span> à chaque changement de compteur.
-export default function CartBadge({ className }: { className?: string }) {
+export default function CartBadge({ className, hideLabel }: { className?: string; hideLabel?: boolean }) {
   const { itemCount } = useCart();
 
   return (
@@ -15,7 +15,7 @@ export default function CartBadge({ className }: { className?: string }) {
       aria-label={itemCount > 0 ? `Panier (${itemCount} article${itemCount > 1 ? "s" : ""})` : "Panier"}
       className={className ?? "flex items-center gap-2 font-display text-sm font-medium uppercase tracking-[0.18em] text-ink transition-colors hover:text-rust"}
     >
-      <span className="hidden sm:inline">Panier</span>
+      {!hideLabel && <span className="hidden sm:inline">Panier</span>}
       {/* data-cart-icon : cible visée par l'animation d'envol du produit au
           clic sur "Ajouter au panier" (voir lib/cart/flyToCart.ts) — le
           fait d'être hors écran ici (nav mobile masquée) désactive

@@ -11,12 +11,21 @@ const nextConfig: NextConfig = {
   // sécurité du 2026-09-13) — frame-ancestors suffit pour la faille réelle
   // identifiée (clickjacking), le reste est un chantier séparé.
   async headers() {
+    // En développement seulement, l'encadrement same-origin est autorisé :
+    // c'est ce dont a besoin l'aperçu iPhone (public/dev-iphone.html), qui
+    // charge le site dans une iframe aux dimensions d'un téléphone. La prod
+    // reste en DENY / frame-ancestors 'none' — aucun relâchement en ligne.
+    const isDev = process.env.NODE_ENV === "development";
+
     return [
       {
         source: "/:path*",
         headers: [
-          { key: "X-Frame-Options", value: "DENY" },
-          { key: "Content-Security-Policy", value: "frame-ancestors 'none';" },
+          { key: "X-Frame-Options", value: isDev ? "SAMEORIGIN" : "DENY" },
+          {
+            key: "Content-Security-Policy",
+            value: isDev ? "frame-ancestors 'self';" : "frame-ancestors 'none';",
+          },
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },

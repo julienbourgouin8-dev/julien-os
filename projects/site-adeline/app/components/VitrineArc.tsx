@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from "react";
 import WriteOnHeading from "@/components/WriteOnHeading";
 
 const IMAGE = "/brand/vitrine-composite-v4.jpg";
@@ -126,6 +126,12 @@ const CLOSE_DELAY = 200;
 // Distance de glissement (px) à partir de laquelle un drag sur la carte
 // compte comme "pièce suivante/précédente".
 const SWIPE_THRESHOLD = 50;
+// Distance de scroll (px) depuis l'ouverture du panneau au-delà de laquelle
+// on considère que la visiteuse a quitté la section vitrine — ferme le
+// panneau tout seul. Sans ça (régression 2026-09-13, ce filet de sécurité
+// existait avant et avait disparu) le panneau pouvait rester affiché en
+// plein écran même en remontant jusqu'au hero.
+const SCROLL_CLOSE_THRESHOLD = 80;
 
 export default function VitrineArc() {
   // Survol pour ouvrir/glisser d'une pièce à l'autre, clic gardé en plus
@@ -142,6 +148,11 @@ export default function VitrineArc() {
   const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dragStartX = useRef<number | null>(null);
   const dragHandled = useRef(false);
+  // Les 5 <video> ne sont JAMAIS démontées/remontées (voir le rendu plus
+  // bas) — ces refs permettent de déclencher .play()/.pause() directement
+  // sans jamais recréer l'élément, seule façon d'avoir une reprise de
+  // lecture instantanée au lieu de redémarrer le décodage à chaque fois.
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
   const cancelClose = () => {
     if (closeTimer.current) {
@@ -157,11 +168,24 @@ export default function VitrineArc() {
     }
   };
 
+  const playVideo = (i: number) => {
+    videoRefs.current[i]?.play().catch(() => {});
+  };
+
   const openPiece = (i: number) => {
     cancelOpen();
     cancelClose();
     setActiveIndex(i);
     setOpen(true);
+    playVideo(i);
+  };
+
+  // Ferme le panneau et met en pause la vidéo en cours — pas juste
+  // `setOpen(false)` seul, sinon la vidéo continue de tourner (et de
+  // consommer CPU/batterie) indéfiniment en arrière-plan une fois fermée.
+  const closePanel = () => {
+    if (activeIndex !== null) videoRefs.current[activeIndex]?.pause();
+    setOpen(false);
   };
 
   // Survol : ouverture retardée d'un court instant plutôt qu'immédiate.
@@ -175,13 +199,18 @@ export default function VitrineArc() {
   const HOVER_INTENT_DELAY = 130;
   const scheduleOpen = (i: number) => {
     cancelOpen();
+    // Lance la lecture dès l'INTENTION de survol, pas seulement à
+    // l'ouverture effective du panneau — utilise le délai d'intention (et
+    // le trajet de la souris) comme temps de charge, pour supprimer le
+    // décalage perçu au moment où le panneau s'affiche vraiment.
+    playVideo(i);
     openTimer.current = setTimeout(() => openPiece(i), HOVER_INTENT_DELAY);
   };
 
   const scheduleClose = () => {
     cancelOpen();
     cancelClose();
-    closeTimer.current = setTimeout(() => setOpen(false), CLOSE_DELAY);
+    closeTimer.current = setTimeout(closePanel, CLOSE_DELAY);
   };
 
   const active = activeIndex !== null ? hotspots[activeIndex] : null;
@@ -189,7 +218,9 @@ export default function VitrineArc() {
   const goRelative = (delta: number) => {
     setActiveIndex((i) => {
       const base = i ?? 0;
-      return (base + delta + hotspots.length) % hotspots.length;
+      const next = (base + delta + hotspots.length) % hotspots.length;
+      playVideo(next);
+      return next;
     });
   };
 
@@ -210,8 +241,46 @@ export default function VitrineArc() {
     dragHandled.current = false;
   };
 
+  // Filet de sécurité scroll : si le panneau est ouvert et qu'on scrolle de
+  // plus de SCROLL_CLOSE_THRESHOLD px (dans n'importe quel sens) depuis son
+  // ouverture, on le referme tout seul — évite qu'il reste affiché en plein
+  // écran alors qu'on a quitté la section vitrine depuis longtemps.
+  useEffect(() => {
+    if (!open) return;
+    const scrollAtOpen = window.scrollY;
+    const handleScroll = () => {
+      if (Math.abs(window.scrollY - scrollAtOpen) > SCROLL_CLOSE_THRESHOLD) {
+        closePanel();
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
   return (
     <div className="relative w-full">
+      {/* Titre en flux normal, au-dessus de la photo — pas superposé dessus.
+          Il était posé sur l'image (façon hero) via `position: absolute` en
+          %, mais cette photo n'a pas la même marge que le hero à toutes les
+          tailles d'écran : sur mobile (image pleine largeur), le titre
+          retombait systématiquement sur les anses/pièces en dessous, quelle
+          que soit la taille de police (retour Julien 2026-09-13, vidéo
+          mobile). En flux normal, aucun risque de chevauchement possible,
+          à n'importe quelle largeur. */}
+      <div className="px-4 pb-6 pt-2 text-center sm:pb-8">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">
+          Nos catégories
+        </p>
+        <WriteOnHeading
+          as="h2"
+          text="Des pièces qui vous accompagnent au quotidien"
+          italicWords={["au", "quotidien"]}
+          blueWords={["pièces"]}
+          className="mt-2 font-display text-[clamp(1.1rem,4.2vw,2.25rem)] text-ink"
+        />
+      </div>
+
       <div className="relative w-full" style={{ aspectRatio: "2438 / 1254" }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -219,20 +288,6 @@ export default function VitrineArc() {
           alt="Sélection de créations CréA'deline posées sur un socle d'exposition"
           className="absolute inset-0 h-full w-full object-contain"
         />
-
-        {/* titre posé sur l'image (façon hero) — pas un bloc à part au-dessus,
-            pour que ça reste dans la section vitrine, pas entre deux sections */}
-        <div className="absolute inset-x-0 top-[6%] text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">
-            Nos catégories
-          </p>
-          <WriteOnHeading
-            as="h2"
-            text="Une pièce pour chaque usage"
-            italicWords={["chaque", "usage"]}
-            className="mt-2 font-display text-3xl text-ink sm:text-4xl"
-          />
-        </div>
 
         {hotspots.map((spot, i) => (
           <div key={spot.name}>
@@ -267,33 +322,42 @@ export default function VitrineArc() {
         ))}
       </div>
 
-      {/* préchargement — vidéos hors écran (pas dans la carte), montées dès
-          l'arrivée sur la page pour que le navigateur commence à les
-          télécharger tout de suite, plutôt qu'au premier survol. */}
-      <div aria-hidden className="pointer-events-none absolute h-0 w-0 overflow-hidden">
-        {hotspots.map((spot) =>
-          spot.video ? <video key={spot.video} src={spot.video} preload="auto" muted playsInline /> : null,
-        )}
-      </div>
+      {/* fond assombri — ferme au clic (utile au tactile). z-40, sous les
+          zones de survol des pièces (z-[60]) : cliquer directement sur une
+          AUTRE pièce visible bascule toujours dessus sans repasser par une
+          fermeture. */}
+      {open && <div aria-hidden onClick={closePanel} className="fixed inset-0 z-40 bg-ink/60" />}
 
-      {open && active && (
-        <>
-          {/* fond assombri — ferme au clic (utile au tactile). z-40, sous les
-              zones de survol des pièces (z-[60]) : cliquer directement sur
-              une AUTRE pièce visible bascule toujours dessus sans repasser
-              par une fermeture. */}
-          <div aria-hidden onClick={() => setOpen(false)} className="fixed inset-0 z-40 bg-ink/60" />
-
-          <div className="pointer-events-none fixed inset-0 z-[70] flex items-center justify-center p-6">
-            <div
-              onMouseEnter={cancelClose}
-              onMouseLeave={scheduleClose}
-              onClick={(e) => e.stopPropagation()}
-              className="pointer-events-auto relative flex w-[min(90vw,640px)] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
-            >
+      {/* Panneau + vidéos — la carte (fond blanc, boutons, texte) est
+          conditionnelle à `open`, mais les 5 <video> en dessous ne le sont
+          JAMAIS : toujours montées, empilées, crossfade par opacité sur
+          l'index actif. C'est ce qui permet à `playVideo` (appelé dès
+          l'intention de survol, voir scheduleOpen) de démarrer le
+          décodage en arrière-plan AVANT l'ouverture — remonter l'élément
+          vidéo à chaque fois (`key` différent) annulait ce gain et
+          redémarrait le décodage à zéro. */}
+      <div
+        className={
+          open
+            ? "pointer-events-none fixed inset-0 z-[70] flex items-center justify-center p-6"
+            : "pointer-events-none absolute h-0 w-0 overflow-hidden"
+        }
+      >
+        <div
+          onMouseEnter={open ? cancelClose : undefined}
+          onMouseLeave={open ? scheduleClose : undefined}
+          onClick={open ? (e) => e.stopPropagation() : undefined}
+          className={
+            open
+              ? "pointer-events-auto relative flex w-[min(90vw,640px)] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
+              : "relative h-0 w-0 overflow-hidden"
+          }
+        >
+          {open && (
+            <>
               <button
                 type="button"
-                onClick={() => setOpen(false)}
+                onClick={closePanel}
                 aria-label="Fermer"
                 className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-ink shadow-sm transition-transform hover:scale-105"
               >
@@ -327,51 +391,61 @@ export default function VitrineArc() {
                   <path d="M9 6l6 6-6 6" />
                 </svg>
               </button>
+            </>
+          )}
 
-              {/* zone vidéo à ratio FIXE (16/9) et fond blanc — chaque vidéo
-                  a un format natif légèrement différent, donc avec un cadre
-                  fixe + object-contain, le très léger espace résiduel (quasi
-                  invisible) est blanc comme le panneau. Glissable au doigt/
-                  souris (cursor grab) pour changer de pièce. Un seul
-                  <video>, remonté (key={active.video}) à chaque changement —
-                  `autoPlay` natif, pas d'appel `.play()` en JS. */}
-              <div
-                className="relative aspect-[16/9] w-full shrink-0 cursor-grab touch-pan-y bg-white active:cursor-grabbing"
-                onPointerDown={onDragStart}
-                onPointerMove={onDragMove}
-                onPointerUp={onDragEnd}
-                onPointerLeave={onDragEnd}
-              >
-                {active.video && (
-                  <video
-                    key={active.video}
-                    src={active.video}
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    className="pointer-events-none absolute inset-0 h-full w-full object-contain"
-                  />
-                )}
-              </div>
-
-              <div className="shrink-0 bg-white px-6 py-5 text-center">
-                <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-teal">
-                  {active.category}
-                </p>
-                <p className="mt-1 font-display text-lg italic text-ink">{active.name}</p>
-                <a
-                  href={`/boutique/${active.categorySlug}`}
-                  className="group mt-4 inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-denim px-6 py-2.5 text-xs font-semibold text-paper shadow-[0_8px_20px_rgba(79,108,143,0.35)] transition-transform hover:-translate-y-0.5"
-                >
-                  Découvrir nos créations
-                  <span className="transition-transform group-hover:translate-x-1">→</span>
-                </a>
-              </div>
-            </div>
+          {/* zone vidéo à ratio FIXE (16/9) et fond blanc — chaque vidéo a un
+              format natif légèrement différent, donc avec un cadre fixe +
+              object-contain, le très léger espace résiduel (quasi invisible)
+              est blanc comme le panneau. Glissable au doigt/souris (cursor
+              grab) pour changer de pièce quand le panneau est ouvert. */}
+          <div
+            className={
+              open
+                ? "relative aspect-[16/9] w-full shrink-0 cursor-grab touch-pan-y bg-white active:cursor-grabbing"
+                : "relative h-px w-px overflow-hidden"
+            }
+            onPointerDown={open ? onDragStart : undefined}
+            onPointerMove={open ? onDragMove : undefined}
+            onPointerUp={open ? onDragEnd : undefined}
+            onPointerLeave={open ? onDragEnd : undefined}
+          >
+            {hotspots.map((spot, i) =>
+              spot.video ? (
+                <video
+                  key={spot.video}
+                  ref={(el) => {
+                    videoRefs.current[i] = el;
+                  }}
+                  src={spot.video}
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  className="pointer-events-none absolute inset-0 h-full w-full object-contain transition-opacity duration-150"
+                  style={{ opacity: open && activeIndex === i ? 1 : 0 }}
+                />
+              ) : null,
+            )}
           </div>
-        </>
-      )}
+
+          {open && active && (
+            <div className="shrink-0 bg-white px-6 py-5 text-center">
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-teal">
+                {active.category}
+              </p>
+              <p className="mt-1 font-display text-lg italic text-ink">{active.name}</p>
+              <a
+                href={`/boutique/${active.categorySlug}`}
+                className="group mt-4 inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-denim px-6 py-2.5 text-xs font-semibold text-paper shadow-[0_8px_20px_rgba(79,108,143,0.35)] transition-transform hover:-translate-y-0.5"
+              >
+                Découvrir nos créations
+                <span className="transition-transform group-hover:translate-x-1">→</span>
+              </a>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

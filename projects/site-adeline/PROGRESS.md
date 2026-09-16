@@ -1,4 +1,4 @@
-# Site CréA'deline — journal de session (dernière mise à jour 2026-08-13)
+# Site CréA'deline — journal de session (dernière mise à jour 2026-09-16)
 
 Contexte à charger avant de reprendre : ce fichier + `TODO.md` (plan
 e-commerce brique par brique, toujours valable pour les phases futures) +
@@ -487,18 +487,372 @@ aucune dépendance à un service externe qui peut se mettre en pause tout seul.
 dans `admin/.env.local` pour la vraie adresse d'Adeline quand elle sera
 confirmée (pas besoin de régénérer le hash, l'email n'est pas dans le hash).
 
+## Pivot : SQLite local → Neon Postgres (2026-09-13)
+
+Le backend "100% local" du 2026-08-28 (SQLite + `data/` partagé sur disque)
+bloquait le passage en prod sur Vercel : le filesystem serverless Vercel
+n'est pas persistant/partagé entre invocations, donc SQLite y était un
+cul-de-sac dès que `/boutique` irait vraiment en ligne avec du trafic.
+Migré vers **Neon Postgres** (choisi via Vercel Storage, cf. réponse Julien
+"Vercel Postgres (Neon)") :
+
+- `@neondatabase/serverless` (`neon()` tagged-template) remplace
+  `better-sqlite3` dans `app/lib/db/` ET `admin/lib/db/` (products, orders,
+  audit_log, login_attempts). Connexion en **singleton paresseux**
+  (`getSql()` instancié au premier appel, jamais au chargement du module) —
+  la version non-paresseuse faisait planter le build Vercel entier
+  (`Failed to collect page data for /api/checkout`) parce que Next.js
+  exécute le top-level de chaque route au build, y compris les routes qui
+  n'ont pas besoin de DB.
+- Toutes les requêtes DB sont passées async (`await`) partout où c'était
+  synchrone avant — `decrementStock` utilise maintenant `RETURNING id` pour
+  détecter une ligne affectée (neon en mode "simple query" n'expose pas
+  `rowCount`).
+- `DATABASE_URL` (Neon, pooler `us-east-1`) dans `.env.local` des deux apps
+  et dans Vercel. `DB_PATH`/SQLite retirés.
+- Le seul produit existant migré manuellement (une ligne), scripts
+  `admin/scripts/purge-old-orders.js` et `seed-product.js` réécrits pour
+  `@neondatabase/serverless` en usage standalone.
+- **Toujours en attente** : le stockage des images uploadées reste
+  local-filesystem (`data/uploads/`, servi par `/uploads/[...path]`) —
+  fonctionne pour l'unique produit actuel (copié à la main dans
+  `public/uploads/`), mais tout nouvel upload via l'admin en prod sur
+  Vercel échouera au prochain redéploiement (disque non persistant). À
+  migrer vers un store persistant (Vercel Blob ou équivalent) avant que
+  Julien/Adeline utilise vraiment l'admin pour ajouter des produits.
+
+## Sécurité + conformité RGPD (session 2026-09-13)
+
+Audit de sécurité + conformité française/européenne demandé explicitement
+par Julien ("teste tous les fails de sécurité + conformité aux lois
+françaises et européennes"). Corrections faites :
+
+- **Headers de sécurité** (`next.config.ts` de `app/` ET `admin/` —
+  `admin/` ne les avait pas encore) : CSP (`frame-ancestors 'none'`),
+  `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`,
+  `Referrer-Policy`, `Permissions-Policy`.
+- **Validation réelle des uploads** (`admin/lib/uploads.ts`) : avant, seule
+  l'extension du nom de fichier était vérifiée (contournable en renommant
+  n'importe quel fichier). Maintenant `detectImageExt(buffer)` lit les
+  magic bytes (JPEG/PNG/WEBP/GIF), l'extension est dérivée du contenu réel
+  détecté, et l'upload est rejeté si le contenu ne correspond à aucun type
+  d'image connu.
+- **Dépendances** : `maplibre-gl` 6.3.0→6.9.0 (XSS connu), `sharp` mis à
+  jour (`npm audit fix`) — a cassé le worker MapLibre copié à la main
+  (`public/maplibre-gl-worker.js`), recopié depuis le nouveau
+  `node_modules/maplibre-gl/dist/` (même piège que documenté plus haut dans
+  ce fichier, cette fois causé par le audit fix plutôt qu'un update manuel).
+- **RGPD/CNIL** :
+  - `app/components/CookieConsent.tsx` + `app/lib/consent.ts` : bandeau
+    consentement (clé `creadeline_cookie_consent` en localStorage, jamais
+    un cookie de tracking directement), deux toggles ("Fonctionnement du
+    site" toujours actif, "Mesure d'audience" opt-in réel par défaut
+    désactivé), PostHog (`PostHogProvider.tsx`) ne s'initialise que si
+    consentement donné. Lien "Gérer les cookies" en pied de page
+    (`ContactSection.tsx`) rouvre le bandeau via `resetConsent()`.
+  - Pages légales créées (`app/app/{mentions-legales,confidentialite,
+    cookies,cgv}/page.tsx`, composant partagé `LegalPage.tsx`) — contiennent
+    des **`[À COMPLÉTER]` volontaires** (nom/raison sociale d'Adeline,
+    SIRET, statut, adresse, email) : à remplir dès que ces infos sont
+    confirmées, jamais inventées.
+  - `legal/registre-traitements.md` et `legal/procedure-violation-donnees.md`
+    (nouveaux, internes, pas de route publique) — registre des traitements
+    Art. 30 et procédure de notification de violation de données.
+  - Droit à l'effacement / rétention : `anonymizeOrder` et
+    `getOrdersWithPiiOlderThan` dans `lib/db/orders.ts` — email/adresse de
+    livraison effacés automatiquement après 3 ans, montant/contenu de
+    commande conservés 10 ans (obligation comptable) sans donnée
+    identifiante. Documenté dans `confidentialite/page.tsx`.
+  - Droit de rétractation (Code conso Art. L221-28) : exemption documentée
+    pour les pièces sur mesure/personnalisées dans les CGV.
+- **Skill GRC/RGPD évalué** : un repo GitHub externe de skills GRC passé en
+  revue pour pertinence marché français — seul le skill RGPD a été retenu
+  et installé (le reste, orienté SOC2/US, écarté comme hors-sujet pour ce
+  projet).
+
+## Déploiement — accès permanent + pipeline (session 2026-09-13)
+
+- **Accès Vercel permanent** : Julien voulait que Claude n'ait plus besoin
+  de login interactif à chaque session. Token API Vercel stocké dans
+  `~/.vercel_token` (chmod 600, jamais collé dans la conversation — fichier
+  ouvert directement en TextEdit pour que Julien colle lui-même). Toute
+  commande Vercel utilise `--token "$(cat ~/.vercel_token)"`.
+- **Piège découvert (3 tours de confusion avant diagnostic)** :
+  `creadeline.vercel.app` est un **alias manuellement épinglé**
+  (`/v4/aliases`), PAS mis à jour automatiquement par `vercel --prod` — un
+  nouveau déploiement prod crée une nouvelle URL unique
+  (`creadeline-xxxxx-....vercel.app`) mais ne touche pas l'alias existant.
+  **Toujours enchaîner après un déploiement :**
+  ```
+  npx vercel --prod --token "$(cat ~/.vercel_token)" --yes
+  npx vercel alias set <nouvelle-url> creadeline.vercel.app --token "$(cat ~/.vercel_token)"
+  ```
+- **GitHub push cassé** : le credential Keychain macOS pointait vers le
+  mauvais compte GitHub (`juliengrrb`, sans accès au repo dont le
+  propriétaire est `julienbourgouin8-dev`). Résolu via PAT + nettoyage
+  Keychain Access. Gros push initial (1.3 Go, 9 commits jamais poussés,
+  plusieurs semaines de travail) — nécessite un timeout généreux en
+  arrière-plan si ça revient.
+- **Cache in-memory du serveur `next dev`** : après correction d'une image
+  hero mal recadrée, l'ancienne version optimisée restait servie même après
+  correction du fichier source sur disque et purge de `.next/cache/images`
+  — le cache vit aussi en mémoire dans le process `next dev` déjà lancé.
+  Fix : renommer le fichier (nouveau nom = nouvelle clé de cache) plutôt que
+  redémarrer le serveur de dev de Julien (règle absolue de ce projet : ne
+  jamais `pkill` son serveur).
+
+## Vitrine animée — refonte lecture vidéo (session 2026-09-13)
+
+Problème récurrent signalé plusieurs fois par Julien ("j'arrive pas avec
+cette section à avoir un truc dont je suis satisfait") : la vidéo au survol
+redémarrait/mettait du temps à apparaître, et le panneau flottant restait
+parfois coincé ouvert après un scroll loin de la section. `VitrineArc.tsx`
+réécrit :
+- Les `<video>` sont maintenant **toujours en lecture** (refs persistantes,
+  `playVideo(i)`), affichées/masquées par crossfade d'opacité plutôt que
+  montées/démontées — la vidéo est déjà en train de jouer avant même d'être
+  montrée, plus de délai de redémarrage.
+- `closePanel()` met en pause ET ferme — plus d'état "vidéo qui tourne dans
+  le vide" hors écran.
+- Filet de sécurité au scroll (seuil de delta 80px, déjà en place depuis la
+  session précédente) conservé et re-vérifié comme fonctionnel avec la
+  nouvelle logique.
+
+## Fond de commerce — divers (session 2026-09-13)
+
+- **Footer** : ligne de copyright "© 2026 CréA'deline. Pièces uniques
+  faites main..." retirée sur demande explicite (`ContactSection.tsx`).
+- **Vercel Speed Insights** : `@vercel/speed-insights` installé (package
+  officiel, pas juste un trace ponctuel) — `<SpeedInsights />` dans
+  `app/layout.tsx`, non gaté par le consentement cookies (aucune donnée
+  personnelle/cookie selon la doc Vercel) mais listé en toute transparence
+  dans `confidentialite/page.tsx`.
+
+## Refonte mobile (session 2026-09-13, en cours)
+
+Julien a envoyé un enregistrement d'écran de son téléphone sur le site en
+ligne ("c'est pas du tout bien optimisé pour mobile"). Vidéo découpée en
+frames (`ffmpeg -vf fps=2`), analysée catégorie par catégorie, corrections
+faites une par une (vérifiées à chaque fois par capture Playwright
+`devices['iPhone 13']`, jamais juste "ça devrait aller") :
+
+- **Chevauchement wordmark logo / nav** en haut du hero — corrigé.
+- **Titre de la section Vitrine qui chevauchait la photo produit** :
+  déplacé du positionnement absolu (calé en % de la hauteur du conteneur
+  image) vers le flux normal du document, **avant** le conteneur image —
+  deux tentatives ratées (juste réduire la police, puis police + `max()`
+  plancher) avant cette solution robuste.
+- **CTA "Voir les créations" qui chevauchait les produits** sur mobile
+  (positionné "à droite des produits" comme en desktop, mais sur mobile
+  la photo remplit toute la largeur sans marge) — recentré en bas, sous les
+  produits, sur mobile uniquement (`sm:` reprend le placement desktop).
+- **Hero trop court** (dernier fix, 2026-09-13) : verrouiller la hauteur du
+  hero sur le ratio de la photo (comme en desktop) donnait, sur un écran
+  étroit, une bande si fine que hero + vitrine + marchés tenaient tous sur
+  le premier écran. Changé en `h-[88vh] w-full` sur mobile (hauteur d'écran
+  fixe et généreuse, l'image en `object-cover` rogne les côtés — jamais le
+  produit, grâce à la marge de fond ajoutée de chaque côté lors du
+  recentrage de l'image), `sm:` et plus revient au ratio naturel sans
+  rognage. Vérifié à l'écran (mobile + desktop, capture Playwright) et
+  déployé.
+- **Décision explicite** : ce traitement (hauteur fixe + rognage sécurisé)
+  n'a **pas** été appliqué à l'image de la section Vitrine — ses zones de
+  clic (hotspots produits) sont calibrées en % de ce conteneur exact et se
+  désalignerait si l'image était recadrée différemment sur mobile.
+- **En attente / à clarifier avec Julien** : il a dit "il faut tout revoir
+  toutes les tailles... il va falloir réduire les polices gérer tout ça" —
+  périmètre pas encore confirmé (juste le premier écran mobile, ou aussi
+  tablette/autres breakpoints ?). Prochaine étape probable : repasser
+  chaque section mobile une par une comme ci-dessus, en repartant si besoin
+  du reste des frames de la vidéo envoyée par Julien.
+
+## Barre d'état iOS (encoche) — cause trouvée, correctif annulé (2026-09-16)
+
+> **État du code : revenu à l'avant, sur demande explicite de Julien** —
+> « remets l'image d'origine, enlève ton gris, remets tout comme c'était
+> avant ». La barre est donc de nouveau en paper (le fond du `<body>`) et la
+> photo mobile est `hero-mobile-v9.png`, la photo de studio d'origine que
+> Julien a retouchée dans Canva. Le liseré crème/photo est de retour, assumé.
+> Ce qui suit reste le diagnostic exact du problème : à relire avant toute
+> nouvelle tentative, pour ne pas repartir sur les fausses pistes.
+>
+> Pourquoi le correctif a été retiré : il obligeait à peindre la barre avec
+> la couleur du haut de la photo, soit **#DFDBDB**, un gris trop soutenu —
+> une bande grise en haut de l'écran + un fond de section gris sous le titre
+> et le CTA. Techniquement juste, visuellement mauvais. Le fond de studio de
+> la photo étant en dégradé (haut sombre, bas quasi blanc), matcher le haut
+> imposait mécaniquement cette teinte-là.
+>
+> Si on y revient un jour, la piste propre est d'agir sur la **photo** et non
+> sur le CSS : éclaircir/uniformiser sa première bande de pixels pour que le
+> haut tombe sur un blanc cassé clair, puis reprendre le correctif ci-dessous
+> avec cette couleur-là.
+
+
+Symptôme : sur l'iPhone de Julien, la bande du haut (heure / réseau /
+batterie) sortait crème alors que le hero mobile est blanc — liseré net à
+la jonction. Plusieurs tentatives avaient échoué avant, **toutes fondées sur
+une mauvaise hypothèse** : padding-top + marge négative sur le hero, puis un
+bloc "cale" en `h-[env(safe-area-inset-top)]`, puis remplacement de la photo
+hero par une version à fond blanc pur (générée par IA, d'où la plaque de
+logo mal reproduite qu'Adeline doit retoucher).
+
+**La bande est hors viewport** dans un onglet Safari classique : c'est
+pourquoi `env(safe-area-inset-top)` y vaut 0 (le "cale" faisait 0 px de
+haut) et qu'aucun élément de la page ne peut l'atteindre. iOS y peint le
+fond du **canvas** du document, c'est-à-dire le background propagé depuis
+`<html>` ou, à défaut, celui de `<body>`. Seul `<body>` en avait un
+(`--color-paper` #f3f3ee) → barre crème, page blanche. Tout s'explique.
+
+Le correctif qui marchait (retiré depuis, cf. encadré ci-dessus — le
+réécrire à l'identique si on y revient) tenait en deux endroits à garder
+alignés :
+
+- `app/globals.css` : `html { background: <couleur> }`, surchargé pour
+  l'accueil par `@media (max-width: 639px) { html:has(#hero) { … } }`, avec
+  la couleur du haut de la photo hero mobile. `:has()` demande iOS ≥ 16.4 ;
+  en dessous on retombe sur le fond du body, soit l'état actuel.
+- `themeColor` dans les exports `viewport` (racine + surcharge par page),
+  avec la même valeur. Couvre Chrome iOS et la barre du bas de Safari.
+
+Vérifié en local et sur un déploiement preview : `theme-color` et fond du
+canvas bien distincts page par page, en-têtes de sécurité intacts en prod.
+La méthode est donc validée — c'est la **couleur** qu'elle imposait qui a
+été refusée, pas le mécanisme.
+
+Points à retenir pour la prochaine fois :
+
+- Mesurer la couleur sur le **rendu** (capture Playwright, bandeau cookies
+  écarté via `localStorage.setItem('creadeline_cookie_consent','refused')`,
+  sinon son voile assombrit tout et fausse la mesure — piège rencontré),
+  jamais sur le fichier source.
+- Un fond de studio **non uniforme** (celui de `hero-mobile-v9.png` va de
+  #E4DFDF au centre à #D3D1D2 dans les coins) ne matchera jamais
+  parfaitement une barre unie. C'est ce qui faisait échouer les essais
+  précédents. Un fond uniforme, ou une première bande de photo uniformisée,
+  reste la condition d'un raccord exact.
+
+## Aperçu iPhone dans VS Code (2026-09-16)
+
+`app/public/dev-iphone.html` — le site dans une iframe aux dimensions
+exactes d'un iPhone, barre d'état et barre Safari dessinées autour, avec
+sélecteur de modèle et champ d'URL. Le rechargement à chaud de Next
+s'applique dans l'iframe : les modifications apparaissent en direct.
+
+La barre d'état y est peinte avec la **vraie** couleur du canvas lue dans
+l'iframe (même origine), pas une valeur en dur — donc le bug ci-dessus se
+reproduit et se vérifie dans VS Code, sans avoir à déployer.
+
+- Ouverture : Cmd+Shift+P → *Tasks: Run Task* → **Aperçu iPhone —
+  CréA'deline** (défini dans `.vscode/tasks.json` à la racine de
+  `julien-os`), ou l'URL http://localhost:3000/dev-iphone.html dans le
+  *Simple Browser* de VS Code. Extension **Live Preview**
+  (`ms-vscode.live-server`) installée en complément.
+- `next.config.ts` : les en-têtes anti-clickjacking passent en
+  `SAMEORIGIN` / `frame-ancestors 'self'` **uniquement** quand
+  `NODE_ENV === "development"` — sans ça l'iframe est bloquée. La prod
+  reste en `DENY` / `'none'`, aucun relâchement en ligne.
+- Le fichier vit dans `public/` pour rester en même origine (condition pour
+  lire la couleur du canvas), il est donc aussi servi en prod : sans
+  intérêt pour une visiteuse, inoffensif, et en `noindex`.
+
+## Hero desktop — recadrage final, nav 4 liens, titre section 2 (session 2026-09-16)
+
+Session longue, beaucoup d'allers-retours sur l'image du hero desktop — le
+résumé ci-dessous ne garde que l'état final et les leçons, pas chaque essai
+intermédiaire (tous les fichiers `hero-v9`/`v10`/`v12`/`v13`/`v14` créés en
+cours de route ont été supprimés, seuls `hero-v8.png` — image source
+d'origine, conservée — et `hero-v16.png` — version finale active —
+restent dans `public/brand/`).
+
+**Pipeline image final (hero-v8 → v11 → v15 → v16), toutes des vraies
+retouches pixel, pas du CSS :**
+
+1. `hero-v11.png` : crop du **haut** de `hero-v8.png` (2752×2236 →
+   2752×1883). Mesuré au pixel où le sac commence (ligne 393) pour ne
+   garder que 40px de marge, sans jamais toucher le produit.
+2. `hero-v15.png` : le groupe de sacs n'était pas centré horizontalement
+   (marge 468px à gauche contre 232px à droite, mesuré). **Piège
+   important** : rogner à gauche pour recentrer *zoome mécaniquement*
+   l'image (moins de pixels sources affichés sur la même largeur 100vw =
+   agrandissement, 13% de zoom dans la tentative annulée — retour Julien
+   « tout a été décalé, l'image a grossi »). La bonne méthode : **étendre
+   la toile à droite** de 236px en dupliquant la dernière colonne de
+   pixels (fond quasi plat → raccord invisible). Résultat : marges
+   parfaitement égales (468px/468px) sans aucun zoom ni déformation.
+   2752×1883 → 2988×1883.
+3. `hero-v16.png` : ~22% de la hauteur de la photo (411px sur 1883)
+   n'était que du fond vide sous les sacs (dernier pixel de produit/ombre
+   mesuré à la ligne 1472 — rien après). Rogné en gardant 70px de marge
+   → 2988×1542. C'est cette bande-là que Julien pointait comme « une
+   bande rectangulaire qui ressemble au fond », pas un artefact CSS.
+
+**CSS/layout du hero (`app/page.tsx`) :**
+
+- Conteneur image : `sm:aspect-[2988/1542] sm:h-auto`, **sans
+  `max-h-screen`**. Une tentative de plafonner la hauteur (pour éviter le
+  scroll sur petit écran) recoupait le produit à chaque fois — Julien a
+  tranché : jamais de rognage du sac, un petit scroll sur écran court est
+  acceptable.
+- `sm:pb-10` ajouté puis **retiré** le même jour : rempli en `bg-paper`
+  uni (#f3f3ee) contre un bas de photo légèrement plus sombre par
+  endroits (~#eae9e5) → bande visible. Retiré, la section `#vitrine`
+  reprend directement après la photo.
+- Bloc texte/CTA (« Des créations qui vous correspondent ») :
+  `sm:right-32 sm:top-[51%]`. Décalé du bord droit (`right-10` → `right-32`)
+  pour rééquilibrer avec l'asymétrie de la photo, et de `58%` à `51%` de
+  hauteur pour éviter la petite pochette (zone dégagée à hauteur de
+  l'épaule du sac). Le `top-%` a été recalculé à chaque recadrage vertical
+  de l'image (même ligne physique de la photo, juste réexprimée en % de
+  la nouvelle hauteur totale).
+- Nav : passée de 3 à **4 liens** (ajout « À propos », retrait du mot
+  « Panier » — icône seule via nouveau prop `hideLabel` sur
+  `CartBadge.tsx`) pour rééquilibrer la nav autour de la bandoulière
+  plutôt que retoucher la photo. Positions `25% / 41% / 59% / 75%`
+  (Créations/Marchés à gauche de la bandoulière, Contact/À propos à
+  droite), recalculées après le crop v15. `CartBadge` a aussi reçu
+  `top-[-8px]` : son icône (36px) est plus haute que le texte des autres
+  liens, donc sans `top` explicite elle paraissait plus basse (retour
+  Julien : « le bouton panier est un peu en bas »).
+- **`WriteOnHeading.tsx`** : nouveau prop `blueWords` (même logique que
+  `italicWords` déjà existant), applique `font-bold text-denim` mot par
+  mot — pour mettre en avant un mot-clé dans le même bleu que
+  « créations » du hero. Utilisé dans `VitrineArc.tsx`.
+- **Titre section 2** (`VitrineArc.tsx`) changé : « Une pièce pour
+  *chaque usage* » → « Des **pièces** qui vous accompagnent *au
+  quotidien* » (« pièces » en bleu gras, « au quotidien » en italique).
+
+**Non bloquant mais en attente** : le lien **« À propos »** pointe vers
+`#apropos`, qui n'existe pas — aucune section/page « À propos » sur le
+site. Julien n'a pas encore tranché le contenu/la destination.
+
+**Déployé en prod** (`npx vercel@48 --prod --token "$(cat
+~/.vercel_token)" --yes` puis `vercel alias set <nouvelle-url>
+creadeline.vercel.app`) — plusieurs fois dans la session, dernière
+version en ligne inclut tout ce qui précède. **Note d'environnement** :
+`npx vercel@latest` (et `npx vercel` sans version) échoue actuellement en
+local avec `npm error Invalid Version` (bug de résolution npm/arborist,
+pas un problème Vercel) — épingler une version qui marche, ex.
+`vercel@48`, contourne le problème. `vercel@37` s'installe mais l'API
+Vercel refuse les CLI < 47.2.2.
+
+**Prochaine étape demandée par Julien** : la version PC est validée,
+« c'est parfait » — passer à la **version mobile**.
+
 ## Reste à faire / en attente
 
+- **Lien "À propos"** (nav hero) : pointe vers `#apropos`, section/page
+  inexistante — destination et contenu à définir avec Julien (voir
+  section hero ci-dessus).
 - **Email de contact** : toujours vide, en attente que Julien confirme
-  l'adresse réelle d'Adeline. Impacte aussi `ADMIN_EMAIL` ci-dessus.
+  l'adresse réelle d'Adeline. Impacte aussi `ADMIN_EMAIL` ci-dessus et les
+  placeholders `[À COMPLÉTER]` des pages légales (email, SIRET, adresse,
+  raison sociale).
 - **Nom de domaine propre** (type creadeline.fr) : pas fait, le site tourne
-  sur le sous-domaine gratuit `creadeline.vercel.app`. À faire si/quand
-  Julien achète un domaine. Le déploiement Vercel actuel utilisait Supabase
-  — à reconfigurer pour le backend local (voir note VPS ci-dessous) avant le
-  prochain déploiement en ligne.
-- **Hébergement backend local en prod** : pensé pour un VPS (deux apps
-  Next.js + `data/` partagé sur le même hôte), pas encore déployé — Vercel
-  ne convient plus tel quel (pas de disque persistant partagé entre deux
-  apps). À faire quand Julien est prêt à sortir du sous-domaine gratuit.
-- Stripe/paiement, panier, Sendcloud/shipping, emails transactionnels,
-  pages légales : toujours dans `TODO.md`, phases futures non commencées.
+  sur le sous-domaine gratuit `creadeline.vercel.app`.
+- **Stockage uploads** : toujours local-filesystem, pas persistant sur
+  Vercel — voir section "Pivot SQLite → Neon" ci-dessus.
+- **Mobile** : scope de "revoir toutes les tailles" à clarifier avec Julien
+  (voir section refonte mobile ci-dessus).
+- Stripe/paiement, panier, Sendcloud/shipping, emails transactionnels :
+  toujours dans `TODO.md`, phases futures non commencées.

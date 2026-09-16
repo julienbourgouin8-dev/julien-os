@@ -10,10 +10,19 @@ export function flyToCart(originEl: HTMLElement, imageUrl: string | null) {
   if (!imageUrl) return;
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-  const cartIcon = document.querySelector<HTMLElement>("[data-cart-icon]");
-  if (!cartIcon) return;
-  const destRect = cartIcon.getBoundingClientRect();
-  if (destRect.width === 0) return; // masqué (breakpoint mobile) — pas de cible
+  // Deux icônes panier existent dans le DOM (nav desktop + header mobile),
+  // une seule visible selon le breakpoint — on prend la première dont le
+  // rect n'est pas nul plutôt que la première du DOM (qui serait celle,
+  // masquée, de l'autre breakpoint).
+  let destRect: DOMRect | null = null;
+  for (const el of document.querySelectorAll<HTMLElement>("[data-cart-icon]")) {
+    const rect = el.getBoundingClientRect();
+    if (rect.width > 0) {
+      destRect = rect;
+      break;
+    }
+  }
+  if (!destRect) return; // aucune icône visible — pas de cible
 
   const originRect = originEl.getBoundingClientRect();
   const size = 64;

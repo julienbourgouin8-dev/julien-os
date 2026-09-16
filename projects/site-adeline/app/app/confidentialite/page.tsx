@@ -35,6 +35,11 @@ export default function ConfidentialitePage() {
           mois maximum.
         </li>
         <li>
+          <strong>Performance technique (Vercel Speed Insights)</strong> : temps de chargement des
+          pages, mesurés de façon anonyme pour surveiller la rapidité du site. Aucun cookie, aucune
+          donnée permettant de vous identifier individuellement.
+        </li>
+        <li>
           <strong>Commande en ligne</strong> (si vous achetez une pièce) : email, adresse de
           livraison, contenu de la commande. Le paiement lui-même est géré par Stripe, qui ne
           transmet jamais votre numéro de carte à CréA&apos;deline. Votre email et votre adresse

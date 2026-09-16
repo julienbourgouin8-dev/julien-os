@@ -10,11 +10,16 @@ export default function WriteOnHeading({
   as: Tag = "h2",
   className = "",
   italicWords = [],
+  blueWords = [],
 }: {
   text: string;
   as?: ElementType;
   className?: string;
   italicWords?: string[];
+  // Mot(s)-clé mis en avant dans le même bleu que "créations" dans le
+  // hero (text-denim), même logique que italicWords (retour Julien
+  // 2026-09-16 : "les mots importants... même bleu que cette phrase-là").
+  blueWords?: string[];
 }) {
   const ref = useRef<HTMLElement>(null);
   const [revealed, setRevealed] = useState(false);
@@ -45,7 +50,12 @@ export default function WriteOnHeading({
       {words.map((word, i) => (
         <span
           key={`${word}-${i}`}
-          className={italicWords.includes(word) ? "font-display italic" : undefined}
+          className={[
+            italicWords.includes(word) ? "font-display italic" : "",
+            blueWords.includes(word) ? "font-bold text-denim" : "",
+          ]
+            .filter(Boolean)
+            .join(" ") || undefined}
           style={{
             display: "inline-block",
             // `clip-path` (même à "pas de clip") crée sa propre zone de

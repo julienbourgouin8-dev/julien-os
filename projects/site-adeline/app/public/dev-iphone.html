@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Aperçu iPhone — CréA'deline</title>
+    <!--
+      Maquette d'aperçu iPhone pour VS Code (Simple Browser / Live Preview).
+      Ouvre le site dans un iframe aux dimensions exactes d'un iPhone, avec la
+      barre d'état et la barre Safari dessinées autour — donc le rechargement
+      à chaud de Next s'applique dedans comme dans un vrai navigateur.
+
+      Pourquoi ce fichier existe plutôt qu'une extension : aucune extension
+      VS Code ne simule la chrome iOS. Or c'est précisément ce qui manquait
+      pour déboguer la couleur de la barre d'état (cf. globals.css) — ici
+      cette barre est peinte avec la *vraie* couleur du canvas lue dans
+      l'iframe (même origine), pas avec une valeur en dur, donc l'écart de
+      couleur se voit ici comme sur le téléphone.
+
+      Il vit dans public/ pour rester en même origine que le site (sans ça,
+      impossible de lire la couleur du canvas). Il est donc aussi servi en
+      prod : sans intérêt pour une visiteuse, mais inoffensif, et en noindex.
+    -->
+    <style>
+      :root {
+        --bg: #16171b;
+        --panel: #1f2126;
+        --line: #32353d;
+        --text: #e7e8ea;
+        --muted: #9b9fa8;
+        --accent: #4f6c8f;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font: 13px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ---------- barre d'outils ---------- */
+      .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        background: var(--panel);
+        border-bottom: 1px solid var(--line);
+        flex: 0 0 auto;
+        flex-wrap: wrap;
+      }
+      .toolbar input,
+      .toolbar select,
+      .toolbar button {
+        font: inherit;
+        color: var(--text);
+        background: #14151a;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 5px 9px;
+      }
+      .toolbar input { flex: 1 1 140px; min-width: 100px; }
+      .toolbar button { cursor: pointer; background: var(--accent); border-color: transparent; }
+      .toolbar button.ghost { background: #14151a; border-color: var(--line); }
+      .toolbar button:hover { filter: brightness(1.12); }
+      .swatch {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      .swatch i {
+        width: 13px;
+        height: 13px;
+        border-radius: 3px;
+        border: 1px solid var(--line);
+        background: #fff;
+      }
+
+      /* ---------- scène ---------- */
+      .stage {
+        flex: 1 1 auto;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        padding: 14px;
+      }
+      .phone-scale { transform-origin: center center; }
+
+      /* Coque : dimensions en points CSS d'un iPhone 15/16 par défaut,
+         surchargées par le sélecteur d'appareil. */
+      .phone {
+        position: relative;
+        width: var(--w);
+        height: var(--h);
+        background: #000;
+        border-radius: 54px;
+        padding: 4px;
+        box-shadow: 0 0 0 2px #3a3d45, 0 26px 60px rgba(0, 0, 0, 0.55);
+      }
+      .screen {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        border-radius: 50px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+      }
+
+      /* Barre d'état — peinte avec la couleur du canvas lue dans l'iframe,
+         comme le fait iOS. C'est le sujet du bug qu'on débogue. */
+      .statusbar {
+        flex: 0 0 var(--status-h);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 30px 0;
+        font-weight: 600;
+        font-size: 15px;
+        color: #000;
+        position: relative;
+        z-index: 2;
+      }
+      .island {
+        position: absolute;
+        top: 11px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 124px;
+        height: 36px;
+        border-radius: 20px;
+        background: #000;
+      }
+      .status-icons { display: flex; align-items: center; gap: 5px; }
+      .status-icons svg { display: block; }
+
+      iframe {
+        flex: 1 1 auto;
+        width: 100%;
+        border: 0;
+        background: #fff;
+        display: block;
+      }
+
+      /* Barre Safari du bas (position par défaut sur iPhone). */
+      .safaribar {
+        flex: 0 0 82px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px 0;
+        position: relative;
+      }
+      .safaribar .pill {
+        height: 40px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.82);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.14);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #1b1b1b;
+        font-size: 13px;
+      }
+      .safaribar .url { flex: 1; padding: 0 14px; overflow: hidden; white-space: nowrap; }
+      .safaribar .round { width: 40px; flex: 0 0 40px; }
+      .home-indicator {
+        position: absolute;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 140px;
+        height: 5px;
+        border-radius: 3px;
+        background: rgba(0, 0, 0, 0.35);
+      }
+
+      .hint {
+        color: var(--muted);
+        padding: 0 10px 8px;
+        font-size: 11.5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="toolbar">
+      <select id="device" title="Appareil">
+        <option value="393x852x59" selected>iPhone 15/16 · 393×852</option>
+        <option value="402x874x59">iPhone 16 Pro · 402×874</option>
+        <option value="430x932x62">iPhone 15/16 Pro Max · 430×932</option>
+        <option value="375x812x44">iPhone 13 mini · 375×812</option>
+        <option value="320x568x20">iPhone SE 1 · 320×568</option>
+      </select>
+      <input id="url" value="/" spellcheck="false" title="Chemin à afficher" />
+      <button id="go">Aller</button>
+      <button id="reload" class="ghost" title="Recharger l'iframe">↻</button>
+      <span class="swatch" title="Couleur du canvas lue dans la page — c'est elle qu'iOS peint dans la barre d'état">
+        <i id="chip"></i><span id="chipLabel">—</span>
+      </span>
+    </div>
+
+    <div class="stage">
+      <div class="phone-scale" id="scale">
+        <div class="phone" id="phone" style="--w: 393px; --h: 852px; --status-h: 59px">
+          <div class="screen">
+            <div class="statusbar" id="statusbar">
+              <span id="clock">9:41</span>
+              <div class="island" id="island"></div>
+              <span class="status-icons">
+                <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor">
+                  <rect x="0" y="8" width="3" height="4" rx="1" />
+                  <rect x="5" y="5.5" width="3" height="6.5" rx="1" />
+                  <rect x="10" y="3" width="3" height="9" rx="1" />
+                  <rect x="15" y="0" width="3" height="12" rx="1" />
+                </svg>
+                <svg width="26" height="13" viewBox="0 0 26 13" fill="none">
+                  <rect x="0.5" y="0.5" width="21" height="12" rx="3.5" stroke="currentColor" opacity=".4" />
+                  <rect x="2" y="2" width="15" height="9" rx="2" fill="currentColor" />
+                  <path d="M23 4.5v4a2.6 2.6 0 0 0 0-4Z" fill="currentColor" opacity=".4" />
+                </svg>
+              </span>
+            </div>
+
+            <iframe id="frame" src="/" title="Aperçu du site"></iframe>
+
+            <div class="safaribar" id="safaribar">
+              <div class="pill round">‹</div>
+              <div class="pill url" id="urlPill">creadeline.vercel.app</div>
+              <div class="pill round">⋯</div>
+              <div class="home-indicator"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="hint">
+      La barre d'état et la barre Safari prennent la couleur du canvas de la page
+      (<code>&lt;html&gt;</code>, sinon <code>&lt;body&gt;</code>) — c'est ce qu'iOS
+      y peint. Si un liseré apparaît ici, il apparaîtra sur l'iPhone.
+    </p>
+
+    <script>
+      const frame = document.getElementById("frame");
+      const phone = document.getElementById("phone");
+      const scale = document.getElementById("scale");
+      const chip = document.getElementById("chip");
+      const chipLabel = document.getElementById("chipLabel");
+      const statusbar = document.getElementById("statusbar");
+      const safaribar = document.getElementById("safaribar");
+      const island = document.getElementById("island");
+      const urlInput = document.getElementById("url");
+      const urlPill = document.getElementById("urlPill");
+
+      /* Mise à l'échelle pour que la coque tienne dans le panneau VS Code,
+         quelle que soit sa largeur. */
+      function fit() {
+        const stage = document.querySelector(".stage");
+        const w = phone.offsetWidth;
+        const h = phone.offsetHeight;
+        const k = Math.min((stage.clientWidth - 28) / w, (stage.clientHeight - 28) / h, 1);
+        scale.style.transform = `scale(${k})`;
+      }
+
+      function setDevice(value) {
+        const [w, h, status] = value.split("x").map(Number);
+        phone.style.setProperty("--w", w + "px");
+        phone.style.setProperty("--h", h + "px");
+        phone.style.setProperty("--status-h", status + "px");
+        // Les modèles sans Dynamic Island (SE, encoche classique) n'affichent
+        // pas la pilule centrale.
+        island.style.display = status >= 44 ? "" : "none";
+        phone.style.borderRadius = status >= 44 ? "54px" : "20px";
+        phone.querySelector(".screen").style.borderRadius = status >= 44 ? "50px" : "16px";
+        fit();
+      }
+
+      /* Couleur du canvas telle qu'iOS la lirait : background de <html> s'il
+         en a un, sinon celui de <body> (propagation du canvas). */
+      function readCanvasColor() {
+        try {
+          const doc = frame.contentDocument;
+          if (!doc || !doc.documentElement) return null;
+          const htmlBg = getComputedStyle(doc.documentElement).backgroundColor;
+          const transparent = (c) => !c || c === "transparent" || c === "rgba(0, 0, 0, 0)";
+          if (!transparent(htmlBg)) return htmlBg;
+          const bodyBg = doc.body && getComputedStyle(doc.body).backgroundColor;
+          return transparent(bodyBg) ? "rgb(255, 255, 255)" : bodyBg;
+        } catch {
+          return null; // autre origine : on garde la dernière couleur connue
+        }
+      }
+
+      function hex(rgb) {
+        const m = rgb && rgb.match(/\d+/g);
+        if (!m) return rgb || "—";
+        return "#" + m.slice(0, 3).map((n) => (+n).toString(16).padStart(2, "0")).join("").toUpperCase();
+      }
+
+      function paintChrome() {
+        const color = readCanvasColor();
+        if (!color) return;
+        statusbar.style.background = color;
+        safaribar.style.background = color;
+        chip.style.background = color;
+        chipLabel.textContent = hex(color);
+      }
+
+      function navigate() {
+        let path = urlInput.value.trim() || "/";
+        if (!path.startsWith("/") && !path.startsWith("http")) path = "/" + path;
+        frame.src = path;
+        urlPill.textContent = "creadeline.vercel.app" + (path === "/" ? "" : path);
+      }
+
+      document.getElementById("device").addEventListener("change", (e) => setDevice(e.target.value));
+      document.getElementById("go").addEventListener("click", navigate);
+      urlInput.addEventListener("keydown", (e) => e.key === "Enter" && navigate());
+      document.getElementById("reload").addEventListener("click", () => {
+        frame.contentWindow.location.reload();
+      });
+      frame.addEventListener("load", paintChrome);
+      window.addEventListener("resize", fit);
+
+      // Le rechargement à chaud de Next repeint sans événement `load` : on
+      // relit la couleur périodiquement pour rester synchro pendant l'édition.
+      setInterval(paintChrome, 700);
+
+      // Heure réelle dans la barre d'état, comme sur le téléphone.
+      setInterval(() => {
+        const d = new Date();
+        document.getElementById("clock").textContent =
+          d.getHours() + ":" + String(d.getMinutes()).padStart(2, "0");
+      }, 1000);
+
+      setDevice("393x852x59");
+      fit();
+      paintChrome();
+    </script>
+  </body>
+</html>

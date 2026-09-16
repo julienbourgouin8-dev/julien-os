@@ -1,5 +1,5 @@
 import "server-only";
-import { neon } from "@neondatabase/serverless";
+import { neon, type NeonQueryFunction } from "@neondatabase/serverless";
 
 // Migration 2026-09-13 : SQLite local (fichier partagé avec l'admin) ne
 // survit pas de façon fiable sur Vercel serverless (filesystem éphémère,
@@ -8,12 +8,27 @@ import { neon } from "@neondatabase/serverless";
 // base via DATABASE_URL, plus de fichier partagé. Schéma recréé si absent
 // au démarrage (idempotent), pas d'outil de migration séparé pour deux
 // tables.
-const connectionString = process.env.DATABASE_URL ?? process.env.POSTGRES_URL;
-if (!connectionString) {
-  throw new Error("DATABASE_URL (ou POSTGRES_URL) manquant dans .env.local — voir Storage > Postgres sur Vercel.");
+//
+// La connexion est créée paresseusement (au premier appel réel), pas à
+// l'import du module : Next.js "collect page data" au build importe toutes
+// les routes API pour analyse statique, donc une erreur ici au niveau
+// module ferait planter le build entier même sur des pages qui ne touchent
+// jamais la DB.
+let sqlInstance: NeonQueryFunction<false, false> | null = null;
+
+function getSql(): NeonQueryFunction<false, false> {
+  if (!sqlInstance) {
+    const connectionString = process.env.DATABASE_URL ?? process.env.POSTGRES_URL;
+    if (!connectionString) {
+      throw new Error("DATABASE_URL (ou POSTGRES_URL) manquant — voir Storage > Postgres sur Vercel.");
+    }
+    sqlInstance = neon(connectionString);
+  }
+  return sqlInstance;
 }
 
-export const sql = neon(connectionString);
+export const sql: NeonQueryFunction<false, false> = ((strings: TemplateStringsArray, ...values: unknown[]) =>
+  getSql()(strings, ...values)) as NeonQueryFunction<false, false>;
 
 let schemaReady: Promise<void> | null = null;
 
