@@ -1,0 +1,97 @@
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 520ms ease;
+}
+
+.intro__stage {
+  position: relative;
+  width: min(46vw, 340px);
+  aspect-ratio: 462 / 156;
+  /* Shared unit for every piece's travel distance, so the gap opens by
+     the same amount regardless of how tall each individual piece is
+     (percentages in `transform` are relative to the piece's OWN box —
+     the tiny subtitle would barely move next to the tall icon otherwise). */
+  --stage-h: calc(min(46vw, 340px) * 156 / 462);
+}
+
+/* Three real pieces (icon / big title / subtitle), stacked at their exact
+   assembled position — a "burger": each layer only ever moves straight up
+   or down, no rotation, no sideways drift. */
+.intro__piece {
+  position: absolute;
+  transition: transform 760ms var(--ease-premium);
+  will-change: transform;
+}
+
+.intro__piece--icon {
+  left: 7.14%;
+  top: 0;
+  width: 83.98%;
+}
+
+.intro__piece--word {
+  left: 0;
+  top: 56.41%;
+  width: 100%;
+  transition-delay: 90ms;
+}
+
+.intro__piece--tag {
+  left: 14.29%;
+  top: 91.67%;
+  width: 70.13%;
+  transition-delay: 160ms;
+}
+
+/* Start: the 3 layers pulled apart vertically (top layer up, bottom layer
+   down, like an open burger). JS removes this class shortly after paint
+   so the browser animates them closing back onto each other. */
+.intro.is-scattered .intro__piece--icon {
+  transform: translateY(calc(var(--stage-h) * -0.62));
+}
+.intro.is-scattered .intro__piece--word {
+  transform: translateY(calc(var(--stage-h) * -0.1));
+}
+.intro.is-scattered .intro__piece--tag {
+  transform: translateY(calc(var(--stage-h) * 0.68));
+}
+
+/* End: assembled logo holds, then opens back up (further this time) while
+   the whole overlay fades — this IS the reveal transition. */
+.intro.is-departing {
+  opacity: 0;
+}
+.intro.is-departing .intro__piece {
+  opacity: 0;
+  transition: transform 640ms var(--ease-premium), opacity 460ms ease 100ms;
+}
+.intro.is-departing .intro__piece--icon {
+  transform: translateY(calc(var(--stage-h) * -1));
+}
+.intro.is-departing .intro__piece--word {
+  transform: translateY(calc(var(--stage-h) * -0.16));
+}
+.intro.is-departing .intro__piece--tag {
+  transform: translateY(calc(var(--stage-h) * 1.1));
+}
+
+.intro.is-done {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro__piece {
+    transition: opacity 250ms ease !important;
+    transform: none !important;
+  }
+  .intro.is-scattered .intro__piece {
+    opacity: 0;
+  }
+}

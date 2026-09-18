@@ -1,0 +1,129 @@
+.hero-scroll {
+  position: relative;
+  height: 100vh;
+}
+
+.hero-viewport {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--ink);
+}
+
+.hero__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: filter 900ms ease;
+}
+
+.hero__video.is-dimmed {
+  filter: brightness(0.35) saturate(0.7);
+}
+
+/* Cover crops almost nothing on normal screens (16:10 laptops, 16:9
+   monitors) — that crop is the unavoidable minimum to fill edge-to-edge.
+   It only becomes a real "zoomed in" problem on shapes far from the
+   video's own 16:9: very wide ultrawide monitors (crops top/bottom hard)
+   or tall phones in portrait (crops the sides hard). Only those extremes
+   fall back to the full, uncropped frame — with bars — since at that
+   point showing the whole shot beats an aggressive crop. */
+@media (min-aspect-ratio: 2/1), (max-aspect-ratio: 4/5) {
+  .hero__video {
+    object-fit: contain;
+    background: var(--ink);
+  }
+}
+
+.hero__chooser {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-5);
+  padding: var(--sp-4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 400ms ease;
+}
+
+.hero__chooser.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.hero__chooser-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(28px, 3.2vw, 42px);
+  color: var(--white);
+  text-align: center;
+  margin: 0;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 450ms ease, transform 450ms ease;
+}
+
+.hero__chooser.is-active .hero__chooser-title {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hero__chooser-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-3);
+  max-width: 1100px;
+}
+
+.hero__chooser-card {
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: var(--sp-4) var(--sp-3);
+  min-width: 220px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 450ms ease, transform 450ms ease, background 200ms ease, border-color 200ms ease;
+}
+
+.hero__chooser-card:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.75);
+}
+
+.hero__chooser.is-active .hero__chooser-card {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hero__chooser.is-active .hero__chooser-card:nth-child(1) { transition-delay: 150ms; }
+.hero__chooser.is-active .hero__chooser-card:nth-child(2) { transition-delay: 250ms; }
+.hero__chooser.is-active .hero__chooser-card:nth-child(3) { transition-delay: 350ms; }
+.hero__chooser.is-active .hero__chooser-card:nth-child(4) { transition-delay: 450ms; }
+
+@media (max-width: 720px) {
+  .hero__chooser-cards {
+    flex-direction: column;
+    width: 100%;
+  }
+  .hero__chooser-card {
+    min-width: 0;
+  }
+}

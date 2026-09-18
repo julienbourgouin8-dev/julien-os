@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Driving Sens — Perfectionnement au pilotage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
+  rel="stylesheet"
+/>
+<link rel="stylesheet" href="css/tokens.css" />
+<link rel="stylesheet" href="css/base.css" />
+<link rel="stylesheet" href="css/intro.css" />
+<link rel="stylesheet" href="css/header.css" />
+<link rel="stylesheet" href="css/hero.css" />
+</head>
+<body id="top">
+
+<div class="intro is-scattered" id="intro" aria-hidden="true">
+  <div class="intro__stage">
+    <img class="intro__piece intro__piece--icon" src="assets/brand/logo-icon.svg" alt="" />
+    <img class="intro__piece intro__piece--word" src="assets/brand/logo-word.svg" alt="" />
+    <img class="intro__piece intro__piece--tag" src="assets/brand/logo-tag.svg" alt="" />
+  </div>
+</div>
+
+<header class="site-header" id="siteHeader">
+  <div class="site-header__inner">
+    <a class="site-header__brand" href="#top">
+      <img src="assets/brand/logo-full.svg" alt="Driving Sens" />
+    </a>
+    <nav class="site-header__nav">
+      <a href="#performance-passion">Performance &amp; Passion</a>
+      <a href="#serenite-confiance">Sérénité &amp; Confiance</a>
+      <a href="#entreprise-collectif">Entreprise &amp; Collectif</a>
+      <a href="#industrie-marques">Industrie &amp; Marques</a>
+    </nav>
+    <a class="site-header__cta" href="#contact">Réserver un stage</a>
+  </div>
+</header>
+
+<section class="hero-scroll" id="heroScroll">
+  <div class="hero-viewport" id="hero">
+    <video
+      class="hero__video"
+      id="heroVideo"
+      poster="assets/img/hero-poster.jpg"
+      muted
+      playsinline
+      preload="auto"
+    >
+      <source src="assets/video/hero.mp4?v=4" type="video/mp4" />
+    </video>
+
+    <div class="hero__chooser" id="heroChooser" aria-hidden="true">
+      <h2 class="hero__chooser-title">Que recherchez-vous&nbsp;?</h2>
+      <div class="hero__chooser-cards">
+        <a class="hero__chooser-card" href="#performance-passion">Performance &amp; Passion</a>
+        <a class="hero__chooser-card" href="#serenite-confiance">Sérénité &amp; Confiance</a>
+        <a class="hero__chooser-card" href="#entreprise-collectif">Entreprise &amp; Collectif</a>
+        <a class="hero__chooser-card" href="#industrie-marques">Industrie &amp; Marques</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="prestations" style="min-height:100vh; background:var(--ink); display:flex; align-items:center; justify-content:center;">
+  <p class="eyebrow">Prestations — contenu à venir</p>
+</section>
+
+<script src="js/intro.js"></script>
+<script src="js/hero-video.js"></script>
+</body>
+</html>
