@@ -32,6 +32,7 @@ export default function ProductGallery({ images, name }: { images: string[]; nam
           sizes="(min-width: 1280px) 690px, (min-width: 1024px) 55vw, 100vw"
           quality={82}
           priority={i === 0}
+          unoptimized={url.startsWith("/uploads/")}
           className="block h-auto w-full bg-white"
         />
       ))}
