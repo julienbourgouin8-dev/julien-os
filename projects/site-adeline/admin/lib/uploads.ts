@@ -1,6 +1,6 @@
 import "server-only";
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
-import sharp from "sharp";
+import sharp, { type Sharp } from "sharp";
 
 // Migration 2026-09-22 : filesystem local (UPLOADS_DIR, non persistant en
 // serverless) → bucket S3 privé sur Garage, auto-hébergé sur le VPS à côté
@@ -62,6 +62,110 @@ const CONTENT_TYPES: Record<string, string> = {
   gif: "image/gif",
 };
 
+const PRODUCT_FRAME_WIDTH = 1600;
+const PRODUCT_FRAME_HEIGHT = 900;
+const TARGET_SUBJECT_HEIGHT = 0.79;
+const MAX_SUBJECT_WIDTH = 0.9;
+
+type SubjectBox = { minX: number; minY: number; maxX: number; maxY: number };
+
+// Les photos produit sont réalisées sur le même fond de studio clair. On
+// mesure la différence entre chaque pixel et le fond visible sur les bords
+// gauche/droit de sa ligne : cela donne la boîte réelle de la pièce, sans
+// dépendre de sa couleur (rose, noire, motifs clairs...). Le cadrage est
+// ensuite rapproché pour que chaque pièce occupe la même hauteur que la
+// trousse rose historique, tout en gardant un peu d'air sur les côtés.
+async function detectSubjectBox(image: Sharp): Promise<SubjectBox | null> {
+  const previewWidth = 400;
+  const previewHeight = 225;
+  const pixels = await image
+    .clone()
+    .resize(previewWidth, previewHeight, { fit: "fill" })
+    .removeAlpha()
+    .raw()
+    .toBuffer();
+
+  let minX = previewWidth;
+  let minY = previewHeight;
+  let maxX = -1;
+  let maxY = -1;
+  const edgeWidth = 30;
+
+  for (let y = 0; y < previewHeight; y += 1) {
+    let bgR = 0;
+    let bgG = 0;
+    let bgB = 0;
+    for (let x = 0; x < edgeWidth; x += 1) {
+      for (const sampleX of [x, previewWidth - 1 - x]) {
+        const sample = (y * previewWidth + sampleX) * 3;
+        bgR += pixels[sample];
+        bgG += pixels[sample + 1];
+        bgB += pixels[sample + 2];
+      }
+    }
+    const samples = edgeWidth * 2;
+    bgR /= samples;
+    bgG /= samples;
+    bgB /= samples;
+
+    for (let x = 0; x < previewWidth; x += 1) {
+      const i = (y * previewWidth + x) * 3;
+      const dr = pixels[i] - bgR;
+      const dg = pixels[i + 1] - bgG;
+      const db = pixels[i + 2] - bgB;
+      if (Math.sqrt(dr * dr + dg * dg + db * db) > 32) {
+        minX = Math.min(minX, x);
+        minY = Math.min(minY, y);
+        maxX = Math.max(maxX, x);
+        maxY = Math.max(maxY, y);
+      }
+    }
+  }
+
+  return maxX >= minX && maxY >= minY ? { minX, minY, maxX, maxY } : null;
+}
+
+async function normalizeProductFrame(buffer: Buffer): Promise<Buffer> {
+  const oriented = sharp(buffer, { animated: false }).rotate();
+  const metadata = await oriented.metadata();
+  const width = metadata.width;
+  const height = metadata.height;
+
+  // Le cadrage automatique est volontairement limité aux photos paysage de
+  // la boutique. Une éventuelle photo portrait reste entière au lieu d'être
+  // rognée agressivement.
+  if (!width || !height || width / height < 1.55 || width / height > 2.05) {
+    return oriented
+      .resize({ width: PRODUCT_FRAME_WIDTH, height: PRODUCT_FRAME_HEIGHT, fit: "inside", withoutEnlargement: true })
+      .webp({ quality: 82, effort: 4 })
+      .toBuffer();
+  }
+
+  const box = await detectSubjectBox(oriented);
+  if (!box) {
+    return oriented
+      .resize(PRODUCT_FRAME_WIDTH, PRODUCT_FRAME_HEIGHT, { fit: "fill" })
+      .webp({ quality: 82, effort: 4 })
+      .toBuffer();
+  }
+
+  const subjectWidth = (box.maxX - box.minX + 1) / 400;
+  const subjectHeight = (box.maxY - box.minY + 1) / 225;
+  const zoom = Math.max(1, Math.min(TARGET_SUBJECT_HEIGHT / subjectHeight, MAX_SUBJECT_WIDTH / subjectWidth));
+  const cropHeight = Math.max(1, Math.round(height / zoom));
+  const cropWidth = Math.max(1, Math.round(cropHeight * (16 / 9)));
+  const centerX = ((box.minX + box.maxX + 1) / 2 / 400) * width;
+  const centerY = ((box.minY + box.maxY + 1) / 2 / 225) * height;
+  const left = Math.max(0, Math.min(width - cropWidth, Math.round(centerX - cropWidth / 2)));
+  const top = Math.max(0, Math.min(height - cropHeight, Math.round(centerY - cropHeight / 2)));
+
+  return oriented
+    .extract({ left, top, width: Math.min(cropWidth, width), height: Math.min(cropHeight, height) })
+    .resize(PRODUCT_FRAME_WIDTH, PRODUCT_FRAME_HEIGHT, { fit: "fill" })
+    .webp({ quality: 82, effort: 4 })
+    .toBuffer();
+}
+
 export async function saveUploadedFile(file: File): Promise<string> {
   const buffer = Buffer.from(await file.arrayBuffer());
   const ext = detectImageExt(buffer);
@@ -75,11 +179,7 @@ export async function saveUploadedFile(file: File): Promise<string> {
   // orientation EXIF appliquée, taille plafonnée à 1800 px, métadonnées
   // retirées et conversion WebP. 1800 px garde une marge confortable pour
   // l'affichage desktop/Retina sans stocker ni resservir une source 4K.
-  const optimized = await sharp(buffer, { animated: false })
-    .rotate()
-    .resize({ width: 1800, height: 1800, fit: "inside", withoutEnlargement: true })
-    .webp({ quality: 82, effort: 4 })
-    .toBuffer();
+  const optimized = await normalizeProductFrame(buffer);
   const filename = `${crypto.randomUUID()}.webp`;
   await getS3().send(
     new PutObjectCommand({

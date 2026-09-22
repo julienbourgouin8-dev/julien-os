@@ -148,18 +148,55 @@ function AutoplayVideo({ src, className }: { src: string; className?: string }) 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    let shouldPlay = false;
+    let retryTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const attemptPlay = () => {
+      if (!shouldPlay || document.visibilityState === "hidden") return;
+      el.muted = true;
+      if (el.networkState === HTMLMediaElement.NETWORK_EMPTY) el.load();
+      el.play().catch(() => {
+        // Safari peut refuser le premier play() pendant un refresh alors que
+        // la vidéo n'a pas encore assez de données. On retente après le
+        // prochain événement média, avec un petit filet de sécurité temporisé.
+        if (retryTimer) clearTimeout(retryTimer);
+        retryTimer = setTimeout(attemptPlay, 350);
+      });
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0]?.isIntersecting) {
-          el.play().catch(() => {});
+        shouldPlay = Boolean(entries[0]?.isIntersecting);
+        if (shouldPlay) {
+          attemptPlay();
         } else {
           el.pause();
+          if (retryTimer) clearTimeout(retryTimer);
         }
       },
       { threshold: 0.25 },
     );
+
+    const onMediaReady = () => attemptPlay();
+    const onPageShow = () => attemptPlay();
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") attemptPlay();
+      else el.pause();
+    };
+
+    el.addEventListener("loadedmetadata", onMediaReady);
+    el.addEventListener("canplay", onMediaReady);
+    window.addEventListener("pageshow", onPageShow);
+    document.addEventListener("visibilitychange", onVisibilityChange);
     observer.observe(el);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      if (retryTimer) clearTimeout(retryTimer);
+      el.removeEventListener("loadedmetadata", onMediaReady);
+      el.removeEventListener("canplay", onMediaReady);
+      window.removeEventListener("pageshow", onPageShow);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
   }, []);
 
   return (
@@ -178,7 +215,10 @@ function AutoplayVideo({ src, className }: { src: string; className?: string }) 
 // Délai avant fermeture au survol — laisse le temps de glisser la souris de
 // la pièce vers la carte (ou vers une pièce voisine) sans que ça clignote
 // fermé entre les deux.
-const CLOSE_DELAY = 200;
+// 200 ms ne laissait pas assez de temps au curseur pour quitter la pièce et
+// atteindre le panneau central : le panneau se refermait et pausait la vidéo
+// pendant son premier démarrage, d'où l'impression d'une image figée.
+const CLOSE_DELAY = 650;
 // Distance de glissement (px) à partir de laquelle un drag sur la carte
 // compte comme "pièce suivante/précédente".
 const SWIPE_THRESHOLD = 50;
@@ -207,11 +247,23 @@ export default function VitrineArc() {
   const [isDesktop, setIsDesktop] = useState(false);
   useEffect(() => {
     const mql = window.matchMedia("(min-width: 640px)");
-    setIsDesktop(mql.matches);
+    const frame = window.requestAnimationFrame(() => setIsDesktop(mql.matches));
     const onChange = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
     mql.addEventListener("change", onChange);
-    return () => mql.removeEventListener("change", onChange);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      mql.removeEventListener("change", onChange);
+    };
   }, []);
+
+  // Le parent fermé faisait 0×0 : malgré `preload="auto"`, Chromium et
+  // Safari pouvaient différer le téléchargement jusqu'au premier survol.
+  // Une fois les cinq éléments desktop réellement montés, `.load()` force
+  // leur préchargement tout de suite pour que le hover ne reste pas figé.
+  useEffect(() => {
+    if (!isDesktop) return;
+    videoRefs.current.forEach((video) => video?.load());
+  }, [isDesktop]);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dragStartX = useRef<number | null>(null);
@@ -254,25 +306,6 @@ export default function VitrineArc() {
   const closePanel = () => {
     if (activeIndex !== null) videoRefs.current[activeIndex]?.pause();
     setOpen(false);
-  };
-
-  // Survol : ouverture retardée d'un court instant plutôt qu'immédiate.
-  // Sans ce délai, un vrai geste de souris qui VOYAGE vers la carte (pour
-  // cliquer "Découvrir", par ex. depuis "Sac savane" tout à gauche jusqu'au
-  // centre de l'écran) traverse physiquement d'autres zones de survol en
-  // chemin (ex. "Bouillotte") — chacune bascule la pièce affichée avant même
-  // que la souris n'arrive à destination. Un survol volontaire (on s'arrête
-  // sur une pièce) dépasse toujours ce délai ; un simple passage en chemin
-  // vers ailleurs, non.
-  const HOVER_INTENT_DELAY = 130;
-  const scheduleOpen = (i: number) => {
-    cancelOpen();
-    // Lance la lecture dès l'INTENTION de survol, pas seulement à
-    // l'ouverture effective du panneau — utilise le délai d'intention (et
-    // le trajet de la souris) comme temps de charge, pour supprimer le
-    // décalage perçu au moment où le panneau s'affiche vraiment.
-    playVideo(i);
-    openTimer.current = setTimeout(() => openPiece(i), HOVER_INTENT_DELAY);
   };
 
   const scheduleClose = () => {
@@ -425,7 +458,7 @@ export default function VitrineArc() {
             <button
               type="button"
               onClick={() => openPiece(i)}
-              onMouseEnter={() => scheduleOpen(i)}
+              onMouseEnter={() => openPiece(i)}
               onMouseLeave={() => {
                 cancelOpen();
                 scheduleClose();
@@ -466,7 +499,7 @@ export default function VitrineArc() {
         className={
           open
             ? "pointer-events-none fixed inset-0 z-[70] flex items-center justify-center p-6"
-            : "pointer-events-none absolute h-0 w-0 overflow-hidden"
+            : "pointer-events-none fixed left-0 top-0 h-px w-px overflow-hidden opacity-0"
         }
       >
         <div
