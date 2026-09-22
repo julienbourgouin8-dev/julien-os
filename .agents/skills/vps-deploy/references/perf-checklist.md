@@ -105,6 +105,20 @@ indéfiniment, Next.js le fait déjà correctement) :
   headers: [{ key: "Cache-Control", value: "no-cache, must-revalidate" }],
 }
 ```
+⚠️ **Cette règle attrape aussi les fichiers du dossier `public/`** (vidéos, images — pas de hash
+dans leur nom, le pattern d'exclusion ne vise que `_next/`). Conséquence réelle observée : forcer
+`no-cache` sur des fichiers vidéo casse leur lecture sur Safari iOS après un rechargement de page
+(bug WebKit documenté : la lecture échoue quand la réponse vient d'une revalidation conditionnelle/
+304 au lieu d'un téléchargement complet — symptôme : vidéo qui marche au premier chargement, plus du
+tout après un simple reload). Ajouter une règle plus spécifique, placée APRÈS (Next.js applique la
+dernière correspondance pour une même clé d'en-tête), qui reprend la main sur `Cache-Control` pour
+les dossiers publics connus :
+```ts
+{
+  source: "/(brand|products|uploads)/:path*",  // adapter à la structure réelle du projet
+  headers: [{ key: "Cache-Control", value: "public, max-age=3600, stale-while-revalidate=86400" }],
+}
+```
 À faire dès la mise en place initiale d'un nouveau site sur ce VPS, pas seulement après avoir
 constaté le problème — le coût (une revalidation ETag par requête, ~quelques ms) est négligeable.
 
