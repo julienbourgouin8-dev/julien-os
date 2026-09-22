@@ -20,6 +20,7 @@ type Hotspot = {
   width: number;
   height: number;
   video?: string;
+  mobileVideo?: string;
 };
 
 // Coordonnées mesurées par script (seuillage pixel vs fond, voir historique
@@ -40,6 +41,7 @@ const hotspots: Hotspot[] = [
     width: 16.8,
     height: 52.7,
     video: "/products/videos/sac-savane-360-v3.mp4",
+    mobileVideo: "/products/videos/sac-savane-360-v3-mobile.mp4",
   },
   {
     // bouillotte (housse fleece + tissu imprimé) — remplace la sacoche
@@ -52,6 +54,7 @@ const hotspots: Hotspot[] = [
     width: 15.6,
     height: 47.7,
     video: "/products/videos/bouillotte-360.mp4",
+    mobileVideo: "/products/videos/bouillotte-360-mobile.mp4",
   },
   {
     // trousse de toilette effet python noir — remplace la pochette éventail
@@ -64,6 +67,7 @@ const hotspots: Hotspot[] = [
     width: 25.5,
     height: 41.7,
     video: "/products/videos/trousse-python-360.mp4",
+    mobileVideo: "/products/videos/trousse-python-360-mobile.mp4",
   },
   {
     name: "Lunch box",
@@ -74,6 +78,7 @@ const hotspots: Hotspot[] = [
     width: 20.4,
     height: 40.6,
     video: "/products/videos/lunch-box-360-v10.mp4",
+    mobileVideo: "/products/videos/lunch-box-360-v10-mobile.mp4",
   },
   {
     name: "Trousse papillons",
@@ -84,6 +89,7 @@ const hotspots: Hotspot[] = [
     width: 8.3,
     height: 31.3,
     video: "/products/videos/trousse-papillons-360-v2.mp4",
+    mobileVideo: "/products/videos/trousse-papillons-360-v2-mobile.mp4",
   },
 ];
 
@@ -142,9 +148,9 @@ function staticCropStyle(spot: Hotspot): CSSProperties {
 // métadonnées à l'avance (pas la vidéo entière, coût réseau négligeable),
 // ce qui rend le `.play()` déclenché par l'IntersectionObserver beaucoup
 // plus robuste.
-function AutoplayVideo({ src, className }: { src: string; className?: string }) {
+function AutoplayVideo({ src, className, eager = false }: { src: string; className?: string; eager?: boolean }) {
   const ref = useRef<HTMLVideoElement | null>(null);
-  const [sourceReady, setSourceReady] = useState(false);
+  const [sourceReady, setSourceReady] = useState(eager);
 
   // Ne donne même pas de `src` au navigateur tant que la vidéo est loin
   // sous l'écran. Safari iOS lançait sinon les cinq téléchargements au
@@ -280,7 +286,6 @@ function AutoplayVideo({ src, className }: { src: string; className?: string }) 
     <video
       ref={ref}
       src={sourceReady ? src : undefined}
-      autoPlay={sourceReady}
       muted
       loop
       playsInline
@@ -481,9 +486,9 @@ export default function VitrineArc() {
           côtés). Le texte/bouton en dessous récupère son propre `px-4`
           pour ne pas coller aux bords, lui. */}
       <div className="flex flex-col gap-10 pb-10 sm:hidden">
-        {hotspots.map((spot) => (
+        {hotspots.map((spot, i) => (
           <div key={spot.name} className="flex flex-col items-center text-center">
-            {spot.video && <AutoplayVideo src={spot.video} className="w-full" />}
+            {spot.mobileVideo && <AutoplayVideo src={spot.mobileVideo} className="w-full" eager={i === 0} />}
             <p className="mt-6 px-4 text-sm font-semibold uppercase tracking-[0.2em] text-teal">
               {spot.category}
             </p>

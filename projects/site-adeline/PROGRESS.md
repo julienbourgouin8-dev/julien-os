@@ -32,6 +32,13 @@ Process générique de déploiement (VPS Hostinger + Coolify), réutilisable pou
   la lecture sans attendre que 25 % de la vidéo soit affiché, et un watchdog relance Safari si
   `play()` réussit mais que `currentTime` reste figé. Les cinq vidéos ne sont donc plus chargées
   simultanément au démarrage.
+- Correctif renforcé après le dernier retour iPhone réel : cinq variantes MP4 mobiles 720 px ont
+  été générées avec H.264, CRF 27 et `faststart`. Elles pèsent entre 368 et 737 Kio, soit environ
+  2,3 Mio au total contre 7,7 Mio pour les cinq fichiers desktop. Le desktop conserve les sources
+  1280 px d'origine. La première vidéo mobile est préparée dès le montage ; les suivantes peuvent
+  précharger à l'approche mais ne jouent que lorsqu'elles sont réellement visibles. Plusieurs
+  vidéos visibles dans un écran haut restent autorisées à jouer ensemble : une tentative de
+  décodeur mobile exclusif mettait à tort la première en pause lorsque la seconde apparaissait.
 - Après un vrai refresh, une classe `page-reload` est posée avant le rendu. Le hero mobile est
   alors affiché directement dans son état final, sans rejouer l'animation par-dessus l'instantané
   de page conservé par Safari. Les navigations normales gardent l'animation.
@@ -41,6 +48,10 @@ Process générique de déploiement (VPS Hostinger + Coolify), réutilisable pou
 - Vérifications locales : TypeScript et ESLint passent ; WebKit confirme `page-reload`, aucune
   animation du hero au refresh et la lecture des vidéos visibles ; Chromium confirme le centrage
   et les dimensions du catalogue PC.
+- Test de résistance final WebKit : 10 cycles de chargement/refresh sur les deux premières vidéos
+  (20 lectures), puis 3 cycles complets sur les cinq vidéos (15 lectures). Résultat cumulé :
+  **35 lectures, zéro échec** ; toutes les vidéos avaient `readyState=4`, `paused=false` et leur
+  `currentTime` avançait d'environ 0,81 s pendant chaque fenêtre de mesure de 0,8 s.
 
 **Le site est en ligne sur le VPS, pas sur Vercel.** Deux apps Next.js déployées séparément dans
 Coolify sur le même VPS Hostinger (Frankfurt) :
