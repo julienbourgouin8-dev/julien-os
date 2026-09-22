@@ -364,10 +364,19 @@ export default function VitrineArc() {
       </div>
 
       <div className="relative hidden w-full sm:block" style={{ aspectRatio: "2438 / 1254" }}>
+        {/* `loading="lazy"` (audit perf 2026-09-22) : ce bloc est `hidden` en
+            CSS sous `sm` (remplacé par la liste mobile juste au-dessus),
+            mais le pré-parseur HTML du navigateur télécharge quand même les
+            <img> par défaut AVANT que le CSS soit appliqué — cette image de
+            376 Ko partait donc en réseau même sur mobile où elle n'est
+            jamais affichée. `loading="lazy"` la conditionne à une
+            intersection réelle avec le viewport, qui n'arrive jamais tant
+            que l'élément reste `display:none`. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={IMAGE}
           alt="Sélection de créations CréA'deline posées sur un socle d'exposition"
+          loading="lazy"
           className="absolute inset-0 h-full w-full object-contain"
         />
 

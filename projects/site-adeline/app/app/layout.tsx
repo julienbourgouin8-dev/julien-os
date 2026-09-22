@@ -7,11 +7,14 @@ import CookieConsent from "@/components/CookieConsent";
 import { CartProvider } from "@/lib/cart/CartProvider";
 import "./globals.css";
 
+// Axes variables `opsz`/`SOFT`/`WONK` retirés (audit perf 2026-09-22) :
+// aucun `font-variation-settings` ne les fait varier nulle part dans le
+// CSS du site — ils gonflaient le fichier de police sans jamais être
+// utilisés. Seul `wght` (toujours inclus par défaut) sert réellement.
 const display = Fraunces({
   variable: "--font-display",
   subsets: ["latin"],
   style: ["italic", "normal"],
-  axes: ["opsz", "SOFT", "WONK"],
 });
 
 const body = Jost({
