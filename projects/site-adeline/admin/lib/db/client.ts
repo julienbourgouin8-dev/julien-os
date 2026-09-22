@@ -1,18 +1,29 @@
 import "server-only";
-import { neon } from "@neondatabase/serverless";
+import postgres, { type Sql } from "postgres";
 
-// Migration 2026-09-13 : SQLite local (fichier partagé avec la vitrine) ne
-// survit pas de façon fiable sur Vercel serverless (filesystem éphémère,
-// pas de garantie de persistance entre invocations) — remplacé par Postgres
-// (Neon, intégration Vercel Storage). app/ et admin/ pointent sur la même
-// base via DATABASE_URL, plus de fichier partagé. Schéma recréé si absent
-// au démarrage (idempotent), pas d'outil de migration séparé.
-const connectionString = process.env.DATABASE_URL ?? process.env.POSTGRES_URL;
-if (!connectionString) {
-  throw new Error("DATABASE_URL (ou POSTGRES_URL) manquant dans .env.local — voir Storage > Postgres sur Vercel.");
+// Migration 2026-09-22 : Neon (driver HTTP @neondatabase/serverless) →
+// Postgres standard auto-hébergé sur le VPS (Coolify) — voir
+// app/lib/db/client.ts pour le détail du choix de driver (`postgres`,
+// compatible tel quel avec l'usage `sql\`...\`` déjà écrit partout).
+//
+// Connexion paresseuse (au premier appel réel), pas à l'import du module —
+// voir app/lib/db/client.ts pour le détail (build Vercel qui plantait sinon).
+let sqlInstance: Sql | null = null;
+
+function getSql(): Sql {
+  if (!sqlInstance) {
+    const connectionString = process.env.DATABASE_URL ?? process.env.POSTGRES_URL;
+    if (!connectionString) {
+      throw new Error("DATABASE_URL (ou POSTGRES_URL) manquant.");
+    }
+    sqlInstance = postgres(connectionString);
+  }
+  return sqlInstance;
 }
 
-export const sql = neon(connectionString);
+export const sql: Sql = ((strings: TemplateStringsArray, ...values: any[]) =>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (getSql() as any)(strings, ...values)) as Sql;
 
 let schemaReady: Promise<void> | null = null;
 
@@ -45,10 +56,20 @@ export function ensureSchema(): Promise<void> {
           total_cents INTEGER NOT NULL,
           customer_email TEXT,
           shipping_address JSONB,
+          shipping_carrier TEXT,
+          shipping_label_url TEXT,
+          shipping_tracking_number TEXT,
+          shipping_tracking_url TEXT,
+          shipping_parcel_id TEXT,
           created_at TIMESTAMPTZ NOT NULL,
           updated_at TIMESTAMPTZ NOT NULL
         )
       `;
+      await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_carrier TEXT`;
+      await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_label_url TEXT`;
+      await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_tracking_number TEXT`;
+      await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_tracking_url TEXT`;
+      await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_parcel_id TEXT`;
       // Traçabilité des actions admin sur des données personnelles (RGPD
       // Art. 5(2), accountability) — qui a fait quoi et quand, pas le
       // contenu complet.

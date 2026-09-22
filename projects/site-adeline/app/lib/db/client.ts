@@ -1,34 +1,35 @@
 import "server-only";
-import { neon, type NeonQueryFunction } from "@neondatabase/serverless";
+import postgres, { type Sql } from "postgres";
 
-// Migration 2026-09-13 : SQLite local (fichier partagé avec l'admin) ne
-// survit pas de façon fiable sur Vercel serverless (filesystem éphémère,
-// pas de garantie de persistance entre invocations) — remplacé par Postgres
-// (Neon, intégration Vercel Storage). app/ et admin/ pointent sur la même
-// base via DATABASE_URL, plus de fichier partagé. Schéma recréé si absent
-// au démarrage (idempotent), pas d'outil de migration séparé pour deux
-// tables.
+// Migration 2026-09-22 : Neon (driver HTTP @neondatabase/serverless) →
+// Postgres standard auto-hébergé sur le VPS (Coolify), plus de proxy HTTP
+// Neon disponible — driver TCP classique avec pool de connexions (`postgres`,
+// alias porsager/postgres, choisi car son API "tagged template" est
+// compatible telle quelle avec l'usage `sql\`...\`` déjà écrit dans tout le
+// code : products.ts, orders.ts, audit.ts, rate-limit.ts n'ont pas eu besoin
+// de changer).
 //
 // La connexion est créée paresseusement (au premier appel réel), pas à
 // l'import du module : Next.js "collect page data" au build importe toutes
 // les routes API pour analyse statique, donc une erreur ici au niveau
 // module ferait planter le build entier même sur des pages qui ne touchent
 // jamais la DB.
-let sqlInstance: NeonQueryFunction<false, false> | null = null;
+let sqlInstance: Sql | null = null;
 
-function getSql(): NeonQueryFunction<false, false> {
+function getSql(): Sql {
   if (!sqlInstance) {
     const connectionString = process.env.DATABASE_URL ?? process.env.POSTGRES_URL;
     if (!connectionString) {
-      throw new Error("DATABASE_URL (ou POSTGRES_URL) manquant — voir Storage > Postgres sur Vercel.");
+      throw new Error("DATABASE_URL (ou POSTGRES_URL) manquant.");
     }
-    sqlInstance = neon(connectionString);
+    sqlInstance = postgres(connectionString);
   }
   return sqlInstance;
 }
 
-export const sql: NeonQueryFunction<false, false> = ((strings: TemplateStringsArray, ...values: unknown[]) =>
-  getSql()(strings, ...values)) as NeonQueryFunction<false, false>;
+export const sql: Sql = ((strings: TemplateStringsArray, ...values: any[]) =>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (getSql() as any)(strings, ...values)) as Sql;
 
 let schemaReady: Promise<void> | null = null;
 
@@ -61,10 +62,21 @@ export function ensureSchema(): Promise<void> {
           total_cents INTEGER NOT NULL,
           customer_email TEXT,
           shipping_address JSONB,
+          shipping_carrier TEXT,
+          shipping_label_url TEXT,
+          shipping_tracking_number TEXT,
+          shipping_tracking_url TEXT,
+          shipping_parcel_id TEXT,
           created_at TIMESTAMPTZ NOT NULL,
           updated_at TIMESTAMPTZ NOT NULL
         )
       `;
+      // Migrations progressives idempotentes pour bases déjà existantes
+      await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_carrier TEXT`;
+      await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_label_url TEXT`;
+      await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_tracking_number TEXT`;
+      await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_tracking_url TEXT`;
+      await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_parcel_id TEXT`;
     })();
   }
   return schemaReady;

@@ -839,6 +839,23 @@ Vercel refuse les CLI < 47.2.2.
 **Prochaine étape demandée par Julien** : la version PC est validée,
 « c'est parfait » — passer à la **version mobile**.
 
+## Intégration Sendcloud & Expédition (session 2026-09-21)
+
+Intégration complète de la chaîne d'expédition et d'affranchissement automatique avec l'API Sendcloud v2 pour la boutique CréA'deline.
+
+- **Base de données (Neon Postgres)** :
+  - Colonnes d'expédition ajoutées à la table `orders` : `shipping_carrier`, `shipping_label_url`, `shipping_tracking_number`, `shipping_tracking_url`, `shipping_parcel_id`.
+  - Migrations idempotentes dans `app/lib/db/client.ts` et `admin/lib/db/client.ts`.
+- **Client Sendcloud v2** (`app/lib/sendcloud/client.ts` et `admin/lib/sendcloud/client.ts`) :
+  - Authentification HTTP Basic via `SENDCLOUD_PUBLIC_KEY` et `SENDCLOUD_SECRET_KEY`.
+  - Création de colis + réservation d'affranchissement avec `request_label: true` (retourne le numéro de tracking et l'URL du PDF d'étiquette).
+  - Gestion sécurisée d'absence de clés (warning sans plantage de commande).
+- **Webhook Stripe** (`app/app/api/webhooks/stripe/route.ts`) :
+  - Dès réception de `checkout.session.completed`, génération automatique de l'expédition et mise à jour de la commande.
+- **Admin Commandes** (`admin/app/(protected)/orders/`) :
+  - Colonne « Expédition » dans la liste des commandes avec affichage du numéro de tracking.
+  - Fiche détail (`[id]/page.tsx`) : bloc « Expédition & Suivi », lien direct vers le portail de suivi, bouton de téléchargement du PDF de l'étiquette et bouton de génération manuelle de secours.
+
 ## Reste à faire / en attente
 
 - **Lien "À propos"** (nav hero) : pointe vers `#apropos`, section/page
@@ -850,9 +867,262 @@ Vercel refuse les CLI < 47.2.2.
   raison sociale).
 - **Nom de domaine propre** (type creadeline.fr) : pas fait, le site tourne
   sur le sous-domaine gratuit `creadeline.vercel.app`.
-- **Stockage uploads** : toujours local-filesystem, pas persistant sur
-  Vercel — voir section "Pivot SQLite → Neon" ci-dessus.
-- **Mobile** : scope de "revoir toutes les tailles" à clarifier avec Julien
-  (voir section refonte mobile ci-dessus).
-- Stripe/paiement, panier, Sendcloud/shipping, emails transactionnels :
-  toujours dans `TODO.md`, phases futures non commencées.
+- **Stockage uploads (Images produits)** : toujours local-filesystem (`data/uploads/`), non persistant sur
+  Vercel serverless — à migrer vers Vercel Blob ou S3/R2 pour les futurs ajouts depuis l'admin.
+  **Obsolète depuis le 2026-09-22 : remplacé par la migration VPS ci-dessous (MinIO/S3 sur Coolify),
+  ne plus regarder Vercel Blob.**
+- **Mobile** : scope de "revoir toutes les tailles" à finaliser (voir section refonte mobile).
+- **Emails transactionnels (Brevo)** : confirmation de commande et notification d'expédition par email.
+
+## Migration hébergement — Vercel/Neon → VPS Hostinger + Coolify (session 2026-09-22, EN COURS)
+
+**À lire en premier au prochain reprise de session.** Cette migration est déclenchée par trois
+signaux distincts remontés par Julien le même jour : (1) le stockage uploads local ne survit pas au
+serverless Vercel (déjà connu, voir juste au-dessus) ; (2) la base Neon tourne en `us-east-1` (USA),
+alors que le site est 100% francophone avec tout un dossier RGPD déjà construit (`legal/`,
+`confidentialite/page.tsx`) qui part du principe "données en UE" — incohérence à corriger ; (3) le
+plan gratuit Vercel ("Hobby") **interdit contractuellement l'usage commercial**, or le site encaisse
+de vrais paiements Stripe — zone grise qu'on veut arrêter d'accepter passivement. Julien a aussi
+exprimé une frustration légitime : payer une brique gérée séparément par service (Vercel + Neon +
+Cellar/Blob) revient cher rapporté à la RAM réelle utilisée, et il voulait "un seul serveur pour
+tout regrouper" plutôt que continuer à empiler des services tiers facturés à la pièce.
+
+### Recherche comparative menée (pour ne pas la refaire)
+
+Comparatif VPS approfondi fait ce jour avec prix réels vérifiés (API publiques quand possible,
+jamais les prix d'appel marketing) :
+
+- **Clever Cloud** (PaaS français) : prix réels tirés de leur API publique
+  (`api.clever-cloud.com/v2/products/instances` et `.../addonproviders`, accessible sans clé) —
+  runtime Node nano ~6,08 €/mois + Postgres XXS ~5,25 €/mois + Cellar (S3) quasi gratuit à notre
+  volume ≈ **11-12 €/mois** au total. Écarté : plus cher et plus fragmenté qu'un VPS unique pour ce
+  qu'on veut faire.
+- **Hetzner** : gamme bon marché (CX) indisponible en 2026, fortes hausses de prix cette année —
+  plus le bon plan (~20 €/mois pour 2vCPU/4Go, non compétitif). Écarté.
+- **IONOS** : vérifié en détail (specs+prix réels sur ionos.fr) — un plan 4vCPU/8Go équivalent à
+  l'offre OVH revient à **~26,40 €/mois réels** (après une promo de 3 mois trompeuse) + 10 € de
+  frais de mise en service. ~3x plus cher qu'OVH à specs égales. Écarté.
+- **OVHcloud VPS-2** (4 vCPU/8 Go/75 Go, sauvegardes incluses) : ~8,65 €/mois TTC réel — très bon
+  prix, mais **disponible uniquement au Royaume-Uni (Erith)** au moment de la commande, pas en
+  France/Allemagne (stock). RU = hors UE (Brexit), couvert par une décision d'adéquation RGPD donc
+  légalement OK, mais moins "propre" que rester strictement en UE.
+- **Hostinger "Web App Hosting"** (le produit façon Vercel, déploiement Git en 1 clic) : écarté —
+  prix réel après engagement 48 mois ~17-26 $/mois (pas le "3,99 $/mois" affiché), et surtout **base
+  de données MySQL native** (Postgres seulement via une intégration Supabase greffée à part) —
+  aurait cassé tout le code déjà écrit pour Postgres et réintroduit l'éparpillement qu'on voulait
+  éviter.
+- **Hostinger VPS (gamme KVM)** — **retenu**. KVM 1 : 5,99 €/mois sur engagement 12 mois (passe à
+  12,99 €/mois au renouvellement, vérifié directement sur la page de commande, pas une estimation),
+  + option "Sauvegarde automatique quotidienne" activée (+2,99 €/mois) car ce serveur héberge
+  maintenant les vraies données clients/commandes. Total ~8,98 €/mois. **Datacenter choisi :
+  Allemagne (Frankfurt)** — reste strictement en UE, contrairement à l'unique option OVH disponible
+  ce jour-là (RU). Moins de puissance brute qu'OVH VPS-2 (1 vCPU/4 Go vs 4 vCPU/8 Go) mais jugé
+  suffisant à notre échelle et le compromis UE-sans-ambiguïté l'a emporté.
+
+**Domaine** : `.fr` acheté séparément (pas de domaine gratuit Hostinger utilisable — leur offre
+gratuite est limitée aux extensions `.tech`/`.cloud`, inadaptées à une marque de couture française).
+Comparatif fait : **Infomaniak le moins cher dans la durée** (4,50 €/an, prix fixe à vie, jamais
+d'augmentation) ; **Gandi surprenamment cher au renouvellement** (25,90-28,78 €/an malgré sa
+réputation "premium/éthique" — à éviter) ; **OVHcloud raisonnable et stable** (~4,99 € HT an 1 →
+7,79 € HT/an ensuite, soit ~9,35 €/an TTC en continu). **Domaine finalement acheté chez OVHcloud**
+(15,34 € TTC pour 2 ans, DNSSEC + email Zimbra Starter inclus gratuitement).
+
+✅ **RÉSOLU (session 2026-09-22, reprise) : domaine acheté = `creadeline16.fr`**, sans accent.
+`creadeline.fr` sans accent était déjà pris, d'où le suffixe `16`. Toute référence à `creadeline.fr`
+plus bas dans ce plan doit être lue comme `creadeline16.fr`.
+
+### État de l'infrastructure au 2026-09-22 (où on s'est arrêtés)
+
+- **VPS Hostinger acheté et actif** : IP `179.198.209.59`, hostname `srv2000362.hstgr.cloud`,
+  Ubuntu 24.04, datacenter Frankfurt (Allemagne).
+- **Accès SSH configuré proprement** : clé ed25519 générée ce jour (`~/.ssh/creadeline_vps`, jamais
+  affichée dans une conversation), clé publique installée dans
+  `/root/.ssh/authorized_keys` sur le VPS. Alias prêt à l'emploi dans `~/.ssh/config` :
+  **`ssh creadeline-vps`** se connecte directement, sans mot de passe. Le mot de passe root
+  généré par Hostinger a servi une seule fois à installer la clé puis a été supprimé du disque
+  local (jamais collé dans le chat, conformément à la règle du projet sur les secrets — toujours
+  via un fichier local ouvert en TextEdit, jamais dans la conversation).
+- **Coolify v4.3.23 installé** via l'app 1-clic Hostinger, tous les conteneurs `healthy`
+  (`coolify`, `coolify-proxy`, `coolify-db`, `coolify-redis`, `coolify-realtime`,
+  `coolify-sentinel`). Dashboard sur `http://179.198.209.59:8000` (compte admin créé par Julien,
+  identifiants connus de lui seul).
+- **Assistant de configuration Coolify terminé** : serveur "localhost" (cette même machine,
+  `host.docker.internal`), projet "My first project" / environnement "production" créés, Docker
+  Engine confirmé actif.
+- **On s'est arrêtés sur l'écran "New Resource"** de Coolify (Root Team / My first project /
+  production), juste avant de créer la ressource PostgreSQL — **rien n'est encore créé côté
+  base de données ou stockage sur ce VPS**.
+- **Le site actuel (`creadeline.vercel.app` + Neon Postgres `us-east-1` + uploads locaux) tourne
+  toujours normalement et n'a pas été touché** — c'est toujours lui la version en ligne tant que la
+  migration n'est pas terminée et vérifiée.
+- **DNS pas encore pointé** : le domaine acheté (voir point non résolu ci-dessus) ne pointe pas
+  encore vers `179.198.209.59`.
+
+### Mise à jour — session 2026-09-22 (reprise), avancement
+
+- **Domaine résolu** : `creadeline16.fr` (sans accent, `creadeline.fr` sans accent était déjà pris,
+  d'où le `16`).
+- **PostgreSQL déployé dans Coolify** : ressource "creadeline-db", conteneur `weragxl251e5gltuems22q76`,
+  healthy. Base `creadeline`, accès **Public** activé (port auto-assigné par Coolify) + **SSL require**,
+  car l'admin (resté sur Vercel) doit pouvoir l'atteindre depuis l'extérieur. Identifiants
+  auto-générés par Coolify, jamais vus dans le chat.
+- **Stockage objet : changement de plan MinIO → Garage.** MinIO (serveur + client `mc`) a été trouvé
+  **officiellement archivé/abandonné par son éditeur** (page `dl.min.io` renvoie HTTP 410, "no longer
+  maintained, no security updates") au moment de le configurer — en plus la console web "Community
+  Edition" a perdu toutes les fonctions d'admin (plus de gestion de clés IAM ni de règles de bucket en
+  UI). Décision prise avec Julien : remplacer par **Garage** (Deuxfleurs, projet français,
+  S3-compatible, activement maintenu), cohérent avec la démarche RGPD/UE de cette migration. Le
+  conteneur MinIO a été arrêté/supprimé.
+  - Déployé **directement en SSH sur le VPS** (pas via l'UI Coolify — Garage nécessite plusieurs
+    commandes CLI post-démarrage que l'UI ne gère pas) : fichiers dans `/opt/garage/` sur le VPS
+    (`garage.toml`, `garage.env` chmod 600 avec `GARAGE_RPC_SECRET`/`GARAGE_ADMIN_TOKEN` générés
+    aléatoirement, `docker-compose.yml` avec `restart: unless-stopped`). Image `dxflrs/garage:v2.4.1`
+    (pinnée, pas `:latest` — recommandation officielle Garage). Conteneur `garage`, ports `3900` (API
+    S3) et `3903` (admin) exposés sur le VPS.
+  - Layout single-node appliqué (`garage layout assign -z dc1 -c 1G <node_id>` + `apply`).
+  - Bucket **privé** `creadeline-uploads` créé (pas de policy publique — voir choix d'architecture
+    ci-dessous). Clé d'accès dédiée `creadeline-app` (droits read/write/owner sur ce bucket
+    uniquement) créée avec `garage key create` en redirigeant la sortie directement dans un fichier
+    local, jamais affichée dans la conversation :
+    **`projects/site-adeline/.secrets/garage-app-key.txt`** (chmod 600, dossier `.secrets/` ajouté au
+    `.gitignore` racine). Contient l'Access Key ID et la Secret Key à utiliser dans le SDK S3 côté app.
+    ⚠️ Incident mineur pendant la manip : une première clé a été accidentellement affichée dans la
+    sortie d'une commande (donc visible dans l'historique de conversation) — elle a été **révoquée
+    immédiatement** (`garage key delete`) et regénérée proprement avant tout usage. Ne pas réutiliser
+    l'ancien Key ID `GK78cacaa49258264a98cdc770` s'il traîne quelque part, il est mort.
+  - **Choix d'architecture : bucket privé, pas d'exposition publique.** Contrairement au plan initial
+    ("stocker l'URL publique résultante dans la colonne images"), on garde le bucket privé et l'app
+    continue de servir les images via ses routes existantes
+    (`app/app/uploads/[...path]/route.ts` et équivalent admin), juste en lisant depuis Garage (S3
+    `GetObjectCommand`, authentifié avec la clé `creadeline-app`) au lieu du disque local, puis en
+    streamant la réponse. Ça évite la fonctionnalité "bucket website" de Garage (qui demanderait un
+    sous-domaine dédié + DNS wildcard, complexité inutile ici) et garde le contrôle d'accès côté
+    serveur. **Donc à l'étape 5 du plan ci-dessous, ne PAS retirer les routes `/uploads/...` — les
+    adapter pour lire du S3 au lieu du filesystem, pas les supprimer.**
+  - ⚠️ **Ménage à faire dans Coolify** : il reste une ressource fantôme "Minio"
+    (`service-b3tej1rcbeq3gdxjd7nof2o1`) dans l'UI Coolify, créée avant le changement de plan, dont le
+    conteneur a été arrêté/supprimé manuellement en SSH. Coolify ne le sait pas — supprimer cette
+    ressource depuis l'UI Coolify (Projects → My first project → production) pour que le dashboard
+    reflète l'état réel.
+
+### Mise à jour — session 2026-09-22 (suite), migration DB + code
+
+- **⚠️ Nom de la base Postgres Coolify = `postgres`, pas `creadeline`.** Le champ "Initial database"
+  rempli à `creadeline` dans l'UI Coolify n'a pas été pris en compte (bug ou mauvaise manip côté
+  Coolify, pas creusé) — la base réellement créée s'appelle `postgres` (le nom par défaut de l'image
+  officielle). Toutes les chaînes de connexion utilisent `postgres` comme nom de base. Pas grave en
+  soi, juste à savoir pour ne pas chercher une base `creadeline` qui n'existe pas.
+- **SSL activé manuellement sur le Postgres Coolify.** Le toggle "SSL" de l'UI Coolify n'avait
+  visiblement pas été appliqué (SSL toujours `off` en interrogeant le serveur malgré un restart).
+  Corrigé directement en SSH : certificat auto-signé généré sur l'hôte VPS (`openssl`, absent de
+  l'image Postgres elle-même), copié dans `$PGDATA` du conteneur (`docker cp` + `chown postgres`),
+  `ssl = on` + `ssl_cert_file`/`ssl_key_file` ajoutés à `postgresql.conf`, conteneur redémarré.
+  Confirmé : `SHOW ssl;` → `on`. La chaîne de connexion utilise `sslmode=require` (chiffré, pas de
+  vérification CA puisque certificat auto-signé — suffisant pour ce besoin, pas d'échange de données
+  bancaires brutes sur ce canal, Stripe reste hors DB).
+- **Migration des données Neon → Coolify Postgres faite et vérifiée.** `pg_dump` du Neon existant
+  (schémas `public.*` uniquement, `neon_auth` exclu — infrastructure propre à Neon, pas nos données)
+  → restauré dans le nouveau Postgres via un conteneur `postgres:18` temporaire sur le VPS. Piège
+  rencontré : un premier essai de restauration a silencieusement importé zéro ligne (`docker run`
+  sans le flag `-i`, donc le fichier passé par `< fichier.sql` n'atteignait jamais le conteneur) —
+  corrigé en montant le fichier en volume au lieu de le piper par stdin. Vérifié après coup :
+  `products` (1 ligne), `orders` (0), `audit_log` (1), `login_attempts` (0) — cohérent avec l'état
+  réel du site à ce stade.
+  - Le `DATABASE_URL` Neon a été transféré du Mac vers le VPS par `scp` direct (jamais affiché), et
+    supprimé du VPS une fois la migration terminée. Le dump SQL temporaire (`/opt/migration/`) a
+    aussi été supprimé après vérification.
+- **Code applicatif migré du driver Neon vers `postgres` (porsager/postgres), pas `pg` brut.** Choisi
+  car son API "tagged template" (`sql\`...\``) est compatible telle quelle avec tout le code déjà
+  écrit (`app/lib/db/products.ts`, `orders.ts`, `admin/lib/db/products.ts`, `orders.ts`,
+  `admin/lib/audit.ts`, `admin/lib/auth/rate-limit.ts`) — **zéro changement nécessaire dans ces
+  fichiers**, seuls les deux `client.ts` (app et admin) ont été réécrits. Package
+  `@neondatabase/serverless` désinstallé des deux `package.json`, `postgres` et `@aws-sdk/client-s3`
+  installés à la place (les deux apps en ont besoin : DB pour les deux, S3 aussi pour les deux car
+  chacune sert `/uploads/[...path]` depuis son propre déploiement).
+- **`admin/lib/uploads.ts` migré vers S3 (Garage)** : `saveUploadedFile`/`deleteUploadedFile` gardent
+  exactement la même signature (seul appelant : `admin/lib/db/products.ts`, pas touché) mais
+  écrivent/suppriment maintenant via `@aws-sdk/client-s3` (`PutObjectCommand`/`DeleteObjectCommand`)
+  au lieu du filesystem local. `forcePathStyle: true` requis par Garage.
+- **Les deux routes `app/app/uploads/[...path]/route.ts` et `admin/app/uploads/[...path]/route.ts`**
+  (fichiers identiques) adaptées pour lire l'objet via `GetObjectCommand` sur Garage et le streamer,
+  au lieu de lire le fichier local — **conservées** (pas supprimées, contrairement à ce que
+  suggérait le plan initial pensé pour MinIO public, voir choix d'architecture plus haut : bucket
+  resté privé).
+- **`.env.local` de `app/` et `admin/` mis à jour** (en local sur ce Mac, jamais affichés dans la
+  conversation, valeurs transférées uniquement via variables shell) : `DATABASE_URL` pointe
+  maintenant sur `179.198.209.59:5432` (Postgres Coolify, `sslmode=require`), et 5 nouvelles
+  variables ajoutées : `S3_ENDPOINT=http://179.198.209.59:3900`, `S3_REGION=garage`,
+  `S3_BUCKET=creadeline-uploads`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` (valeurs lues depuis
+  `projects/site-adeline/.secrets/garage-app-key.txt`, généré plus haut dans ce fichier).
+  **Ces mêmes variables devront être ajoutées manuellement dans Coolify (pour le déploiement de
+  `app/`) et dans Vercel (pour `admin/`, qui y reste) à l'étape "Déployer le site" ci-dessous — ne
+  pas oublier `S3_*` en plus de `DATABASE_URL`, l'étape 6/8 du plan initial ne les mentionnait pas
+  encore.**
+- **Vérifié end-to-end avec un script Node jetable** (créé et supprimé dans la même session, jamais
+  commité) : connexion DB réelle (`SELECT count(*) FROM products` → 1) + aller-retour S3 complet
+  (put/get/delete sur le bucket réel) — les deux passent.
+- `npm run build` relancé avec succès sur `app/` et `admin/` après tous ces changements (TypeScript
+  strict OK, build Next.js OK).
+- ⚠️ **Ménage Coolify toujours pas fait** : la ressource fantôme "Minio" (renommée automatiquement
+  "creadeline" dans l'UI, statut "Unknown") est toujours présente — le bouton Delete n'a pas été
+  trouvé dans le menu déroulant du haut (Deploy/Force Deploy/Force Cleanup Containers, pas de
+  Delete). Il faut chercher plus bas sur la page ("Danger Zone" habituelle chez Coolify) ou dans les
+  Settings de la ressource.
+
+### Plan détaillé — étapes restantes, dans l'ordre (⚠️ partiellement obsolète, voir mises à jour ci-dessus — étapes 1-5 faites, reprendre à l'étape 6)
+
+1. **Résoudre le point non résolu ci-dessus** (orthographe du domaine) avant toute action DNS.
+2. Dans Coolify (New Resource → section **Databases**, au-dessus de la section Applications visible
+   à l'écran) : déployer une ressource **PostgreSQL**. Noter la chaîne de connexion interne générée.
+3. Créer le stockage objet : vérifier dans Coolify si la section **"S3 Storage"** (visible dans la
+   barre latérale, sous Infrastructure) suffit telle quelle, ou s'il faut déployer **MinIO** en plus
+   via un service Docker Compose dédié — à trancher une fois sur l'écran correspondant.
+4. **Migration des données** : `pg_dump` de la base Neon actuelle (`DATABASE_URL` pointant vers
+   `ep-round-dream-avtullc2-pooler.c-11.us-east-1.aws.neon.tech`) → import dans le nouveau Postgres
+   Coolify.
+5. **Changements de code nécessaires** (dans `projects/site-adeline/`) :
+   - `app/lib/db/client.ts` et `admin/lib/db/client.ts` : remplacer le driver HTTP
+     `@neondatabase/serverless` (`neon()` tagged template) par un driver Postgres standard (`pg` ou
+     `postgres.js`) avec un vrai pool de connexions — Coolify Postgres est un Postgres classique en
+     TCP, pas le proxy HTTP de Neon. Conserver le pattern de singleton paresseux (connexion créée au
+     premier appel, jamais au chargement du module) pour ne pas reproduire le crash de build Vercel
+     déjà rencontré et documenté plus haut dans ce fichier.
+   - `admin/lib/uploads.ts` : remplacer l'écriture locale (`fs.writeFile` vers `data/uploads/`) par
+     un upload S3 (`@aws-sdk/client-s3`, `PutObjectCommand`) vers le stockage retenu à l'étape 3.
+     Stocker l'URL publique résultante dans la colonne `images` au lieu d'un chemin local.
+   - Retirer `app/uploads/[...path]/route.ts` (et son équivalent admin) une fois les images servies
+     directement depuis l'URL S3.
+   - Réuploader manuellement la/les photo(s) produit actuellement en ligne vers le nouveau stockage,
+     mettre à jour la ligne en base correspondante.
+6. **Déployer le site** (`app/`) comme ressource Application dans Coolify (source Git), avec toutes
+   les variables d'env : nouveau `DATABASE_URL`, clés Stripe, clés Sendcloud, clés PostHog,
+   identifiants S3/MinIO.
+7. **Pointer le DNS** : enregistrement A du domaine (une fois l'orthographe confirmée) vers
+   `179.198.209.59`, depuis le compte client OVH.
+8. **Admin** : reste sur Vercel (plan gratuit, décision déjà prise et assumée) — juste mettre à jour
+   ses variables d'env (`DATABASE_URL`, identifiants S3) pour pointer vers la nouvelle base/le
+   nouveau stockage sur le VPS, accessible depuis l'extérieur.
+9. **Vérification bout en bout avant toute coupure** : connexion admin → ajout d'un produit test
+   avec photo → confirmer le stockage S3/MinIO → confirmer l'affichage sur le site public une fois
+   déployé → passer une commande test → confirmer que Stripe/Sendcloud/décrément de stock
+   fonctionnent toujours avec la nouvelle base → confirmer que PostHog reçoit toujours les
+   événements.
+10. **Seulement une fois tout vérifié** : bascule finale (le DNS du point 7 fait déjà l'essentiel),
+    garder `creadeline.vercel.app` comme filet de sécurité tant que la confiance dans la nouvelle
+    stack n'est pas totale, avant de considérer Neon/Vercel comme obsolètes pour ce projet.
+11. **Chantier SEO identifié en parallèle, à faire pendant cette migration** (voir aussi `TODO.md`
+    §6/8) : créer `app/sitemap.ts` et `app/robots.ts` (absents, confirmé par `curl` → 404 sur les
+    deux), corriger le bug "Charente-Maritime" resté dans la meta description de
+    `app/app/layout.tsx` (doit être "Charente", déjà corrigé ailleurs sur le site), ajouter des
+    `generateMetadata` par page sur les routes boutique/produit (actuellement toutes les pages
+    partagent le même title/description que l'accueil), ajouter Open Graph/Twitter Card et un
+    JSON-LD `schema.org/Product` sur les fiches produit, puis soumettre le sitemap via Google
+    Search Console une fois le nouveau domaine en ligne (vérifié ce jour : le site n'est pas encore
+    indexé par Google, `site:creadeline.vercel.app` ne remonte rien, faute de sitemap/Search
+    Console configurés).
+
+### Rappel sécurité pour la suite
+
+Ne jamais faire passer un secret (mot de passe, clé privée, token) dans la conversation — toujours
+via un fichier local (`touch` + `chmod 600` + `open -e` dans TextEdit) que Julien remplit lui-même.
+La clé SSH de ce VPS vit dans `~/.ssh/creadeline_vps`, jamais ailleurs.

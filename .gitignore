@@ -16,3 +16,5 @@ projects/site-adeline/data/*.db-shm
 projects/site-adeline/data/*.db-wal
 projects/site-adeline/data/uploads/*
 !projects/site-adeline/data/uploads/.gitkeep
+.vercel
+.secrets/

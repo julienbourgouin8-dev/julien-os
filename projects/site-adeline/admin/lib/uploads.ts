@@ -1,10 +1,40 @@
 import "server-only";
-import { writeFile, unlink } from "node:fs/promises";
-import path from "node:path";
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 
-// Dossier partagé avec la vitrine (voir app/app/uploads/[...path]/route.ts,
-// qui sert ces mêmes fichiers) — remplace Supabase Storage.
-const uploadsDir = path.resolve(process.cwd(), process.env.UPLOADS_DIR ?? "../data/uploads");
+// Migration 2026-09-22 : filesystem local (UPLOADS_DIR, non persistant en
+// serverless) → bucket S3 privé sur Garage, auto-hébergé sur le VPS à côté
+// du reste (voir projects/site-adeline/PROGRESS.md, section migration
+// hébergement). Le bucket reste privé : ni l'app ni l'admin n'exposent
+// d'URL publique directe vers Garage, les deux continuent de servir les
+// images via leur route `/uploads/[...path]` existante (voir
+// app/app/uploads/[...path]/route.ts et l'équivalent admin), qui lit
+// maintenant l'objet depuis S3 au lieu du disque.
+let s3Instance: S3Client | null = null;
+
+function getS3(): S3Client {
+  if (!s3Instance) {
+    const endpoint = process.env.S3_ENDPOINT;
+    const region = process.env.S3_REGION;
+    const accessKeyId = process.env.S3_ACCESS_KEY_ID;
+    const secretAccessKey = process.env.S3_SECRET_ACCESS_KEY;
+    if (!endpoint || !region || !accessKeyId || !secretAccessKey) {
+      throw new Error("Variables S3_ENDPOINT/S3_REGION/S3_ACCESS_KEY_ID/S3_SECRET_ACCESS_KEY manquantes.");
+    }
+    s3Instance = new S3Client({
+      endpoint,
+      region,
+      forcePathStyle: true, // requis par Garage (pas de virtual-hosted-style)
+      credentials: { accessKeyId, secretAccessKey },
+    });
+  }
+  return s3Instance;
+}
+
+function bucket(): string {
+  const name = process.env.S3_BUCKET;
+  if (!name) throw new Error("Variable S3_BUCKET manquante.");
+  return name;
+}
 
 // Détection par signature binaire (magic bytes), pas par le nom donné par le
 // navigateur — un fichier renommé "photo.jpg" contenant tout autre chose
@@ -24,6 +54,13 @@ function detectImageExt(buffer: Buffer): string | null {
   return null;
 }
 
+const CONTENT_TYPES: Record<string, string> = {
+  jpg: "image/jpeg",
+  png: "image/png",
+  webp: "image/webp",
+  gif: "image/gif",
+};
+
 export async function saveUploadedFile(file: File): Promise<string> {
   const buffer = Buffer.from(await file.arrayBuffer());
   const ext = detectImageExt(buffer);
@@ -31,14 +68,23 @@ export async function saveUploadedFile(file: File): Promise<string> {
     throw new Error(`Fichier "${file.name}" refusé : ce n'est pas une image valide (jpg, png, webp ou gif).`);
   }
   const filename = `${crypto.randomUUID()}.${ext}`;
-  await writeFile(path.join(uploadsDir, filename), buffer);
+  await getS3().send(
+    new PutObjectCommand({
+      Bucket: bucket(),
+      Key: filename,
+      Body: buffer,
+      ContentType: CONTENT_TYPES[ext],
+    }),
+  );
   return `/uploads/${filename}`;
 }
 
 // `url` est le chemin renvoyé par saveUploadedFile ("/uploads/xxx.jpg") —
-// on ignore silencieusement si le fichier est déjà absent.
+// on ignore silencieusement si l'objet est déjà absent.
 export async function deleteUploadedFile(url: string): Promise<void> {
   const filename = url.split("/uploads/")[1];
   if (!filename) return;
-  await unlink(path.join(uploadsDir, filename)).catch(() => {});
+  await getS3()
+    .send(new DeleteObjectCommand({ Bucket: bucket(), Key: filename }))
+    .catch(() => {});
 }
