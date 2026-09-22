@@ -41,7 +41,22 @@ Coolify sur le même VPS Hostinger (Frankfurt) :
 
 ### Reste à faire (liste unique, remplace les listes éparpillées des sections précédentes)
 
-1. **Vérification bout en bout réelle** (jamais faite) : se connecter à `admin.creadeline16.fr`,
+0. **⚠️ Vidéos mobiles (VitrineArc) toujours cassées après un rechargement de page**, malgré 3
+   corrections successives le 2026-09-22 : (1) `preload="none"`→`"metadata"`, (2) panneau vidéo
+   desktop qui restait monté sur mobile (10 `<video>` en concurrence, corrigé via `isDesktop`
+   matchMedia), (3) `Cache-Control: no-cache` appliqué par erreur aux fichiers vidéo eux-mêmes
+   (bug WebKit connu : lecture vidéo cassée par une revalidation 304, corrigé avec une règle
+   `public, max-age=3600` dédiée à `/brand|products|uploads`). **Chaque correction a réellement
+   amélioré les choses** (Julien confirme : "le site reste fluide") mais **le bug de fond
+   persiste** : au premier chargement les vidéos jouent, après un simple reload elles ne
+   s'affichent plus, cause exacte non identifiée. Mis de côté par Julien pour avancer sur autre
+   chose (2026-09-22) — **à reprendre**. Piste non essayée : accès à distance à Safari Web
+   Inspector (iPhone → Mac) pour voir de vraies erreurs console/réseau au lieu de deviner depuis
+   l'émulation Chrome DevTools, qui n'a jamais réussi à reproduire le bug. Voir aussi le point 10
+   de `.agents/skills/vps-deploy/references/perf-checklist.md` pour l'historique complet du
+   diagnostic.
+1. **Vérification bout en bout réelle** (en cours, 2026-09-22 : Julien teste l'admin — ajout de
+   produits) : se connecter à `admin.creadeline16.fr`,
    ajouter un produit avec photo (confirmer qu'elle atterrit sur Garage, pas sur
    `public/uploads/`), confirmer l'affichage sur le site public, passer une commande test
    (Stripe + décrément de stock), confirmer Sendcloud (étiquette d'expédition) et PostHog
