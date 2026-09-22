@@ -130,47 +130,33 @@ function staticCropStyle(spot: Hotspot): CSSProperties {
 // mécanisme que la vitrine desktop, cf. `playVideo` plus bas) corrige ça
 // sans cadre ni frames — juste la vidéo d'origine, format naturel.
 //
-// `rootMargin: "200px"` (retour Julien 2026-09-22, audit perf) : sans
-// marge, le déclenchement au pixel près laisse trop peu de temps réseau
-// pour démarrer la lecture sur un vrai mobile (contrairement au VPS local
-// où tout est instantané) — la vidéo restait visiblement figée/vide le
-// temps du premier chargement. La marge lance le fetch ~200px avant que la
-// vidéo entre réellement à l'écran, le temps du scroll sert de préchargement.
-// Retry sur `canplay` (au lieu d'avaler l'échec de `.play()` en silence,
-// version précédente) : un `.play()` peut légitimement échouer sur mobile
-// (interrompu par un `.pause()` concurrent si le scroll est rapide, ou par
-// une politique navigateur temporaire) — sans nouvelle tentative une fois
-// la vidéo réellement prête, elle restait vide en permanence, cause la
-// plus probable du "des fois ça ne charge pas du tout" remonté par Julien.
+// `preload="metadata"` (pas "none", tentative annulée le 2026-09-22) :
+// sur vrai mobile (retour Julien, testé sur son téléphone en 4G réelle),
+// `preload="none"` + déclenchement du `.play()` uniquement à
+// l'intersection s'est révélé peu fiable (vidéos qui ne démarraient plus
+// du tout) — probablement des politiques de lecture plus strictes sur
+// mobile réel que dans les tests devtools/émulation utilisés pour valider
+// le correctif précédent. `preload="metadata"` reprend exactement la
+// config déjà utilisée et fiable du panneau vidéo desktop plus bas dans ce
+// fichier (jamais posé de problème) : le navigateur charge un peu de
+// métadonnées à l'avance (pas la vidéo entière, coût réseau négligeable),
+// ce qui rend le `.play()` déclenché par l'IntersectionObserver beaucoup
+// plus robuste.
 function AutoplayVideo({ src, className }: { src: string; className?: string }) {
   const ref = useRef<HTMLVideoElement | null>(null);
-  const wantsPlayingRef = useRef(false);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-
-    const attemptPlay = () => {
-      wantsPlayingRef.current = true;
-      el.play().catch(() => {
-        const retry = () => {
-          el.removeEventListener("canplay", retry);
-          if (wantsPlayingRef.current) el.play().catch(() => {});
-        };
-        el.addEventListener("canplay", retry);
-      });
-    };
-
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0]?.isIntersecting) {
-          attemptPlay();
+          el.play().catch(() => {});
         } else {
-          wantsPlayingRef.current = false;
           el.pause();
         }
       },
-      { threshold: 0, rootMargin: "200px 0px" },
+      { threshold: 0.25 },
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -183,7 +169,7 @@ function AutoplayVideo({ src, className }: { src: string; className?: string }) 
       muted
       loop
       playsInline
-      preload="none"
+      preload="metadata"
       className={className}
     />
   );
