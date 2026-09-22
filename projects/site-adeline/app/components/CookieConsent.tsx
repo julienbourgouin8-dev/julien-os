@@ -13,16 +13,19 @@ function Toggle({
   checked,
   onChange,
   disabled,
+  label,
 }: {
   checked: boolean;
   onChange?: (v: boolean) => void;
   disabled?: boolean;
+  label: string;
 }) {
   return (
     <button
       type="button"
       role="switch"
       aria-checked={checked}
+      aria-label={label}
       disabled={disabled}
       onClick={() => onChange?.(!checked)}
       className="relative h-6 w-11 shrink-0 rounded-full transition-colors disabled:opacity-60"
@@ -86,7 +89,7 @@ export default function CookieConsent() {
                 fonctionnent. Ne nécessite pas de consentement.
               </p>
             </div>
-            <Toggle checked disabled />
+            <Toggle checked disabled label="Fonctionnement du site (toujours actif)" />
           </div>
 
           <div className="flex items-start justify-between gap-4 border-t border-line pt-4">
@@ -97,7 +100,7 @@ export default function CookieConsent() {
                 le site. Pas de publicité, pas de partage à des tiers.
               </p>
             </div>
-            <Toggle checked={analyticsOn} onChange={setAnalyticsOn} />
+            <Toggle checked={analyticsOn} onChange={setAnalyticsOn} label="Mesure d'audience" />
           </div>
         </div>
 
