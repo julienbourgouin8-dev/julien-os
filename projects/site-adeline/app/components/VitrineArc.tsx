@@ -157,7 +157,7 @@ function AutoplayVideo({ src, className }: { src: string; className?: string }) 
 
     const loadWhenNear = () => {
       const rect = el.getBoundingClientRect();
-      if (rect.top < window.innerHeight + 250 && rect.bottom > -250) {
+      if (rect.top < window.innerHeight + 700 && rect.bottom > -700) {
         setSourceReady(true);
         return true;
       }
@@ -169,7 +169,7 @@ function AutoplayVideo({ src, className }: { src: string; className?: string }) 
       (entries) => {
         if (entries[0]?.isIntersecting) setSourceReady(true);
       },
-      { rootMargin: "250px 0px", threshold: 0 },
+      { rootMargin: "700px 0px", threshold: 0 },
     );
     observer.observe(el);
     window.addEventListener("scroll", loadWhenNear, { passive: true });
@@ -188,6 +188,9 @@ function AutoplayVideo({ src, className }: { src: string; className?: string }) 
     if (!el || !sourceReady) return;
     let shouldPlay = false;
     let retryTimer: ReturnType<typeof setTimeout> | null = null;
+    let watchdog: ReturnType<typeof setInterval> | null = null;
+    let lastTime = -1;
+    let stalledTicks = 0;
 
     const attemptPlay = () => {
       if (!shouldPlay || document.visibilityState === "hidden") return;
@@ -203,17 +206,43 @@ function AutoplayVideo({ src, className }: { src: string; className?: string }) 
       });
     };
 
+    const startWatchdog = () => {
+      if (watchdog) clearInterval(watchdog);
+      watchdog = setInterval(() => {
+        if (!shouldPlay || document.visibilityState === "hidden") return;
+        if (el.paused || el.readyState < HTMLMediaElement.HAVE_FUTURE_DATA) {
+          attemptPlay();
+          return;
+        }
+
+        // Safari peut résoudre play() tout en laissant l'image figée. Si
+        // le temps n'avance pas pendant ~1,5 s alors que des données sont
+        // disponibles, on réarme proprement la lecture sans recharger le
+        // fichier ni perdre le cache déjà téléchargé.
+        if (Math.abs(el.currentTime - lastTime) < 0.01) stalledTicks += 1;
+        else stalledTicks = 0;
+        lastTime = el.currentTime;
+        if (stalledTicks >= 3) {
+          stalledTicks = 0;
+          el.pause();
+          attemptPlay();
+        }
+      }, 500);
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
         shouldPlay = Boolean(entries[0]?.isIntersecting);
         if (shouldPlay) {
           attemptPlay();
+          startWatchdog();
         } else {
           el.pause();
           if (retryTimer) clearTimeout(retryTimer);
+          if (watchdog) clearInterval(watchdog);
         }
       },
-      { threshold: 0.25 },
+      { threshold: 0.01 },
     );
 
     const onMediaReady = () => attemptPlay();
@@ -224,15 +253,24 @@ function AutoplayVideo({ src, className }: { src: string; className?: string }) 
     };
 
     el.addEventListener("loadedmetadata", onMediaReady);
+    el.addEventListener("loadeddata", onMediaReady);
     el.addEventListener("canplay", onMediaReady);
+    el.addEventListener("progress", onMediaReady);
+    el.addEventListener("stalled", onMediaReady);
+    el.addEventListener("waiting", onMediaReady);
     window.addEventListener("pageshow", onPageShow);
     document.addEventListener("visibilitychange", onVisibilityChange);
     observer.observe(el);
     return () => {
       observer.disconnect();
       if (retryTimer) clearTimeout(retryTimer);
+      if (watchdog) clearInterval(watchdog);
       el.removeEventListener("loadedmetadata", onMediaReady);
+      el.removeEventListener("loadeddata", onMediaReady);
       el.removeEventListener("canplay", onMediaReady);
+      el.removeEventListener("progress", onMediaReady);
+      el.removeEventListener("stalled", onMediaReady);
+      el.removeEventListener("waiting", onMediaReady);
       window.removeEventListener("pageshow", onPageShow);
       document.removeEventListener("visibilitychange", onVisibilityChange);
     };

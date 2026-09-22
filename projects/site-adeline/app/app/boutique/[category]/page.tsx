@@ -170,7 +170,7 @@ export default async function CategoryPage({
                  100%)` plafonne le minimum à la largeur réellement
                  disponible, donc la colonne peut redescendre sous 360px
                  sur un écran étroit au lieu de déborder. */
-              <div className="grid justify-center grid-cols-[repeat(auto-fit,minmax(min(390px,100%),420px))] gap-x-10 gap-y-16 md:relative md:-ml-[264px] md:w-[calc(100%+264px)]">
+              <div className="grid justify-center grid-cols-[repeat(auto-fit,minmax(min(390px,100%),420px))] gap-x-10 gap-y-16 md:translate-x-7">
                 {products.map((p) => (
                   <ProductCard
                     key={p.id}

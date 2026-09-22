@@ -1,4 +1,4 @@
-# Site CréA'deline — journal de session (dernière mise à jour 2026-09-22)
+# Site CréA'deline — journal de session (dernière mise à jour 2026-09-23)
 
 ⚠️ **Ce fichier est un journal chronologique, pas un état courant.** Pour reprendre après une
 coupure de session, lire dans l'ordre : (1) `MEMORY.md` → mémoire `project_site_adeline_hero.md`
@@ -11,7 +11,36 @@ l'historique brut des sessions précédentes, gardé pour référence mais **par
 Process générique de déploiement (VPS Hostinger + Coolify), réutilisable pour d'autres sites :
 **`.agents/skills/vps-deploy/SKILL.md`**.
 
-## ÉTAT AU 2026-09-22 (fin de session) — à lire en premier
+## ÉTAT AU 2026-09-23 (fin de session) — à lire en premier
+
+### Correctifs produits, Safari mobile et performance du 23 septembre
+
+- Les photos ajoutées depuis l'admin sont désormais normalisées en 1600×900 WebP qualité 82,
+  avec détection du produit sur le fond studio pour conserver le même niveau de zoom que les
+  anciennes fiches. Les neuf photos déjà importées ont été migrées sans supprimer les originaux.
+- L'ordre choisi dans l'admin pour l'image principale est conservé. Les images `/uploads/` déjà
+  optimisées sont servies directement sur les cartes et les fiches, sans seconde transformation
+  Next.js au premier affichage.
+- Sur PC, le catalogue garde le filtre dans sa colonne et centre deux cartes de 420 px dans tout
+  l'espace restant à droite, avec un ajustement final de 28 px vers la droite : l'écart entre le
+  filtre et la première carte est ainsi égal à la marge après la seconde carte. Aucun décalage
+  négatif vers le filtre ne doit être réintroduit.
+- Le panneau vidéo PC précharge ses cinq rotations et démarre dès le survol. Ce comportement est
+  validé et ne doit plus être modifié dans le cadre des corrections mobiles.
+- Sur mobile, les vidéos ne reçoivent leur `src` que lorsqu'elles approchent de l'écran. Une zone
+  de préchargement de 700 px prépare la prochaine rotation, un seuil de visibilité de 1 % lance
+  la lecture sans attendre que 25 % de la vidéo soit affiché, et un watchdog relance Safari si
+  `play()` réussit mais que `currentTime` reste figé. Les cinq vidéos ne sont donc plus chargées
+  simultanément au démarrage.
+- Après un vrai refresh, une classe `page-reload` est posée avant le rendu. Le hero mobile est
+  alors affiché directement dans son état final, sans rejouer l'animation par-dessus l'instantané
+  de page conservé par Safari. Les navigations normales gardent l'animation.
+- Rapport Lighthouse reçu avant ce correctif : performance 92, FCP 1,4 s, LCP 3,0 s, TBT 40 ms,
+  CLS 0, Speed Index 4,2 s. La cause réseau principale était le téléchargement initial des cinq
+  MP4, soit environ 7,7 Mo. Le chargement progressif ci-dessus cible directement ce diagnostic.
+- Vérifications locales : TypeScript et ESLint passent ; WebKit confirme `page-reload`, aucune
+  animation du hero au refresh et la lecture des vidéos visibles ; Chromium confirme le centrage
+  et les dimensions du catalogue PC.
 
 **Le site est en ligne sur le VPS, pas sur Vercel.** Deux apps Next.js déployées séparément dans
 Coolify sur le même VPS Hostinger (Frankfurt) :
@@ -41,7 +70,7 @@ Coolify sur le même VPS Hostinger (Frankfurt) :
 
 ### Reste à faire (liste unique, remplace les listes éparpillées des sections précédentes)
 
-0. **⚠️ Vidéos mobiles (VitrineArc) toujours cassées après un rechargement de page**, malgré 3
+0. **Résolu le 2026-09-23 — vidéos mobiles après rechargement Safari.** Historique : malgré 3
    corrections successives le 2026-09-22 : (1) `preload="none"`→`"metadata"`, (2) panneau vidéo
    desktop qui restait monté sur mobile (10 `<video>` en concurrence, corrigé via `isDesktop`
    matchMedia), (3) `Cache-Control: no-cache` appliqué par erreur aux fichiers vidéo eux-mêmes
@@ -52,9 +81,10 @@ Coolify sur le même VPS Hostinger (Frankfurt) :
    s'affichent plus, cause exacte non identifiée. Mis de côté par Julien pour avancer sur autre
    chose (2026-09-22) — **à reprendre**. Piste non essayée : accès à distance à Safari Web
    Inspector (iPhone → Mac) pour voir de vraies erreurs console/réseau au lieu de deviner depuis
-   l'émulation Chrome DevTools, qui n'a jamais réussi à reproduire le bug. Voir aussi le point 10
-   de `.agents/skills/vps-deploy/references/perf-checklist.md` pour l'historique complet du
-   diagnostic.
+   l'émulation Chrome DevTools, qui n'avait jamais réussi à reproduire le bug. La correction
+   finale charge chaque source à l'approche, utilise l'autoplay natif muet, démarre dès 1 % de
+   visibilité et surveille l'avancement réel de `currentTime` pour relancer une lecture Safari
+   figée. Le double hero au refresh est traité séparément via `page-reload`.
 1. **Vérification bout en bout réelle** (en cours, 2026-09-22 : Julien teste l'admin — ajout de
    produits) : se connecter à `admin.creadeline16.fr`,
    ajouter un produit avec photo (confirmer qu'elle atterrit sur Garage, pas sur
