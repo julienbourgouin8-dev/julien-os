@@ -87,7 +87,38 @@ Safari 15.4+), elle peut au contraire FORCER la réintroduction de polyfills pou
 applicatif qui n'en avait pas besoin — vérifier la version minimale réelle requise par chaque
 feature ES ciblée avant de figer les seuils.
 
-### 9. Ne pas toucher aux animations "non composited" sans juger l'impact réel
+### 9. Cache-Control par défaut de Next.js sur les pages statiques : dangereux après un redéploiement fréquent
+Les pages statiquement pré-rendues (`x-nextjs-prerender: 1`) partent par défaut avec
+`Cache-Control: s-maxage=31536000` (un an) et **aucune directive `max-age`/`private` explicite pour
+le navigateur lui-même**. Si le site est redéployé plusieurs fois d'affilée (courant en début de
+projet), le HTML en cache côté navigateur peut continuer à référencer d'anciens fichiers JS/CSS
+(hashés, donc supprimés au build suivant) — symptôme observé en vrai : rechargements de page
+aléatoires ("ça charge, puis ça recharge tout seul", mécanisme de récupération intégré à Next.js
+sur une erreur de chargement de chunk) et comportement incohérent d'une visite à l'autre selon
+quelle version de HTML était servie depuis le cache. Fix dans `next.config.ts` (`headers()`) :
+forcer `Cache-Control: no-cache, must-revalidate` sur toutes les pages HTML, **en excluant
+explicitement `/_next/static/` et `/_next/image`** (ces fichiers sont content-hashés, sûrs à cacher
+indéfiniment, Next.js le fait déjà correctement) :
+```ts
+{
+  source: "/((?!_next/static|_next/image).*)",
+  headers: [{ key: "Cache-Control", value: "no-cache, must-revalidate" }],
+}
+```
+À faire dès la mise en place initiale d'un nouveau site sur ce VPS, pas seulement après avoir
+constaté le problème — le coût (une revalidation ETag par requête, ~quelques ms) est négligeable.
+
+### 10. Trop de `<video>` montées simultanément sur mobile — limite de décodage concurrent
+Si un composant a une version "desktop" (ex. panneau au survol) ET une version "mobile" (ex. liste
+empilée) avec CHACUNE ses propres éléments `<video>`, et que les deux sont montées dans le DOM en
+permanence (l'une juste cachée en CSS `hidden sm:block` plutôt que non rendue), le total de
+`<video src>` actives peut dépasser ce que Safari iOS gère de façon fiable en simultané — symptôme
+observé : vidéos qui échouent à charger de façon aléatoire (~1 fois sur 2), pas reproductible de
+façon fiable en émulation Chrome DevTools desktop. Fix : monter conditionnellement la version non
+pertinente via un état JS (`matchMedia` sur le breakpoint, pas juste une classe CSS `hidden`) plutôt
+que de compter sur le CSS seul pour "désactiver" des éléments média.
+
+### 11. Ne pas toucher aux animations "non composited" sans juger l'impact réel
 Lighthouse liste `filter`/`clip-path` animés comme "non composited" (risque théorique de CLS/jank).
 Si le CLS mesuré est déjà à 0.000 et que l'animation est un effet de design délibéré et documenté
 (pas un oubli), ne pas la sacrifier pour un point de diagnostic sans conséquence mesurée — respecter
