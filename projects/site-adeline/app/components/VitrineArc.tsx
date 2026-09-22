@@ -144,16 +144,55 @@ function staticCropStyle(spot: Hotspot): CSSProperties {
 // plus robuste.
 function AutoplayVideo({ src, className }: { src: string; className?: string }) {
   const ref = useRef<HTMLVideoElement | null>(null);
+  const [sourceReady, setSourceReady] = useState(false);
+
+  // Ne donne même pas de `src` au navigateur tant que la vidéo est loin
+  // sous l'écran. Safari iOS lançait sinon les cinq téléchargements au
+  // refresh (7,7 Mo au total), puis n'accordait plus de décodeur aux vidéos
+  // réellement visibles. Le rootMargin prépare la prochaine vidéo avant
+  // son arrivée, sans saturer le chargement initial.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || sourceReady) return;
+
+    const loadWhenNear = () => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight + 250 && rect.bottom > -250) {
+        setSourceReady(true);
+        return true;
+      }
+      return false;
+    };
+
+    const frame = window.requestAnimationFrame(loadWhenNear);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) setSourceReady(true);
+      },
+      { rootMargin: "250px 0px", threshold: 0 },
+    );
+    observer.observe(el);
+    window.addEventListener("scroll", loadWhenNear, { passive: true });
+    window.addEventListener("resize", loadWhenNear);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      observer.disconnect();
+      window.removeEventListener("scroll", loadWhenNear);
+      window.removeEventListener("resize", loadWhenNear);
+    };
+  }, [sourceReady]);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || !sourceReady) return;
     let shouldPlay = false;
     let retryTimer: ReturnType<typeof setTimeout> | null = null;
 
     const attemptPlay = () => {
       if (!shouldPlay || document.visibilityState === "hidden") return;
       el.muted = true;
+      el.defaultMuted = true;
       if (el.networkState === HTMLMediaElement.NETWORK_EMPTY) el.load();
       el.play().catch(() => {
         // Safari peut refuser le premier play() pendant un refresh alors que
@@ -197,16 +236,17 @@ function AutoplayVideo({ src, className }: { src: string; className?: string }) 
       window.removeEventListener("pageshow", onPageShow);
       document.removeEventListener("visibilitychange", onVisibilityChange);
     };
-  }, []);
+  }, [sourceReady]);
 
   return (
     <video
       ref={ref}
-      src={src}
+      src={sourceReady ? src : undefined}
+      autoPlay={sourceReady}
       muted
       loop
       playsInline
-      preload="metadata"
+      preload={sourceReady ? "auto" : "none"}
       className={className}
     />
   );

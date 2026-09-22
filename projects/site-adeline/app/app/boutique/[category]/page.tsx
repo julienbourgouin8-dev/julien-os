@@ -78,7 +78,7 @@ export default async function CategoryPage({
         )}
       </div>
 
-      <main className="max-w-7xl px-10 pb-16 pt-4">
+      <main className="mx-auto w-full max-w-7xl px-10 pb-16 pt-4">
       {products.length === 0 && demoProducts.length === 0 && !isFiltered && !subcategory ? (
         <p className="mt-4 text-ink/50">
           Aucune pièce publiée dans cette catégorie pour l&apos;instant — revenez bientôt.
@@ -170,7 +170,7 @@ export default async function CategoryPage({
                  100%)` plafonne le minimum à la largeur réellement
                  disponible, donc la colonne peut redescendre sous 360px
                  sur un écran étroit au lieu de déborder. */
-              <div className="grid justify-center grid-cols-[repeat(auto-fit,minmax(min(360px,100%),380px))] gap-x-10 gap-y-16 md:relative md:-ml-[264px] md:w-[calc(100%+264px)]">
+              <div className="grid justify-center grid-cols-[repeat(auto-fit,minmax(min(390px,100%),420px))] gap-x-10 gap-y-16 md:relative md:-ml-[264px] md:w-[calc(100%+264px)]">
                 {products.map((p) => (
                   <ProductCard
                     key={p.id}

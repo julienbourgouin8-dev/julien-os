@@ -49,7 +49,7 @@ export default function ProductCard({ href, category, name, price_cents, images,
               src={images[0]}
               alt={name}
               fill
-              sizes="(min-width: 1280px) 380px, (min-width: 768px) calc((100vw - 344px) / 2), 100vw"
+              sizes="(min-width: 1280px) 420px, (min-width: 768px) calc((100vw - 344px) / 2), 100vw"
               quality={82}
               unoptimized={images[0].startsWith("/uploads/")}
               className="object-contain"

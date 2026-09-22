@@ -134,6 +134,19 @@ body {
   animation: write-on 0.9s cubic-bezier(0.45, 0, 0.2, 1) both;
 }
 
+/* Sur un vrai refresh, Safari affiche d'abord son instantané de l'ancienne
+   page puis rejoue les animations CSS de la nouvelle. Visuellement cela
+   ressemble à deux chargements successifs. Le type de navigation est posé
+   dans <head> avant le rendu : au refresh uniquement, le hero arrive
+   directement dans son état final. Une navigation normale garde l'effet. */
+.page-reload .mobile-hero-motion {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none;
+  clip-path: none !important;
+  filter: none !important;
+}
+
 /* Reveal-on-scroll: JS toggles [data-revealed] once the element enters view */
 [data-reveal] {
   opacity: 0;

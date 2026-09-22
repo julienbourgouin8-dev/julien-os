@@ -204,11 +204,11 @@ export default function MobileHeroTagline() {
           fontSize: fluidRem(knobs.des.size),
         }}
       >
-        <span className={animationReady ? "write-on" : "opacity-0"} onAnimationEnd={clearFilterOnEnd} style={{ lineHeight: 1.35, paddingBottom: "0.12em" }}>
+        <span className={`${animationReady ? "write-on" : "opacity-0"} mobile-hero-motion`} onAnimationEnd={clearFilterOnEnd} style={{ lineHeight: 1.35, paddingBottom: "0.12em" }}>
           Des
         </span>{" "}
         <span
-          className={`${animationReady ? "write-on" : "opacity-0"} not-italic font-sans font-bold text-denim`}
+          className={`${animationReady ? "write-on" : "opacity-0"} mobile-hero-motion not-italic font-sans font-bold text-denim`}
           onAnimationEnd={clearFilterOnEnd}
           style={{ animationDelay: "0.3s", lineHeight: 1.35, paddingBottom: "0.12em" }}
         >
@@ -224,7 +224,7 @@ export default function MobileHeroTagline() {
         }}
       >
         <span
-          className={animationReady ? "write-on" : "opacity-0"}
+          className={`${animationReady ? "write-on" : "opacity-0"} mobile-hero-motion`}
           onAnimationEnd={clearFilterOnEnd}
           style={{ animationDelay: "0.6s", lineHeight: 1.35, paddingBottom: "0.12em" }}
         >
@@ -243,14 +243,14 @@ export default function MobileHeroTagline() {
           style={{ fontSize: fluidRem(knobs.vous.size) }}
         >
           <span
-            className={animationReady ? "write-on" : "opacity-0"}
+            className={`${animationReady ? "write-on" : "opacity-0"} mobile-hero-motion`}
             onAnimationEnd={clearFilterOnEnd}
             style={{ animationDelay: "0.9s", lineHeight: 1.35, paddingBottom: "0.12em" }}
           >
             vous
           </span>{" "}
           <span
-            className={`${animationReady ? "write-on" : "opacity-0"} text-denim`}
+            className={`${animationReady ? "write-on" : "opacity-0"} mobile-hero-motion text-denim`}
             onAnimationEnd={clearFilterOnEnd}
             style={{ animationDelay: "1.15s", lineHeight: 1.35, paddingBottom: "0.12em" }}
           >
@@ -259,7 +259,7 @@ export default function MobileHeroTagline() {
         </p>
         <a
           href="#vitrine"
-          className={`${animationReady ? "hero-pop" : "opacity-0"} group mt-4 inline-flex items-center gap-2 rounded-full bg-denim px-8 py-3.5 text-sm font-semibold text-paper shadow-[0_8px_20px_rgba(79,108,143,0.35)] transition-transform hover:-translate-y-0.5`}
+          className={`${animationReady ? "hero-pop" : "opacity-0"} mobile-hero-motion group mt-4 inline-flex items-center gap-2 rounded-full bg-denim px-8 py-3.5 text-sm font-semibold text-paper shadow-[0_8px_20px_rgba(79,108,143,0.35)] transition-transform hover:-translate-y-0.5`}
           style={{ animationDelay: "1.45s" }}
         >
           Voir les créations

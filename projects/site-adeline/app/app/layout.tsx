@@ -54,13 +54,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${display.variable} ${body.variable} ${script.variable} h-full antialiased`}
     >
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var n=performance.getEntriesByType('navigation')[0];if(n&&n.type==='reload')document.documentElement.classList.add('page-reload')}catch(e){}`,
+          }}
+        />
         {/* Préconnexion aux tuiles/style de la carte (MapLibre, section
             Marchés) — audit perf 2026-09-22, PSI l'identifiait comme
             candidat. La carte est chargée en différé (voir MarchesLazy.tsx)
             donc ça n'affecte jamais le LCP, mais accélère la première
             requête vers ces origines une fois qu'on y arrive. */}
-        <link rel="preconnect" href="https://basemaps.cartocdn.com" />
-        <link rel="preconnect" href="https://tiles.basemaps.cartocdn.com" crossOrigin="anonymous" />
       </head>
       <body className="min-h-full flex flex-col">
         <PostHogProvider>
