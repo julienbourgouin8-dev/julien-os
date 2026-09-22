@@ -200,6 +200,18 @@ export default function VitrineArc() {
   // pièces, y compris celle du milieu.
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
+  // Breakpoint Tailwind `sm` (640px) — pilote le montage du panneau vidéo
+  // desktop (voir plus bas). `false` par défaut (SSR/premier rendu) : ça
+  // matche le comportement mobile par défaut avant hydratation, cohérent
+  // avec `hidden sm:block` en CSS pour le reste du composant.
+  const [isDesktop, setIsDesktop] = useState(false);
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 640px)");
+    setIsDesktop(mql.matches);
+    const onChange = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mql.addEventListener("change", onChange);
+    return () => mql.removeEventListener("change", onChange);
+  }, []);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dragStartX = useRef<number | null>(null);
@@ -440,6 +452,16 @@ export default function VitrineArc() {
           décodage en arrière-plan AVANT l'ouverture — remonter l'élément
           vidéo à chaque fois (`key` différent) annulait ce gain et
           redémarrait le décodage à zéro. */}
+      {/* `isDesktop &&` (retour Julien 2026-09-22) : ces 5 <video> ne
+          servent qu'au survol desktop (open ne devient jamais true sur
+          mobile, les boutons qui l'ouvrent sont dans le bloc `hidden
+          sm:block` plus haut) mais restaient montées dans le DOM sur
+          mobile aussi — 10 <video src> simultanées au total avec les 5 de
+          la liste mobile empilée, probablement au-delà de la limite de
+          décodage vidéo concurrent de Safari iOS (comportement observé :
+          vidéos mobiles qui ne se chargent pas de façon aléatoire, environ
+          une fois sur deux). Ne plus les monter du tout sur mobile. */}
+      {isDesktop && (
       <div
         className={
           open
@@ -525,7 +547,15 @@ export default function VitrineArc() {
                   muted
                   loop
                   playsInline
-                  preload="metadata"
+                  // `auto` (retour Julien 2026-09-22 : 1-2s de délai visible
+                  // au premier survol avant que la vidéo démarre, image figée
+                  // pendant ce temps). Sûr uniquement parce que ce panneau
+                  // n'est désormais monté que sur desktop (voir `isDesktop`
+                  // plus haut) — précharger les 5 vidéos en tâche de fond
+                  // après le chargement initial de la page coûte quelques Mo
+                  // de bande passante desktop (pas mobile), en échange d'une
+                  // lecture instantanée au survol au lieu d'une image figée.
+                  preload="auto"
                   className="pointer-events-none absolute inset-0 h-full w-full object-contain transition-opacity duration-150"
                   style={{ opacity: open && activeIndex === i ? 1 : 0 }}
                 />
@@ -550,6 +580,7 @@ export default function VitrineArc() {
           )}
         </div>
       </div>
+      )}
     </div>
   );
 }

@@ -40,6 +40,25 @@ const nextConfig: NextConfig = {
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
         ],
       },
+      // Migration VPS (2026-09-22) : les pages statiquement pré-rendues
+      // partaient avec `Cache-Control: s-maxage=31536000` (un an) sans
+      // directive `max-age`/`private` explicite pour les navigateurs eux-
+      // mêmes — chaque redéploiement change les hash des fichiers JS/CSS
+      // référencés par ce HTML, mais un HTML caché trop longtemps continue
+      // à pointer vers d'anciens fichiers qui n'existent plus. Résultat
+      // observé en vrai (retour Julien, iPhone Safari) : rechargements qui
+      // alternaient entre une version fraîche et une version cassée/périmée
+      // du HTML au hasard des heuristiques de cache mobile. Le document
+      // HTML doit toujours être revalidé (`no-cache` : le navigateur peut
+      // garder une copie mais doit vérifier l'ETag à chaque fois — rapide,
+      // 304 si rien n'a changé) ; SEULS les fichiers sous `/_next/static/`
+      // portent un hash de contenu dans leur nom et peuvent être mis en
+      // cache indéfiniment sans risque, Next.js gère déjà ça correctement,
+      // on ne touche pas à ceux-là (pattern d'exclusion regex ci-dessous).
+      {
+        source: "/((?!_next/static|_next/image).*)",
+        headers: [{ key: "Cache-Control", value: "no-cache, must-revalidate" }],
+      },
     ];
   },
 };
