@@ -129,21 +129,48 @@ function staticCropStyle(spot: Hotspot): CSSProperties {
 // déclenche `.play()`/`.pause()` à l'entrée/sortie de l'écran (même
 // mécanisme que la vitrine desktop, cf. `playVideo` plus bas) corrige ça
 // sans cadre ni frames — juste la vidéo d'origine, format naturel.
+//
+// `rootMargin: "200px"` (retour Julien 2026-09-22, audit perf) : sans
+// marge, le déclenchement au pixel près laisse trop peu de temps réseau
+// pour démarrer la lecture sur un vrai mobile (contrairement au VPS local
+// où tout est instantané) — la vidéo restait visiblement figée/vide le
+// temps du premier chargement. La marge lance le fetch ~200px avant que la
+// vidéo entre réellement à l'écran, le temps du scroll sert de préchargement.
+// Retry sur `canplay` (au lieu d'avaler l'échec de `.play()` en silence,
+// version précédente) : un `.play()` peut légitimement échouer sur mobile
+// (interrompu par un `.pause()` concurrent si le scroll est rapide, ou par
+// une politique navigateur temporaire) — sans nouvelle tentative une fois
+// la vidéo réellement prête, elle restait vide en permanence, cause la
+// plus probable du "des fois ça ne charge pas du tout" remonté par Julien.
 function AutoplayVideo({ src, className }: { src: string; className?: string }) {
   const ref = useRef<HTMLVideoElement | null>(null);
+  const wantsPlayingRef = useRef(false);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+
+    const attemptPlay = () => {
+      wantsPlayingRef.current = true;
+      el.play().catch(() => {
+        const retry = () => {
+          el.removeEventListener("canplay", retry);
+          if (wantsPlayingRef.current) el.play().catch(() => {});
+        };
+        el.addEventListener("canplay", retry);
+      });
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0]?.isIntersecting) {
-          el.play().catch(() => {});
+          attemptPlay();
         } else {
+          wantsPlayingRef.current = false;
           el.pause();
         }
       },
-      { threshold: 0.25 },
+      { threshold: 0, rootMargin: "200px 0px" },
     );
     observer.observe(el);
     return () => observer.disconnect();
