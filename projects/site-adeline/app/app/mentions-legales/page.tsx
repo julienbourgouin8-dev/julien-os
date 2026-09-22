@@ -3,40 +3,42 @@ import LegalPage from "@/components/LegalPage";
 
 export const metadata: Metadata = { title: "Mentions légales — CréA'deline" };
 
-// ⚠️ Page non finalisable sans les infos réelles d'Adeline (voir les
-// [À COMPLÉTER] ci-dessous) : nom/raison sociale, statut juridique, SIRET,
-// adresse, email de contact. Obligatoire pour tout site pro en France (LCEN
-// art. 6-III), pas seulement pour l'e-commerce — à publier avant tout
-// partage large du site tant que ces champs ne sont pas remplis.
+// Identité légale reprise de l'attestation d'immatriculation INPI/RNE
+// (extrait du 13/09/2026, SIREN 878 826 536) : entrepreneur individuel,
+// nom d'usage Guyot, nom commercial CréA'deline, activité artisanale
+// (code APE 1419Z), adresse du siège 16 route de la Gabote, 16430 Balzac.
 export default function MentionsLegalesPage() {
   return (
-    <LegalPage title="Mentions légales" updated="[À COMPLÉTER — date de mise en ligne]">
+    <LegalPage title="Mentions légales" updated="2026-09-19">
       <h2>Éditeur du site</h2>
       <p>
-        <strong>[NOM COMPLET D&apos;ADELINE / RAISON SOCIALE]</strong>
+        <strong>Adeline Guyot</strong> — nom commercial <strong>CréA&apos;deline</strong>
         <br />
-        Statut : [À COMPLÉTER — ex. Micro-entrepreneur / Entreprise individuelle]
+        Statut : Entrepreneur individuel (activité artisanale — fabrication d&apos;accessoires
+        en tissu)
         <br />
-        SIRET : [À COMPLÉTER]
+        SIREN : 878 826 536 — SIRET : 878 826 536 00012
         <br />
-        Adresse : [À COMPLÉTER]
+        Immatriculée au Registre National des Entreprises (RNE)
         <br />
-        Email : [À COMPLÉTER]
+        Adresse : 16 route de la Gabote, 16430 Balzac, France
+        <br />
+        Email : deline1001@yahoo.fr
         <br />
         Téléphone : 06 60 05 42 86
       </p>
 
       <h2>Directeur de la publication</h2>
-      <p>[NOM COMPLET D&apos;ADELINE]</p>
+      <p>Adeline Guyot</p>
 
       <h2>Hébergement</h2>
       <p>
         Le site est hébergé par Vercel Inc., 340 S Lemon Ave #4133, Walnut, CA 91789,
-        États-Unis (adresse à vérifier sur{" "}
+        États-Unis (
         <a href="https://vercel.com/legal" target="_blank" rel="noreferrer">
           vercel.com/legal
-        </a>{" "}
-        avant publication).
+        </a>
+        ).
       </p>
 
       <h2>Propriété intellectuelle</h2>
@@ -47,7 +49,7 @@ export default function MentionsLegalesPage() {
 
       <h2>Contact</h2>
       <p>
-        Pour toute question concernant le site : [EMAIL À COMPLÉTER] ou via le{" "}
+        Pour toute question concernant le site : deline1001@yahoo.fr ou via le{" "}
         <a href="/#contact">formulaire de contact</a>.
       </p>
     </LegalPage>

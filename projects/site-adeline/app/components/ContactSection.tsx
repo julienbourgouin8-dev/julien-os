@@ -5,13 +5,6 @@ import Link from "next/link";
 import WriteOnHeading from "@/components/WriteOnHeading";
 import { resetConsent } from "@/lib/consent";
 
-// TODO Julien : adresse mail exacte d'Adeline pas encore confirmée (carte
-// de visite coupée sur "deline1001@y..."). Volontairement vide pour
-// l'instant plutôt que de deviner — le formulaire ouvre le client mail du
-// visiteur pré-rempli (sujet + message), mais SANS destinataire tant que
-// l'adresse réelle n'est pas donnée. Renseigner ici dès que tu l'as.
-export const CONTACT_EMAIL = "";
-
 function FacebookIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
@@ -66,20 +59,29 @@ export default function ContactSection() {
   const [pieceType, setPieceType] = useState(PIECE_TYPES[0]);
   const [fabric, setFabric] = useState(FABRICS[0]);
   const [message, setMessage] = useState("");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const subject = encodeURIComponent(`Demande via le site — ${pieceType}`);
-    const body = encodeURIComponent(
-      `Type de pièce : ${pieceType}\nTissu souhaité : ${fabric}\n\n${message}\n\n— ${name}${email ? ` (${email})` : ""}`,
-    );
-    // Ouvre le client mail du visiteur, déjà rempli — c'est LUI qui envoie
-    // depuis sa propre boîte, pas d'envoi silencieux côté serveur.
-    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+    setStatus("sending");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, pieceType, fabric, message }),
+      });
+      if (!res.ok) throw new Error("send failed");
+      setStatus("sent");
+      setName("");
+      setEmail("");
+      setMessage("");
+    } catch {
+      setStatus("error");
+    }
   };
 
   return (
-    <footer id="contact" className="scroll-mt-20 bg-paper px-6 py-24">
+    <footer id="contact" className="scroll-mt-20 bg-paper px-6 py-14">
       <div className="mx-auto max-w-2xl text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">
           Une envie précise ?
@@ -87,13 +89,9 @@ export default function ContactSection() {
         <WriteOnHeading
           as="h2"
           text="Parlons de votre pièce"
-          italicWords={["pièce"]}
+          blueWords={["pièce"]}
           className="mt-2 font-display text-3xl text-ink sm:text-4xl"
         />
-        <p className="mx-auto mt-4 max-w-md text-ink/60">
-          Un tissu en tête, une taille précise, une idée de cadeau — écrivez
-          directement ici.
-        </p>
 
         <form onSubmit={handleSubmit} className="mt-10 flex flex-col items-center gap-5">
           <div className="w-full text-center">
@@ -183,11 +181,20 @@ export default function ContactSection() {
           </div>
           <button
             type="submit"
-            className="group mt-2 inline-flex items-center justify-center gap-2 self-center rounded-full bg-denim px-6 py-2.5 text-sm font-semibold text-paper shadow-[0_8px_20px_rgba(79,108,143,0.35)] transition-transform hover:-translate-y-0.5"
+            disabled={status === "sending"}
+            className="group mt-2 inline-flex items-center justify-center gap-2 self-center rounded-full bg-denim px-6 py-2.5 text-sm font-semibold text-paper shadow-[0_8px_20px_rgba(79,108,143,0.35)] transition-transform hover:-translate-y-0.5 disabled:opacity-60"
           >
-            Envoyer
+            {status === "sending" ? "Envoi..." : "Envoyer"}
             <span className="transition-transform group-hover:translate-x-1">→</span>
           </button>
+          {status === "sent" && (
+            <p className="text-sm text-teal">Message envoyé, merci !</p>
+          )}
+          {status === "error" && (
+            <p className="text-sm text-red-600">
+              Une erreur est survenue, réessayez ou appelez-nous directement.
+            </p>
+          )}
         </form>
 
         <div className="mx-auto mt-14 flex max-w-xs items-center gap-4">
@@ -226,6 +233,9 @@ export default function ContactSection() {
         <div className="mt-10 flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-ink/40">
           <Link href="/mentions-legales" className="underline-offset-2 hover:text-ink hover:underline">
             Mentions légales
+          </Link>
+          <Link href="/cgv" className="underline-offset-2 hover:text-ink hover:underline">
+            CGV
           </Link>
           <Link href="/confidentialite" className="underline-offset-2 hover:text-ink hover:underline">
             Confidentialité

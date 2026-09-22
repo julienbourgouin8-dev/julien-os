@@ -3,11 +3,11 @@ import LegalPage from "@/components/LegalPage";
 
 export const metadata: Metadata = { title: "Politique de confidentialité — CréA'deline" };
 
-// ⚠️ Comme mentions-legales/page.tsx : le responsable de traitement doit
-// être identifié nommément (RGPD art. 13) avant publication — [À COMPLÉTER].
+// Responsable de traitement identifié à partir de l'attestation
+// d'immatriculation INPI/RNE (SIREN 878 826 536, voir mentions-legales).
 export default function ConfidentialitePage() {
   return (
-    <LegalPage title="Politique de confidentialité" updated="[À COMPLÉTER — date de mise en ligne]">
+    <LegalPage title="Politique de confidentialité" updated="2026-09-19">
       <p>
         Cette page explique quelles données sont collectées sur ce site, pourquoi, et comment
         les faire modifier ou supprimer.
@@ -15,18 +15,18 @@ export default function ConfidentialitePage() {
 
       <h2>Responsable de traitement</h2>
       <p>
-        <strong>[NOM COMPLET D&apos;ADELINE / RAISON SOCIALE]</strong>, [ADRESSE À COMPLÉTER],
-        joignable à [EMAIL À COMPLÉTER].
+        <strong>Adeline Guyot</strong> (CréA&apos;deline), 16 route de la Gabote, 16430 Balzac,
+        joignable à deline1001@yahoo.fr.
       </p>
 
       <h2>Données collectées</h2>
       <ul>
         <li>
           <strong>Formulaire de contact</strong> : nom, email, message et préférences (type de
-          pièce, tissu). Ces informations ne sont pas envoyées à un serveur — le formulaire
-          ouvre directement votre client mail, c&apos;est vous qui décidez de l&apos;envoyer.
-          Une fois reçu par email, ce message est conservé le temps nécessaire pour traiter
-          votre demande.
+          pièce, tissu). Ces informations sont transmises à Adeline par email via notre serveur
+          et le prestataire d&apos;envoi Resend (États-Unis, encadré par des clauses
+          contractuelles types européennes). Elles sont conservées le temps nécessaire pour
+          traiter votre demande, puis supprimées.
         </li>
         <li>
           <strong>Mesure d&apos;audience (PostHog)</strong> : pages visitées, type d&apos;appareil,
@@ -53,7 +53,7 @@ export default function ConfidentialitePage() {
       <p>
         Conformément au RGPD, vous pouvez demander l&apos;accès, la rectification, l&apos;effacement
         ou la portabilité de vos données, ou vous opposer à leur traitement, en écrivant à{" "}
-        [EMAIL À COMPLÉTER]. Vous pouvez aussi déposer une réclamation auprès de la CNIL
+        deline1001@yahoo.fr. Vous pouvez aussi déposer une réclamation auprès de la CNIL
         (cnil.fr) si vous estimez que vos droits ne sont pas respectés.
       </p>
 
@@ -61,9 +61,10 @@ export default function ConfidentialitePage() {
       <p>
         Vos données ne sont jamais vendues. Elles sont partagées uniquement avec les
         prestataires nécessaires au fonctionnement du site : Stripe (paiement, États-Unis/UE),
-        PostHog (mesure d&apos;audience, avec votre accord, hébergé dans l&apos;Union Européenne),
-        Vercel (hébergement, États-Unis — encadré par leurs clauses contractuelles types
-        européennes).
+        Resend (envoi du formulaire de contact, États-Unis, clauses contractuelles types
+        européennes), PostHog (mesure d&apos;audience, avec votre accord, hébergé dans
+        l&apos;Union Européenne), Vercel (hébergement, États-Unis — encadré par leurs clauses
+        contractuelles types européennes).
       </p>
     </LegalPage>
   );

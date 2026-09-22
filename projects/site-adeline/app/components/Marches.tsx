@@ -123,7 +123,7 @@ export default function Marches() {
   }, [active]);
 
   return (
-    <section id="marches" className="scroll-mt-20 bg-paper px-6 py-24">
+    <section id="marches" className="scroll-mt-20 bg-paper px-6 py-14">
       <div className="mx-auto max-w-6xl">
         <div className="mb-14 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">
@@ -131,8 +131,8 @@ export default function Marches() {
           </p>
           <WriteOnHeading
             as="h2"
-            text="Là où vous avez pu nous croiser"
-            italicWords={["croiser"]}
+            text="Nos prochains évènements"
+            blueWords={["évènements"]}
             className="mt-2 font-display text-3xl text-ink sm:text-4xl"
           />
         </div>

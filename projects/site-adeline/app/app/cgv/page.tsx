@@ -3,10 +3,11 @@ import LegalPage from "@/components/LegalPage";
 
 export const metadata: Metadata = { title: "CGV & remboursement — CréA'deline" };
 
-// ⚠️ Page préparée par avance mais PAS ENCORE À LIER dans le footer public
-// tant que /boutique n'est pas activée en prod (actuellement 404 en live).
-// À finaliser avant la première vente réelle : identité (comme
-// mentions-legales), TVA, et surtout trancher le point ci-dessous.
+// Identité reprise de l'attestation d'immatriculation INPI/RNE (voir
+// mentions-legales). Régime de TVA déduit du statut (entrepreneur
+// individuel, aucun numéro de TVA intracommunautaire sur l'attestation) —
+// franchise en base par défaut pour un micro-entrepreneur, À CONFIRMER avec
+// Adeline si son chiffre d'affaires a dépassé le seuil de franchise.
 //
 // Point de droit à trancher avec Adeline avant publication : le droit de
 // rétractation de 14 jours (Code de la consommation art. L221-18) NE
@@ -22,12 +23,12 @@ export const metadata: Metadata = { title: "CGV & remboursement — CréA'deline
 // selon comment les ventes seront réellement faites.
 export default function CGVPage() {
   return (
-    <LegalPage title="Conditions générales de vente" updated="[À COMPLÉTER — date de mise en ligne]">
+    <LegalPage title="Conditions générales de vente" updated="2026-09-19">
       <h2>Vendeur</h2>
       <p>
-        <strong>[NOM COMPLET D&apos;ADELINE / RAISON SOCIALE]</strong>, [ADRESSE À COMPLÉTER],
-        SIRET [À COMPLÉTER]. [TVA non applicable, art. 293B du CGI — à confirmer selon le
-        statut fiscal réel.]
+        <strong>Adeline Guyot</strong> (CréA&apos;deline), 16 route de la Gabote, 16430 Balzac,
+        France, SIRET 878 826 536 00012. TVA non applicable, art. 293 B du Code général des
+        impôts (franchise en base de TVA).
       </p>
 
       <h2>Produits et prix</h2>
@@ -84,9 +85,11 @@ export default function CGVPage() {
       <h2>Litiges</h2>
       <p>
         En cas de litige, vous pouvez recourir gratuitement à un médiateur de la consommation.
-        [Coordonnées du médiateur à compléter selon l&apos;adhésion effective d&apos;Adeline à un
-        service de médiation — obligatoire pour tout professionnel vendant à des
-        consommateurs.]
+        [Coordonnées du médiateur à compléter dès qu&apos;Adeline aura adhéré à un service de
+        médiation agréé — obligatoire pour tout professionnel vendant à des consommateurs,
+        ex. CMAP, Médicys ou le médiateur de la chambre de métiers et de l&apos;artisanat. Cette
+        adhésion ne peut pas être inventée ici, c&apos;est la seule étape encore bloquante avant
+        une mise en conformité complète des CGV.]
       </p>
     </LegalPage>
   );

@@ -74,8 +74,27 @@ export default function Home() {
               vide propre à la photo elle-même (retour Julien : la bande
               grise juste après les sacs, avant "Nos catégories"). Nouveau
               ratio 2988/1542 — la section suivante démarre juste après
-              les sacs. */}
-          <div className="relative h-[calc(180vw+1rem)] w-full sm:aspect-[2988/1542] sm:h-auto">
+              les sacs.
+              hero-mobile-v9 fait 1536×2752 — le conteneur était calé en
+              `180vw + 1rem`, un excédent bien plus généreux que
+              nécessaire (photo en `object-top`, donc tout ce surplus
+              finissait en bande blanche unie SOUS le sac, entre la photo
+              et la section "Nos catégories" — retour Julien 2026-09-16 :
+              "la fine marche blanche qui a entre les deux sections").
+              Un premier resserrage à `179.17vw + 2px` (approximation
+              décimale du ratio réel) réduisait la bande sans l'éliminer
+              — restait un écart d'arrondi, ET ça décalait légèrement vers
+              le haut tout ce qui est positionné en % de la hauteur du
+              conteneur dans `MobileHeroTagline` (retour Julien : "vous
+              correspondent ça a remonté avec le bouton"), puisque les %
+              étaient calibrés sur l'ancienne hauteur. `aspect-[1536/2752]`
+              fait correspondre la hauteur du conteneur au pixel près à la
+              hauteur réellement rendue de l'image (object-contain n'a
+              alors plus aucun surplus à combler, dans un sens comme dans
+              l'autre) — élimine la bande ET les % de `MobileHeroTagline`
+              retombent exactement là où ils étaient calibrés, sans les
+              retoucher. */}
+          <div className="relative aspect-[1536/2752] w-full sm:aspect-[2988/1542] sm:h-auto">
             <div className="hero-media absolute inset-0">
               {/* Version mobile v1 (2026-09-15) : recomposition 9:16 dédiée
                   (pochettes inclinées contre le sac) plutôt que la même
@@ -132,14 +151,14 @@ export default function Home() {
               <a href="#marches" className="absolute -translate-x-1/2 transition-colors hover:text-rust" style={{ left: "41%" }}>
                 Marchés
               </a>
-              <a href="#contact" className="absolute -translate-x-1/2 transition-colors hover:text-rust" style={{ left: "59%" }}>
-                Contact
-              </a>
               {/* TODO Julien : destination à confirmer, pas de section
                   "À propos" sur le site pour l'instant — pointe vers
                   #apropos qui n'existe pas encore. */}
-              <a href="#apropos" className="absolute -translate-x-1/2 transition-colors hover:text-rust" style={{ left: "75%" }}>
+              <a href="#apropos" className="absolute -translate-x-1/2 transition-colors hover:text-rust" style={{ left: "59%" }}>
                 À propos
+              </a>
+              <a href="#contact" className="absolute -translate-x-1/2 transition-colors hover:text-rust" style={{ left: "75%" }}>
+                Contact
               </a>
               {/* top-[-8px] (2026-09-16) : l'icône (36px) est plus haute
                   que le texte des 4 liens (text-sm) ; sans ça, sa position

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type AnimationEvent } from "react";
 
 type Knob = { top: number; x: number; size: number };
 
@@ -33,7 +33,10 @@ type Knobs = {
 const DEFAULTS: Knobs = {
   des: { top: 21, x: 1.5, size: 2.3 },
   qui: { top: 46.5, x: 2.3, size: 2.3 },
-  vous: { top: 92, x: 1.5, size: 2.1 },
+  // top 92→93.5→97.5→96.5 (retour Julien 2026-09-16 : 93.5 "trop haut",
+  // 97.5 "légèrement trop bas") — entre les deux. Si toujours pas pile,
+  // affiner au pixel près via `?tune=1` plutôt que redeviner à l'aveugle.
+  vous: { top: 96.5, x: 1.5, size: 2.1 },
   logo: { top: 0, x: 1, size: 2.3 },
 };
 
@@ -154,8 +157,34 @@ export default function MobileHeroTagline() {
     }
   };
 
+  // Filet Safari (retour Julien 2026-09-16, sur son iPhone réel : "création
+  // et correspondent... encore floues" — jamais reproduit dans nos tests
+  // Chromium). Une animation CSS active reste TOUJOURS prioritaire sur un
+  // style inline en cascade (vérifié : `element.style.filter = "none"`
+  // seul ne change rien à `getComputedStyle().filter`, qui reste
+  // `blur(0px)` tant que l'animation existe — `animation-fill-mode: both`
+  // la garde active indéfiniment, même après la fin visuelle). Si Safari
+  // garde ces éléments sur une couche de compositing à cause de ce filter
+  // toujours actif (texte au rendu plus doux en permanence), la seule
+  // façon de vraiment s'en débarrasser est de couper l'animation
+  // elle-même une fois terminée — pas juste une de ses propriétés.
+  const clearFilterOnEnd = (e: AnimationEvent<HTMLSpanElement>) => {
+    e.currentTarget.style.animation = "none";
+  };
+
   return (
     <>
+      {/* Effet d'écriture (retour Julien 2026-09-16 : "rajoute les effets
+          d'écriture... comme il y a sur le site Web") — même classe
+          `write-on` (clip-path + blur, cf. globals.css) que le wordmark du
+          hero desktop, jouée au montage (pas au scroll, contrairement à
+          `WriteOnHeading` plus bas dans la page : ce bloc est visible dès
+          l'arrivée sur la page, donc l'anim doit partir immédiatement, y
+          compris après un refresh). Mots enchaînés en cascade, `qui`
+          en dernier avant "vous correspondent" pour lire comme une seule
+          phrase qui s'écrit de haut en bas. `lineHeight`/`paddingBottom`
+          sur chaque span : même garde-fou que `WriteOnHeading` pour ne pas
+          tronquer la descendante du "q" de "qui" sous `clip-path`. */}
       <p
         className="absolute inset-x-0 -translate-y-1/2 px-6 text-center font-display font-medium italic leading-tight text-ink sm:hidden"
         style={{
@@ -164,8 +193,14 @@ export default function MobileHeroTagline() {
           fontSize: fluidRem(knobs.des.size),
         }}
       >
-        Des{" "}
-        <span className="not-italic font-sans font-bold text-denim">
+        <span className="write-on" onAnimationEnd={clearFilterOnEnd} style={{ lineHeight: 1.35, paddingBottom: "0.12em" }}>
+          Des
+        </span>{" "}
+        <span
+          className="write-on not-italic font-sans font-bold text-denim"
+          onAnimationEnd={clearFilterOnEnd}
+          style={{ animationDelay: "0.3s", lineHeight: 1.35, paddingBottom: "0.12em" }}
+        >
           créations
         </span>
       </p>
@@ -177,7 +212,13 @@ export default function MobileHeroTagline() {
           fontSize: fluidRem(knobs.qui.size),
         }}
       >
-        qui
+        <span
+          className="write-on"
+          onAnimationEnd={clearFilterOnEnd}
+          style={{ animationDelay: "0.6s", lineHeight: 1.35, paddingBottom: "0.12em" }}
+        >
+          qui
+        </span>
       </p>
       <div
         className="absolute inset-x-0 -translate-y-1/2 px-6 text-center sm:hidden"
@@ -190,11 +231,25 @@ export default function MobileHeroTagline() {
           className="font-display font-medium italic leading-tight text-ink"
           style={{ fontSize: fluidRem(knobs.vous.size) }}
         >
-          vous <span className="text-denim">correspondent</span>
+          <span
+            className="write-on"
+            onAnimationEnd={clearFilterOnEnd}
+            style={{ animationDelay: "0.9s", lineHeight: 1.35, paddingBottom: "0.12em" }}
+          >
+            vous
+          </span>{" "}
+          <span
+            className="write-on text-denim"
+            onAnimationEnd={clearFilterOnEnd}
+            style={{ animationDelay: "1.15s", lineHeight: 1.35, paddingBottom: "0.12em" }}
+          >
+            correspondent
+          </span>
         </p>
         <a
           href="#vitrine"
           className="hero-pop group mt-4 inline-flex items-center gap-2 rounded-full bg-denim px-8 py-3.5 text-sm font-semibold text-paper shadow-[0_8px_20px_rgba(79,108,143,0.35)] transition-transform hover:-translate-y-0.5"
+          style={{ animationDelay: "1.45s" }}
         >
           Voir les créations
           <span className="transition-transform group-hover:translate-x-1">→</span>

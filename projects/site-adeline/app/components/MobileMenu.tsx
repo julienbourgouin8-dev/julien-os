@@ -5,10 +5,10 @@ import { useState } from "react";
 const LINKS = [
   { href: "#vitrine", label: "Créations" },
   { href: "#marches", label: "Marchés" },
-  { href: "#contact", label: "Contact" },
   // TODO Julien : même destination provisoire que la nav desktop hero
   // (page.tsx) — pas de section "À propos" sur le site pour l'instant.
   { href: "#apropos", label: "À propos" },
+  { href: "#contact", label: "Contact" },
 ];
 
 // Menu hamburger mobile — remplace l'icône "Boutique" isolée (qui pointait

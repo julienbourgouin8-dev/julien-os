@@ -158,7 +158,19 @@ export default async function CategoryPage({
             {products.length === 0 && demoProducts.length === 0 ? (
               <p className="text-ink/50">Aucune pièce ne correspond à ce filtre.</p>
             ) : (
-              <div className="grid grid-cols-[repeat(auto-fill,minmax(360px,1fr))] gap-x-10 gap-y-16">
+              /* `minmax(360px,1fr)` imposait une largeur de colonne MINIMALE
+                 de 360px même quand le conteneur disponible est plus étroit
+                 (mobile : ~310px une fois les paddings de `main` et de
+                 l'aside filtres déduits) — la grille refusait de rétrécir
+                 sous ce plancher et débordait de 50px à droite du
+                 conteneur (retour Julien 2026-09-16, capture d'écran :
+                 "toujours à droite par rapport à la page", vérifié en
+                 mesurant le DOM réel : carte produit à left:40px
+                 right:400px dans un parent large de 310px). `min(360px,
+                 100%)` plafonne le minimum à la largeur réellement
+                 disponible, donc la colonne peut redescendre sous 360px
+                 sur un écran étroit au lieu de déborder. */
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(min(360px,100%),1fr))] gap-x-10 gap-y-16">
                 {products.map((p) => (
                   <ProductCard
                     key={p.id}

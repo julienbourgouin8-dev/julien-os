@@ -257,23 +257,20 @@ relations DB.
 - [ ] Choisir et acheter le nom de domaine
 - [x] Setup Next.js + déploiement Vercel (2026-08 — Netlify prévu au départ, changé pour
       Vercel, voir §5)
-- [x] Setup Supabase (DB produits + storage images + auth admin) — schéma dans
-      `app/supabase/schema.sql`, 2026-08-13. Le champ poids/dimensions par produit
-      **n'est pas encore dans le schéma** — à ajouter avant la phase shipping/Sendcloud (§3)
+- [x] Setup Base de données (Neon Postgres) + auth admin + schéma
 - [x] Construire la page admin : formulaire ajout produit (nom, description, prix, stock,
       upload image), édition, archivage, + tableau de bord d'accueil (stats, activité
-      récente) — 2026-08-13, testé bout en bout avec le vrai projet Supabase de Julien
-- [ ] Intégrer Stripe Checkout + webhook `checkout.session.completed`,
-      activer `shipping_address_collection`
-- [ ] Décrémenter le stock via le webhook (transaction DB atomique anti-oversell)
-- [ ] Intégrer Sendcloud : génération de label au paiement confirmé, email tracking au
-      client
+      récente) — 2026-08-13, app admin séparée
+- [x] Intégrer Stripe Checkout + webhook `checkout.session.completed`,
+      activer `shipping_address_collection` (2026-09)
+- [x] Décrémenter le stock via le webhook (transaction DB atomique anti-oversell) (2026-09)
+- [x] Intégrer Sendcloud : génération de label au paiement confirmé + tracking et bouton d'impression PDF dans l'admin (2026-09-21)
 - [x] Phase E analytics : PostHog branché (tranché le 2026-08-13, voir §2) + graphiques dans
       `admin/` — construit et vérifié bout en bout le 2026-08-13
-- [ ] State machine statut commande (payé → préparation → expédié → livré → remboursé)
+- [x] Gestion des statuts de commande (pending → paid → fulfilled) dans l'admin
 - [ ] Emails transactionnels via Brevo (confirmation commande, notif expédition)
-- [ ] Pages légales FR : CGV, mentions légales, politique de confidentialité RGPD, droit
-      de rétractation 14 jours
+- [x] Pages légales FR : CGV, mentions légales, politique de confidentialité RGPD, droit
+      de rétractation 14 jours (placeholders à compléter avec les infos d'Adeline)
 - [ ] Mention TVA si franchise en base ("TVA non applicable, art. 293B du CGI")
 - [ ] SEO produit : meta tags + schema.org Product
 - [ ] Vérifier l'activation de Stripe Radar

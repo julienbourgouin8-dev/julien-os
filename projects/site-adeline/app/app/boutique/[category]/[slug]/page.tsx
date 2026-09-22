@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getCategoryBySlug } from "@/lib/categories";
 import { getProductBySlug } from "@/lib/db/products";
 import { getDemoProduct } from "@/lib/demo-products";
-import { CONTACT_EMAIL } from "@/components/ContactSection";
+import { CONTACT_EMAIL } from "@/lib/contact";
 import { formatPrice } from "@/components/ProductCard";
 import ProductGallery from "@/components/ProductGallery";
 import AddToCartButton from "@/components/AddToCartButton";

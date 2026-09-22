@@ -117,7 +117,15 @@ body {
   }
   to {
     clip-path: inset(0 0 0 0);
-    filter: blur(0);
+    /* `blur(0)` plutôt que `none` : sur Safari iOS réel (retour Julien
+       2026-09-16, "création et correspondent... encore floues" sur son
+       téléphone — jamais reproduit dans nos tests Chromium), un `filter`
+       actif, même à blur nul, semble garder l'élément sur une couche de
+       compositing avec un rendu de texte plus doux/flou en permanence.
+       `none` retire complètement la propriété filter à la fin de
+       l'animation (fill-mode `both`) au lieu de la geler à une valeur
+       "nulle" mais toujours active. */
+    filter: none;
   }
 }
 

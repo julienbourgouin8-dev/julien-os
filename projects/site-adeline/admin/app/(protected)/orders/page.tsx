@@ -43,6 +43,7 @@ export default async function AdminOrdersPage() {
                 <th className="px-4 py-4 font-medium">Articles</th>
                 <th className="px-4 py-4 font-medium">Total</th>
                 <th className="px-4 py-4 font-medium">Statut</th>
+                <th className="px-4 py-4 font-medium">Expédition</th>
                 <th className="px-6 py-4 font-medium" />
               </tr>
             </thead>
@@ -64,6 +65,15 @@ export default async function AdminOrdersPage() {
                       >
                         {status.label}
                       </span>
+                    </td>
+                    <td className="px-4 py-3.5 text-xs text-ink/60">
+                      {o.shipping_tracking_number ? (
+                        <span className="inline-flex items-center gap-1 font-mono text-teal">
+                          ✓ {o.shipping_tracking_number}
+                        </span>
+                      ) : (
+                        <span className="text-ink/35">Non affranchi</span>
+                      )}
                     </td>
                     <td className="px-6 py-3.5 text-right">
                       <Link href={`/orders/${o.id}`} className="text-ink/45 hover:text-denim">
