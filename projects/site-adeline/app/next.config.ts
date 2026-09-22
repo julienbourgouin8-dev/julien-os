@@ -3,6 +3,15 @@ import type { NextConfig } from "next";
 // Images servies en same-origin depuis /uploads (voir app/uploads/[...path]/route.ts)
 // depuis le passage à un stockage local — plus de remotePatterns externe requis.
 const nextConfig: NextConfig = {
+  images: {
+    // AVIF avant WebP (audit perf 2026-09-22, PSI signalait le hero PNG
+    // comme élément LCP avec ~291 Kio d'économie possible) — Next
+    // sert déjà du WebP par défaut, AVIF compresse encore ~20-30% de
+    // mieux sur les photos et se négocie automatiquement selon le header
+    // Accept du navigateur (fallback WebP transparent pour les
+    // navigateurs qui ne supportent pas AVIF, zéro changement visuel).
+    formats: ["image/avif", "image/webp"],
+  },
   // Anti-clickjacking (le site n'a aucune raison d'être chargé dans une
   // iframe tierce) + durcissement de base. Pas de Content-Security-Policy
   // script-src stricte ici : Next.js App Router s'appuie sur des scripts
