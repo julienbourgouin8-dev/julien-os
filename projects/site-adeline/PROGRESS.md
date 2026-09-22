@@ -1152,7 +1152,49 @@ plus bas dans ce plan doit être lue comme `creadeline16.fr`.
   toujours en ligne en parallèle, pas encore coupé — sert de filet de sécurité tant que l'admin n'a
   pas été testée en conditions réelles (login, ajout produit + photo, commande test Stripe/Sendcloud).
 
-## Audit performance page d'accueil — suite (tours 2 et 3, mêmes session)
+## Audit performance page d'accueil — résultat final (tour 4)
+
+**Score PageSpeed Insights mobile : 58 → 91/100. Desktop : 99/100.** LCP mobile 7,8s → 3,0s, TBT
+1080ms → 150ms, poids total de page 27 Mo → 8 Mo (essentiellement les 5 vidéos produit
+recompressées, ~8 Mo restants — difficile de descendre plus bas sans réduire la résolution/durée des
+clips, jugé pas nécessaire).
+
+Le tour 4 a corrigé la cause du score qui avait *baissé* après le tour 3 (recompression vidéo) :
+`next/dynamic` seul ne suffisait pas à différer MapLibre — son `import()` se déclenchait dès
+l'hydratation (juste après le premier rendu), pas à la visibilité réelle. Une fois le réseau
+allégé (moins de vidéos à télécharger en concurrence), ce coût CPU (init WebGL, parsing du style)
+tombait plus tôt dans la fenêtre de mesure du TBT, le rendant plus visible qu'avant. Corrigé dans
+`MarchesLazy.tsx` avec un vrai `IntersectionObserver` (`rootMargin: 400px`) : la carte n'est
+importée/montée qu'en approchant réellement de la section — pas à un scroll simulé de fin de trace.
+
+`browserslist` ajouté à `app/package.json` (Chrome/Edge/Firefox 100+, Safari 15.4+) : investigation
+a montré que le "JS obsolète" que PSI signale en boucle (13,5 Kio, `Array.prototype.at`,
+`Object.hasOwn`, etc.) **fait partie du runtime interne de Next.js lui-même** (chunk contenant
+`next-route-announcer`, code de routing/hydratation du framework), pas de notre code ni de
+`posthog-js` — présent dans la quasi-totalité des apps Next.js, non éliminable depuis le code
+applicatif. Gardé quand même comme config correcte (cible réellement les navigateurs qu'on veut
+supporter), mais **ce point restera signalé par PSI indéfiniment, ce n'est pas un bug à chasser
+davantage.**
+
+Bonus accessibilité (signalé par la catégorie "Navigation agentique" de PSI) : les toggles du
+bandeau cookies (`CookieConsent.tsx`) n'avaient pas de nom accessible (`aria-label` ajouté).
+
+**Leçon méthodologique de cette session** : les scores/résumés seuls ne suffisent pas à diagnostiquer
+correctement — c'est le rapport PSI **détaillé** (tableaux "Évitez d'énormes charges utiles de
+réseau" avec le détail par URL, "Réduisez les ressources JS inutilisées" avec les noms de chunks)
+qui a permis de trouver la vraie cause (vidéos) après deux tours de corrections qui semblaient
+correctes mais n'attaquaient pas le bon problème. **Toujours demander/fournir le rapport détaillé,
+pas juste le score, pour ce genre d'audit.**
+
+Piège méthodologique rencontré en cours de route : un ancien process `next dev` tournait déjà sur le
+port 3000 depuis plusieurs jours (session de travail habituelle de Julien) — une partie des
+vérifications locales "de confiance" tapait dessus au lieu du build de prod fraîchement compilé,
+sans erreur visible (juste des noms de chunks différents, faciles à rater). Toujours vérifier
+`lsof -i :PORT` avant de faire confiance à un serveur local pour une vérif perf, ou utiliser un port
+dédié (ex. `PORT=3099 npm run start`) pour ne jamais risquer de perturber le serveur de dev de
+Julien (voir [[feedback_keep_dev_server_running]]).
+
+## Audit performance page d'accueil — tours 2 et 3
 
 Après le premier tour (ci-dessous), le score n'avait presque pas bougé (58→59→60) malgré des
 correctifs corrects — signe qu'aucun n'attaquait la vraie cause dominante. Julien a fourni le
