@@ -1152,7 +1152,58 @@ plus bas dans ce plan doit être lue comme `creadeline16.fr`.
   toujours en ligne en parallèle, pas encore coupé — sert de filet de sécurité tant que l'admin n'a
   pas été testée en conditions réelles (login, ajout produit + photo, commande test Stripe/Sendcloud).
 
-## Audit performance page d'accueil (session 2026-09-22, PageSpeed Insights mobile)
+## Audit performance page d'accueil — suite (tours 2 et 3, mêmes session)
+
+Après le premier tour (ci-dessous), le score n'avait presque pas bougé (58→59→60) malgré des
+correctifs corrects — signe qu'aucun n'attaquait la vraie cause dominante. Julien a fourni le
+rapport PSI **détaillé** (avec le tableau "Évitez d'énormes charges utiles de réseau" listant
+chaque URL) plutôt qu'un simple score, ce qui a permis de trouver la vraie cause :
+
+**Cause réelle du poids de page (~26 Mo sur 27 Mo total) : les 5 vidéos produit du présentoir
+(VitrineArc) étaient massivement surdimensionnées** — jusqu'à 1920×1080 à 5-12 Mbps pour de
+simples clips muets en boucle affichés au maximum à 640px de large. `preload="none"` (tour 1)
+empêchait bien le chargement au montage, mais le test PSI scrolle toute la page et déclenche donc
+quand même la lecture (et le téléchargement complet) des 5 vidéos via l'`IntersectionObserver` —
+un comportement qui reflète un vrai visage d'utilisateur qui parcourt toute la page, pas un artefact
+du test. **Ré-encodées** (`ffmpeg`, H.264, largeur max 1280px, CRF 26, piste audio retirée — les
+vidéos sont toujours `muted`) : qualité vérifiée image par image (frames extraites avant/après,
+comparées visuellement) avant remplacement des fichiers, aucune différence perceptible même sur les
+textures détaillées (cuir façon python, motif tissu). **Total : ~26 Mo → ~7,5 Mo (-70%).**
+
+Deuxième découverte du tour 2 : **les deux `<Image priority>` du hero (mobile ET desktop) se
+téléchargent TOUJOURS toutes les deux**, même celle masquée en CSS (`hidden`/`sm:hidden`) —
+`priority` force un preload qui ignore la visibilité CSS, contrairement à `loading="lazy"` (qui,
+lui, respecte bien `display:none` via l'IntersectionObserver de Next). Identifié mais **pas
+corrigé** : la seule vraie solution propre (un `<picture>` natif avec sources par media-query, pour
+que le navigateur ne télécharge jamais la mauvaise variante) demanderait de réécrire la structure du
+hero, très lourdement calée au pixel près (des dizaines de commentaires documentant l'historique des
+ajustements) — risque de casser le positionnement jugé trop élevé pour le gain, laissé de côté
+volontairement. **À reprendre si Julien veut aller plus loin sur ce point précis.**
+
+Autres correctifs du tour 2-3 (moindre impact, mais chaque point du rapport PSI traité) :
+- `next.config.ts` : `images.formats = ["image/avif", "image/webp"]` — le hero PNG était identifié
+  comme ressource LCP par PSI, AVIF compresse encore ~20-30% de mieux que WebP sur les photos.
+- Police Fraunces : axes variables `opsz`/`SOFT`/`WONK` retirés (aucun `font-variation-settings` ne
+  les utilise dans le CSS) — fichier de police nettement plus léger.
+- Préconnexion ajoutée vers `basemaps.cartocdn.com`/`tiles.basemaps.cartocdn.com` (tuiles MapLibre).
+- Image popup carte (`stand-marche.webp`) recompressée un cran plus loin (q60 au lieu de q75),
+  **depuis le JPEG original récupéré via `git show` sur l'historique** — jamais recompresser un
+  WebP déjà lossy à partir de lui-même (cascade de pertes), toujours repartir de la source.
+- **Volontairement pas touché** : les animations `write-on` (`clip-path` + `filter: blur`) que PSI
+  liste comme "non composited" — effet de "texte qui s'écrit à l'encre" documenté et validé avec
+  Julien sur plusieurs sessions passées, le CLS mesuré est déjà à 0.000 (le risque théorique ne
+  s'est jamais matérialisé), et l'instruction explicite de Julien était de préserver le design
+  existant. Idem pour le bundle MapLibre (JS/CSS inutilisé, DOM, "forced reflow") : c'est une vraie
+  librairie de carte interactive avec un vrai coût, déjà sortie du chemin critique (chargement
+  différé), la réduire davantage demanderait de la remplacer — hors scope d'un audit de perf qui
+  doit préserver les fonctionnalités.
+
+**Prochaine étape** : Julien redéploie `creadeline-app` sur Coolify et relance PageSpeed Insights
+(mobile + desktop) pour mesurer l'impact réel de ce tour. Si le score ne bouge pas comme attendu,
+recoller le rapport PSI **détaillé** (avec les tableaux, pas juste les scores) comme cette fois —
+c'est ce qui a permis de trouver la vraie cause après deux tours dans le vide.
+
+## Audit performance page d'accueil (session 2026-09-22, PageSpeed Insights mobile) — tour 1
 
 Demandé par Julien juste après la mise en ligne sur le VPS, sur la base d'un rapport PSI réel
 (mobile, Moto G Power, 4G lente) : **score Performance 58/100**, LCP 7,8 s, TBT 520 ms, poids total
