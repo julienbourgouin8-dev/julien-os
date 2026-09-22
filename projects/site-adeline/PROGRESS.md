@@ -1069,7 +1069,148 @@ plus bas dans ce plan doit être lue comme `creadeline16.fr`.
   Delete). Il faut chercher plus bas sur la page ("Danger Zone" habituelle chez Coolify) ou dans les
   Settings de la ressource.
 
-### Plan détaillé — étapes restantes, dans l'ordre (⚠️ partiellement obsolète, voir mises à jour ci-dessus — étapes 1-5 faites, reprendre à l'étape 6)
+### Mise à jour — session 2026-09-22 (suite 2), repo dédié + déploiement + DNS
+
+- **Code extrait vers un repo GitHub dédié `julienbourgouin8-dev/creadeline-site`** (privé), séparé du
+  monorepo perso `julien-os`. Historique de `projects/site-adeline` préservé via `git subtree split`.
+  Deux commits faits dans `julien-os` avant l'extraction : un pour les changements de migration
+  (driver Postgres, S3, `.gitignore`), un pour intégrer le travail en cours qui traînait non commité
+  (Sendcloud, formulaire de contact, ajustements boutique — à la demande explicite de Julien, "récupère
+  tout ce qui est essentiel et qui n'a pas été comité et mets-le"). Le fichier
+  `app/components/VitrineArc.tsx.backup` (backup manuel, pas du code) a été explicitement exclu du
+  commit.
+- **Authentification Coolify → GitHub** : clé de déploiement SSH dédiée (lecture seule, pas de token
+  GitHub), générée en local (`projects/site-adeline/.secrets/creadeline_deploy_key*`), clé publique
+  ajoutée au repo via l'API GitHub, clé privée collée par Julien dans Coolify (Keys & Tokens).
+  ⚠️ **Incident sécurité pendant cette étape** : une commande de diagnostic
+  (`git credential-osxkeychain get`) a affiché un token GitHub personnel de Julien en clair dans la
+  conversation — token révoqué et régénéré par Julien immédiatement. Nouvelle règle mémorisée
+  ([[feedback_never_run_secret_revealing_commands_bare]]) pour ne plus jamais exécuter ce genre de
+  commande sans capture silencieuse.
+- **Application déployée dans Coolify** (ressource "creadeline-app", Railpack, base directory `/app`).
+  Piège rencontré : premier déploiement avec un build vide (`Cmd=[/bin/bash]`, conteneur en
+  crash-loop) — le champ **Base directory** n'avait pas été sauvegardé (vide) lors de la création de
+  la ressource. Corrigé en le renseignant explicitement (`/app`) puis redéployant — Railpack a alors
+  correctement détecté Next.js (`npm run build` + `next start`).
+  Les 12 variables d'env nécessaires (`DATABASE_URL`, `S3_ENDPOINT`, `S3_REGION`, `S3_BUCKET`,
+  `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`,
+  `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_POSTHOG_KEY`,
+  `NEXT_PUBLIC_POSTHOG_HOST`, `RESEND_API_KEY`) collées via le mode "Developer View" de Coolify
+  (paste en bloc), valeurs jamais affichées dans la conversation.
+- **Domaine `creadeline16.fr` pointé et en ligne, HTTPS fonctionnel.** DNS OVH : enregistrement A `@`
+  modifié de l'IP de parking OVH (`213.186.33.5`) vers `179.198.209.59` — propagation quasi
+  instantanée (vérifié direct sur `dns111.ovh.net`, le NS faisant autorité). Domaine ajouté dans
+  Coolify (Traefik généré + certificat Let's Encrypt automatique), redéploiement nécessaire après
+  ajout du domaine pour que les labels Traefik du conteneur se mettent à jour. **`https://creadeline16.fr`
+  répond 200, titre correct, HTTP/2, DB + images (via Garage) fonctionnels — vérifié en conditions
+  réelles.**
+  - ⚠️ **`www.creadeline16.fr` en "DNS mismatch"** dans Coolify — pas encore résolu. OVH a une entrée
+    TXT `"1|www.creadeline16.fr"` qui suggère une redirection déjà configurée côté OVH (pas un simple
+    A/CNAME) pour ce sous-domaine — à investiguer avant de considérer `www` comme fonctionnel.
+- Les images produits actuellement affichées (`/uploads/*.jpg` référencées en base) sont en fait des
+  fichiers statiques déjà présents dans `app/public/uploads/` (commités dans le repo), servis
+  directement par Next.js — **pas encore via Garage** pour ces images historiques spécifiques. Le
+  chemin S3/Garage (route `/uploads/[...path]`) ne sera exercé que pour les **nouvelles** images
+  uploadées depuis l'admin à partir de maintenant. Testé indépendamment avec succès (round-trip S3
+  complet via script jetable, voir plus haut).
+
+### Mise à jour — session 2026-09-22 (suite 3), admin déployée sur le VPS (pas Vercel)
+
+- **⚠️ Correction importante du plan** : contrairement à ce qui était noté plus haut ("Admin : reste
+  sur Vercel, décision déjà prise"), vérification faite ce jour sur le compte Vercel de Julien
+  (`vercel project ls` + API) → **il n'existe qu'un seul projet Vercel pour ce site** ("creadeline",
+  qui sert `app/`). **L'admin n'a jamais été déployée nulle part, elle n'a tourné qu'en localhost.**
+  La décision "admin reste sur Vercel" prise en session précédente supposait à tort qu'un déploiement
+  existait déjà. Comme il n'y avait donc aucun coût de bascule, redécidé avec Julien : **l'admin part
+  aussi sur le VPS/Coolify**, pas sur Vercel — cohérent avec l'objectif initial de tout regrouper sur
+  un seul serveur.
+- **Admin déployée dans Coolify** (ressource "creadeline-admin", même repo `creadeline-site`, même
+  clé de déploiement, base directory `/admin`, Railpack, port 3000). A démarré correctement du
+  premier coup (leçon du déploiement de `app/` déjà appliquée : bien vérifier que Base directory est
+  sauvegardé avant de déployer). 12 variables d'env ajoutées : `DATABASE_URL`, `ADMIN_EMAIL`,
+  `ADMIN_PASSWORD_HASH`, `SESSION_SECRET`, `POSTHOG_PERSONAL_API_KEY`, `POSTHOG_PROJECT_ID`,
+  `POSTHOG_HOST`, `S3_ENDPOINT`, `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY_ID`,
+  `S3_SECRET_ACCESS_KEY`. Vérifié : `/login` répond 200 avec le bon titre, pas d'erreur serveur.
+- **Pas encore de domaine public dessus, volontairement** — c'est un back-office avec de vraies
+  données clients/commandes, son exposition (sous-domaine dédié type `admin.creadeline16.fr` +
+  restrictions d'accès) reste à décider avec Julien avant de l'ouvrir sur internet. Pour l'instant
+  accessible uniquement via l'URL de test `*.sslip.io` générée par Coolify.
+- Base Postgres et bucket Garage restent accédés via l'**IP publique du VPS** (pas le réseau Docker
+  interne) pour app ET admin — simplification volontaire : Garage tourne hors du réseau Coolify
+  (déployé en dehors de son orchestration, voir plus haut), donc pas de mise en réseau interne facile
+  sans retravailler cette partie. Fonctionne, testé bout en bout, optimisation réseau interne notée
+  comme amélioration possible mais non bloquante.
+
+### Mise à jour — session 2026-09-22 (fin de session), admin exposée publiquement
+
+- **`admin.creadeline16.fr` en ligne, HTTPS fonctionnel** (DNS OVH A → `179.198.209.59`, domaine
+  ajouté dans Coolify, certificat Let's Encrypt généré). `/login` répond 200. L'admin est maintenant
+  accessible de partout, plus seulement en localhost.
+- **État global à ce point** : site public (`creadeline16.fr`) et admin (`admin.creadeline16.fr`)
+  tous deux en ligne sur le VPS Hostinger via Coolify, DB Postgres + stockage Garage partagés entre
+  les deux, tout sur un seul serveur comme voulu au départ. Vercel/Neon (`creadeline.vercel.app`)
+  toujours en ligne en parallèle, pas encore coupé — sert de filet de sécurité tant que l'admin n'a
+  pas été testée en conditions réelles (login, ajout produit + photo, commande test Stripe/Sendcloud).
+
+## Audit performance page d'accueil (session 2026-09-22, PageSpeed Insights mobile)
+
+Demandé par Julien juste après la mise en ligne sur le VPS, sur la base d'un rapport PSI réel
+(mobile, Moto G Power, 4G lente) : **score Performance 58/100**, LCP 7,8 s, TBT 520 ms, poids total
+de page ~54 Mo(!). Trois causes identifiées dans le code, corrigées :
+
+1. **`AutoplayVideo` (VitrineArc.tsx, version mobile empilée) avait `preload="auto"`** sur ses 5
+   `<video>` — le navigateur téléchargeait les 5 fichiers vidéo en entier dès le montage, quelle que
+   soit leur visibilité réelle (un `IntersectionObserver` gère déjà play/pause, mais ne contrôlait pas
+   le préchargement). Passé à `preload="none"` — vérifié en local (devtools) après coup : seule la
+   vidéo visible atteint `readyState 4`, les 4 autres restent à `0` (aucun fetch) tant qu'elles ne
+   sont pas scrollées en vue. Quasi certainement la plus grosse partie des 54 Mo.
+2. **`Marches` (carte MapLibre GL) importée statiquement dans `page.tsx`** — son JS (~200 Ko, rendu
+   WebGL) et son CSS étaient inclus dans le bundle critique de la page d'accueil alors que la carte
+   est toujours tout en bas, jamais visible au chargement. Extrait dans un nouveau composant
+   `MarchesLazy.tsx` (`"use client"` + `next/dynamic(..., { ssr: false })`, `page.tsx` reste un Server
+   Component) avec un placeholder de même hauteur (`aspect-ratio: 4/3`) pour ne pas provoquer de CLS.
+3. **`PostHogProvider.tsx` importait `posthog-js`/`posthog-js/react` statiquement** — chargés pour
+   TOUT visiteur dès le premier rendu, consentement RGPD ou non (l'init réelle était bien gardée par
+   le consentement, mais pas l'import du module). `posthog-js` dépend de `core-js`, d'où les ~22 Ko de
+   polyfills obsolètes (`Array.prototype.at/flat/flatMap`, `Object.fromEntries/hasOwn`,
+   `String.prototype.trimStart/End`, `Math.trunc`) signalés par PSI ("Ancien JavaScript"). Réécrit en
+   `import()` dynamique déclenché uniquement après consentement accepté — avant ça, zéro octet de la
+   librairie n'est chargé.
+4. **Image `stand-marche.jpg` (popup carte) : 48 Ko → converti en WebP + redimensionné** (`cwebp -q 75
+   -resize 320 320`, 414×414 → 320×320) → **22,5 Ko** (-53 %), affichage identique (`object-fit:
+   cover` dans une carte 240×104 CSS). Ancien `.jpg` supprimé du repo.
+
+**Non touché, volontairement** (hors scope de l'audit mesuré, ou risque/bénéfice pas clair) : les
+requêtes CSS render-blocking restantes (probablement le CSS Tailwind + MapLibre déjà réduit par le
+point 2), le JS "legacy" restant s'il en subsiste, les autres pages (`TrackEvent`/`posthog-js/react`
+sur les pages boutique n'a pas été touché, même limitation, mais pas mesuré par ce rapport PSI qui ne
+portait que sur `/`). À reprendre si un futur rapport PSI les signale encore comme impactants.
+
+**Vérification faite avant déploiement** : `npx tsc --noEmit` propre sur `app/`, `npm run build`
+réussi, revue visuelle en local via Chrome DevTools MCP (mobile 390×844) — hero identique, vidéo
+VitrineArc lit bien en scrollant dessus, carte + popup (nouvelle image WebP) s'affichent
+correctement, zéro erreur console. **Re-mesure PageSpeed Insights après déploiement en prod : voir
+plus bas / à compléter par Julien.**
+
+### Reste à faire (non bloquant, prochaine session)
+
+1. **Vérification bout en bout réelle** : se connecter à `admin.creadeline16.fr`, ajouter un produit
+   avec photo (confirmer qu'elle atterrit bien sur Garage cette fois, pas `public/uploads/`),
+   confirmer l'affichage sur le site public, passer une commande test (Stripe + décrément de stock),
+   confirmer Sendcloud (étiquette d'expédition) et PostHog (événements reçus).
+2. **`www.creadeline16.fr` en "DNS mismatch"** dans Coolify — OVH a une entrée TXT de redirection
+   préexistante pour `www`, pas un simple A/CNAME. À investiguer/corriger.
+3. **Ménage Coolify** : ressource fantôme "creadeline" (ex-Minio) toujours présente, bouton Delete
+   toujours pas localisé dans l'UI (voir note plus haut).
+4. **SEO** (identifié pendant la migration, voir plan original plus bas) : `app/sitemap.ts`,
+   `app/robots.ts`, bug "Charente-Maritime" dans la meta description, `generateMetadata` par page,
+   Open Graph/JSON-LD produits, soumission Google Search Console.
+5. **Une fois tout confirmé stable** : décommissionner Vercel/Neon pour ce projet (garder
+   `creadeline.vercel.app` comme filet de sécurité encore un moment avant).
+6. Points en attente depuis avant la migration, toujours vrais : lien nav "À propos" sans destination,
+   email de contact réel d'Adeline à confirmer (bloque aussi les mentions légales), version mobile.
+
+### Plan détaillé d'origine (obsolète par endroits, gardé pour référence historique — voir mises à jour ci-dessus pour l'état réel)
 
 1. **Résoudre le point non résolu ci-dessus** (orthographe du domaine) avant toute action DNS.
 2. Dans Coolify (New Resource → section **Databases**, au-dessus de la section Applications visible

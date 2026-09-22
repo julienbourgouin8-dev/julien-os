@@ -109,7 +109,7 @@ export default function Marches() {
       .setLngLat([current.lng, current.lat])
       .setHTML(
         `<div class="marche-popup-card">
-          <img src="/products/stand-marche.jpg" alt="" />
+          <img src="/products/stand-marche.webp" alt="" width="320" height="320" loading="lazy" />
           <div class="marche-popup-body">
             <p class="marche-popup-date">Charente</p>
             <p class="marche-popup-name">${current.name}</p>

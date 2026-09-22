@@ -3,8 +3,10 @@ import VitrineArc from "@/components/VitrineArc";
 import CartBadge from "@/components/CartBadge";
 import MobileMenu from "@/components/MobileMenu";
 import MobileHeroTagline from "@/components/MobileHeroTagline";
-import Marches from "@/components/Marches";
 import ContactSection from "@/components/ContactSection";
+// Chargement paresseux (JS + CSS MapLibre hors bundle critique) — voir
+// commentaire dans MarchesLazy.tsx.
+import Marches from "@/components/MarchesLazy";
 
 export default function Home() {
   return (
