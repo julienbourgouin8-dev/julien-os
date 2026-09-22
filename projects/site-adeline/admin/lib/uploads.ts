@@ -1,5 +1,6 @@
 import "server-only";
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import sharp from "sharp";
 
 // Migration 2026-09-22 : filesystem local (UPLOADS_DIR, non persistant en
 // serverless) → bucket S3 privé sur Garage, auto-hébergé sur le VPS à côté
@@ -67,13 +68,26 @@ export async function saveUploadedFile(file: File): Promise<string> {
   if (!ext) {
     throw new Error(`Fichier "${file.name}" refusé : ce n'est pas une image valide (jpg, png, webp ou gif).`);
   }
-  const filename = `${crypto.randomUUID()}.${ext}`;
+  // Les anciennes photos produit sont des fichiers déjà préparés dans
+  // public/uploads, alors que les nouvelles arrivaient jusque-là dans Garage
+  // exactement telles que l'iPhone les avait produites (plusieurs Mo, parfois
+  // 4K). Toutes les nouvelles photos suivent désormais le même pipeline :
+  // orientation EXIF appliquée, taille plafonnée à 1800 px, métadonnées
+  // retirées et conversion WebP. 1800 px garde une marge confortable pour
+  // l'affichage desktop/Retina sans stocker ni resservir une source 4K.
+  const optimized = await sharp(buffer, { animated: false })
+    .rotate()
+    .resize({ width: 1800, height: 1800, fit: "inside", withoutEnlargement: true })
+    .webp({ quality: 82, effort: 4 })
+    .toBuffer();
+  const filename = `${crypto.randomUUID()}.webp`;
   await getS3().send(
     new PutObjectCommand({
       Bucket: bucket(),
       Key: filename,
-      Body: buffer,
-      ContentType: CONTENT_TYPES[ext],
+      Body: optimized,
+      ContentType: CONTENT_TYPES.webp,
+      CacheControl: "public, max-age=31536000, immutable",
     }),
   );
   return `/uploads/${filename}`;

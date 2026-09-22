@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function ProductGallery({ images, name }: { images: string[]; name: string }) {
   if (images.length === 0) {
     return (
@@ -13,23 +15,22 @@ export default function ProductGallery({ images, name }: { images: string[]; nam
   }
 
   return (
-    // Empilement vertical, une photo pleine largeur après l'autre — plus de
-    // galerie miniature + cadre fixe (qui forçait un ratio et rognait/
-    // ajoutait des bandes dès qu'une photo ne matchait pas). <img> nature
-    // plutôt que next/image : on ne connaît pas à l'avance le ratio des
-    // prochaines photos uploadées par l'admin, et un width/height figé sur
-    // next/image aurait déformé toute photo qui ne fait pas exactement
-    // 1600×893 (le format des 4 photos actuelles). Avec <img> + h-auto, le
-    // navigateur respecte toujours le ratio réel du fichier, jamais
-    // recadré/déformé.
+    // Empilement vertical, une photo pleine largeur après l'autre. Les
+    // attributs width/height donnent une réserve 16:9 (format produit
+    // historique) mais `h-auto` conserve toujours le ratio intrinsèque réel.
+    // Contrairement à l'ancien <img> brut, next/image sert ici une variante
+    // AVIF/WebP dimensionnée pour l'écran au lieu de télécharger la source
+    // Garage complète sur la fiche produit.
     <div className="flex flex-col gap-6">
       {images.map((url, i) => (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        <Image
           key={url}
           src={url}
           alt={i === 0 ? name : `${name} — vue ${i + 1}`}
-          loading={i === 0 ? "eager" : "lazy"}
+          width={1600}
+          height={900}
+          sizes="(min-width: 1280px) 690px, (min-width: 1024px) 55vw, 100vw"
+          priority={i === 0}
           className="block h-auto w-full bg-white"
         />
       ))}

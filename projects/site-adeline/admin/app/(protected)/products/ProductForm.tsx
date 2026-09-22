@@ -12,9 +12,23 @@ export default function ProductForm({ product, action }: { product?: Product; ac
   const [state, formAction, pending] = useActionState(action, undefined);
   const [existingImages, setExistingImages] = useState<string[]>(product?.images ?? []);
   const [newFiles, setNewFiles] = useState<File[]>([]);
+  const [primaryImage, setPrimaryImage] = useState<{ type: "existing" | "new"; value: string } | null>(
+    product?.images[0] ? { type: "existing", value: product.images[0] } : null,
+  );
 
-  const removeExisting = (url: string) => setExistingImages((imgs) => imgs.filter((u) => u !== url));
-  const removeNew = (index: number) => setNewFiles((files) => files.filter((_, i) => i !== index));
+  const removeExisting = (url: string) => {
+    setExistingImages((imgs) => imgs.filter((u) => u !== url));
+    if (primaryImage?.type === "existing" && primaryImage.value === url) setPrimaryImage(null);
+  };
+  const removeNew = (index: number) => {
+    setNewFiles((files) => files.filter((_, i) => i !== index));
+    setPrimaryImage((primary) => {
+      if (primary?.type !== "new") return primary;
+      const currentIndex = Number(primary.value);
+      if (currentIndex === index) return null;
+      return currentIndex > index ? { type: "new", value: String(currentIndex - 1) } : primary;
+    });
+  };
 
   return (
     <form
@@ -115,11 +129,30 @@ export default function ProductForm({ product, action }: { product?: Product; ac
 
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.1em] text-ink/45">Photos</p>
+        <p className="mt-1 text-xs leading-relaxed text-ink/55">
+          Choisis la vue de face comme photo principale. Elle sera toujours affichée en premier sur la boutique.
+        </p>
         <div className="mt-2 flex flex-wrap gap-3">
           {existingImages.map((url) => (
-            <div key={url} className="group relative h-20 w-20">
+            <div key={url} className="group relative h-24 w-24">
               <input type="hidden" name="existingImages" value={url} />
-              <Image src={url} alt="" fill className="rounded-lg object-cover" />
+              <Image
+                src={url}
+                alt=""
+                fill
+                className={`rounded-lg object-cover ring-2 ${
+                  primaryImage?.type === "existing" && primaryImage.value === url
+                    ? "ring-denim"
+                    : "ring-transparent"
+                }`}
+              />
+              <button
+                type="button"
+                onClick={() => setPrimaryImage({ type: "existing", value: url })}
+                className="absolute inset-x-1 bottom-1 rounded-full bg-white/95 px-2 py-1 text-[0.58rem] font-bold uppercase tracking-wide text-ink shadow-sm"
+              >
+                {primaryImage?.type === "existing" && primaryImage.value === url ? "Principale ✓" : "Mettre en 1er"}
+              </button>
               <button
                 type="button"
                 onClick={() => removeExisting(url)}
@@ -131,13 +164,24 @@ export default function ProductForm({ product, action }: { product?: Product; ac
             </div>
           ))}
           {newFiles.map((file, i) => (
-            <div key={i} className="group relative h-20 w-20">
+            <div key={`${file.name}-${file.lastModified}`} className="group relative h-24 w-24">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={URL.createObjectURL(file)}
                 alt=""
-                className="h-full w-full rounded-lg object-cover"
+                className={`h-full w-full rounded-lg object-cover ring-2 ${
+                  primaryImage?.type === "new" && primaryImage.value === String(i)
+                    ? "ring-denim"
+                    : "ring-transparent"
+                }`}
               />
+              <button
+                type="button"
+                onClick={() => setPrimaryImage({ type: "new", value: String(i) })}
+                className="absolute inset-x-1 bottom-1 rounded-full bg-white/95 px-2 py-1 text-[0.58rem] font-bold uppercase tracking-wide text-ink shadow-sm"
+              >
+                {primaryImage?.type === "new" && primaryImage.value === String(i) ? "Principale ✓" : "Mettre en 1er"}
+              </button>
               <button
                 type="button"
                 onClick={() => removeNew(i)}
@@ -154,9 +198,23 @@ export default function ProductForm({ product, action }: { product?: Product; ac
           type="file"
           accept="image/*"
           multiple
-          onChange={(e) => setNewFiles((prev) => [...prev, ...Array.from(e.target.files ?? [])])}
+          onChange={(e) => {
+            const selected = Array.from(e.target.files ?? []);
+            setNewFiles((prev) => {
+              if (!primaryImage && selected.length > 0) {
+                setPrimaryImage({ type: "new", value: String(prev.length) });
+              }
+              return [...prev, ...selected];
+            });
+          }}
           className="mt-3 text-sm text-ink/60"
         />
+        {primaryImage && (
+          <>
+            <input type="hidden" name="primaryImageType" value={primaryImage.type} />
+            <input type="hidden" name="primaryImageValue" value={primaryImage.value} />
+          </>
+        )}
         {/* DataTransfer permet d'attacher la sélection de fichiers courante à
             un <input type="file"> normal, seul type que FormData sait lire. */}
         <input

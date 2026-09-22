@@ -57,12 +57,39 @@ async function uploadNewImages(formData: FormData): Promise<string[]> {
   return uploadProductImages(files);
 }
 
+function missingPrimaryImage(formData: FormData, existingCount: number): boolean {
+  const newCount = formData
+    .getAll("newImages")
+    .filter((file): file is File => file instanceof File && file.size > 0).length;
+  return existingCount + newCount > 1 && !formData.get("primaryImageType");
+}
+
+function putPrimaryImageFirst(existingImages: string[], newImages: string[], formData: FormData): string[] {
+  const allImages = [...existingImages, ...newImages];
+  const primaryType = formData.get("primaryImageType");
+  const primaryValue = formData.get("primaryImageValue");
+
+  let primaryUrl: string | undefined;
+  if (primaryType === "existing" && typeof primaryValue === "string") {
+    primaryUrl = existingImages.find((url) => url === primaryValue);
+  } else if (primaryType === "new" && typeof primaryValue === "string") {
+    const index = Number.parseInt(primaryValue, 10);
+    if (Number.isInteger(index)) primaryUrl = newImages[index];
+  }
+
+  if (!primaryUrl) return allImages;
+  return [primaryUrl, ...allImages.filter((url) => url !== primaryUrl)];
+}
+
 export async function createProductAction(
   _state: ProductFormState,
   formData: FormData,
 ): Promise<ProductFormState> {
   const parsed = parseInput(formData);
   if ("error" in parsed) return parsed;
+  if (missingPrimaryImage(formData, parsed.images.length)) {
+    return { error: "Choisis la vue de face comme photo principale avant d’enregistrer." };
+  }
 
   let newImages: string[];
   try {
@@ -70,7 +97,10 @@ export async function createProductAction(
   } catch (err) {
     return { error: (err as Error).message };
   }
-  const product = await dbCreateProduct({ ...parsed, images: [...parsed.images, ...newImages] });
+  const product = await dbCreateProduct({
+    ...parsed,
+    images: putPrimaryImageFirst(parsed.images, newImages, formData),
+  });
   await logAction("product_created", product.id);
 
   revalidatePath("/products");
@@ -84,6 +114,9 @@ export async function updateProductAction(
 ): Promise<ProductFormState> {
   const parsed = parseInput(formData);
   if ("error" in parsed) return parsed;
+  if (missingPrimaryImage(formData, parsed.images.length)) {
+    return { error: "Choisis la vue de face comme photo principale avant d’enregistrer." };
+  }
 
   let newImages: string[];
   try {
@@ -91,7 +124,10 @@ export async function updateProductAction(
   } catch (err) {
     return { error: (err as Error).message };
   }
-  await dbUpdateProduct(id, { ...parsed, images: [...parsed.images, ...newImages] });
+  await dbUpdateProduct(id, {
+    ...parsed,
+    images: putPrimaryImageFirst(parsed.images, newImages, formData),
+  });
   await logAction("product_updated", id);
 
   revalidatePath("/products");

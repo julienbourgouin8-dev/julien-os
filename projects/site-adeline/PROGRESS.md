@@ -1377,6 +1377,27 @@ VitrineArc lit bien en scrollant dessus, carte + popup (nouvelle image WebP) s'a
 correctement, zéro erreur console. **Re-mesure PageSpeed Insights après déploiement en prod : voir
 plus bas / à compléter par Julien.**
 
+## Correctif photos produits + grille boutique (session 2026-09-22, fin)
+
+- **Cause du chargement lent confirmée sur les trois nouveaux articles** : leurs 9 images étaient
+  des PNG 2752×1536 stockés bruts dans Garage, entre 4,7 et 6,9 Mo chacun. Les anciennes photos
+  historiques étaient déjà préparées et beaucoup plus légères.
+- **Les 9 images existantes ont été converties en WebP** (largeur/hauteur plafonnée à 1800 px,
+  qualité 82, orientation EXIF appliquée, métadonnées retirées), puis les trois lignes produit ont
+  été mises à jour en base. Résultat : 67–243 Ko par image, soit 96–99 % de réduction. Les objets
+  PNG originaux sont volontairement conservés dans Garage pour permettre un retour arrière.
+- **Tous les prochains uploads passent automatiquement par le même traitement** dans
+  `admin/lib/uploads.ts` avant leur envoi vers Garage.
+- **Photo principale explicite dans l'admin** : le formulaire permet de désigner la vue de face ;
+  cette photo est enregistrée en première position indépendamment de l'ordre de sélection des
+  fichiers. Avec plusieurs photos, l'enregistrement est bloqué tant qu'aucune principale n'est
+  choisie.
+- **Fiche produit** : les images passent maintenant par `next/image` au lieu d'être servies en
+  source Garage brute, tout en conservant leur ratio réel (`h-auto`).
+- **Grille desktop** : cartes limitées à 380 px et groupe centré dans la colonne catalogue. À
+  1280 px, les deux cartes ont désormais 68 px de marge à gauche et à droite de leur zone, au lieu
+  d'être étirées jusqu'au bord droit. Le comportement mobile validé reste inchangé.
+
 ### Reste à faire (non bloquant, prochaine session)
 
 1. **Vérification bout en bout réelle** : se connecter à `admin.creadeline16.fr`, ajouter un produit
