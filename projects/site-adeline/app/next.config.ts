@@ -59,6 +59,27 @@ const nextConfig: NextConfig = {
         source: "/((?!_next/static|_next/image).*)",
         headers: [{ key: "Cache-Control", value: "no-cache, must-revalidate" }],
       },
+      // Correction du `no-cache` ci-dessus pour les fichiers statiques du
+      // dossier `public/` (vidéos, images) : la règle du dessus les
+      // attrapait aussi par erreur (pas de hash de contenu dans leur nom,
+      // mais couverts par le pattern d'exclusion pensé seulement pour
+      // `_next/static`/`_next/image`). Conséquence observée en vrai
+      // (retour Julien 2026-09-22) : les vidéos produit cassaient après un
+      // simple rechargement de page sur Safari iOS — bug WebKit connu, la
+      // lecture vidéo échoue quand la réponse passe par une revalidation
+      // conditionnelle (304) au lieu d'un téléchargement complet, exactement
+      // ce que `no-cache` force à chaque requête. Cette règle, plus
+      // spécifique et placée après, reprend la main sur `Cache-Control`
+      // pour ces chemins (Next.js applique les règles dans l'ordre, la
+      // dernière correspondance gagne pour une même clé d'en-tête) — cache
+      // d'une heure, assez court pour qu'un fichier remplacé (même nom,
+      // nouveau contenu — arrivé plusieurs fois pendant l'audit perf) se
+      // rafraîchisse vite, assez long pour ne jamais forcer une
+      // revalidation vidéo par vidéo.
+      {
+        source: "/(brand|products|uploads)/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=3600, stale-while-revalidate=86400" }],
+      },
     ];
   },
 };
