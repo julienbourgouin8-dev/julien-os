@@ -1,4 +1,82 @@
-# Site CréA'deline — journal de session (dernière mise à jour 2026-09-16)
+# Site CréA'deline — journal de session (dernière mise à jour 2026-09-22)
+
+⚠️ **Ce fichier est un journal chronologique, pas un état courant.** Pour reprendre après une
+coupure de session, lire dans l'ordre : (1) `MEMORY.md` → mémoire `project_site_adeline_hero.md`
+(état condensé à jour), (2) ce fichier en partant de la section
+**"ÉTAT AU 2026-09-22 (fin de session) — à lire en premier"** juste en dessous, (3) `TODO.md` (plan
+e-commerce brique par brique, toujours valable). Les sections plus bas ("Où on en est", etc.) sont
+l'historique brut des sessions précédentes, gardé pour référence mais **partiellement obsolète**
+(ex. mentionne encore Vercel comme hébergement principal — plus vrai, voir ci-dessous).
+
+Process générique de déploiement (VPS Hostinger + Coolify), réutilisable pour d'autres sites :
+**`.agents/skills/vps-deploy/SKILL.md`**.
+
+## ÉTAT AU 2026-09-22 (fin de session) — à lire en premier
+
+**Le site est en ligne sur le VPS, pas sur Vercel.** Deux apps Next.js déployées séparément dans
+Coolify sur le même VPS Hostinger (Frankfurt) :
+- **Site public** : https://creadeline16.fr (Coolify resource `creadeline-app`)
+- **Admin (back-office)** : https://admin.creadeline16.fr (Coolify resource `creadeline-admin`) —
+  **première mise en ligne, elle n'avait jamais été déployée avant** (tournait seulement en
+  localhost). Pas encore de restriction d'accès au-delà du login applicatif — à revoir.
+- **Base de données** : PostgreSQL 18 dans Coolify (ressource `creadeline-db`, conteneur nommé
+  `weragxl251e5gltuems22q76`), nom de la base = `postgres` (pas `creadeline`, bug Coolify, voir
+  plus bas). SSL activé manuellement (pas via le toggle Coolify, qui n'a pas fonctionné).
+- **Stockage objet** : Garage (S3-compatible, PAS MinIO — abandonné par son éditeur en 2026, voir
+  plus bas), conteneur `garage`, bucket privé `creadeline-uploads`, déployé hors Coolify (docker
+  compose manuel en SSH, `/opt/garage/` sur le VPS).
+- **Code** : extrait du monorepo `julien-os` vers un repo GitHub dédié **`julienbourgouin8-dev/creadeline-site`**
+  (privé), via `git subtree split`. Toute modif doit continuer d'être faite dans
+  `julien-os/projects/site-adeline/`, committée là, puis **repoussée vers ce repo dédié** avant
+  qu'un redéploiement Coolify la récupère (Coolify ne connaît QUE ce repo dédié, pas le monorepo).
+  Voir la procédure exacte dans `.agents/skills/vps-deploy/SKILL.md`, section "Mettre à jour un
+  site déjà déployé".
+- **Vercel/Neon** (`creadeline.vercel.app`) toujours en ligne en parallèle, pas coupé — sert de
+  filet de sécurité. À décommissionner une fois la nouvelle stack validée en conditions réelles
+  (voir "Reste à faire" ci-dessous).
+- **Performance page d'accueil** : audité et corrigé (PageSpeed Insights). Mobile 58→91/100,
+  desktop 99/100. Détail complet dans la section "Audit performance page d'accueil — résultat
+  final (tour 4)" plus bas — **à lire avant de retoucher `VitrineArc.tsx`, `Marches.tsx`,
+  `PostHogProvider.tsx` ou les vidéos produit**, plusieurs pièges y sont documentés.
+
+### Reste à faire (liste unique, remplace les listes éparpillées des sections précédentes)
+
+1. **Vérification bout en bout réelle** (jamais faite) : se connecter à `admin.creadeline16.fr`,
+   ajouter un produit avec photo (confirmer qu'elle atterrit sur Garage, pas sur
+   `public/uploads/`), confirmer l'affichage sur le site public, passer une commande test
+   (Stripe + décrément de stock), confirmer Sendcloud (étiquette d'expédition) et PostHog
+   (événements reçus).
+2. **`www.creadeline16.fr`** en "DNS mismatch" dans Coolify — OVH a une redirection TXT
+   préexistante pour `www`, pas un simple A/CNAME. Pas résolu.
+3. **Décider et restreindre l'accès à `admin.creadeline16.fr`** — actuellement exposée sur
+   internet avec pour seule protection le login applicatif (email + mot de passe hashé). Pas de
+   Cloudflare Access, pas de VPN, pas de restriction IP. Discuter avec Julien si un niveau de
+   protection supplémentaire est voulu vu que c'est un back-office avec de vraies données
+   clients/commandes.
+4. **Chantier SEO** identifié pendant la migration : `app/sitemap.ts` et `app/robots.ts`
+   (absents), bug "Charente-Maritime" restant dans une meta description (`app/app/layout.tsx`,
+   doit être "Charente"), `generateMetadata` par page sur les routes boutique/produit (toutes
+   partagent actuellement le title/description de l'accueil), Open Graph/JSON-LD `schema.org/Product`
+   sur les fiches produit, soumission du sitemap à Google Search Console (site pas encore indexé,
+   confirmé par `site:creadeline.vercel.app` qui ne remonte rien).
+5. **Une fois tout confirmé stable** : décommissionner Vercel/Neon pour ce projet, retirer
+   `@vercel/speed-insights` du code (`<SpeedInsights />` dans `layout.tsx` — pointe vers une
+   route `/_vercel/speed-insights/script.js` qui 404 systématiquement maintenant qu'on n'est plus
+   sur Vercel, erreur console inoffensive mais à nettoyer).
+6. **Points en attente depuis avant la migration, toujours vrais** : lien nav "À propos" sans
+   destination (pointe vers `#apropos`, section inexistante), email de contact réel d'Adeline
+   toujours pas confirmé (bloque aussi les mentions légales : SIRET, raison sociale, adresse),
+   version mobile du site à finaliser (scope "revoir toutes les tailles").
+7. **Travail non commité laissé de côté volontairement pendant cette session** (toujours sur le
+   disque local, jamais perdu, juste pas encore poussé/déployé si modifié depuis) : rien —
+   tout le travail en attente au début de la session (Sendcloud, formulaire contact, vidéos
+   lunch-box v9/v10) a été committé et déployé pendant cette session, voir plus bas.
+8. **Optimisation réseau interne possible mais non faite** : `DATABASE_URL` et `S3_ENDPOINT`
+   utilisés par les apps pointent sur l'IP publique du VPS (`179.198.209.59`) même si Postgres et
+   Garage tournent sur la même machine que les apps — fonctionne, testé, mais un peu moins
+   efficace qu'un vrai réseau Docker interne. Non bloquant.
+
+## Où on en est (historique, partiellement obsolète — voir "ÉTAT AU 2026-09-22" ci-dessus)
 
 Contexte à charger avant de reprendre : ce fichier + `TODO.md` (plan
 e-commerce brique par brique, toujours valable pour les phases futures) +
@@ -7,9 +85,8 @@ la section "Backend produits" plus bas) : le site public dans `app/`
 (`npm run dev` → http://localhost:3000) et l'admin dans `admin/`
 (`npm run dev` → http://localhost:3001, port différent car process séparé).
 
-## Où on en est
-
-**Site en ligne, v1 livrée.** → **https://creadeline.vercel.app**
+**Site en ligne, v1 livrée (historique — voir "ÉTAT AU 2026-09-22" pour l'URL actuelle).**
+Ancienne URL Vercel (toujours active en parallèle) : https://creadeline.vercel.app
 
 Site vitrine Next.js 16 (App Router, Tailwind v4, Turbopack) pour la marque de
 couture faite main **CréA'deline** (Adeline, **Charente** — pas
