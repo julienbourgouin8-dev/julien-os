@@ -158,18 +158,17 @@ function AutoplayVideo({
   src,
   poster,
   className,
-  eager = false,
 }: {
   src: string;
   poster?: string;
   className?: string;
-  eager?: boolean;
 }) {
   const ref = useRef<HTMLVideoElement | null>(null);
+  const [sourceReady, setSourceReady] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || !sourceReady) return;
     let shouldPlay = false;
     let retryTimer: ReturnType<typeof setTimeout> | null = null;
     let watchdog: ReturnType<typeof setInterval> | null = null;
@@ -188,20 +187,6 @@ function AutoplayVideo({
         retryTimer = setTimeout(attemptPlay, 350);
       });
     };
-
-    // La source reste présente dès le HTML. C'est plus fiable sur Safari
-    // après un refresh que de créer le `src` tardivement avec React. On ne
-    // demande cependant le fichier complet que lorsque la vidéo approche
-    // de l'écran, afin de préserver le chargement initial.
-    const preloadObserver = new IntersectionObserver(
-      (entries) => {
-        if (!entries[0]?.isIntersecting) return;
-        el.preload = "auto";
-        if (el.networkState === HTMLMediaElement.NETWORK_EMPTY) el.load();
-        preloadObserver.disconnect();
-      },
-      { rootMargin: "1200px 0px", threshold: 0 },
-    );
 
     const startWatchdog = () => {
       if (watchdog) clearInterval(watchdog);
@@ -257,10 +242,8 @@ function AutoplayVideo({
     el.addEventListener("waiting", onMediaReady);
     window.addEventListener("pageshow", onPageShow);
     document.addEventListener("visibilitychange", onVisibilityChange);
-    preloadObserver.observe(el);
     observer.observe(el);
     return () => {
-      preloadObserver.disconnect();
       observer.disconnect();
       if (retryTimer) clearTimeout(retryTimer);
       if (watchdog) clearInterval(watchdog);
@@ -273,7 +256,26 @@ function AutoplayVideo({
       window.removeEventListener("pageshow", onPageShow);
       document.removeEventListener("visibilitychange", onVisibilityChange);
     };
-  }, []);
+  }, [sourceReady]);
+
+  // Hors interaction tactile, la source n'est ajoutée que peu avant
+  // l'arrivée de la vidéo à l'écran. Le rapport Lighthouse du 23/09
+  // montrait que `preload="metadata"` avec un `src` présent suffisait à
+  // faire télécharger les cinq MP4 en entier (3,3 Mio) dès l'accueil.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || sourceReady) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0]?.isIntersecting) return;
+        setSourceReady(true);
+        observer.disconnect();
+      },
+      { rootMargin: "500px 0px", threshold: 0 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [sourceReady]);
 
   return (
     <video
@@ -287,13 +289,15 @@ function AutoplayVideo({
           node.defaultMuted = true;
         }
       }}
-      src={src}
+      src={sourceReady ? src : undefined}
+      data-mobile-rotation
+      data-video-src={src}
       poster={poster}
-      autoPlay
+      autoPlay={sourceReady}
       muted
       loop
       playsInline
-      preload={eager ? "auto" : "metadata"}
+      preload={sourceReady ? "auto" : "none"}
       width={640}
       height={360}
       className={className}
@@ -344,6 +348,53 @@ export default function VitrineArc() {
       mql.removeEventListener("change", onChange);
     };
   }, []);
+
+  // iOS coupe volontairement l'autoplay en mode économie d'énergie. Le
+  // premier contact du doigt utilisé pour commencer à faire défiler le
+  // hero est néanmoins une interaction utilisateur valide. On l'utilise
+  // silencieusement pour autoriser les cinq vidéos dans CE geste, avant
+  // qu'elles n'entrent à l'écran. Aucun bouton ni blocage du scroll.
+  useEffect(() => {
+    if (isDesktop) return;
+
+    const unlockMobileVideos = () => {
+      const videos = Array.from(
+        document.querySelectorAll<HTMLVideoElement>("video[data-mobile-rotation]"),
+      );
+
+      videos.forEach((video) => {
+        const source = video.dataset.videoSrc;
+        video.muted = true;
+        video.defaultMuted = true;
+        if (source && !video.getAttribute("src")) {
+          video.src = source;
+          video.preload = "auto";
+          video.load();
+        }
+        // Appelé synchroniquement depuis `touchstart` : Safari considère
+        // ceci comme une lecture demandée par l'utilisatrice, y compris en
+        // économie d'énergie.
+        void video.play().catch(() => {});
+      });
+
+      // Les cinq éléments ont reçu l'autorisation dans le geste tactile,
+      // mais seules les vidéos proches de l'écran doivent continuer à
+      // décoder. Leur observer les relancera ensuite à l'entrée en vue.
+      window.setTimeout(() => {
+        videos.forEach((video) => {
+          const rect = video.getBoundingClientRect();
+          if (rect.bottom < -120 || rect.top > window.innerHeight + 120) video.pause();
+        });
+      }, 250);
+    };
+
+    document.addEventListener("touchstart", unlockMobileVideos, {
+      capture: true,
+      passive: true,
+      once: true,
+    });
+    return () => document.removeEventListener("touchstart", unlockMobileVideos, true);
+  }, [isDesktop]);
 
   // Le parent fermé faisait 0×0 : malgré `preload="auto"`, Chromium et
   // Safari pouvaient différer le téléchargement jusqu'au premier survol.
@@ -492,14 +543,13 @@ export default function VitrineArc() {
           côtés). Le texte/bouton en dessous récupère son propre `px-4`
           pour ne pas coller aux bords, lui. */}
       <div className="flex flex-col gap-10 pb-10 sm:hidden">
-        {hotspots.map((spot, i) => (
+        {hotspots.map((spot) => (
           <div key={spot.name} className="flex flex-col items-center text-center">
             {spot.mobileVideo && (
               <AutoplayVideo
                 src={spot.mobileVideo}
                 poster={spot.mobilePoster}
                 className="w-full"
-                eager={i === 0}
               />
             )}
             <p className="mt-6 px-4 text-sm font-semibold uppercase tracking-[0.2em] text-teal">

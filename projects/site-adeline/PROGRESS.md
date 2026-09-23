@@ -15,6 +15,18 @@ Process générique de déploiement (VPS Hostinger + Coolify), réutilisable pou
 
 ### Correctif Safari + centrage catalogue du 23 septembre au matin
 
+- Correctif économie d'énergie iOS : les MP4 mobiles n'ont plus de `src` dans le HTML initial.
+  Le premier `touchstart` utilisé naturellement pour faire défiler le hero attribue les cinq
+  sources et appelle `play()` dans ce même geste utilisateur ; Safari doit ainsi autoriser leur
+  lecture même quand l'autoplay est désactivé par le mode économie d'énergie. Les vidéos lointaines
+  sont remises en pause 250 ms plus tard et reprises par leur observer lorsqu'elles entrent en vue.
+- Correctif performance suivant le rapport Lighthouse à 88 : les cinq MP4 (3,3 Mio) ne sont plus
+  téléchargés au chargement. Sans toucher préalable, une source n'est ajoutée qu'à 500 px de
+  l'écran. Le hero LCP porte explicitement `fetchPriority="high"` et les affiches vidéo ont été
+  recompressées de 198 Kio à environ 114 Kio. Compilation de production et ESLint ciblé validés.
+- Le filtre mobile de la boutique utilise maintenant `mx-auto` sous le breakpoint tablette : sa
+  largeur maximale de 320 px est centrée au lieu de rester collée aux 16 px de marge gauche.
+  Les règles desktop restent inchangées à partir de `md`/`xl`.
 - L'essai en WebP animé a été retiré : il fonctionnait après refresh sur Safari, mais chargeait
   4 Mio d'images animées, réduisait la fluidité à 8 images/s et a fait passer le score Lighthouse
   mobile de 96 à 72 (LCP mesuré à 14,6 s).

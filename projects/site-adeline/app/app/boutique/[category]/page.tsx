@@ -85,7 +85,7 @@ export default async function CategoryPage({
         </p>
       ) : (
         <div className="relative mt-4 grid grid-cols-1 gap-y-12 md:grid-cols-[200px_1fr] md:gap-x-12 xl:block">
-          <aside className="max-w-xs md:max-w-none xl:absolute xl:left-0 xl:top-0 xl:w-40">
+          <aside className="mx-auto w-full max-w-xs md:mx-0 md:max-w-none xl:absolute xl:left-0 xl:top-0 xl:w-40">
             <p className="font-display text-lg italic text-ink">Filtrer par</p>
             <details className="group mt-4 border-t border-line py-4" open>
               <summary className="flex cursor-pointer list-none items-center justify-between text-xs font-semibold uppercase tracking-[0.15em] text-ink">

@@ -113,6 +113,7 @@ export default function Home() {
                 alt="Sac cabas, portefeuille et pochette assortis, en simili cuir bleu et écru, CréA'deline"
                 fill
                 priority
+                fetchPriority="high"
                 sizes="100vw"
                 className="object-contain object-top sm:hidden"
               />
@@ -121,6 +122,7 @@ export default function Home() {
                 alt="Sac cabas, portefeuille et pochette assortis, en simili cuir bleu et écru, CréA'deline"
                 fill
                 priority
+                fetchPriority="high"
                 sizes="100vw"
                 className="hidden object-cover sm:block"
               />
