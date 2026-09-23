@@ -1,7 +1,7 @@
 "use client";
 
 import Script from "next/script";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { formatPrice } from "@/components/ProductCard";
 
 export type ServicePoint = {
@@ -147,58 +147,117 @@ export default function ShippingMethodPicker({
         strategy="afterInteractive"
         onReady={() => setWidgetReady(true)}
       />
-      <div className="space-y-2">
+      <div>
         <p className="text-xs font-semibold uppercase tracking-[0.1em] text-ink/45">Livraison</p>
-
-        {pointRelais && (
-          <div>
-            <label className="flex cursor-pointer items-center justify-between rounded-xl border border-line bg-white px-3 py-2.5 text-sm">
-              <span className="flex items-center gap-2">
-                <input
-                  type="radio"
-                  name="shippingMethod"
-                  checked={method === "point_relais"}
-                  onChange={() => setMethod("point_relais")}
-                />
-                {pointRelais.label}
-              </span>
-              <span className="font-medium text-ink">{formatPrice(pointRelais.priceCents)}</span>
-            </label>
-            {method === "point_relais" && (
-              <div className="mt-1.5 pl-7 text-xs">
-                {servicePoint ? (
-                  <p className="text-ink/60">
-                    {servicePoint.name} — {servicePoint.street} {servicePoint.house_number}, {servicePoint.postal_code}{" "}
-                    {servicePoint.city}{" "}
-                    <button type="button" onClick={openPicker} className="text-denim underline">
+        <div className="mt-2 space-y-2">
+          {pointRelais && (
+            <ShippingOption
+              icon={<PinIcon />}
+              label={pointRelais.label}
+              priceCents={pointRelais.priceCents}
+              selected={method === "point_relais"}
+              onSelect={() => setMethod("point_relais")}
+            >
+              {method === "point_relais" &&
+                (servicePoint ? (
+                  <div className="flex items-start justify-between gap-3 rounded-lg bg-denim/[0.06] px-3 py-2 text-xs text-ink/70">
+                    <span>
+                      <span className="font-semibold text-ink">{servicePoint.name}</span>
+                      <br />
+                      {servicePoint.street} {servicePoint.house_number}, {servicePoint.postal_code} {servicePoint.city}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={openPicker}
+                      className="shrink-0 font-semibold text-denim underline underline-offset-2"
+                    >
                       Changer
                     </button>
-                  </p>
+                  </div>
                 ) : (
-                  <button type="button" onClick={openPicker} className="text-denim underline">
+                  <button
+                    type="button"
+                    onClick={openPicker}
+                    className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-denim/40 py-2 text-xs font-semibold text-denim transition-colors hover:bg-denim/[0.06]"
+                  >
                     Choisir mon point relais
                   </button>
-                )}
-              </div>
-            )}
-          </div>
-        )}
+                ))}
+            </ShippingOption>
+          )}
 
-        {domicile && (
-          <label className="flex cursor-pointer items-center justify-between rounded-xl border border-line bg-white px-3 py-2.5 text-sm">
-            <span className="flex items-center gap-2">
-              <input
-                type="radio"
-                name="shippingMethod"
-                checked={method === "domicile"}
-                onChange={() => setMethod("domicile")}
-              />
-              {domicile.label}
-            </span>
-            <span className="font-medium text-ink">{formatPrice(domicile.priceCents)}</span>
-          </label>
-        )}
+          {domicile && (
+            <ShippingOption
+              icon={<HomeIcon />}
+              label={domicile.label}
+              priceCents={domicile.priceCents}
+              selected={method === "domicile"}
+              onSelect={() => setMethod("domicile")}
+            />
+          )}
+        </div>
       </div>
     </>
+  );
+}
+
+function ShippingOption({
+  icon,
+  label,
+  priceCents,
+  selected,
+  onSelect,
+  children,
+}: {
+  icon: ReactNode;
+  label: string;
+  priceCents: number;
+  selected: boolean;
+  onSelect: () => void;
+  children?: ReactNode;
+}) {
+  return (
+    <div
+      className={`rounded-xl border-2 transition-colors ${
+        selected ? "border-denim bg-denim/[0.04]" : "border-line bg-white"
+      }`}
+    >
+      <button
+        type="button"
+        onClick={onSelect}
+        className="flex w-full items-center gap-3 px-3.5 py-3 text-left"
+      >
+        <span
+          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
+            selected ? "border-denim" : "border-ink/25"
+          }`}
+        >
+          {selected && <span className="h-2.5 w-2.5 rounded-full bg-denim" />}
+        </span>
+        <span className={`shrink-0 ${selected ? "text-denim" : "text-ink/40"}`}>{icon}</span>
+        <span className="min-w-0 flex-1 text-sm font-medium text-ink">{label}</span>
+        <span className="text-sm font-bold text-ink">{formatPrice(priceCents)}</span>
+      </button>
+      {children && <div className="px-3.5 pb-3.5">{children}</div>}
+    </div>
+  );
+}
+
+function PinIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12Z" />
+      <circle cx="12" cy="9" r="2.5" />
+    </svg>
+  );
+}
+
+function HomeIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M4 11.5 12 4l8 7.5" />
+      <path d="M6 10v9a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-9" />
+      <path d="M10 20v-5h4v5" />
+    </svg>
   );
 }

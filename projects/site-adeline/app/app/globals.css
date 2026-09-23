@@ -35,10 +35,22 @@
   --font-script: var(--font-script);
 }
 
+/* Garde-fou récurrent (retour Julien à plusieurs reprises, jamais
+   reproductible en émulation) : un élément isolé qui déborde légèrement de
+   la largeur de l'écran pousse tout le rendu vers la droite sur mobile —
+   marge normale à gauche, plus rien à droite, symptôme classique d'un
+   overflow horizontal non contenu. Plutôt que traquer l'élément exact à
+   chaque fois qu'un nouveau composant l'introduit, on coupe la possibilité
+   même de déborder au niveau racine. */
+html {
+  overflow-x: hidden;
+}
+
 body {
   background: var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-body), sans-serif;
+  overflow-x: hidden;
 }
 
 .font-display {
