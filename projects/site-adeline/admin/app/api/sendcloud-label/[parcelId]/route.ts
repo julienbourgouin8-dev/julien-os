@@ -9,7 +9,7 @@ import { PDFDocument } from "pdf-lib";
 // de le servir). La page garde exactement les mêmes dimensions (compatible
 // rouleau d'étiquettes thermique comme impression A4 "taille réelle") — on
 // réduit juste le contenu et on le recentre, plutôt que d'agrandir la page.
-const MARGIN_RATIO = 0.06;
+const MARGIN_RATIO = 0.12;
 
 // Rétrécit et recentre chaque page du PDF source dans une marge blanche
 // (voir MARGIN_RATIO) — jamais bloquant : si le retraitement échoue pour
