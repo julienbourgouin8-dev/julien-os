@@ -2089,6 +2089,37 @@ documenté.
   potentiellement payé le tarif boutique et généré une étiquette/réservation du mauvais type de service
   côté Sendcloud à la commande réelle. Pas encore re-testé de bout en bout avec une vraie commande
   casier après ce correctif — **à faire avant la prochaine commande réelle**.
+
+### Deuxième bug trouvé dans la foulée : même produit casier proposé en deux variantes, la mauvaise gagnait par défaut
+
+Julien a collé une explication (probablement d'un autre assistant IA) confirmant que le QR seul est le
+flux "paperless" officiel Mondial Relay pour casier, mais soulignant que Sendcloud distingue parfois une
+offre "Locker (impression à domicile)" d'une offre "Locker (Paperless/QR)" via le `shipping_method_id`/
+les fonctionnalités de l'option. Vérifié en direct via `POST /v3/shipping-options` (compte réel,
+Balzac → Paris, 300g) : **confirmé, il existe deux produits Mondial Relay casier distincts, au même prix
+pile (3,81€)** :
+- `mondial_relay:locker_delivery,dualapi/labelless` — `functionalities.labelless: true` — QR seul.
+- `mondial_relay:locker_delivery,dualapi` — `functionalities.labelless: false` — **étiquette A6 classique
+  complète, imprimée chez Adeline**.
+
+`lib/sendcloud/rates.ts` ne regroupait les options que par `(carrier, isLocker)` sans regarder
+`labelless` — à prix égal, la logique "garde si strictement moins cher" gardait simplement la première
+rencontrée dans la réponse API, qui se trouve être la version QR. **Même défaut potentiel repéré pour les
+boutiques** (`service_point_qr` vs `service_point`, également 3,91€ pile) — pas confirmé en bug réel côté
+boutique (le test Vival avait bien pris la version classique), mais corrigé par la même occasion pour ne
+pas laisser un tirage au sort selon l'ordre de réponse de l'API.
+
+- **Décision avec Julien** : toujours privilégier l'étiquette classique imprimée (cohérent avec le
+  workflow d'Adeline partout ailleurs — domicile, boutique), jamais le flux QR/paperless, même à prix
+  identique ou inférieur.
+- **Corrigé** dans `lib/sendcloud/rates.ts` : la sélection de la meilleure option par `(carrier,
+  isLocker)` préfère maintenant explicitement `functionalities.labelless === false` avant de départager
+  par prix. Revérifié avec les vraies données de l'API (script Node isolé) : `mondial_relay:true`
+  sélectionne maintenant bien `mondial_relay:locker_delivery,dualapi` (étiquette classique) et non plus
+  la variante `/labelless`. Build vérifié OK.
+- **Reste à faire** : test de bout en bout d'une vraie commande casier après déploiement (aucune
+  commande casier réelle n'a encore généré une étiquette classique — seulement vérifié via l'API de
+  cotation, pas via une vraie création de colis `/v3/shipments/announce`).
 - **Choix tranché avec Julien** : garder casiers + boutiques dans le pool "Point Relais" (le moins cher
   gagne), pas de restriction aux boutiques seules.
 - Légende de prix par transporteur ajoutée au-dessus du bouton "Choisir mon point relais" (le widget

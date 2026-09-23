@@ -69,7 +69,7 @@ const EXCLUDED_CARRIER_CODES = ["sendcloud"];
 type SendcloudShippingOption = {
   code: string;
   carrier?: { code?: string; name?: string };
-  functionalities?: { last_mile?: string };
+  functionalities?: { last_mile?: string; labelless?: boolean };
   quotes?: { price?: { total?: { value?: string } } }[];
 };
 
@@ -110,6 +110,15 @@ export async function getShippingQuotes(weightGrams: number): Promise<ShippingQu
     // Meilleure option trouvée par (carrier, isLocker) — évite les doublons
     // tout en gardant chaque combinaison distincte.
     const bestByKey = new Map<string, ShippingQuote>();
+    // Pour chaque combinaison (carrier, isLocker), Sendcloud propose parfois
+    // deux produits distincts au même prix : un "labelless" (QR à scanner en
+    // point de dépôt, la borne imprime) et un classique (étiquette A6
+    // imprimée chez Adeline). Adeline colle une étiquette avant dépôt comme
+    // pour tout le reste — jamais le flux QR, même si moins cher/à égalité
+    // et rencontré en premier dans la réponse API (constaté en test réel :
+    // les deux options casier Mondial Relay étaient à 3,81€ pile, seul
+    // `functionalities.labelless` les distingue).
+    const bestLabellessByKey = new Map<string, boolean>();
 
     for (const opt of options) {
       const carrierCode = opt.carrier?.code ?? "";
@@ -121,15 +130,25 @@ export async function getShippingQuotes(weightGrams: number): Promise<ShippingQu
         if (quote && (!domicile || quote.priceCents < domicile.priceCents)) domicile = quote;
       } else if (lastMile && POINT_RELAIS_LAST_MILE.includes(lastMile) && POINT_RELAIS_CARRIERS.includes(carrierCode)) {
         const isLocker = LOCKER_LAST_MILE.includes(lastMile);
+        const labelless = Boolean(opt.functionalities?.labelless);
         const quote = toQuote(
           opt,
           "point_relais",
           `Point Relais ${opt.carrier?.name ?? carrierCode}`,
           isLocker,
         );
+        if (!quote) continue;
         const key = `${carrierCode}:${isLocker}`;
         const existing = bestByKey.get(key);
-        if (quote && (!existing || quote.priceCents < existing.priceCents)) bestByKey.set(key, quote);
+        const existingLabelless = bestLabellessByKey.get(key);
+        const shouldReplace =
+          !existing ||
+          (existingLabelless && !labelless) ||
+          (existingLabelless === labelless && quote.priceCents < existing.priceCents);
+        if (shouldReplace) {
+          bestByKey.set(key, quote);
+          bestLabellessByKey.set(key, labelless);
+        }
       }
     }
 
