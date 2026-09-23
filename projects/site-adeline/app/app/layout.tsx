@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://creadeline16.fr"),
   title: "CréA'deline — Créations personnalisées, cousues main",
   description:
-    "Sacs, trousses et pochettes cousus main sur mesure par CréA'deline, en Charente. Pièces uniques, tissus choisis, création personnalisée.",
+    "Sacs, trousses et accessoires en tissu, cousus main sur mesure en Charente. Couture artisanale, pièces uniques et idées cadeaux personnalisées.",
   // `black-translucent` : si le site est un jour ajouté à l'écran d'accueil
   // (PWA), le contenu de la page peut s'étendre sous l'encoche/île
   // dynamique au lieu de laisser une barre système opaque au-dessus — voir
