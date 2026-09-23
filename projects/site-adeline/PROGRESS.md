@@ -3,7 +3,7 @@
 ⚠️ **Ce fichier est un journal chronologique, pas un état courant.** Pour reprendre après une
 coupure de session, lire dans l'ordre : (1) `MEMORY.md` → mémoire `project_site_adeline_hero.md`
 (état condensé à jour), (2) ce fichier en partant de la section
-**"ÉTAT AU 2026-09-22 (fin de session) — à lire en premier"** juste en dessous, (3) `TODO.md` (plan
+**"ÉTAT AU 2026-09-23, 10 h 35 — à lire en premier"** juste en dessous, (3) `TODO.md` (plan
 e-commerce brique par brique, toujours valable). Les sections plus bas ("Où on en est", etc.) sont
 l'historique brut des sessions précédentes, gardé pour référence mais **partiellement obsolète**
 (ex. mentionne encore Vercel comme hébergement principal — plus vrai, voir ci-dessous).
@@ -11,9 +11,237 @@ l'historique brut des sessions précédentes, gardé pour référence mais **par
 Process générique de déploiement (VPS Hostinger + Coolify), réutilisable pour d'autres sites :
 **`.agents/skills/vps-deploy/SKILL.md`**.
 
-## ÉTAT AU 2026-09-23 (fin de session) — à lire en premier
+## ÉTAT AU 2026-09-23, 10 h 35 — à lire en premier
 
-### Point de restauration validé sur vrai iPhone — 23 septembre, 10 h
+### Compte rendu complet de la session 7 h 06 → 10 h 35
+
+#### Résultat final validé
+
+- **Production active** : image Coolify
+  `ksbifcf2nwdthwrbxa1yb555:a9f10bce24aa979f5d97279d3875e835cf9a27f8`, vérifiée sur le VPS
+  après le déploiement manuel final de Julien.
+- **Site public** : `https://creadeline16.fr`, réponse HTTP 200 après chaque déploiement contrôlé.
+- **Safari iPhone normal** : les cinq rotations apparaissent et démarrent après chargement ou
+  refresh ; le bug historique des vidéos absentes/figées n'est plus reproduit.
+- **Safari iPhone avec économie d'énergie** : le premier contact du doigt utilisé naturellement
+  pour commencer à faire défiler le hero autorise silencieusement les cinq éléments vidéo. Aucun
+  bouton supplémentaire et aucune action spécifique ne sont demandés à la visiteuse. Test validé
+  par Julien sur son véritable iPhone.
+- **Fluidité du premier geste** : la première version fonctionnelle amorçait les cinq vraies vidéos
+  dans `touchstart` et produisait une latence perceptible. La version finale utilise à la place un
+  micro-MP4 commun de 1,5 Kio pendant 150 ms ; Julien confirme après déploiement : « c'est excellent ».
+- **Catalogue** : mise en page PC validée, deux cartes de 420 px centrées indépendamment de la
+  colonne filtre ; filtre mobile centré dans la page.
+- **Performance mobile** : 72 après l'essai WebP animé, 88 après le retour aux cinq MP4 chargés
+  trop tôt, puis **91/100** après le chargement progressif. Le dernier allègement (micro-déverrouillage,
+  posters 480 px et préchargement à 250 px) est déployé après cette mesure et doit être réaudité si
+  un score actualisé est nécessaire. Les métriques du rapport à 91 étaient FCP 1,4 s, LCP 3,4 s,
+  TBT 0 ms, CLS 0 et Speed Index 2,9 s.
+
+#### 1. Incident VPS/Coolify au début de la session
+
+Le premier déploiement complet du matin a rendu simultanément Coolify, le site public et même SSH
+quasiment inaccessibles. Hostinger restait joignable et le ping répondait, ce qui pouvait faire
+penser à un problème Coolify ou réseau. Le redémarrage du VPS effectué par Julien à environ 7 h 25
+a rétabli tous les services.
+
+L'analyse des journaux du boot précédent a établi la chronologie suivante :
+
+- 7 h 08 min 15 s : début du déploiement Coolify ;
+- 7 h 08 min 33 s : premiers échecs système (`Device or resource busy`) ;
+- à partir de 7 h 09 min 49 s : `systemd-journald` signale à répétition `Under memory pressure,
+  flushing caches` ;
+- les healthchecks Coolify, PostgreSQL, Redis, Garage et du proxy expirent ; Docker/containerd
+  renvoient `context deadline exceeded` et n'arrivent plus à résoudre/copier les images ;
+- jusqu'au redémarrage, HTTPS, Coolify sur le port 8000 et la bannière SSH ne répondent plus.
+
+Cause confirmée : le VPS possède environ 3,8 Gio de RAM et **aucun swap**. Le build Next.js/Railpack
+était exécuté par BuildKit sur le même VPS que tous les services de production, sans limite de RAM
+ni de CPU. Le disque n'était pas en cause (environ 34 Go libres, inodes à 7 %) et aucune unité
+systemd n'était durablement en échec. Le noyau n'a pas produit de ligne OOM-kill classique : la
+machine est entrée en récupération mémoire/thrashing suffisamment sévère pour affamer Docker, le
+proxy et SSH avant qu'un processus précis soit tué.
+
+Après redémarrage, les déploiements suivants ont été surveillés avec `free` et `docker stats` :
+environ 2 à 2,4 Gio restaient disponibles, les rolling updates se terminaient normalement et
+l'ancien conteneur restait en service jusqu'au démarrage du nouveau. À 10 h 35, après le dernier
+déploiement, environ 2 Gio étaient encore disponibles.
+
+**Protection production encore recommandée, non réalisée dans cette session** : construire les
+images hors du VPS puis faire seulement tirer l'image à Coolify, ajouter 2 à 4 Gio de swap, limiter
+BuildKit, interdire les builds concurrents, configurer un healthcheck applicatif et une alerte de
+mémoire/disponibilité. Tant que ce chantier n'est pas fait, surveiller les builds comme aujourd'hui.
+
+#### 2. Mise en page boutique PC et mobile
+
+Le besoin PC a été clarifié à plusieurs reprises à partir de captures réelles : le filtre devait
+rester proche du bord gauche, tandis que le bloc de deux produits devait être centré par rapport au
+titre et à toute la page, pas simplement centré dans l'espace restant après le filtre.
+
+Solution finale dans `app/app/boutique/[category]/page.tsx` :
+
+- suppression du conteneur `max-w-7xl` qui ajoutait une marge globale trompeuse ;
+- à `xl`, filtre positionné indépendamment à gauche dans une largeur de 160 px ;
+- grille produits en `xl:grid-cols-[repeat(2,420px)]` avec `xl:mx-auto xl:w-fit` ;
+- aucune translation arbitraire de 28 px dans l'état final ;
+- images/cartes plus grandes mais espacements gauche/droite visuellement équilibrés ;
+- la copie locale non committée de cette mise en page a été comparée au dépôt production avant un
+  push forcé subtree. Les empreintes correspondaient : elle a été committée séparément pour éviter
+  que le déploiement vidéo ne rétablisse par accident l'ancien catalogue.
+
+Régression mobile découverte ensuite : `max-w-xs` limitait le filtre à 320 px mais le laissait
+aligné sur les 16 px de marge gauche, donc une grande marge restait à droite sur un écran de 414 px.
+Ajout de `mx-auto w-full max-w-xs md:mx-0 md:max-w-none` : centrage uniquement sur mobile, règles
+tablette/PC inchangées.
+
+#### 3. Pourquoi les vidéos Safari disparaissaient ou restaient figées
+
+Plusieurs problèmes distincts s'additionnaient, ce qui explique pourquoi chaque correctif semblait
+améliorer le site sans le rendre fiable à 100 % :
+
+1. Les cinq vidéos du panneau desktop étaient aussi montées sur mobile, en plus des cinq vidéos de
+   la liste mobile : jusqu'à dix décodeurs concurrents sur Safari iOS. Correction : montage du
+   panneau avec `isDesktop`/`matchMedia`, donc zéro vidéo desktop dans le DOM mobile.
+2. La règle HTML `Cache-Control: no-cache` s'appliquait aussi aux MP4 publics. Safari gérait mal la
+   revalidation/304 de ces médias après refresh. Correction : cache public spécifique aux médias.
+3. L'ajout tardif du `src`, l'IntersectionObserver et l'hydratation React pouvaient courir les uns
+   contre les autres après refresh. Des retries, `pageshow`, `visibilitychange`, événements média
+   et un watchdog sur `currentTime` ont été ajoutés pour reprendre une lecture réellement figée.
+4. Les anciens MP4 n'avaient souvent qu'une seule image-clé sur dix secondes. Les cinq variantes
+   mobiles ont été régénérées à 720 px, 24 i/s, H.264 Main, `yuv420p`, `faststart`, sans audio et
+   avec une image-clé toutes les deux secondes. Safari peut ainsi reprendre le décodage sans revenir
+   au tout début du fichier.
+5. Une affiche JPEG a été ajoutée à chaque vidéo : même avant le premier frame ou en cas de retard
+   média, le produit reste visible au lieu de laisser un rectangle vide.
+
+#### 4. Essai WebP animé, pourquoi il a été abandonné
+
+Pour supprimer totalement la politique d'autoplay Safari, les cinq rotations ont brièvement été
+converties en WebP animés 640×360 à 8 i/s. Sur vrai iPhone, ce montage survivait effectivement au
+refresh et ne dépendait plus de `video.play()`. En revanche :
+
+- animation visiblement moins fluide qu'une vidéo 24 i/s ;
+- environ 4 Mio chargés par la page ;
+- les cinq images étaient récupérées par Lighthouse malgré le lazy loading ;
+- score mobile tombé de 96 à **72**, LCP à **14,6 s** ;
+- l'une des animations devenait elle-même l'élément LCP.
+
+Les WebP animés ont donc été retirés du code et supprimés des assets. Les MP4 mobiles optimisés ont
+été conservés. Cette expérience reste utile : elle a prouvé que le dernier obstacle était bien la
+politique média de Safari, pas la visibilité des composants.
+
+#### 5. Identification du mode économie d'énergie iOS
+
+Après retour aux MP4, les affiches apparaissaient mais Safari superposait son bouton lecture et
+refusait parfois toute lecture automatique. Le HTML public a été vérifié : `muted`, `loop`,
+`playsInline` et `autoplay` étaient correctement présents. Julien a ensuite désactivé le mode
+économie d'énergie : toutes les vidéos ont immédiatement fonctionné.
+
+C'est un comportement volontaire de WebKit : iOS désactive l'autoplay des vidéos silencieuses en
+mode économie d'énergie et affiche son contrôle natif. Il n'existe pas d'API Web permettant de lire
+directement l'état de ce mode, ni d'attribut permettant de contourner l'interdiction. En revanche,
+un `play()` exécuté de manière synchrone pendant un véritable geste utilisateur reste autorisé.
+Un simple événement `scroll` ne suffit pas, mais `touchstart` oui.
+
+#### 6. Déverrouillage invisible au premier geste
+
+Première version fonctionnelle (`f922e1d`) :
+
+- écoute de `touchstart` sur `document`, en capture, passive et `once` ;
+- au premier contact utilisé pour faire défiler le hero, attribution des cinq vraies sources MP4 ;
+- `muted = true`, `defaultMuted = true` puis `play()` synchrone sur chaque élément ;
+- après 250 ms, pause des vidéos éloignées ; leurs observers les reprennent à l'entrée en vue ;
+- aucun bouton, aucune interception de l'événement et aucun changement du scroll.
+
+Cette version a été validée sur vrai iPhone, y compris en économie d'énergie. Elle a cependant
+révélé une petite latence au premier geste : l'autorisation déclenchait en même temps cinq réseaux
+MP4 et cinq initialisations de décodeur.
+
+Version finale fluide (`a9f10bc`) :
+
+- création de `public/products/videos/mobile-unlock.mp4`, clip H.264 blanc 32×18, 0,25 s,
+  sans audio, `faststart`, **1 533 octets** ;
+- au premier `touchstart`, chaque élément reçoit ce même micro-fichier mis en cache une seule fois ;
+- les cinq appels `play()` restent synchrones dans le geste, donc Safari autorise bien chacun des
+  éléments, mais sans télécharger/décoder les vraies rotations ;
+- pause des éléments éloignés après 150 ms ;
+- la vraie source remplace le micro-clip seulement à 250 px de l'écran ;
+- l'autorisation étant attachée aux éléments `<video>`, leur observer peut ensuite les lire/pause
+  normalement durant le scroll.
+
+Validation finale par Julien, après déploiement en économie d'énergie : fonctionnement fluide et
+absence de la latence gênante du premier essai.
+
+#### 7. Performance : mesures et corrections
+
+Évolution observée pendant la session :
+
+| Version | Score mobile | Cause dominante |
+|---|---:|---|
+| Avant l'essai WebP | 96 | Base précédente, mais vidéos Safari non fiables |
+| WebP animés | 72 | 4 Mio d'images animées, LCP 14,6 s |
+| MP4 présents dès le HTML | 88 | cinq MP4, environ 3,3 Mio, téléchargés au chargement |
+| Sources différées à 500 px | 91 | seulement les deux premières vidéos, environ 1,1 Mio |
+| Micro-déverrouillage + 250 px | à remesurer | aucun vrai MP4 au chargement initial attendu |
+
+Corrections appliquées :
+
+- retrait de tout `src` MP4 du HTML mobile initial ; seuls `data-video-src` et les posters restent ;
+- ajout de la vraie source via React/IntersectionObserver à 250 px de la zone visible ;
+- cinq posters recompressés puis redimensionnés de 720 à 480 px : environ 198 Kio au premier audit,
+  114 Kio au deuxième, puis **environ 61 Kio** dans l'état final ;
+- `fetchPriority="high"` explicite sur les images hero mobile et desktop ; le HTML compilé contient
+  bien le preload du hero mobile avec `fetchPriority="high"` ;
+- `/brand` et `/products` : `Cache-Control: public, max-age=31536000, immutable` ; toute future
+  modification d'un média doit utiliser un nouveau nom/version de fichier ;
+- `/uploads` garde `max-age=3600, stale-while-revalidate=86400`, car une photo corrigée depuis
+  l'admin peut conserver son chemin ;
+- CSS bloquante de 10,4 Kio (~150 ms), JavaScript legacy estimé à 13 Kio, JS inutilisé estimé à
+  24 Kio et animation `write-on` non composée : volontairement laissés en place. Leur gain est
+  faible et les modifier aurait présenté un risque disproportionné pour le hero validé.
+
+#### 8. Déploiements et contrôle de production
+
+Le projet reste développé dans `julien-os/projects/site-adeline`, puis extrait vers le dépôt privé
+`julienbourgouin8-dev/creadeline-site` avec `git subtree split`. Coolify ne lit que ce dépôt dédié.
+
+Commits locaux importants de la session :
+
+- `d59ee3b` : retour aux MP4 fluides, réencodage et posters ;
+- `aac7e22` : sauvegarde du centrage catalogue PC déjà présent en production ;
+- `4686844` : autoplay natif déclaré sur toutes les vidéos mobiles ;
+- `4d5c48c` : déverrouillage au premier toucher, chargement progressif, centrage mobile et perf ;
+- `94b4732` : point de restauration après validation sur vrai iPhone ;
+- `719aa66` : micro-déverrouillage 1,5 Kio et optimisation finale de la fluidité.
+
+Commits extraits/déployés importants :
+
+- `8b441cc` : MP4 optimisés + catalogue PC préservé ;
+- `f922e1d` : première version du déverrouillage tactile, validée fonctionnellement ;
+- `a9f10bc` : version finale fluide, active à 10 h 35.
+
+À chaque déploiement effectué par l'agent : mémoire vérifiée pendant le build, fin du rolling update,
+tag du conteneur, HTTP 200, présence/absence des bons médias dans le HTML public, support HTTP 206
+des MP4 et taille des posters contrôlés. Le dernier déploiement a été lancé manuellement par Julien,
+puis son conteneur et la mémoire VPS ont été vérifiés par l'agent.
+
+#### 9. Règles de non-régression
+
+1. Ne jamais remonter les cinq vrais MP4 mobiles dans le HTML initial.
+2. Ne jamais supprimer `mobile-unlock.mp4` ni déplacer le `play()` hors du callback synchrone de
+   `touchstart` sans retester sur vrai iPhone en économie d'énergie.
+3. Ne pas considérer Chrome mobile simulé ou WebKit desktop comme preuve finale pour Safari iOS.
+4. Garder le panneau desktop démonté sur mobile ; ne jamais revenir à dix vidéos simultanées.
+5. Tout remplacement sous `/brand` ou `/products` doit changer de nom, car le cache est immutable.
+6. Tester les quatre scénarios après toute modification média : ouverture normale, refresh normal,
+   ouverture en économie d'énergie, refresh en économie d'énergie, puis scroll immédiat sans attente.
+7. Conserver les posters : ils garantissent une fiche visuelle complète avant le premier frame.
+8. Pour le catalogue, modifier les règles mobiles et PC dans leurs breakpoints respectifs ; une
+   correction `xl` ne doit jamais déplacer le filtre mobile.
+9. Ne pas déclencher plusieurs builds Coolify simultanément et surveiller la RAM tant que les builds
+   restent effectués sur le VPS sans swap ni limites.
+
+### Point de restauration intermédiaire validé sur vrai iPhone — 23 septembre, 10 h
 
 - Version production validée : commit extrait `f922e1d` (monorepo `4d5c48c`).
 - Safari mobile après refresh : les vidéos restent visibles et se lancent normalement.
@@ -25,8 +253,7 @@ Process générique de déploiement (VPS Hostinger + Coolify), réutilisable pou
   cinq MP4 complets.
 - Seul défaut restant observé : en mode économie d'énergie, le premier geste de défilement présente
   une petite latence perceptible car les cinq sources sont actuellement attribuées et amorcées dans
-  le même `touchstart`. Prochaine optimisation : conserver l'autorisation donnée par ce geste tout
-  en réduisant fortement le travail réseau/décodage effectué sur cette première frame.
+  le même `touchstart`. L'optimisation décrite juste après a ensuite supprimé cette latence.
 - Optimisation préparée après ce point de restauration : le premier toucher ne charge plus les cinq
   vraies vidéos. Il fait jouer dans chaque élément un micro-MP4 blanc commun de **1,5 Kio** pendant
   150 ms, ce qui conserve l'autorisation Safari attachée au geste avec un coût réseau et décodage
@@ -34,7 +261,7 @@ Process générique de déploiement (VPS Hostinger + Coolify), réutilisable pou
 - Les cinq affiches ont été redimensionnées de 720 à 480 px et passent d'environ 114 Kio à 61 Kio.
   `/brand` et `/products` ont maintenant un cache immutable d'un an ; `/uploads` garde son cache
   court car les images issues de l'admin peuvent changer sans nouveau chemin. ESLint ciblé et build
-  Next.js production validés. Cette optimisation reste à valider sur vrai iPhone après déploiement.
+  Next.js production validés. Optimisation ensuite déployée et validée sur le vrai iPhone de Julien.
 
 ### Correctif Safari + centrage catalogue du 23 septembre au matin
 
@@ -139,21 +366,15 @@ Coolify sur le même VPS Hostinger (Frankfurt) :
 
 ### Reste à faire (liste unique, remplace les listes éparpillées des sections précédentes)
 
-0. **Résolu le 2026-09-23 — vidéos mobiles après rechargement Safari.** Historique : malgré 3
-   corrections successives le 2026-09-22 : (1) `preload="none"`→`"metadata"`, (2) panneau vidéo
-   desktop qui restait monté sur mobile (10 `<video>` en concurrence, corrigé via `isDesktop`
-   matchMedia), (3) `Cache-Control: no-cache` appliqué par erreur aux fichiers vidéo eux-mêmes
-   (bug WebKit connu : lecture vidéo cassée par une revalidation 304, corrigé avec une règle
-   `public, max-age=3600` dédiée à `/brand|products|uploads`). **Chaque correction a réellement
-   amélioré les choses** (Julien confirme : "le site reste fluide") mais **le bug de fond
-   persiste** : au premier chargement les vidéos jouent, après un simple reload elles ne
-   s'affichent plus, cause exacte non identifiée. Mis de côté par Julien pour avancer sur autre
-   chose (2026-09-22) — **à reprendre**. Piste non essayée : accès à distance à Safari Web
-   Inspector (iPhone → Mac) pour voir de vraies erreurs console/réseau au lieu de deviner depuis
-   l'émulation Chrome DevTools, qui n'avait jamais réussi à reproduire le bug. La correction
-   finale charge chaque source à l'approche, utilise l'autoplay natif muet, démarre dès 1 % de
-   visibilité et surveille l'avancement réel de `currentTime` pour relancer une lecture Safari
-   figée. Le double hero au refresh est traité séparément via `page-reload`.
+0. **Résolu et validé le 2026-09-23 — vidéos mobiles Safari, refresh et économie d'énergie.** Les
+   correctifs préparatoires du 22 septembre restent nécessaires : panneau desktop démonté sur
+   mobile, cache média distinct du HTML et watchdog de lecture. La cause finale du comportement
+   « affiche + bouton play » a été confirmée sur le vrai iPhone de Julien : iOS désactive
+   volontairement l'autoplay en mode économie d'énergie. État final : premier `touchstart` sur le
+   hero utilisé comme geste d'autorisation, via un micro-MP4 commun de 1,5 Kio pendant 150 ms ;
+   chaque vraie source n'est ajoutée qu'à 250 px de l'écran. Fonctionne après ouverture et refresh,
+   avec ou sans économie d'énergie, sans bouton supplémentaire. Voir le compte rendu 7 h 06 →
+   10 h 35 en tête de fichier avant toute modification de `VitrineArc.tsx`.
 1. **Vérification bout en bout réelle** (en cours, 2026-09-22 : Julien teste l'admin — ajout de
    produits) : se connecter à `admin.creadeline16.fr`,
    ajouter un produit avec photo (confirmer qu'elle atterrit sur Garage, pas sur
