@@ -2507,3 +2507,47 @@ comparaison, pas juste en le lisant tel quel.
 3. Flux "confirmer la disponibilité avant expédition" (toujours volontairement pas construit).
 4. Reste de TODO.md §8 inchangé (mention TVA, SEO produit avancé, Stripe Radar, poids réel des
    produits, décalage mobile).
+
+## Mise à jour — session 2026-09-23 (nuit, fin) : marge ajustée à 12%, code "HOM" confirmé complet, vrai bug de mise en page trouvé sur la page confirmation
+
+### Marge d'étiquette : 6% → 12%
+
+Julien a confirmé que la marge était bien présente (fausse alerte de ma part la fois précédente — les
+aperçus qu'il colle sont recadrés au contenu, donnant l'impression que ça touche le bord), mais restait
+trop juste à son goût. `MARGIN_RATIO` passé de `0.06` à `0.12` dans
+`admin/app/api/sendcloud-label/[parcelId]/route.ts`, revérifié par rendu PNG avant déploiement.
+
+### Question de Julien : le "HOM" est-il tronqué ?
+
+Vérifié dans le flux de contenu brut du PDF (décompression zlib manuelle, pas une supposition) :
+l'opérateur qui dessine ce texte est littéralement `(HOM) Tj` — trois caractères, rien de plus après.
+Ce n'est pas un mot coupé, c'est le code service complet de Mondial Relay pour la livraison à domicile
+(même famille que "24R" vu sur les étiquettes point relais). Rien à corriger.
+
+### Vrai bug trouvé : `.hero-pop` (classe d'animation) applique `display: inline-flex`, casse la mise en page de la carte de confirmation
+
+Julien signale (avec capture) que sur la page de confirmation de commande, l'article et le Total se
+retrouvent écrasés sur la même ligne au lieu de s'empiler. Cette fois, un vrai bug de code (contrairement
+aux fausses pistes précédentes sur les étiquettes) :
+
+- **Cause** : `.hero-pop` dans `app/globals.css` combine l'animation d'entrée ("pop-in") ET
+  `display: inline-flex` — voulu pour les petits éléments (boutons icône+texte) qui utilisent cette
+  classe, mais la carte de résumé de commande (plusieurs enfants censés s'empiler : numéro de commande,
+  liste d'articles, total) l'utilisait aussi juste pour l'animation. Résultat : ses enfants devenaient
+  des items flex côte à côte au lieu de blocs empilés.
+  - Vérifié directement sur le HTML servi en prod (`curl` sur la vraie page) avant de corriger, pas
+    juste supposé à partir de la capture.
+- **Corrigé** : nouvelle classe `.pop-in` dans `globals.css` (même animation, sans le `display`), la
+  carte de confirmation l'utilise à la place de `.hero-pop`. Les 4 autres usages de `.hero-pop` dans le
+  code (boutons, icône checkmark) vérifiés un par un — tous des cas où `inline-flex` est voulu ou sans
+  incidence (contenu unique), aucun autre à corriger.
+- **Vérifié visuellement en local avant déploiement** (serveur `npm run dev` + navigateur, pas juste le
+  HTML) : article et Total bien sur des lignes séparées. Build OK, déployé.
+
+### Reste à faire après cette session
+
+1. Domaine Resend à vérifier (toujours en attente).
+2. Clé secrète Stripe live manquante (toujours en attente).
+3. Flux "confirmer la disponibilité avant expédition" (toujours volontairement pas construit).
+4. Reste de TODO.md §8 inchangé (mention TVA, SEO produit avancé, Stripe Radar, poids réel des
+   produits, décalage mobile).

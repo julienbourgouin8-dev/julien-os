@@ -54,7 +54,7 @@ export default async function CommandeConfirmeePage({
               </p>
 
               <div
-                className="hero-pop mt-8 rounded-2xl border border-ink/[0.05] bg-[#fffdf8] p-6 text-left shadow-[0_1px_2px_rgba(36,27,21,0.04),0_10px_28px_rgba(36,27,21,0.06)]"
+                className="pop-in mt-8 rounded-2xl border border-ink/[0.05] bg-[#fffdf8] p-6 text-left shadow-[0_1px_2px_rgba(36,27,21,0.04),0_10px_28px_rgba(36,27,21,0.06)]"
                 style={{ animationDelay: "0.15s" }}
               >
                 <p className="text-[0.65rem] font-semibold uppercase tracking-[0.15em] text-ink/40">

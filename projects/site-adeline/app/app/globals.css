@@ -107,6 +107,18 @@ body {
   animation: pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
+/* Même animation que .hero-pop, sans le `display: inline-flex` — ce dernier
+   n'est voulu que sur les petits éléments type bouton/icône (contenu unique
+   ou déjà explicitement flex). Appliqué par erreur à une carte à plusieurs
+   enfants empilés (page confirmation commande), ça les transformait en
+   items flex côte à côte au lieu de s'empiler (constaté en test réel,
+   prix/Total écrasés sur une seule ligne). À utiliser pour tout conteneur
+   qui doit juste garder son display normal (block) tout en ayant l'effet
+   d'entrée. */
+.pop-in {
+  animation: pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
 .hero-media {
   animation: hero-settle 1.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 }

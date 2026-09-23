@@ -313,8 +313,16 @@ relations DB.
 - [x] **Marge blanche sur toutes les étiquettes** : certains gabarits transporteur (ex. Mondial Relay
       domicile "HOM") collent du contenu au bord de la page. Retraité dans l'unique proxy de
       téléchargement (`admin/app/api/sendcloud-label/[parcelId]/route.ts`, `pdf-lib`) — page
-      rétrécie à 88% et recentrée, mêmes dimensions exactes. Vérifié par rendu PNG avant/après
+      réduite (marge finale 12%, ajustée depuis 6% après retour de Julien) et recentrée, mêmes
+      dimensions exactes. Vérifié par rendu PNG avant/après (2026-09-23).
+- [x] **Bug de mise en page corrigé sur la page confirmation de commande** : `.hero-pop` (classe
+      d'animation) impose `display: inline-flex`, appliquée par erreur à la carte de résumé de
+      commande — ses enfants (article, total) se retrouvaient côte à côte au lieu de s'empiler.
+      Nouvelle classe `.pop-in` (même animation, sans le display forcé) pour ce cas ; les autres
+      usages de `.hero-pop` vérifiés, tous corrects. Vérifié visuellement en local avant déploiement
       (2026-09-23).
+- [x] Toutes les commandes de test annulées de la session supprimées de la base (11 commandes,
+      2026-09-23) — demande explicite de Julien après la série de tests transporteurs.
 - [x] Retrait à l'entrepôt (0€, pas de transporteur) comme 3e mode de livraison, toujours
       proposé sur la page panier (2026-09-23)
 - [ ] Clarifier/masquer le champ adresse Stripe pour les commandes point relais — message
