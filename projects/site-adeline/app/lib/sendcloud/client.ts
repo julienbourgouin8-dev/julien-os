@@ -54,6 +54,15 @@ export type ServicePointDelivery = {
   postNumber?: string;
 };
 
+const ADDRESS_LINE_1_MAX = 32;
+
+function splitAddressLine1(line1: string, maxLen = ADDRESS_LINE_1_MAX): { line1: string; overflow: string } {
+  if (line1.length <= maxLen) return { line1, overflow: "" };
+  let cut = line1.lastIndexOf(" ", maxLen);
+  if (cut <= 0) cut = maxLen; // pas d'espace trouvé (mot unique très long) : coupe brute
+  return { line1: line1.slice(0, cut).trim(), overflow: line1.slice(cut).trim() };
+}
+
 export async function createParcelAndLabel(params: {
   orderId: string;
   customerEmail?: string | null;
@@ -106,12 +115,21 @@ export async function createParcelAndLabel(params: {
   const weightKg = (params.weightKg ?? 0.5).toFixed(3); // Poids par défaut 500g pour confection textile si non fourni
   const totalValue = (params.totalCents / 100).toFixed(2);
 
+  // Sendcloud limite address_line_1 à 32 caractères ("address 1 combined
+  // with the house number") — une vraie adresse française avec un nom de
+  // rue long la dépasse facilement (ex. "22 Rue du Terrier de
+  // Bourguignole", 34 caractères, rencontré en test réel). On coupe au
+  // dernier espace avant la limite et on renvoie le surplus sur la ligne 2
+  // plutôt que de faire échouer toute la commande.
+  const { line1: addressLine1, overflow } = splitAddressLine1(params.address.line1 || fromAddress.address_line_1);
+  const addressLine2 = [overflow, params.address.line2].filter(Boolean).join(", ") || undefined;
+
   const payload = {
     from_address: fromAddress,
     to_address: {
       name: recipientName,
-      address_line_1: params.address.line1 || fromAddress.address_line_1,
-      address_line_2: params.address.line2 || undefined,
+      address_line_1: addressLine1,
+      address_line_2: addressLine2,
       city: params.address.city,
       postal_code: params.address.postal_code,
       country_code: params.address.country || "FR",
