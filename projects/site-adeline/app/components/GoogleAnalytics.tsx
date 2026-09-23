@@ -25,8 +25,12 @@ function loadGtag(measurementId: string) {
   document.head.appendChild(script);
 
   window.dataLayer = window.dataLayer || [];
-  window.gtag = function gtag(...args: unknown[]) {
-    window.dataLayer.push(args);
+  // Conserver exactement la forme du snippet officiel Google. Le chargeur
+  // gtag reconnaît les objets `arguments`, pas de simples tableaux issus
+  // d'un rest parameter : avec `push(args)`, les commandes restaient dans
+  // dataLayer sans jamais produire de requête /g/collect.
+  window.gtag = function gtag(..._args: unknown[]) {
+    window.dataLayer.push(arguments);
   };
   // Consent Mode : loadGtag() n'est appelé qu'après acceptation explicite du
   // toggle "Mesure d'audience" (voir plus bas), donc analytics_storage est
