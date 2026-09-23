@@ -241,14 +241,28 @@ export default function ShippingMethodPicker({
                     </button>
                   </div>
                 ) : (
-                  <button
-                    type="button"
-                    onClick={openPicker}
-                    disabled={locating}
-                    className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-denim/40 py-2 text-xs font-semibold text-denim transition-colors hover:bg-denim/[0.06] disabled:opacity-60"
-                  >
-                    {locating ? "Localisation…" : "Choisir mon point relais"}
-                  </button>
+                  <div className="space-y-2">
+                    {Object.keys(pointRelaisByCarrier).length > 1 && (
+                      <p className="flex flex-wrap gap-x-3 gap-y-0.5 text-[0.7rem] text-ink/50">
+                        {Object.values(pointRelaisByCarrier).map(
+                          (q) =>
+                            q && (
+                              <span key={q.label}>
+                                {q.label.replace("Point Relais ", "")} : {formatPrice(q.priceCents)}
+                              </span>
+                            ),
+                        )}
+                      </p>
+                    )}
+                    <button
+                      type="button"
+                      onClick={openPicker}
+                      disabled={locating}
+                      className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-denim/40 py-2 text-xs font-semibold text-denim transition-colors hover:bg-denim/[0.06] disabled:opacity-60"
+                    >
+                      {locating ? "Localisation…" : "Choisir mon point relais"}
+                    </button>
+                  </div>
                 ))}
             </ShippingOption>
           )}
