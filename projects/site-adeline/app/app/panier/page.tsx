@@ -2,15 +2,22 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Header from "@/components/Header";
 import { formatPrice } from "@/components/ProductCard";
+import ShippingMethodPicker, { type ShippingState } from "@/components/ShippingMethodPicker";
 import { useCart } from "@/lib/cart/useCart";
+
+const INITIAL_SHIPPING_STATE: ShippingState = { method: null, priceCents: 0, servicePoint: null, ready: true };
 
 export default function PanierPage() {
   const { items, itemCount, subtotalCents, removeItem, updateQuantity } = useCart();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [shipping, setShipping] = useState<ShippingState>(INITIAL_SHIPPING_STATE);
+
+  const cartItems = items.map((i) => ({ productId: i.productId, quantity: i.quantity }));
+  const handleShippingChange = useCallback((state: ShippingState) => setShipping(state), []);
 
   const handleCheckout = async () => {
     setLoading(true);
@@ -20,7 +27,9 @@ export default function PanierPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
+          items: cartItems,
+          shippingMethod: shipping.method ?? undefined,
+          servicePoint: shipping.servicePoint ?? undefined,
         }),
       });
       const data = await res.json();
@@ -139,15 +148,12 @@ export default function PanierPage() {
                   <span>Sous-total</span>
                   <span className="font-medium text-ink">{formatPrice(subtotalCents)}</span>
                 </div>
-                <div className="flex justify-between text-ink/60">
-                  <span>Livraison</span>
-                  <span className="font-medium text-teal">Offerte</span>
-                </div>
+                <ShippingMethodPicker items={cartItems} onChange={handleShippingChange} />
               </div>
 
               <div className="mt-4 flex items-baseline justify-between border-t border-line pt-4">
                 <span className="text-sm font-semibold text-ink">Total</span>
-                <span className="font-display text-2xl text-ink">{formatPrice(subtotalCents)}</span>
+                <span className="font-display text-2xl text-ink">{formatPrice(subtotalCents + shipping.priceCents)}</span>
               </div>
 
               {error && <p className="mt-4 text-sm text-rust">{error}</p>}
@@ -155,10 +161,10 @@ export default function PanierPage() {
               <button
                 type="button"
                 onClick={handleCheckout}
-                disabled={loading}
+                disabled={loading || !shipping.ready}
                 className="mt-5 flex w-full items-center justify-center rounded-full bg-denim py-4 text-sm font-bold text-paper shadow-[0_8px_20px_rgba(79,108,143,0.35)] transition-transform hover:-translate-y-0.5 disabled:opacity-60"
               >
-                {loading ? "Redirection…" : "Passer commande"}
+                {loading ? "Redirection…" : !shipping.ready ? "Choisis un mode de livraison" : "Passer commande"}
               </button>
 
               <p className="mt-4 flex items-center justify-center gap-1.5 text-xs text-ink/40">

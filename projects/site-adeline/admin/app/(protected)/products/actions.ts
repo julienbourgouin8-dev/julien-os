@@ -21,6 +21,7 @@ function parseInput(formData: FormData): ProductInput | { error: string } {
   const description = formData.get("description");
   const priceEuros = formData.get("price");
   const stock = formData.get("stock");
+  const weight = formData.get("weight");
   const status = formData.get("status");
 
   if (typeof name !== "string" || !name.trim()) return { error: "Le nom est requis." };
@@ -40,12 +41,19 @@ function parseInput(formData: FormData): ProductInput | { error: string } {
   const stockNum = typeof stock === "string" ? parseInt(stock, 10) : 0;
   if (Number.isNaN(stockNum) || stockNum < 0) return { error: "Stock invalide." };
 
+  const weight_grams =
+    typeof weight === "string" && weight.trim() !== "" ? Math.round(parseFloat(weight)) : null;
+  if (weight_grams !== null && (Number.isNaN(weight_grams) || weight_grams < 0)) {
+    return { error: "Poids invalide." };
+  }
+
   return {
     name: name.trim(),
     category,
     description: typeof description === "string" ? description.trim() : "",
     price_cents,
     stock: stockNum,
+    weight_grams,
     images: formData.getAll("existingImages").filter((v): v is string => typeof v === "string"),
     status: status as ProductStatus,
   };

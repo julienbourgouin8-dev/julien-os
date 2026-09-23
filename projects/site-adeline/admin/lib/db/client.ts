@@ -47,6 +47,10 @@ export function ensureSchema(): Promise<void> {
           updated_at TIMESTAMPTZ NOT NULL
         )
       `;
+      // Poids en grammes, nécessaire pour demander un tarif de port réel à
+      // l'API Sendcloud (voir lib/shipping.ts) — nullable, les produits déjà
+      // créés n'en ont pas encore, à compléter en admin.
+      await sql`ALTER TABLE products ADD COLUMN IF NOT EXISTS weight_grams INTEGER`;
       await sql`
         CREATE TABLE IF NOT EXISTS orders (
           id TEXT PRIMARY KEY,

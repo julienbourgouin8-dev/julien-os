@@ -1935,3 +1935,72 @@ tapé les identifiants, et dans quelle app/navigateur.
    d'informations supplémentaires ou de patience respectivement.
 5. **Une fois tout ça stable** : premier vrai test de commande de bout en bout (paiement Stripe
    réel → décrément stock → étiquette Sendcloud → email) avant d'considérer le site prêt à annoncer.
+
+## Mise à jour — session 2026-09-23 : admin réparé et GA4 validé en production
+
+- **Admin réparé** : le tableau de bord plantait après connexion car le pilote PostgreSQL renvoyait
+  `created_at` comme objet `Date`, alors que le tri appelait directement `localeCompare`. Le tri
+  convertit maintenant explicitement les valeurs en timestamps. Build validé, déploiement Coolify
+  terminé et tableau de bord vérifié dans Safari.
+- **Bonne propriété GA4 rétablie** : la production utilise de nouveau le flux Web
+  `Site public — https://creadeline16.fr`, identifiant `G-18XP8S05ZS` (propriété 555468194).
+- **Cause racine du zéro hit trouvée** : l'implémentation locale de `gtag` poussait un tableau
+  (`dataLayer.push(args)`) au lieu de l'objet `arguments` attendu par le chargeur Google. Le script
+  `gtag.js` se chargeait donc bien, mais les commandes `config` et `page_view` restaient sans effet.
+- **Correction déployée** : `window.gtag` reproduit maintenant la forme du snippet officiel avec
+  `dataLayer.push(arguments)`. Un test réseau de production a observé une requête
+  `page_view` vers `region1.google-analytics.com/g/collect` acceptée en HTTP 204.
+- **Preuve fonctionnelle dans GA4** : après une vraie navigation Safari consentie, le rapport Temps
+  réel a affiché 1 utilisateur actif, 1 vue et les événements `first_visit`, `page_view` et
+  `session_start` sur la page d'accueil. GA4 est désormais réellement opérationnel.
+- **Ordre de la suite confirmé par Julien** : (1) Stripe live, (2) bordereaux d'envoi Sendcloud,
+  (3) remplacer les statistiques PostHog du dashboard admin par Google Analytics via API.
+
+## Mise à jour — session 2026-09-23 (suite) : compte Sendcloud créé, port dynamique + point relais codés
+
+- **Compte Sendcloud créé et clés API générées** (`SENDCLOUD_PUBLIC_KEY`/`SENDCLOUD_SECRET_KEY`), ajoutées
+  aux variables d'env Coolify de `creadeline-app` **et** `creadeline-admin` (le code utilise les deux :
+  `app/lib/sendcloud/client.ts` pour la génération auto au webhook, `admin/lib/sendcloud/client.ts` pour le
+  bouton manuel de secours). Webhook de notification Sendcloud laissé désactivé (pas de route pour le
+  recevoir côté nous, pas bloquant — le tracking/label arrivent déjà dans la réponse de création du colis).
+- **Bug de menu Sendcloud** : la doc/TODO existante référençait "Settings → API access", qui n'existe plus
+  dans l'UI actuelle — c'est maintenant **Réglages → Boutiques connectées → Sendcloud API → Connect**.
+- **Poids produit ajouté** : colonne `weight_grams` (nullable, grammes) sur `products`, migration
+  idempotente dans `app/lib/db/client.ts` et `admin/lib/db/client.ts` (appliquée en prod, vérifié via le
+  build local qui se connecte à la vraie base). Champ ajouté au formulaire admin
+  (`admin/app/(protected)/products/ProductForm.tsx` + `actions.ts`) — **les produits déjà en ligne n'ont
+  pas encore de poids renseigné**, à compléter par Julien ; un poids par défaut de 300g est utilisé en
+  attendant (`DEFAULT_ITEM_WEIGHT_GRAMS` dans `app/lib/shipping.ts`).
+- **Calcul de port réel via l'API Sendcloud v3 `shipping-options`** (`app/lib/sendcloud/rates.ts`) : testé
+  en direct avec les vraies clés avant d'écrire le code (poids 500g, destination Paris) — tarifs confirmés
+  fonctionnels, ex. Mondial Relay Point Relais ~3,91€, Colissimo Domicile ~8,78€, Chronopost Domicile
+  ~9,67€. Nécessite un `from_address` explicite dans la requête (sinon l'API renvoie les options sans
+  prix, `quotes: []`, découvert en testant) — adresse d'expédition réelle d'Adeline fournie par Julien :
+  **16 route de la Gabote, 16430 Balzac** (`SENDCLOUD_FROM_*` dans `.secrets/sendcloud.env`, à ajouter aux
+  variables d'env de `creadeline-app` uniquement — `rates.ts` n'est utilisé que côté app, pas admin).
+- **Choix UX tranché avec Julien** : le client choisit entre deux options sur la page panier (pas de tarif
+  unique imposé) — **Point Relais** (Mondial Relay) ou **Domicile** (Colissimo/Chronopost, le moins cher
+  des deux retenu automatiquement).
+- **Point Relais nécessite le widget officiel Sendcloud** (`embed.sendcloud.sc/spp/1.0.0/api.min.js`,
+  `sendcloud.servicePoints.open(...)`) — pas une carte à construire nous-mêmes, juste intégrer ce script.
+  Doit tourner sur notre propre page panier (Stripe Checkout étant une page hébergée par Stripe, on ne
+  peut rien y insérer) : le choix domicile/point relais se fait donc **avant** Stripe, pas dessus.
+- **Nouveau composant `app/components/ShippingMethodPicker.tsx`** : appelle `/api/shipping-quote` (nouvelle
+  route, calcule le poids du panier + interroge Sendcloud) pour afficher les deux prix, ouvre le widget si
+  "Point Relais" est choisi, bloque le bouton "Passer commande" tant qu'un choix complet n'est pas fait
+  (méthode + relais précis si applicable) — remplace le bloc statique "Livraison : Offerte" de
+  `app/app/panier/page.tsx`.
+- **`app/app/api/checkout/route.ts`** : ne fait plus confiance au prix de port envoyé par le client — recalcule
+  côté serveur à partir du poids réel + méthode choisie avant de créer la session Stripe. Si Sendcloud est
+  indisponible ou pas encore configuré (adresse d'expédition manquante), retombe sur la livraison gratuite
+  existante plutôt que de bloquer le paiement.
+- **Webhook Stripe** (`app/app/api/webhooks/stripe/route.ts`) : lit `shippingMethod`/`servicePoint` dans les
+  metadata de la session, calcule le vrai poids total de la commande (plus de `weightKg: 0.5` en dur), et
+  transmet `to_service_point`/`to_post_number` au client Sendcloud pour la livraison en point relais
+  (`app/lib/sendcloud/client.ts` étendu en conséquence — accepte une adresse sans `line1` si un point relais
+  est fourni, voir la doc Sendcloud "Creating a parcel with service point delivery").
+- **Les deux builds (`app/` et `admin/`) passent sans erreur** avant tout commit/déploiement.
+- **Reste à faire** : variables `SENDCLOUD_FROM_*` et `NEXT_PUBLIC_SENDCLOUD_PUBLIC_KEY` à ajouter dans
+  Coolify (`creadeline-app` uniquement) puis déployer ; renseigner le poids réel des produits déjà en ligne
+  dans l'admin ; premier vrai test de bout en bout (choix point relais + domicile, paiement Stripe test,
+  vérifier que l'étiquette Sendcloud se génère correctement dans les deux cas).

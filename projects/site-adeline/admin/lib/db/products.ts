@@ -14,6 +14,7 @@ export type Product = {
   stock: number;
   images: string[];
   status: ProductStatus;
+  weight_grams: number | null;
   created_at: string;
   updated_at: string;
 };
@@ -26,6 +27,7 @@ export type ProductInput = {
   stock: number;
   images: string[];
   status: ProductStatus;
+  weight_grams: number | null;
 };
 
 function fromRow(row: Product): Product {
@@ -96,8 +98,8 @@ export async function createProduct(input: ProductInput): Promise<Product> {
   const slug = await uniqueSlug(input.name);
   const now = new Date().toISOString();
   await sql`
-    INSERT INTO products (id, slug, name, category, description, price_cents, stock, images, status, created_at, updated_at)
-    VALUES (${id}, ${slug}, ${input.name}, ${input.category}, ${input.description}, ${input.price_cents}, ${input.stock}, ${JSON.stringify(input.images)}, ${input.status}, ${now}, ${now})
+    INSERT INTO products (id, slug, name, category, description, price_cents, stock, images, status, weight_grams, created_at, updated_at)
+    VALUES (${id}, ${slug}, ${input.name}, ${input.category}, ${input.description}, ${input.price_cents}, ${input.stock}, ${JSON.stringify(input.images)}, ${input.status}, ${input.weight_grams}, ${now}, ${now})
   `;
   return (await getProductById(id))!;
 }
@@ -108,7 +110,8 @@ export async function updateProduct(id: string, input: ProductInput): Promise<Pr
   const now = new Date().toISOString();
   await sql`
     UPDATE products SET slug = ${slug}, name = ${input.name}, category = ${input.category}, description = ${input.description},
-      price_cents = ${input.price_cents}, stock = ${input.stock}, images = ${JSON.stringify(input.images)}, status = ${input.status}, updated_at = ${now}
+      price_cents = ${input.price_cents}, stock = ${input.stock}, images = ${JSON.stringify(input.images)}, status = ${input.status},
+      weight_grams = ${input.weight_grams}, updated_at = ${now}
     WHERE id = ${id}
   `;
   return (await getProductById(id))!;

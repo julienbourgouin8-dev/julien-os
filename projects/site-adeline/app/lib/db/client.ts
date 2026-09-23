@@ -77,6 +77,10 @@ export function ensureSchema(): Promise<void> {
       await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_tracking_number TEXT`;
       await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_tracking_url TEXT`;
       await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_parcel_id TEXT`;
+      // Poids en grammes, nécessaire pour demander un tarif de port réel à
+      // l'API Sendcloud (voir lib/shipping.ts) — nullable, les produits déjà
+      // créés n'en ont pas encore, à compléter en admin.
+      await sql`ALTER TABLE products ADD COLUMN IF NOT EXISTS weight_grams INTEGER`;
     })();
   }
   return schemaReady;

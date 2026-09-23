@@ -112,6 +112,25 @@ export default function ProductForm({ product, action }: { product?: Product; ac
       </div>
 
       <div>
+        <label htmlFor="weight" className="text-xs font-semibold uppercase tracking-[0.1em] text-ink/45">
+          Poids emballé (grammes)
+        </label>
+        <p className="mt-1 text-xs leading-relaxed text-ink/55">
+          Nécessaire pour calculer les frais de port réels au moment du paiement (article + emballage).
+        </p>
+        <input
+          id="weight"
+          name="weight"
+          type="number"
+          min={0}
+          step={1}
+          defaultValue={product?.weight_grams ?? ""}
+          placeholder="ex. 250"
+          className="mt-1.5 w-full rounded-xl bg-ink/[0.04] px-4 py-3 text-sm text-ink outline-none ring-1 ring-transparent transition-all focus:bg-white focus:ring-denim"
+        />
+      </div>
+
+      <div>
         <label htmlFor="status" className="text-xs font-semibold uppercase tracking-[0.1em] text-ink/45">
           Statut
         </label>

@@ -33,6 +33,11 @@ function getAuthHeader(): string {
   return `Basic ${Buffer.from(`${pub}:${sec}`).toString("base64")}`;
 }
 
+export type ServicePointDelivery = {
+  id: number;
+  postNumber?: string;
+};
+
 export async function createParcelAndLabel(params: {
   orderId: string;
   customerEmail?: string | null;
@@ -40,6 +45,7 @@ export async function createParcelAndLabel(params: {
   address: RecipientAddress | null;
   totalCents: number;
   weightKg?: number;
+  servicePoint?: ServicePointDelivery | null;
 }): Promise<SendcloudParcelResult> {
   if (!isSendcloudConfigured()) {
     console.warn("[Sendcloud] Clés non configurées. Saut de la génération d'étiquette.");
@@ -49,7 +55,17 @@ export async function createParcelAndLabel(params: {
     };
   }
 
-  if (!params.address || !params.address.line1 || !params.address.postal_code || !params.address.city) {
+  // Livraison en point relais : Sendcloud a quand même besoin d'une adresse
+  // postale du client (facturation/identité), mais achemine physiquement le
+  // colis vers `to_service_point`, pas vers cette adresse — voir
+  // https://sendcloud.dev/docs/service-points/creating-a-parcel-with-service-point-delivery
+  if (!params.address || !params.address.postal_code || !params.address.city) {
+    return {
+      success: false,
+      error: "Adresse de livraison incomplète.",
+    };
+  }
+  if (!params.servicePoint && !params.address.line1) {
     return {
       success: false,
       error: "Adresse de livraison incomplète.",
@@ -57,13 +73,13 @@ export async function createParcelAndLabel(params: {
   }
 
   const recipientName = params.customerName?.trim() || "Client CréA'deline";
-  const weight = (params.weightKg ?? 0.5).toFixed(3); // Poids par défaut 500g pour confection textile
+  const weight = (params.weightKg ?? 0.5).toFixed(3); // Poids par défaut 500g pour confection textile si non fourni
   const totalValue = (params.totalCents / 100).toFixed(2);
 
   const payload = {
     parcel: {
       name: recipientName,
-      address: params.address.line1,
+      address: params.address.line1 || "Point Relais",
       address_2: params.address.line2 || "",
       city: params.address.city,
       postal_code: params.address.postal_code,
@@ -74,6 +90,12 @@ export async function createParcelAndLabel(params: {
       total_order_value_currency: "EUR",
       weight,
       request_label: true,
+      ...(params.servicePoint
+        ? {
+            to_service_point: params.servicePoint.id,
+            to_post_number: params.servicePoint.postNumber || "",
+          }
+        : {}),
     },
   };
 

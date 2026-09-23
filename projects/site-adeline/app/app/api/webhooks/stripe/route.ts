@@ -9,7 +9,8 @@ import {
   updateOrderShipping,
   type OrderItem,
 } from "@/lib/db/orders";
-import { createParcelAndLabel } from "@/lib/sendcloud/client";
+import { createParcelAndLabel, type ServicePointDelivery } from "@/lib/sendcloud/client";
+import { getCartWeightGrams } from "@/lib/shipping";
 
 // Source de vérité du paiement : Stripe appelle cette route, jamais le
 // navigateur du client. Signature vérifiée avant toute lecture du contenu
@@ -59,9 +60,26 @@ export async function POST(request: NextRequest) {
         shippingAddress,
       });
 
-      // Génération automatique d'étiquette Sendcloud / Colissimo
-      if (shippingAddress && shippingAddress.line1 && shippingAddress.postal_code && shippingAddress.city) {
+      // Génération automatique d'étiquette Sendcloud / Colissimo — point
+      // relais accepté avec juste ville + code postal (pas de rue précise,
+      // le colis part vers `to_service_point`, voir lib/sendcloud/client.ts).
+      const servicePoint: ServicePointDelivery | undefined = session.metadata?.servicePoint
+        ? (() => {
+            const sp = JSON.parse(session.metadata!.servicePoint!) as { id: number; postNumber?: string };
+            return { id: sp.id, postNumber: sp.postNumber };
+          })()
+        : undefined;
+
+      if (
+        shippingAddress &&
+        shippingAddress.postal_code &&
+        shippingAddress.city &&
+        (servicePoint || shippingAddress.line1)
+      ) {
         try {
+          const weightGrams = await getCartWeightGrams(
+            items.map((i) => ({ productId: i.product_id, quantity: i.quantity })),
+          );
           const shippingResult = await createParcelAndLabel({
             orderId: order.id,
             customerEmail: order.customer_email,
@@ -76,7 +94,8 @@ export async function POST(request: NextRequest) {
               country: shippingAddress.country ?? "FR",
             },
             totalCents: order.total_cents,
-            weightKg: 0.5,
+            weightKg: weightGrams / 1000,
+            servicePoint,
           });
 
           if (shippingResult.success) {

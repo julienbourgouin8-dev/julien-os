@@ -13,6 +13,7 @@ export type Product = {
   stock: number;
   images: string[];
   status: ProductStatus;
+  weight_grams: number | null;
   created_at: string;
   updated_at: string;
 };
