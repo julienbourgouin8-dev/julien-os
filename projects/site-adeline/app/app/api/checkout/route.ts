@@ -155,6 +155,14 @@ export async function POST(request: NextRequest) {
     // Pas d'adresse à collecter pour un retrait à l'entrepôt — rien à
     // expédier, ça n'ajouterait qu'une étape inutile au paiement.
     ...(body.shippingMethod === "retrait" ? {} : { shipping_address_collection: { allowed_countries: ["FR"] } }),
+    // Mondial Relay EXIGE un numéro de téléphone pour la livraison à
+    // domicile (sans lui, l'annonce échoue côté transporteur — constaté en
+    // test réel, plusieurs commandes de test bloquées avant qu'on comprenne
+    // pourquoi). Collecté systématiquement, pas juste pour "domicile" :
+    // utile aussi pour le point relais/casier (le transporteur peut vouloir
+    // prévenir le client) et pas de raison de le demander seulement à
+    // certains clients selon leur choix de livraison.
+    phone_number_collection: { enabled: body.shippingMethod !== "retrait" },
     // Point relais/casier : le colis part vers le point choisi juste avant,
     // pas vers cette adresse (Sendcloud l'exige quand même pour
     // identité/facturation) — sans ce message, un client tape n'importe

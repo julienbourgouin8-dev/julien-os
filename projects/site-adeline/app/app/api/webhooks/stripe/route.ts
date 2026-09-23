@@ -53,6 +53,10 @@ export async function POST(request: NextRequest) {
           .shipping_details;
       const customerName = shippingDetails?.name ?? session.customer_details?.name ?? null;
       const shippingAddress = shippingDetails?.address ? { ...shippingDetails.address } : null;
+      // Collecté via phone_number_collection sur la session Checkout —
+      // requis par Mondial Relay pour la livraison à domicile, voir
+      // lib/sendcloud/client.ts.
+      const customerPhone = session.customer_details?.phone ?? null;
 
       const weightGrams = await getCartWeightGrams(
         items.map((i) => ({ productId: i.product_id, quantity: i.quantity })),
@@ -73,6 +77,7 @@ export async function POST(request: NextRequest) {
         items,
         totalCents: session.amount_total ?? 0,
         customerEmail: session.customer_details?.email ?? null,
+        customerPhone,
         shippingAddress,
         shippingMethod: session.metadata?.shippingMethod ?? null,
         shippingOptionCode: session.metadata?.shippingOptionCode ?? null,
@@ -106,6 +111,7 @@ export async function POST(request: NextRequest) {
               postal_code: shippingAddress.postal_code,
               state: shippingAddress.state ?? null,
               country: shippingAddress.country ?? "FR",
+              phone: customerPhone,
             },
             totalCents: order.total_cents,
             weightKg: weightGrams / 1000,

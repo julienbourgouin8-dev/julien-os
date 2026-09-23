@@ -61,6 +61,7 @@ export async function generateShippingLabelAction(id: string): Promise<{ success
       postal_code: addr.postal_code,
       city: addr.city,
       country: addr.country ?? "FR",
+      phone: order.customer_phone,
     },
     totalCents: order.total_cents,
     weightKg: order.weight_grams ? order.weight_grams / 1000 : 0.5,

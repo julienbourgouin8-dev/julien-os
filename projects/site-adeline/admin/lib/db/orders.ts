@@ -17,6 +17,7 @@ export type Order = {
   items: OrderItem[];
   total_cents: number;
   customer_email: string | null;
+  customer_phone: string | null;
   shipping_address: Record<string, unknown> | null;
   shipping_carrier: string | null;
   shipping_label_url: string | null;

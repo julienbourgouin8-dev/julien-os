@@ -18,6 +18,11 @@ export type RecipientAddress = {
   postal_code?: string | null;
   state?: string | null;
   country?: string | null;
+  // Requis par Mondial Relay pour la livraison à domicile ("home_domestic")
+  // — sans lui, l'annonce échoue silencieusement côté transporteur
+  // (`status.code: "ANNOUNCEMENT_FAILED"`, constaté en test réel), jamais
+  // requis pour point relais/casier.
+  phone?: string | null;
 };
 
 export function isSendcloudConfigured(): boolean {
@@ -144,6 +149,7 @@ export async function createParcelAndLabel(params: {
       postal_code: params.address.postal_code,
       country_code: params.address.country || "FR",
       email: params.customerEmail || undefined,
+      phone_number: params.address.phone || undefined,
       // Requis par certains transporteurs pour la livraison en point relais —
       // voir doc Sendcloud "post number goes in to_address.po_box".
       po_box: params.servicePoint?.postNumber || undefined,
@@ -191,7 +197,9 @@ export async function createParcelAndLabel(params: {
           tracking_number?: string;
           tracking_url?: string;
           documents?: { type?: string; document_type?: string; link?: string }[];
+          status?: { code?: string; message?: string };
         }[];
+        errors?: { detail?: string; title?: string; code?: string }[];
       };
     };
 
@@ -199,6 +207,28 @@ export async function createParcelAndLabel(params: {
     const parcel = shipment?.parcels?.[0];
     if (!parcel) {
       return { success: false, error: "Réponse Sendcloud vide." };
+    }
+
+    // La réponse peut être HTTP 200 avec un colis créé "à vide" — Sendcloud
+    // renvoie quand même un `id` de colis, mais `status.code` vaut
+    // "ANNOUNCEMENT_FAILED" et le vrai motif est dans `shipment.errors`, PAS
+    // dans une erreur HTTP. Confondre "un objet colis existe" avec "l'envoi
+    // a réussi" a fait rater un vrai échec en silence (constaté en test
+    // réel : livraison à domicile Mondial Relay refusée faute de numéro de
+    // téléphone, mais success:true renvoyé quand même à chaque fois).
+    // Détection sur la présence d'erreurs/d'un statut contenant "FAILED"
+    // plutôt qu'une liste blanche de codes de succès non documentée avec
+    // certitude — plus sûr : on ne risque pas de rejeter un vrai succès
+    // dont le code exact ne serait pas dans une liste devinée.
+    const hasErrors = Boolean(shipment?.errors?.length);
+    const statusFailed = /FAILED/i.test(parcel.status?.code ?? "");
+    if (hasErrors || statusFailed) {
+      const detail = shipment?.errors?.map((e) => e.detail).filter(Boolean).join(" ");
+      return {
+        success: false,
+        parcelId: parcel.id ? String(parcel.id) : undefined,
+        error: detail || parcel.status?.message || "Échec de l'annonce auprès du transporteur.",
+      };
     }
 
     // `document_type` porte le sens ("label", "customs-declaration"...),

@@ -84,6 +84,12 @@ export function ensureSchema(): Promise<void> {
       await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_option_code TEXT`;
       await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS service_point JSONB`;
       await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS weight_grams INTEGER`;
+      // Requis par Mondial Relay pour la livraison à domicile — sans lui,
+      // l'annonce du colis échoue côté transporteur (constaté en test
+      // réel). Collecté via Stripe (phone_number_collection), stocké ici
+      // pour que le bouton manuel "Générer l'étiquette" en admin puisse
+      // aussi le renvoyer, pas seulement la première tentative du webhook.
+      await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS customer_phone TEXT`;
       // Poids en grammes, nécessaire pour demander un tarif de port réel à
       // l'API Sendcloud (voir lib/shipping.ts) — nullable, les produits déjà
       // créés n'en ont pas encore, à compléter en admin.

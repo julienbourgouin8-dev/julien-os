@@ -2390,6 +2390,77 @@ Resend + DNS OVH, pas de nouveau compte à créer) puis d'enchaîner sur tout le
   dit explicitement plus tôt dans la session de ne l'activer qu'après la période de test ; pas
   réinterprété comme inclus dans "fais tout le reste" sans confirmation explicite de sa part.
 
+## Mise à jour — session 2026-09-23 (nuit) : livraison à domicile réellement cassée depuis le début, cause trouvée et corrigée
+
+### Bug grave : "Générer l'étiquette" créait un nouveau colis réel à chaque clic, sans jamais réussir
+
+Julien signale que le bouton "clique mais ne fait rien" sur une commande domicile, et qu'il a cliqué
+plusieurs fois en pensant que ça n'avait pas marché. Investigation :
+
+- **`GET /v3/shipments?order_number=...` révèle 4 shipments Mondial Relay réels créés pour la MÊME
+  commande** (un par tentative du webhook + 3 clics manuels), tous avec `documents: []` et
+  `tracking_number: ""`. **Annulés immédiatement les 4** (`POST /v3/shipments/{id}/cancel`, un par un,
+  UUID de shipment retrouvée via order_number) — `GET /v3/invoices` revérifié vide, aucun frais réel.
+- **Cause racine trouvée dans le détail de la réponse Sendcloud** (jamais visible tant qu'on ne
+  regarde que le champ `documents`) : chaque shipment a `parcels[0].status.code:
+  "ANNOUNCEMENT_FAILED"` et `errors: [{"detail": "Un numéro de téléphone est requis pour la livraison
+  à domicile."}]`. **Mondial Relay exige un numéro de téléphone pour son produit `home_domestic`**,
+  qu'on n'a jamais collecté ni transmis nulle part dans le code.
+- **Deuxième bug, plus grave que le premier** : `createParcelAndLabel` ne regardait QUE "un objet
+  colis existe-t-il dans la réponse ?" pour décider `success: true` — jamais `status.code` ni
+  `shipment.errors`. Un colis "annoncé" mais refusé par le transporteur était donc traité comme un
+  succès silencieux à chaque fois, d'où le bouton qui "ne fait rien" en boucle (aucune erreur
+  affichée, mais aucun tracking/étiquette non plus, et un nouveau colis raté recréé à chaque clic).
+
+### Corrections apportées (dans les DEUX copies dupliquées du client Sendcloud, `app/` et `admin/`)
+
+- **Téléphone collecté et transmis** : `phone_number_collection: { enabled: true }` ajouté à la
+  session Stripe Checkout (`app/api/checkout/route.ts`, activé pour tout sauf le retrait) ; nouvelle
+  colonne `customer_phone` sur `orders` (migration idempotente dans les deux `lib/db/client.ts`) ;
+  webhook Stripe le lit (`session.customer_details?.phone`) et le stocke via `createOrder` ; transmis
+  à Sendcloud comme `to_address.phone_number` dans `createParcelAndLabel`. Le bouton manuel admin
+  (`generateShippingLabelAction`) le relit aussi depuis `order.customer_phone` — pas seulement la
+  première tentative du webhook.
+- **Détection réelle de l'échec** : `createParcelAndLabel` vérifie maintenant `shipment.errors`
+  (non vide) et `parcel.status.code` (contient "FAILED") avant de renvoyer `success: true` — volontairement
+  une détection par motif d'échec plutôt qu'une liste blanche de codes de succès non documentée avec
+  certitude (plus sûr : ne risque pas de rejeter un vrai succès dont le code exact serait absent
+  d'une liste devinée). L'admin affichera maintenant le vrai message d'erreur Sendcloud au lieu d'un
+  échec silencieux.
+- **Repéré et corrigé au passage** : le fichier `admin/lib/sendcloud/client.ts` avait pris du retard
+  sur `app/lib/sendcloud/client.ts` (la troncature `address_line_2` du tour précédent n'avait été
+  appliquée que côté `app/`) — resynchronisé entièrement, les deux fichiers sont de nouveau
+  identiques. **Point de vigilance pour la suite : toute future correction Sendcloud doit être
+  appliquée aux deux copies**, elles ne partagent aucun code commun malgré être fonctionnellement
+  identiques.
+- Commande de test (`94c41f95...`) annulée + stock remis en admin, en plus des 4 shipments Sendcloud.
+- Build des deux apps vérifié OK. **Pas encore retesté de bout en bout** avec le téléphone
+  effectivement rempli — à faire à la prochaine commande domicile réelle.
+
+### Question de Julien : le choix du transporteur domicile devrait-il dépendre de la zone géographique ?
+
+Julien s'inquiète (à raison, question légitime) qu'on ne laisse jamais choisir Mondial Relay vs
+Chronopost pour le domicile, et que certaines zones ne soient peut-être couvertes que par l'un des
+deux. Vérifié en direct via l'API (`POST /v3/shipping-options`, pas une supposition) :
+
+- **Chronopost propose bien plusieurs produits domicile** (de 9,67€ à 33,49€ selon la rapidité), mais
+  systématiquement bien plus cher que Mondial Relay Home Domestic (5,17€ partout testé) — notre code
+  prend déjà tout le catalogue et garde le moins cher (`lib/sendcloud/rates.ts`), donc Mondial Relay
+  gagne quasi automatiquement, pas une restriction artificielle à deux transporteurs.
+  chronopost domicile est un vrai produit express/premium, jamais mécaniquement moins cher.
+- **Testé Mondial Relay Home Domestic sur deux destinations éloignées/atypiques** (Ajaccio 20000,
+  Saint-Denis de la Réunion 97400) : **disponible et au même prix (5,17€) dans les deux cas** — aucun
+  signe d'indisponibilité géographique dans ce compte/contrat, contrairement à la crainte de Julien.
+  Pas exhaustif (tous les codes postaux français n'ont pas été testés un par un), mais aucune preuve
+  du problème redouté sur les cas réels vérifiés.
+- **Décision** : pas de changement de code pour l'instant — le risque réel semble faible d'après les
+  tests, et ajouter une re-vérification de disponibilité à la vraie adresse (connue seulement après
+  paiement, au moment du webhook, alors que le prix a déjà été facturé sur la base d'une destination
+  générique) est un changement structurel plus lourd, à ne construire que si un vrai échec
+  d'indisponibilité géographique est un jour constaté — cohérent avec la manière dont les autres bugs
+  de cette session ont été traités (corriger ce qui casse vraiment, pas ce qui pourrait
+  hypothétiquement casser).
+
 ### Reste à faire après cette session
 
 1. **Domaine Resend à vérifier** (bloque l'email client ET la notification Adeline en vrai) — action
@@ -2397,5 +2468,7 @@ Resend + DNS OVH, pas de nouveau compte à créer) puis d'enchaîner sur tout le
 2. **Clé secrète Stripe live manquante** — action Julien dans le dashboard Stripe.
 3. **Flux "confirmer la disponibilité avant expédition"** — toujours volontairement pas construit,
    en attendant un feu vert explicite de Julien (voir ci-dessus).
-4. Reste de TODO.md §8 inchangé par ailleurs (mention TVA, SEO produit avancé, Stripe Radar, poids
+4. **Retester une vraie commande domicile** avec le numéro de téléphone maintenant collecté — pas
+   encore fait après ce correctif.
+5. Reste de TODO.md §8 inchangé par ailleurs (mention TVA, SEO produit avancé, Stripe Radar, poids
    réel des produits, décalage mobile, test Chronopost déjà fait ce soir — à cocher).

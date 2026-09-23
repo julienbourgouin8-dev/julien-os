@@ -18,6 +18,11 @@ export type RecipientAddress = {
   postal_code?: string | null;
   state?: string | null;
   country?: string | null;
+  // Requis par Mondial Relay pour la livraison à domicile ("home_domestic")
+  // — sans lui, l'annonce échoue silencieusement côté transporteur
+  // (`status.code: "ANNOUNCEMENT_FAILED"`, constaté en test réel), jamais
+  // requis pour point relais/casier.
+  phone?: string | null;
 };
 
 export function isSendcloudConfigured(): boolean {
@@ -54,13 +59,18 @@ export type ServicePointDelivery = {
   postNumber?: string;
 };
 
-const ADDRESS_LINE_1_MAX = 32;
+const ADDRESS_LINE_MAX = 32;
 
-function splitAddressLine1(line1: string, maxLen = ADDRESS_LINE_1_MAX): { line1: string; overflow: string } {
-  if (line1.length <= maxLen) return { line1, overflow: "" };
-  let cut = line1.lastIndexOf(" ", maxLen);
+// Coupe au dernier espace avant la limite plutôt qu'en plein milieu d'un mot
+// — utilisé pour address_line_1 (limite documentée par Sendcloud) ET
+// address_line_2 (non documentée, mais l'étiquette Mondial Relay réelle
+// tranche elle-même la ligne 2 en plein mot si on ne le fait pas nous-mêmes
+// proprement avant, constaté en test réel avec un nom de point relais long).
+function splitAtWordBoundary(text: string, maxLen = ADDRESS_LINE_MAX): { head: string; overflow: string } {
+  if (text.length <= maxLen) return { head: text, overflow: "" };
+  let cut = text.lastIndexOf(" ", maxLen);
   if (cut <= 0) cut = maxLen; // pas d'espace trouvé (mot unique très long) : coupe brute
-  return { line1: line1.slice(0, cut).trim(), overflow: line1.slice(cut).trim() };
+  return { head: text.slice(0, cut).trim(), overflow: text.slice(cut).trim() };
 }
 
 export async function createParcelAndLabel(params: {
@@ -121,8 +131,13 @@ export async function createParcelAndLabel(params: {
   // Bourguignole", 34 caractères, rencontré en test réel). On coupe au
   // dernier espace avant la limite et on renvoie le surplus sur la ligne 2
   // plutôt que de faire échouer toute la commande.
-  const { line1: addressLine1, overflow } = splitAddressLine1(params.address.line1 || fromAddress.address_line_1);
-  const addressLine2 = [overflow, params.address.line2].filter(Boolean).join(", ") || undefined;
+  const { head: addressLine1, overflow } = splitAtWordBoundary(params.address.line1 || fromAddress.address_line_1);
+  const rawLine2 = [overflow, params.address.line2].filter(Boolean).join(", ");
+  // Même règle sur la ligne 2 : si le cumul (surplus de la ligne 1 + vraie
+  // ligne 2 du client) dépasse encore la largeur imprimable, on tronque
+  // proprement plutôt que de laisser Mondial Relay couper en plein mot —
+  // ce qui reste dépasse simplement, jamais de ligne 3 sur ce format.
+  const addressLine2 = rawLine2 ? splitAtWordBoundary(rawLine2).head : undefined;
 
   const payload = {
     from_address: fromAddress,
@@ -134,6 +149,7 @@ export async function createParcelAndLabel(params: {
       postal_code: params.address.postal_code,
       country_code: params.address.country || "FR",
       email: params.customerEmail || undefined,
+      phone_number: params.address.phone || undefined,
       // Requis par certains transporteurs pour la livraison en point relais —
       // voir doc Sendcloud "post number goes in to_address.po_box".
       po_box: params.servicePoint?.postNumber || undefined,
@@ -181,7 +197,9 @@ export async function createParcelAndLabel(params: {
           tracking_number?: string;
           tracking_url?: string;
           documents?: { type?: string; document_type?: string; link?: string }[];
+          status?: { code?: string; message?: string };
         }[];
+        errors?: { detail?: string; title?: string; code?: string }[];
       };
     };
 
@@ -189,6 +207,28 @@ export async function createParcelAndLabel(params: {
     const parcel = shipment?.parcels?.[0];
     if (!parcel) {
       return { success: false, error: "Réponse Sendcloud vide." };
+    }
+
+    // La réponse peut être HTTP 200 avec un colis créé "à vide" — Sendcloud
+    // renvoie quand même un `id` de colis, mais `status.code` vaut
+    // "ANNOUNCEMENT_FAILED" et le vrai motif est dans `shipment.errors`, PAS
+    // dans une erreur HTTP. Confondre "un objet colis existe" avec "l'envoi
+    // a réussi" a fait rater un vrai échec en silence (constaté en test
+    // réel : livraison à domicile Mondial Relay refusée faute de numéro de
+    // téléphone, mais success:true renvoyé quand même à chaque fois).
+    // Détection sur la présence d'erreurs/d'un statut contenant "FAILED"
+    // plutôt qu'une liste blanche de codes de succès non documentée avec
+    // certitude — plus sûr : on ne risque pas de rejeter un vrai succès
+    // dont le code exact ne serait pas dans une liste devinée.
+    const hasErrors = Boolean(shipment?.errors?.length);
+    const statusFailed = /FAILED/i.test(parcel.status?.code ?? "");
+    if (hasErrors || statusFailed) {
+      const detail = shipment?.errors?.map((e) => e.detail).filter(Boolean).join(" ");
+      return {
+        success: false,
+        parcelId: parcel.id ? String(parcel.id) : undefined,
+        error: detail || parcel.status?.message || "Échec de l'annonce auprès du transporteur.",
+      };
     }
 
     // `document_type` porte le sens ("label", "customs-declaration"...),

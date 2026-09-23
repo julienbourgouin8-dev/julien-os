@@ -81,6 +81,9 @@ export function ensureSchema(): Promise<void> {
       await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_option_code TEXT`;
       await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS service_point JSONB`;
       await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS weight_grams INTEGER`;
+      // Requis par Mondial Relay pour la livraison à domicile — voir
+      // app/lib/db/client.ts (même migration, dupliquée dans les deux apps).
+      await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS customer_phone TEXT`;
       // Traçabilité des actions admin sur des données personnelles (RGPD
       // Art. 5(2), accountability) — qui a fait quoi et quand, pas le
       // contenu complet.

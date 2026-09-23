@@ -273,7 +273,8 @@ relations DB.
 - [x] Phase E analytics : PostHog branché (tranché le 2026-08-13, voir §2) + graphiques dans
       `admin/` — construit et vérifié bout en bout le 2026-08-13
 - [x] Gestion des statuts de commande (pending → paid → fulfilled → cancelled) dans l'admin
-- [ ] Tester Chronopost de bout en bout (seul Mondial Relay — boutique et casier — a été validé en vrai à date)
+- [x] Tester Chronopost de bout en bout (2026-09-23, point relais — étiquette complète obtenue,
+      référence tronquée corrigée en cours de route, voir `PROGRESS.md`)
 - [ ] Poids réel des produits (seule une estimation à 200g est renseignée sur les 4 trousses actives)
 - [ ] Corriger le décalage mobile (panier) — non reproductible en émulation même à plusieurs sessions
       d'essai, nécessite le Web Inspector Safari sur le vrai iPhone de Julien pour avancer
@@ -301,6 +302,13 @@ relations DB.
       systématique de l'étiquette classique imprimée sur la variante QR "labelless" à prix
       égal + troncature propre (jamais en plein mot) d'`address_line_2` (2026-09-23, vérifié
       en vrai — étiquette casier complète avec code-barres obtenue)
+- [x] **Livraison à domicile réparée** : Mondial Relay exige un numéro de téléphone pour son produit
+      `home_domestic`, jamais collecté — chaque tentative (webhook + bouton manuel) créait un vrai
+      colis "ANNOUNCEMENT_FAILED" côté transporteur, traité à tort comme un succès faute de vérifier
+      `status.code`/`errors` dans la réponse. Téléphone collecté via Stripe
+      (`phone_number_collection`), stocké (`orders.customer_phone`) et transmis à Sendcloud ; échec
+      réel maintenant détecté et affiché. 4 colis de test dupliqués annulés (2026-09-23). **À
+      revérifier avec une vraie commande domicile après ce correctif.**
 - [x] Retrait à l'entrepôt (0€, pas de transporteur) comme 3e mode de livraison, toujours
       proposé sur la page panier (2026-09-23)
 - [ ] Clarifier/masquer le champ adresse Stripe pour les commandes point relais — message

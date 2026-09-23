@@ -17,6 +17,7 @@ export type Order = {
   items: OrderItem[];
   total_cents: number;
   customer_email: string | null;
+  customer_phone: string | null;
   shipping_address: Record<string, unknown> | null;
   shipping_carrier: string | null;
   shipping_label_url: string | null;
@@ -51,6 +52,7 @@ export async function createOrder(input: {
   items: OrderItem[];
   totalCents: number;
   customerEmail: string | null;
+  customerPhone?: string | null;
   shippingAddress: Record<string, unknown> | null;
   shippingMethod?: string | null;
   shippingOptionCode?: string | null;
@@ -61,8 +63,8 @@ export async function createOrder(input: {
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
   await sql`
-    INSERT INTO orders (id, stripe_session_id, status, items, total_cents, customer_email, shipping_address, shipping_method, shipping_option_code, service_point, weight_grams, created_at, updated_at)
-    VALUES (${id}, ${input.stripeSessionId}, 'paid', ${JSON.stringify(input.items)}, ${input.totalCents}, ${input.customerEmail}, ${input.shippingAddress ? JSON.stringify(input.shippingAddress) : null}, ${input.shippingMethod ?? null}, ${input.shippingOptionCode ?? null}, ${input.servicePoint ? JSON.stringify(input.servicePoint) : null}, ${input.weightGrams ?? null}, ${now}, ${now})
+    INSERT INTO orders (id, stripe_session_id, status, items, total_cents, customer_email, customer_phone, shipping_address, shipping_method, shipping_option_code, service_point, weight_grams, created_at, updated_at)
+    VALUES (${id}, ${input.stripeSessionId}, 'paid', ${JSON.stringify(input.items)}, ${input.totalCents}, ${input.customerEmail}, ${input.customerPhone ?? null}, ${input.shippingAddress ? JSON.stringify(input.shippingAddress) : null}, ${input.shippingMethod ?? null}, ${input.shippingOptionCode ?? null}, ${input.servicePoint ? JSON.stringify(input.servicePoint) : null}, ${input.weightGrams ?? null}, ${now}, ${now})
   `;
   return (await getOrderByStripeSessionId(input.stripeSessionId))!;
 }
