@@ -73,7 +73,13 @@ export default async function DashboardPage() {
   const lowStock = products
     .filter((p) => p.status !== "archived" && p.stock <= LOW_STOCK_THRESHOLD)
     .sort((a, b) => a.stock - b.stock);
-  const recent = [...products].sort((a, b) => b.created_at.localeCompare(a.created_at)).slice(0, 5);
+  // Le driver `postgres` renvoie les TIMESTAMPTZ comme objets Date en
+  // production, même si le type TypeScript historique les décrit encore
+  // comme des chaînes. Convertir explicitement couvre les deux formes et
+  // évite le crash `localeCompare is not a function` du dashboard.
+  const recent = [...products]
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .slice(0, 5);
 
   return (
     <div className="space-y-10">
