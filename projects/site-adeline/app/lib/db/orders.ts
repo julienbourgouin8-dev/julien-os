@@ -23,6 +23,10 @@ export type Order = {
   shipping_tracking_number: string | null;
   shipping_tracking_url: string | null;
   shipping_parcel_id: string | null;
+  shipping_method: string | null;
+  shipping_option_code: string | null;
+  service_point: Record<string, unknown> | null;
+  weight_grams: number | null;
   created_at: string;
   updated_at: string;
 };
@@ -32,6 +36,7 @@ function fromRow(row: Order): Order {
     ...row,
     items: parseJsonb<OrderItem[]>(row.items),
     shipping_address: row.shipping_address ? parseJsonb<Record<string, unknown>>(row.shipping_address) : null,
+    service_point: row.service_point ? parseJsonb<Record<string, unknown>>(row.service_point) : null,
   };
 }
 
@@ -47,13 +52,17 @@ export async function createOrder(input: {
   totalCents: number;
   customerEmail: string | null;
   shippingAddress: Record<string, unknown> | null;
+  shippingMethod?: string | null;
+  shippingOptionCode?: string | null;
+  servicePoint?: Record<string, unknown> | null;
+  weightGrams?: number | null;
 }): Promise<Order> {
   await ensureSchema();
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
   await sql`
-    INSERT INTO orders (id, stripe_session_id, status, items, total_cents, customer_email, shipping_address, created_at, updated_at)
-    VALUES (${id}, ${input.stripeSessionId}, 'paid', ${JSON.stringify(input.items)}, ${input.totalCents}, ${input.customerEmail}, ${input.shippingAddress ? JSON.stringify(input.shippingAddress) : null}, ${now}, ${now})
+    INSERT INTO orders (id, stripe_session_id, status, items, total_cents, customer_email, shipping_address, shipping_method, shipping_option_code, service_point, weight_grams, created_at, updated_at)
+    VALUES (${id}, ${input.stripeSessionId}, 'paid', ${JSON.stringify(input.items)}, ${input.totalCents}, ${input.customerEmail}, ${input.shippingAddress ? JSON.stringify(input.shippingAddress) : null}, ${input.shippingMethod ?? null}, ${input.shippingOptionCode ?? null}, ${input.servicePoint ? JSON.stringify(input.servicePoint) : null}, ${input.weightGrams ?? null}, ${now}, ${now})
   `;
   return (await getOrderByStripeSessionId(input.stripeSessionId))!;
 }

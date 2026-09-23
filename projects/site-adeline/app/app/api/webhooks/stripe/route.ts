@@ -52,13 +52,9 @@ export async function POST(request: NextRequest) {
       const customerName = shippingDetails?.name ?? session.customer_details?.name ?? null;
       const shippingAddress = shippingDetails?.address ? { ...shippingDetails.address } : null;
 
-      const order = await createOrder({
-        stripeSessionId: session.id,
-        items,
-        totalCents: session.amount_total ?? 0,
-        customerEmail: session.customer_details?.email ?? null,
-        shippingAddress,
-      });
+      const weightGrams = await getCartWeightGrams(
+        items.map((i) => ({ productId: i.product_id, quantity: i.quantity })),
+      );
 
       // Génération automatique d'étiquette Sendcloud / Colissimo — point
       // relais accepté avec juste ville + code postal (pas de rue précise,
@@ -70,6 +66,18 @@ export async function POST(request: NextRequest) {
           })()
         : undefined;
 
+      const order = await createOrder({
+        stripeSessionId: session.id,
+        items,
+        totalCents: session.amount_total ?? 0,
+        customerEmail: session.customer_details?.email ?? null,
+        shippingAddress,
+        shippingMethod: session.metadata?.shippingMethod ?? null,
+        shippingOptionCode: session.metadata?.shippingOptionCode ?? null,
+        servicePoint: servicePoint ?? null,
+        weightGrams,
+      });
+
       if (
         shippingAddress &&
         shippingAddress.postal_code &&
@@ -77,9 +85,6 @@ export async function POST(request: NextRequest) {
         (servicePoint || shippingAddress.line1)
       ) {
         try {
-          const weightGrams = await getCartWeightGrams(
-            items.map((i) => ({ productId: i.product_id, quantity: i.quantity })),
-          );
           const shippingResult = await createParcelAndLabel({
             orderId: order.id,
             customerEmail: order.customer_email,
@@ -96,6 +101,7 @@ export async function POST(request: NextRequest) {
             totalCents: order.total_cents,
             weightKg: weightGrams / 1000,
             servicePoint,
+            shippingOptionCode: session.metadata?.shippingOptionCode,
           });
 
           if (shippingResult.success) {

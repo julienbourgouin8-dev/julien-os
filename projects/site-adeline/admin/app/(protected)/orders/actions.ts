@@ -27,8 +27,16 @@ export async function generateShippingLabelAction(id: string): Promise<{ success
     name?: string;
   } | null;
 
-  if (!addr || !addr.line1 || !addr.postal_code || !addr.city) {
+  const servicePoint = order.service_point as { id: number; postNumber?: string } | null;
+
+  if (!addr || !addr.postal_code || !addr.city || (!servicePoint && !addr.line1)) {
     return { success: false, error: "Adresse de livraison incomplète ou absente." };
+  }
+  if (!order.shipping_option_code) {
+    return {
+      success: false,
+      error: "Aucune option d'expédition enregistrée pour cette commande (commande antérieure à cette fonctionnalité).",
+    };
   }
 
   const result = await createParcelAndLabel({
@@ -43,7 +51,9 @@ export async function generateShippingLabelAction(id: string): Promise<{ success
       country: addr.country ?? "FR",
     },
     totalCents: order.total_cents,
-    weightKg: 0.5,
+    weightKg: order.weight_grams ? order.weight_grams / 1000 : 0.5,
+    servicePoint,
+    shippingOptionCode: order.shipping_option_code,
   });
 
   if (!result.success) {

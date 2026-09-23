@@ -116,6 +116,7 @@ export async function POST(request: NextRequest) {
         quantity: 1,
       });
       metadata.shippingMethod = body.shippingMethod;
+      metadata.shippingOptionCode = quote.optionCode;
       if (body.shippingMethod === "point_relais" && body.servicePoint) {
         metadata.servicePoint = JSON.stringify(body.servicePoint);
       }

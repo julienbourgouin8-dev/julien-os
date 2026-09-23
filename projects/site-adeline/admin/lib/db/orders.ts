@@ -23,6 +23,10 @@ export type Order = {
   shipping_tracking_number: string | null;
   shipping_tracking_url: string | null;
   shipping_parcel_id: string | null;
+  shipping_method: string | null;
+  shipping_option_code: string | null;
+  service_point: Record<string, unknown> | null;
+  weight_grams: number | null;
   created_at: string;
   updated_at: string;
 };
@@ -32,6 +36,7 @@ function fromRow(row: Order): Order {
     ...row,
     items: parseJsonb<OrderItem[]>(row.items),
     shipping_address: row.shipping_address ? parseJsonb<Record<string, unknown>>(row.shipping_address) : null,
+    service_point: row.service_point ? parseJsonb<Record<string, unknown>>(row.service_point) : null,
   };
 }
 

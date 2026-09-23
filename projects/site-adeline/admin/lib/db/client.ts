@@ -74,6 +74,13 @@ export function ensureSchema(): Promise<void> {
       await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_tracking_number TEXT`;
       await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_tracking_url TEXT`;
       await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_parcel_id TEXT`;
+      // Nécessaire pour régénérer une étiquette (bouton manuel admin) avec
+      // le même service que celui payé par le client — l'API Sendcloud v3
+      // exige un shipping_option_code explicite, ne le devine plus seule.
+      await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_method TEXT`;
+      await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_option_code TEXT`;
+      await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS service_point JSONB`;
+      await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS weight_grams INTEGER`;
       // Traçabilité des actions admin sur des données personnelles (RGPD
       // Art. 5(2), accountability) — qui a fait quoi et quand, pas le
       // contenu complet.
