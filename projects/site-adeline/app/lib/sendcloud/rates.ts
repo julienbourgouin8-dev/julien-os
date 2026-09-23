@@ -31,19 +31,22 @@ function getFromAddress(): { country_code: string; postal_code: string; city: st
 // avant que Stripe ne collecte la vraie adresse du client.
 const GENERIC_FR_DESTINATION = { country_code: "FR", postal_code: "75001", city: "Paris" };
 
-// Un ou plusieurs codes candidats par méthode — le moins cher trouvé parmi
-// eux est retenu. Ajuster cette liste si Adeline veut privilégier un
-// transporteur précis plus tard.
-const DOMICILE_OPTION_CODES = ["colissimo:home/fr", "chronopost:18", "chronopost:18mailbox"];
-const POINT_RELAIS_OPTION_CODES = [
-  "mondial_relay:service_point,dualapi/size=l,c2c",
-  "mondial_relay:locker_delivery,dualapi",
-  "colissimo:post-office",
-];
+// Sélection dynamique via `functionalities.last_mile` plutôt qu'une liste de
+// codes transporteur figée : un code en dur (ex. "colissimo:home/fr") avait
+// fait rater Mondial Relay Home Domestic, moins cher que Colissimo Home sur
+// ce compte — la comparaison sur tout le catalogue évite de refaire cette
+// erreur si les tarifs ou options disponibles changent.
+const HOME_DELIVERY = "home_delivery";
+const POINT_RELAIS_LAST_MILE = ["service_point", "locker", "locker_or_service_point"];
+
+// Produit de test Sendcloud ("Unstamped letter", carrier "sendcloud", 0€) —
+// jamais une vraie option d'expédition, à exclure explicitement.
+const EXCLUDED_CARRIER_CODES = ["sendcloud"];
 
 type SendcloudShippingOption = {
   code: string;
   carrier?: { code?: string; name?: string };
+  functionalities?: { last_mile?: string };
   quotes?: { price?: { total?: { value?: string } } }[];
 };
 
@@ -72,24 +75,30 @@ export async function getShippingQuotes(weightGrams: number): Promise<ShippingQu
     const data = (await response.json()) as { data?: SendcloudShippingOption[] };
     const options = data.data ?? [];
 
-    const pick = (codes: string[], method: ShippingMethod, label: string): ShippingQuote | null => {
+    const pick = (
+      matches: (lastMile: string | undefined) => boolean,
+      method: ShippingMethod,
+      label: string,
+    ): ShippingQuote | null => {
       let best: ShippingQuote | null = null;
       for (const opt of options) {
-        if (!codes.includes(opt.code)) continue;
+        const carrierCode = opt.carrier?.code ?? "";
+        if (EXCLUDED_CARRIER_CODES.includes(carrierCode)) continue;
+        if (!matches(opt.functionalities?.last_mile)) continue;
         const priceStr = opt.quotes?.[0]?.price?.total?.value;
         if (!priceStr) continue;
         const priceCents = Math.round(parseFloat(priceStr) * 100);
-        if (Number.isNaN(priceCents)) continue;
+        if (Number.isNaN(priceCents) || priceCents <= 0) continue;
         if (!best || priceCents < best.priceCents) {
-          best = { method, label, priceCents, carrierCode: opt.carrier?.code ?? "", optionCode: opt.code };
+          best = { method, label, priceCents, carrierCode, optionCode: opt.code };
         }
       }
       return best;
     };
 
     const quotes = [
-      pick(DOMICILE_OPTION_CODES, "domicile", "Livraison à domicile"),
-      pick(POINT_RELAIS_OPTION_CODES, "point_relais", "Point Relais"),
+      pick((lastMile) => lastMile === HOME_DELIVERY, "domicile", "Livraison à domicile"),
+      pick((lastMile) => Boolean(lastMile && POINT_RELAIS_LAST_MILE.includes(lastMile)), "point_relais", "Point Relais"),
     ].filter((q): q is ShippingQuote => q !== null);
 
     return quotes.length > 0 ? quotes : null;
