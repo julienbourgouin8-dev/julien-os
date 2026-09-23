@@ -2004,3 +2004,143 @@ tapé les identifiants, et dans quelle app/navigateur.
   Coolify (`creadeline-app` uniquement) puis déployer ; renseigner le poids réel des produits déjà en ligne
   dans l'admin ; premier vrai test de bout en bout (choix point relais + domicile, paiement Stripe test,
   vérifier que l'étiquette Sendcloud se génère correctement dans les deux cas).
+
+## Mise à jour — session 2026-09-23 (suite, fin de journée) : compte Sendcloud opérationnel, migration API v2→v3, plusieurs bugs réels corrigés en conditions réelles
+
+Session de test intensive — chaque étape a été vérifiée avec de vraies commandes (Stripe en mode test,
+donc gratuit) plutôt que supposée fonctionnelle après coup. Résumé par thème.
+
+### 1. Compte Sendcloud créé et configuré
+
+- Compte créé par Julien, clés API générées (**Réglages → Boutiques connectées → Sendcloud API**, pas
+  "Settings → API access" comme l'ancienne doc le disait — le menu a changé).
+- Adresse d'expédition réelle d'Adeline fournie et configurée : **16 route de la Gabote, 16430 Balzac**
+  (`SENDCLOUD_FROM_*` dans Coolify, `creadeline-app` **et** `creadeline-admin` — l'admin en avait aussi
+  besoin une fois son bouton manuel migré vers l'API v3, voir §3).
+- Moyen de paiement (prélèvement SEPA) ajouté par Julien pour débloquer la génération réelle d'étiquettes.
+- **Vérifié directement via l'API après plusieurs tests** : `GET /v3/invoices` renvoie `{"data":[]}` —
+  aucune facture générée, donc aucun débit réel à ce jour malgré plusieurs envois de test créés.
+
+### 2. Prix de port dynamique par transporteur ET par type de point (Mondial Relay + Chronopost)
+
+- `app/lib/sendcloud/rates.ts` interroge l'API v3 `shipping-options` et sélectionne dynamiquement la
+  moins chère option par `functionalities.last_mile` (pas de liste de codes transporteur en dur — piège
+  déjà rencontré une fois : Mondial Relay Home Domestic, moins cher que Colissimo Home, avait été raté).
+- **Vérifié empiriquement que le prix domicile est bien national fixe en France** (identique Paris/
+  Marseille/Lille/Angoulême/Ajaccio à poids égal) — confirme que l'approximation "destination générique"
+  utilisée pour calculer un prix avant que Stripe ne collecte la vraie adresse est fiable.
+- **Bug corrigé** : le code ne gardait qu'une seule option "la moins chère" par transporteur point relais,
+  sans distinguer casier automatique (`isLocker`) vs boutique tenue par un commerçant — un client
+  choisissant une vraie boutique (ex. "Vival") dans le widget se voyait quand même réserver le service
+  casier le moins cher, générant une étiquette "labelless" (QR seul) au lieu d'une étiquette classique.
+  Corrigé : `rates.ts` garde toutes les combinaisons (transporteur × casier/boutique), le widget capture
+  `shop_type` du point choisi (détection robuste : `/locker/i` sur la valeur, vocabulaire exact non
+  documenté par Sendcloud), et `/api/checkout` retrouve côté serveur l'option qui correspond vraiment
+  (jamais un prix/choix fait confiance côté client). **Vérifié en vrai** : nouvelle commande avec Vival →
+  `shipping_option_code = mondial_relay:service_point,dualapi/size=l,c2c` (pas `locker_delivery`),
+  étiquette PDF téléchargée et lue directement — vraie étiquette Mondial Relay complète (code-barres,
+  destinataire "VIVAL BALZAC, 2 Place de la Liberté", expéditeur, poids, tracking `72155424`).
+- **Vérifié aussi le cas casier** : le PDF est réellement **juste un QR code, aucun texte visible sur la
+  page** (nom/adresse/tracking absents) — conforme à ce que Sendcloud renvoie tel quel, pas un bug de
+  notre côté. Julien pensait se souvenir d'une étiquette casier avec du texte — non confirmé ni infirmé,
+  à clarifier auprès du support Sendcloud si besoin, pas quelque chose qu'on peut corriger nous-mêmes
+  (on affiche exactement le PDF qu'ils nous donnent).
+- **Choix tranché avec Julien** : garder casiers + boutiques dans le pool "Point Relais" (le moins cher
+  gagne), pas de restriction aux boutiques seules.
+- Légende de prix par transporteur ajoutée au-dessus du bouton "Choisir mon point relais" (le widget
+  Sendcloud n'affiche pas nativement de prix par point sur sa carte — pas une fonctionnalité disponible,
+  vérifié dans leur doc).
+
+### 3. Migration Sendcloud API v2 → v3 (panne réelle découverte en test)
+
+- **Premier vrai test de commande : échec silencieux constaté par Julien** ("je ne vois rien ni côté
+  Sendcloud ni côté admin"). Diagnostic en direct via l'API Stripe (`GET /v1/checkout/sessions`,
+  `GET /v1/events`, `GET /v1/webhook_endpoints`) : **le webhook Stripe pointait encore vers l'ancienne URL
+  Vercel** (`creadeline.vercel.app`), jamais mise à jour depuis la migration VPS du 2026-09-22. Corrigé en
+  éditant l'URL de l'endpoint existant via l'API Stripe (même `id`, donc même secret de signature — pas de
+  redéploiement nécessaire). **Leçon à retenir pour toute future migration d'hébergement : vérifier/mettre
+  à jour les webhooks externes (Stripe, etc.), pas seulement le DNS et les variables d'env.**
+- **Deuxième échec, plus profond** : une fois le webhook corrigé, la commande arrivait bien en admin mais
+  la génération d'étiquette échouait : `Erreur Sendcloud (403): Creating parcels via API v2 is not
+  available for this account. Please use API v3.` — le compte Sendcloud de Julien (créé récemment) n'a
+  simplement pas accès à l'ancienne API v2 que `app/lib/sendcloud/client.ts` utilisait encore.
+  **Migration complète vers v3** (`POST /v3/shipments/announce` au lieu de `POST /v2/parcels`) :
+  - Nouveau format de requête : `from_address`/`to_address` structurés, `ship_with.shipping_option_code`
+    **exigé explicitement** (v2 laissait Sendcloud choisir seul le transporteur — v3 ne le fait plus,
+    d'où le besoin de threader le code d'option calculé pour le prix jusqu'à la génération d'étiquette).
+  - **Nouvelles colonnes sur `orders`** (`shipping_method`, `shipping_option_code`, `service_point`,
+    `weight_grams`) pour persister ces infos au-delà des metadata Stripe éphémères — le bouton manuel de
+    l'admin (`generateShippingLabelAction`) utilisait avant un poids en dur (500g) et ne gérait pas du
+    tout le point relais ; il utilise maintenant les vraies valeurs de la commande.
+  - Réponse v3 parsée différemment (`data.parcels[].documents[]`, `data.carrier`, etc.).
+
+### 4. Deux bugs supplémentaires trouvés sur la vraie étiquette générée
+
+- **Adresse trop longue** : `Erreur Sendcloud (400): address_1 combined with house number has at most 32
+  characters (it has 33)` — une vraie adresse française ("22 Rue du Terrier de Bourguignole", 34
+  caractères) dépasse la limite Sendcloud. Corrigé : coupe au dernier espace avant la limite, renvoie le
+  surplus sur `address_line_2` plutôt que de faire échouer toute la commande (rassuré Julien : une adresse
+  sur deux lignes est le format standard de tous les transporteurs, aucun risque de mauvaise livraison).
+- **Étiquette invisible dans l'admin malgré un envoi réussi** : deux causes cumulées, trouvées en
+  comparant la réponse Sendcloud réelle au code :
+  1. Mauvais champ lu pour détecter le document ("étiquette") — `documents[].type` (format visuel, ex.
+     "qr") au lieu de `documents[].document_type` (catégorie réelle, "label"). `labelUrl` restait `null`
+     même quand Sendcloud renvoyait bien un document.
+  2. Le lien Sendcloud (`/v3/parcels/{id}/documents/label`) **exige nos identifiants API** (401 sans
+     auth, vérifié) — un clic direct depuis le navigateur d'Adeline aurait toujours échoué. Nouvelle route
+     protégée (`admin/app/api/sendcloud-label/[parcelId]/route.ts`, derrière la session admin comme tout
+     le reste sauf `/login`/`/uploads`) qui sert le PDF côté serveur avec nos clés, jamais exposées au
+     navigateur — même schéma que le proxy S3 déjà existant pour les photos produits.
+
+### 5. Annulation de commande avec remise en stock automatique
+
+- Un test de commande décrémente le stock comme une vraie vente (comportement voulu, anti-survente) —
+  mais rien ne permettait de l'annuler et remettre l'article en vente. Bloquait la suite des tests
+  (produit "épuisé" après un seul essai). Nouveau bouton **"Annuler la commande"** sur la fiche détail
+  admin (`CancelOrderButton.tsx` + `cancelOrderAndRestock` dans `lib/db/orders.ts`) : remet en stock
+  chaque article de la commande et passe son statut à `cancelled`, idempotent (sans danger si cliqué deux
+  fois). Réutilisable pour de vraies annulations clientes plus tard, pas juste pour nettoyer des tests.
+
+### 6. Widget de sélection de point relais : langue et géolocalisation
+
+- **Bug trouvé en testant le widget moi-même** : entièrement en anglais par défaut (`language` non
+  précisé, défaut `en-us`) — corrigé (`language: "fr-fr"`).
+- **Géolocalisation ajoutée** (bouton "Choisir mon point relais" déclenche `navigator.geolocation` puis un
+  reverse-geocoding gratuit via Nominatim/OpenStreetMap, sans clé API) pour centrer le widget près du
+  client au lieu de résultats à un endroit arbitraire — **bug trouvé et corrigé en cours de route** : le
+  header de sécurité `Permissions-Policy` du site désactivait complètement `geolocation` pour tout le
+  monde (`geolocation=()`), même avec une permission navigateur accordée. Changé en `geolocation=(self)`
+  (caméra/micro restent désactivés, aucun rapport).
+
+### 7. Design de la sélection livraison retravaillé
+
+- Remplacement des cases grises génériques par des cartes cohérentes avec le reste du site (icônes
+  maison/épingle, état sélectionné en denim, bloc de confirmation du point choisi avec badge "Casier" ou
+  "Boutique" pour qu'Adeline sache directement, sans avoir à ouvrir le PDF, s'il faut imprimer une
+  étiquette ou juste scanner un QR à un casier).
+
+### 8. Décalage mobile — toujours non résolu, cause probablement hors de portée du code
+
+- Signalé à nouveau par Julien avec une capture précise (marge normale à gauche, contenu collé au bord
+  droit, sur plusieurs cartes de la page panier). **Mesuré directement en JS sur la vraie page** :
+  `document.documentElement.scrollWidth === window.innerWidth`, aucun débordement détecté, aucun élément
+  du DOM ne dépasse le viewport — confirmé même en reproduisant la largeur exacte d'un iPhone. Tentative de
+  déboguer avec le vrai moteur Safari (pas Chrome) directement sur ce Mac via `osascript`/AppleScript :
+  bloqué par les permissions macOS (Accessibility pour redimensionner la fenêtre, Screen Recording pour
+  capturer, "Allow JavaScript from Apple Events" à activer dans Safari) — aucune n'était déjà accordée à
+  ce terminal. **Prochaine étape proposée à Julien, pas encore faite** : brancher son iPhone en USB à ce
+  Mac et activer le Web Inspector Safari (Réglages iPhone → Safari → Avancé) pour inspecter le vrai rendu
+  cassé directement, seule piste restante après plusieurs sessions sans succès en émulation.
+
+### Reste à faire après cette session
+
+1. **Tester Chronopost de bout en bout** (seul Mondial Relay a été validé — boutique ET casier).
+2. **Stripe en mode live** — Julien a maintenant accès (clé secrète récupérée via Adeline), mais bloqué
+   plus tôt dans la session par une passkey WebAuthn liée au téléphone d'Adeline, non résolu en détail ici.
+3. **Poids réel des produits** : seul un poids estimé (200g) a été renseigné pour les 4 trousses de
+   toilette actives — à confirmer avec une vraie pesée.
+4. **Décalage mobile** (point 8 ci-dessus) — en attente d'un accès Web Inspector sur le vrai iPhone.
+5. Remplacer les statistiques PostHog du dashboard admin par Google Analytics (ordre confirmé par Julien
+   plus tôt, pas commencé).
+6. Reste de TODO.md §8 inchangé : emails Brevo, mention TVA, SEO produit avancé (`generateMetadata` par
+   page, JSON-LD Product), vérifier Stripe Radar actif.

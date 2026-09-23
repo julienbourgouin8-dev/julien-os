@@ -264,10 +264,21 @@ relations DB.
 - [x] Intégrer Stripe Checkout + webhook `checkout.session.completed`,
       activer `shipping_address_collection` (2026-09)
 - [x] Décrémenter le stock via le webhook (transaction DB atomique anti-oversell) (2026-09)
-- [x] Intégrer Sendcloud : génération de label au paiement confirmé + tracking et bouton d'impression PDF dans l'admin (2026-09-21)
+- [x] Intégrer Sendcloud : génération de label au paiement confirmé + tracking et bouton d'impression PDF dans l'admin (codé le 2026-09-21,
+      **compte réel créé + vraiment vérifié bout en bout le 2026-09-23** — v2→v3, bugs d'adresse/étiquette/casier-boutique
+      trouvés et corrigés en conditions réelles, voir `PROGRESS.md`)
+- [x] Port dynamique par transporteur (Mondial Relay + Chronopost), choix Point Relais (widget Sendcloud,
+      géolocalisation, français) vs Domicile sur la page panier, prix recalculé côté serveur (2026-09-23)
+- [x] Annulation de commande avec remise en stock automatique, bouton admin (2026-09-23)
 - [x] Phase E analytics : PostHog branché (tranché le 2026-08-13, voir §2) + graphiques dans
       `admin/` — construit et vérifié bout en bout le 2026-08-13
-- [x] Gestion des statuts de commande (pending → paid → fulfilled) dans l'admin
+- [x] Gestion des statuts de commande (pending → paid → fulfilled → cancelled) dans l'admin
+- [ ] Tester Chronopost de bout en bout (seul Mondial Relay — boutique et casier — a été validé en vrai à date)
+- [ ] Poids réel des produits (seule une estimation à 200g est renseignée sur les 4 trousses actives)
+- [ ] Corriger le décalage mobile (panier) — non reproductible en émulation même à plusieurs sessions
+      d'essai, nécessite le Web Inspector Safari sur le vrai iPhone de Julien pour avancer
+- [ ] Remplacer les statistiques PostHog du dashboard admin par Google Analytics (ordre confirmé par
+      Julien le 2026-09-23, pas commencé)
 - [ ] Emails transactionnels via Brevo (confirmation commande, notif expédition)
 - [x] Pages légales FR : CGV, mentions légales, politique de confidentialité RGPD, droit
       de rétractation 14 jours (placeholders à compléter avec les infos d'Adeline)
@@ -278,3 +289,5 @@ relations DB.
 - [ ] SEO produit avancé : `generateMetadata` par page (boutique/fiche produit), Open Graph/Twitter
       Card, JSON-LD `schema.org/Product`
 - [ ] Vérifier l'activation de Stripe Radar
+- [ ] Stripe en mode live (Julien a la clé secrète via Adeline, bloqué plus tôt par une passkey
+      WebAuthn liée au téléphone d'Adeline — à reprendre)
