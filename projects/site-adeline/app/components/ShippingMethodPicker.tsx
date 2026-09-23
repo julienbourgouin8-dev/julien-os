@@ -102,7 +102,7 @@ function locateUser(): Promise<{ postalCode?: string; city?: string } | null> {
     navigator.geolocation.getCurrentPosition(
       async (pos) => resolve(await reverseGeocode(pos.coords.latitude, pos.coords.longitude)),
       () => resolve(null), // permission refusée/indisponible : le client tapera lui-même dans le widget
-      { timeout: 5000, maximumAge: 300000 },
+      { timeout: 10000, maximumAge: 300000 },
     );
   });
 }
