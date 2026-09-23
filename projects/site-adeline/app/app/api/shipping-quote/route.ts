@@ -1,7 +1,7 @@
 import "server-only";
 import { NextResponse, type NextRequest } from "next/server";
 import { getCartWeightGrams } from "@/lib/shipping";
-import { getShippingQuotes, cheapestPointRelais } from "@/lib/sendcloud/rates";
+import { getShippingQuotes, cheapestPointRelais, type ShippingQuote } from "@/lib/sendcloud/rates";
 
 type QuoteRequest = {
   items: { productId: string; quantity: number }[];
@@ -25,12 +25,25 @@ export async function POST(request: NextRequest) {
   const weightGrams = await getCartWeightGrams(body.items);
   const quotes = await getShippingQuotes(weightGrams);
 
+  // Légende affichée avant que le client choisisse un point précis : le
+  // moins cher par transporteur (casier ou boutique, peu importe à ce
+  // stade — le prix exact est retranché une fois un point réel choisi).
+  const cheapestByCarrier: Record<string, ShippingQuote> = {};
+  for (const q of quotes?.pointRelaisOptions ?? []) {
+    const existing = cheapestByCarrier[q.carrierCode];
+    if (!existing || q.priceCents < existing.priceCents) cheapestByCarrier[q.carrierCode] = q;
+  }
+
   return NextResponse.json({
     domicile: quotes?.domicile ?? null,
     // Prix "à partir de" affiché avant que le client choisisse un point
-    // précis — le prix par transporteur complet est renvoyé à côté pour que
-    // la page panier facture le bon montant une fois un point choisi.
+    // précis — le prix exact est recalculé au moment du paiement une fois
+    // le vrai point (et son type casier/boutique) connu.
     point_relais: quotes ? cheapestPointRelais(quotes) : null,
-    pointRelaisByCarrier: quotes?.pointRelaisByCarrier ?? {},
+    pointRelaisByCarrier: cheapestByCarrier,
+    // Liste complète (casier + boutique par transporteur) pour que la page
+    // panier puisse afficher le vrai prix une fois un point précis choisi —
+    // /api/checkout refait le même calcul côté serveur pour facturer.
+    pointRelaisOptions: quotes?.pointRelaisOptions ?? [],
   });
 }

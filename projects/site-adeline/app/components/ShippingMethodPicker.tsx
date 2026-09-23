@@ -14,10 +14,15 @@ export type ServicePoint = {
   city?: string;
   country?: string;
   carrier?: string;
+  // Casier automatique (QR à scanner) vs boutique tenue par un commerçant
+  // (étiquette classique) — détermine quelle option d'expédition (et quel
+  // prix) réserver, voir lib/sendcloud/rates.ts.
+  isLocker?: boolean;
 };
 
 type ShippingMethod = "domicile" | "point_relais";
 type Quote = { method: ShippingMethod; label: string; priceCents: number } | null;
+type PointRelaisOption = { carrierCode: string; isLocker: boolean; priceCents: number; label: string };
 
 export type ShippingState = {
   method: ShippingMethod | null;
@@ -37,7 +42,15 @@ type SendcloudServicePointRaw = {
   city?: string;
   country?: string;
   carrier?: string;
+  shop_type?: string;
 };
+
+// Toutes les valeurs de shop_type vues (locker automatique) contiennent le
+// mot "locker" — approche robuste plutôt que d'essayer d'énumérer le
+// vocabulaire exact par transporteur (non documenté par Sendcloud).
+function isLockerShopType(shopType: string | undefined): boolean {
+  return Boolean(shopType && /locker/i.test(shopType));
+}
 
 declare global {
   interface Window {
@@ -100,6 +113,7 @@ export default function ShippingMethodPicker({
   const [domicile, setDomicile] = useState<Quote>(null);
   const [pointRelais, setPointRelais] = useState<Quote>(null);
   const [pointRelaisByCarrier, setPointRelaisByCarrier] = useState<Record<string, Quote>>({});
+  const [pointRelaisOptions, setPointRelaisOptions] = useState<PointRelaisOption[]>([]);
   const [loadingQuotes, setLoadingQuotes] = useState(true);
   const [method, setMethod] = useState<ShippingMethod | null>(null);
   const [servicePoint, setServicePoint] = useState<ServicePoint | null>(null);
@@ -122,12 +136,14 @@ export default function ShippingMethodPicker({
         setDomicile(data.domicile ?? null);
         setPointRelais(data.point_relais ?? null);
         setPointRelaisByCarrier(data.pointRelaisByCarrier ?? {});
+        setPointRelaisOptions(data.pointRelaisOptions ?? []);
       })
       .catch(() => {
         if (!cancelled) {
           setDomicile(null);
           setPointRelais(null);
           setPointRelaisByCarrier({});
+          setPointRelaisOptions([]);
         }
       })
       .finally(() => !cancelled && setLoadingQuotes(false));
@@ -136,11 +152,17 @@ export default function ShippingMethodPicker({
     };
   }, [itemsKey]);
 
-  // Une fois un point précis choisi, le prix suit le transporteur réel de ce
-  // point (Mondial Relay et Chronopost n'ont pas le même tarif) plutôt que
-  // l'estimation "le moins cher" affichée avant le choix.
-  const effectivePointRelais =
-    method === "point_relais" && servicePoint?.carrier ? (pointRelaisByCarrier[servicePoint.carrier] ?? pointRelais) : pointRelais;
+  // Une fois un point précis choisi, le prix suit le vrai transporteur ET le
+  // vrai type (casier/boutique) de ce point — un casier et une boutique du
+  // même transporteur n'ont ni le même tarif ni la même option réservée.
+  const effectivePointRelais: Quote =
+    method === "point_relais" && servicePoint?.carrier
+      ? (() => {
+          const sameCarrier = pointRelaisOptions.filter((o) => o.carrierCode === servicePoint.carrier);
+          const match = sameCarrier.find((o) => o.isLocker === Boolean(servicePoint.isLocker)) ?? sameCarrier[0];
+          return match ? { method: "point_relais", label: match.label, priceCents: match.priceCents } : pointRelais;
+        })()
+      : pointRelais;
 
   useEffect(() => {
     const hasQuotes = Boolean(domicile || pointRelais);
@@ -185,6 +207,7 @@ export default function ShippingMethodPicker({
           city: sp.city,
           country: sp.country,
           carrier: sp.carrier,
+          isLocker: isLockerShopType(sp.shop_type),
         });
       },
       () => {
@@ -229,6 +252,9 @@ export default function ShippingMethodPicker({
                   <div className="flex items-start justify-between gap-3 rounded-lg bg-denim/[0.06] px-3 py-2 text-xs text-ink/70">
                     <span>
                       <span className="font-semibold text-ink">{servicePoint.name}</span>
+                      <span className="ml-1.5 rounded-full bg-ink/[0.06] px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-ink/50">
+                        {servicePoint.isLocker ? "Casier" : "Boutique"}
+                      </span>
                       <br />
                       {servicePoint.street} {servicePoint.house_number}, {servicePoint.postal_code} {servicePoint.city}
                     </span>

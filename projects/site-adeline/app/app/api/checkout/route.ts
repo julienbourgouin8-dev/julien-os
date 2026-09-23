@@ -2,7 +2,7 @@ import "server-only";
 import { NextResponse, type NextRequest } from "next/server";
 import { getProductById } from "@/lib/db/products";
 import { getCartWeightGrams, FALLBACK_SHIPPING_CENTS } from "@/lib/shipping";
-import { getShippingQuotes, type ShippingMethod } from "@/lib/sendcloud/rates";
+import { getShippingQuotes, matchPointRelaisOption, type ShippingMethod } from "@/lib/sendcloud/rates";
 import { getStripe } from "@/lib/stripe/client";
 import { SITE_URL } from "@/lib/site";
 
@@ -16,6 +16,7 @@ type ServicePoint = {
   city?: string;
   country?: string;
   carrier?: string;
+  isLocker?: boolean;
 };
 
 type CheckoutRequest = {
@@ -96,14 +97,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Choisis un point relais avant de payer." }, { status: 400 });
     }
 
-    // Le prix suit le transporteur du point relais réellement choisi par le
-    // client (Mondial Relay et Chronopost n'ont pas le même tarif) — jamais
-    // un prix générique décidé avant que le client ait cliqué sur un point.
+    // Le prix ET l'option réservée suivent le vrai point choisi par le
+    // client — transporteur ET type casier/boutique (Mondial Relay Casier
+    // et Mondial Relay Boutique n'ont ni le même tarif ni la même option
+    // d'expédition à réserver). Jamais un choix générique décidé avant que
+    // le client ait cliqué sur un point précis.
     const quote =
       body.shippingMethod === "domicile"
         ? quotes?.domicile
-        : body.servicePoint?.carrier
-          ? quotes?.pointRelaisByCarrier[body.servicePoint.carrier]
+        : body.servicePoint?.carrier && quotes
+          ? matchPointRelaisOption(quotes, body.servicePoint.carrier, Boolean(body.servicePoint.isLocker))
           : undefined;
 
     if (quote) {
