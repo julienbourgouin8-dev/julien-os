@@ -13,6 +13,29 @@ Process générique de déploiement (VPS Hostinger + Coolify), réutilisable pou
 
 ## ÉTAT AU 2026-09-23 (fin de session) — à lire en premier
 
+### Correctif Safari + centrage catalogue du 23 septembre au matin
+
+- L'essai en WebP animé a été retiré : il fonctionnait après refresh sur Safari, mais chargeait
+  4 Mio d'images animées, réduisait la fluidité à 8 images/s et a fait passer le score Lighthouse
+  mobile de 96 à 72 (LCP mesuré à 14,6 s).
+- Les cinq rotations mobiles utilisent de nouveau des MP4 720p optimisés (environ 3,2 Mio au total).
+  Ils restent à 24 images/s, sont encodés en H.264 Main compatible avec le décodage matériel iOS,
+  utilisent `faststart` et possèdent désormais une image-clé toutes les deux secondes. Leur
+  `src` est présent dès le HTML pour éviter la course de chargement Safari après refresh. Seule la
+  première est préchargée immédiatement ; les suivantes passent en préchargement complet à
+  1 200 px de l'écran et ne jouent que lorsqu'elles deviennent visibles. Un watchdog relance une
+  vidéo visible si Safari résout `play()` tout en laissant l'image figée. Une affiche JPEG légère
+  garantit que le produit reste visible avant le premier décodage ou en cas d'erreur média.
+- Sur PC, les panneaux conservent de vraies vidéos, mais utilisent désormais ces variantes 720p
+  (environ 3,2 Mio au total au lieu de 7,7 Mio). Les cinq sources sont toujours préchargées dès le
+  montage desktop ; le survol reste donc réactif même si l'utilisateur descend immédiatement.
+- Le catalogue PC n'utilise plus le conteneur `max-w-7xl` ni le décalage artificiel de 28 px. À
+  partir du breakpoint XL, le filtre est ancré à 40 px du bord dans une colonne de 160 px, tandis
+  que la grille de deux cartes de 420 px est centrée indépendamment sur l'axe du titre. Contrôle
+  visuel effectué dans Safari sur `/boutique/toilette`.
+- Validation : ESLint ciblé sans erreur (un avertissement hérité pour l'ancien helper mobile,
+  désormais inutilisé), compilation Next.js de production réussie avec webpack.
+
 ### Correctifs produits, Safari mobile et performance du 23 septembre
 
 - Les photos ajoutées depuis l'admin sont désormais normalisées en 1600×900 WebP qualité 82,

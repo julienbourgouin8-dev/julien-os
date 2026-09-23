@@ -21,6 +21,7 @@ type Hotspot = {
   height: number;
   video?: string;
   mobileVideo?: string;
+  mobilePoster?: string;
 };
 
 // Coordonnées mesurées par script (seuillage pixel vs fond, voir historique
@@ -42,6 +43,7 @@ const hotspots: Hotspot[] = [
     height: 52.7,
     video: "/products/videos/sac-savane-360-v3.mp4",
     mobileVideo: "/products/videos/sac-savane-360-v3-mobile.mp4",
+    mobilePoster: "/products/videos/sac-savane-360-v3-mobile-poster.jpg",
   },
   {
     // bouillotte (housse fleece + tissu imprimé) — remplace la sacoche
@@ -55,6 +57,7 @@ const hotspots: Hotspot[] = [
     height: 47.7,
     video: "/products/videos/bouillotte-360.mp4",
     mobileVideo: "/products/videos/bouillotte-360-mobile.mp4",
+    mobilePoster: "/products/videos/bouillotte-360-mobile-poster.jpg",
   },
   {
     // trousse de toilette effet python noir — remplace la pochette éventail
@@ -68,6 +71,7 @@ const hotspots: Hotspot[] = [
     height: 41.7,
     video: "/products/videos/trousse-python-360.mp4",
     mobileVideo: "/products/videos/trousse-python-360-mobile.mp4",
+    mobilePoster: "/products/videos/trousse-python-360-mobile-poster.jpg",
   },
   {
     name: "Lunch box",
@@ -79,6 +83,7 @@ const hotspots: Hotspot[] = [
     height: 40.6,
     video: "/products/videos/lunch-box-360-v10.mp4",
     mobileVideo: "/products/videos/lunch-box-360-v10-mobile.mp4",
+    mobilePoster: "/products/videos/lunch-box-360-v10-mobile-poster.jpg",
   },
   {
     name: "Trousse papillons",
@@ -90,6 +95,7 @@ const hotspots: Hotspot[] = [
     height: 31.3,
     video: "/products/videos/trousse-papillons-360-v2.mp4",
     mobileVideo: "/products/videos/trousse-papillons-360-v2-mobile.mp4",
+    mobilePoster: "/products/videos/trousse-papillons-360-v2-mobile-poster.jpg",
   },
 ];
 
@@ -148,50 +154,22 @@ function staticCropStyle(spot: Hotspot): CSSProperties {
 // métadonnées à l'avance (pas la vidéo entière, coût réseau négligeable),
 // ce qui rend le `.play()` déclenché par l'IntersectionObserver beaucoup
 // plus robuste.
-function AutoplayVideo({ src, className, eager = false }: { src: string; className?: string; eager?: boolean }) {
+function AutoplayVideo({
+  src,
+  poster,
+  className,
+  eager = false,
+}: {
+  src: string;
+  poster?: string;
+  className?: string;
+  eager?: boolean;
+}) {
   const ref = useRef<HTMLVideoElement | null>(null);
-  const [sourceReady, setSourceReady] = useState(eager);
-
-  // Ne donne même pas de `src` au navigateur tant que la vidéo est loin
-  // sous l'écran. Safari iOS lançait sinon les cinq téléchargements au
-  // refresh (7,7 Mo au total), puis n'accordait plus de décodeur aux vidéos
-  // réellement visibles. Le rootMargin prépare la prochaine vidéo avant
-  // son arrivée, sans saturer le chargement initial.
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || sourceReady) return;
-
-    const loadWhenNear = () => {
-      const rect = el.getBoundingClientRect();
-      if (rect.top < window.innerHeight + 700 && rect.bottom > -700) {
-        setSourceReady(true);
-        return true;
-      }
-      return false;
-    };
-
-    const frame = window.requestAnimationFrame(loadWhenNear);
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting) setSourceReady(true);
-      },
-      { rootMargin: "700px 0px", threshold: 0 },
-    );
-    observer.observe(el);
-    window.addEventListener("scroll", loadWhenNear, { passive: true });
-    window.addEventListener("resize", loadWhenNear);
-
-    return () => {
-      window.cancelAnimationFrame(frame);
-      observer.disconnect();
-      window.removeEventListener("scroll", loadWhenNear);
-      window.removeEventListener("resize", loadWhenNear);
-    };
-  }, [sourceReady]);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el || !sourceReady) return;
+    if (!el) return;
     let shouldPlay = false;
     let retryTimer: ReturnType<typeof setTimeout> | null = null;
     let watchdog: ReturnType<typeof setInterval> | null = null;
@@ -202,7 +180,6 @@ function AutoplayVideo({ src, className, eager = false }: { src: string; classNa
       if (!shouldPlay || document.visibilityState === "hidden") return;
       el.muted = true;
       el.defaultMuted = true;
-      if (el.networkState === HTMLMediaElement.NETWORK_EMPTY) el.load();
       el.play().catch(() => {
         // Safari peut refuser le premier play() pendant un refresh alors que
         // la vidéo n'a pas encore assez de données. On retente après le
@@ -211,6 +188,20 @@ function AutoplayVideo({ src, className, eager = false }: { src: string; classNa
         retryTimer = setTimeout(attemptPlay, 350);
       });
     };
+
+    // La source reste présente dès le HTML. C'est plus fiable sur Safari
+    // après un refresh que de créer le `src` tardivement avec React. On ne
+    // demande cependant le fichier complet que lorsque la vidéo approche
+    // de l'écran, afin de préserver le chargement initial.
+    const preloadObserver = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0]?.isIntersecting) return;
+        el.preload = "auto";
+        if (el.networkState === HTMLMediaElement.NETWORK_EMPTY) el.load();
+        preloadObserver.disconnect();
+      },
+      { rootMargin: "1200px 0px", threshold: 0 },
+    );
 
     const startWatchdog = () => {
       if (watchdog) clearInterval(watchdog);
@@ -248,7 +239,7 @@ function AutoplayVideo({ src, className, eager = false }: { src: string; classNa
           if (watchdog) clearInterval(watchdog);
         }
       },
-      { threshold: 0.01 },
+      { rootMargin: "120px 0px", threshold: 0.01 },
     );
 
     const onMediaReady = () => attemptPlay();
@@ -266,8 +257,10 @@ function AutoplayVideo({ src, className, eager = false }: { src: string; classNa
     el.addEventListener("waiting", onMediaReady);
     window.addEventListener("pageshow", onPageShow);
     document.addEventListener("visibilitychange", onVisibilityChange);
+    preloadObserver.observe(el);
     observer.observe(el);
     return () => {
+      preloadObserver.disconnect();
       observer.disconnect();
       if (retryTimer) clearTimeout(retryTimer);
       if (watchdog) clearInterval(watchdog);
@@ -280,16 +273,20 @@ function AutoplayVideo({ src, className, eager = false }: { src: string; classNa
       window.removeEventListener("pageshow", onPageShow);
       document.removeEventListener("visibilitychange", onVisibilityChange);
     };
-  }, [sourceReady]);
+  }, []);
 
   return (
     <video
       ref={ref}
-      src={sourceReady ? src : undefined}
+      src={src}
+      poster={poster}
+      autoPlay={eager}
       muted
       loop
       playsInline
-      preload={sourceReady ? "auto" : "none"}
+      preload={eager ? "auto" : "metadata"}
+      width={640}
+      height={360}
       className={className}
     />
   );
@@ -488,7 +485,14 @@ export default function VitrineArc() {
       <div className="flex flex-col gap-10 pb-10 sm:hidden">
         {hotspots.map((spot, i) => (
           <div key={spot.name} className="flex flex-col items-center text-center">
-            {spot.mobileVideo && <AutoplayVideo src={spot.mobileVideo} className="w-full" eager={i === 0} />}
+            {spot.mobileVideo && (
+              <AutoplayVideo
+                src={spot.mobileVideo}
+                poster={spot.mobilePoster}
+                className="w-full"
+                eager={i === 0}
+              />
+            )}
             <p className="mt-6 px-4 text-sm font-semibold uppercase tracking-[0.2em] text-teal">
               {spot.category}
             </p>
@@ -659,7 +663,10 @@ export default function VitrineArc() {
                   ref={(el) => {
                     videoRefs.current[i] = el;
                   }}
-                  src={spot.video}
+                  // Les versions 720p sont visuellement suffisantes dans un
+                  // panneau de 640 px et pèsent environ trois fois moins :
+                  // elles sont prêtes même si l'on descend immédiatement.
+                  src={spot.mobileVideo ?? spot.video}
                   muted
                   loop
                   playsInline
