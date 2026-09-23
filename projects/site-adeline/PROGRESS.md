@@ -1793,3 +1793,145 @@ plus bas / à compléter par Julien.**
 Ne jamais faire passer un secret (mot de passe, clé privée, token) dans la conversation — toujours
 via un fichier local (`touch` + `chmod 600` + `open -e` dans TextEdit) que Julien remplit lui-même.
 La clé SSH de ce VPS vit dans `~/.ssh/creadeline_vps`, jamais ailleurs.
+
+## Mise à jour — session 2026-09-23 (14h25) : SEO, bug checkout critique, GA4, incidents ouverts
+
+Session dense, plusieurs sujets en parallèle. Résumé par thème, avec l'état réel (pas juste ce qui a
+été tenté) pour chacun.
+
+### 1. SEO de base — fait et vérifié en prod
+
+- **`app/app/sitemap.ts`** créé : liste les pages statiques, les 6 catégories (`lib/categories.ts`)
+  et **tous les produits actifs** via une nouvelle fonction `getAllActiveProducts()` ajoutée dans
+  `lib/db/products.ts`. Généré dynamiquement à chaque requête (pas un fichier statique figé), donc
+  toujours à jour avec la base.
+- **`app/app/robots.ts`** créé : autorise tout sauf `/panier`, `/commande`, `/api`,
+  `/vitrine-test`, référence le sitemap.
+- **Bug corrigé** : la meta description de `app/app/layout.tsx` disait "Charente-Maritime" au lieu
+  de "Charente" (le domaine `creadeline16.fr` = département 16 = Charente). Texte retravaillé à la
+  demande de Julien pour être plus orienté mots-clés réels (sacs, trousses, accessoires en tissu,
+  cousu main, sur mesure, couture artisanale, idées cadeaux) plutôt que la formulation générique
+  d'origine — toujours sans nom de ville précis (Julien n'a pas donné celui d'Adeline), à resserrer
+  plus tard si besoin.
+- **`metadataBase`** ajouté (manquant, nécessaire pour que les URLs Open Graph/sitemap soient
+  absolues et correctes).
+- **Google Search Console connecté** : propriété de type **Domaine** (pas préfixe d'URL) sur
+  `creadeline16.fr`, vérifiée via un enregistrement **TXT** posé dans la zone DNS OVH (`@`,
+  `google-site-verification=...`) — propagation quasi instantanée comme pour le A record. Sitemap
+  soumis (`sitemap.xml`, saisi en chemin relatif dans le champ Search Console) : statut **"Opération
+  effectuée", 15 pages découvertes**. Page d'accueil : indexation demandée via Inspection de l'URL,
+  confirmée **"Cette URL est sur Google"**.
+- Ces trois fichiers/correctifs ont été commit dans le monorepo puis extraits/poussés vers le repo
+  dédié `creadeline-site` avec le script `scripts/subtree-deploy.sh` (voir `.agents/skills/vps-deploy/`),
+  et déployés sur `creadeline-app` dans Coolify. Vérifiés en prod par `curl` (200 sur les deux
+  fichiers) et par lecture directe du contenu retourné.
+
+### 2. Bug critique trouvé et corrigé : Stripe Checkout redirigeait vers `localhost:3000`
+
+**Le plus important de la session.** Julien a signalé qu'après un paiement test, le bouton retour de
+la page Stripe Checkout donnait une erreur "localhost". Vérifié en interrogeant directement l'API
+Stripe (`GET /v1/checkout/sessions/...`) sur une session réelle créée depuis le site : `success_url`
+et `cancel_url` valaient bien **`https://localhost:3000/...`** en production. Cause : la route
+`app/api/checkout/route.ts` utilisait `request.nextUrl.origin`, qui dépend du header `Host` transmis
+par le reverse proxy (Traefik/Coolify) — ce header n'est pas transmis correctement au conteneur pour
+ce déploiement, donc Next.js retombe sur `localhost:3000` (son adresse d'écoute interne). **Un vrai
+paiement client aurait donc atterri sur une erreur au lieu de la page de confirmation** — c'était
+non-fonctionnel malgré tous les tests précédents qui ne portaient jamais sur ce point précis.
+
+Corrigé en arrêtant de dépendre du header du proxy du tout :
+- **`app/lib/site.ts`** créé : exporte `SITE_URL`, une constante fixe
+  (`https://creadeline16.fr` en production, `http://localhost:3000` en dev) au lieu de la dériver
+  de la requête.
+- `app/app/api/checkout/route.ts` utilise maintenant `SITE_URL` pour `success_url`/`cancel_url`.
+- `app/app/sitemap.ts` et `app/app/robots.ts` retravaillés pour importer ce même `SITE_URL` partagé
+  au lieu de dupliquer la chaîne en dur.
+- **Même bug trouvé et corrigé dans l'admin** : `admin/proxy.ts` (middleware de protection des
+  routes) construisait la redirection vers `/login` avec `new URL("/login", request.url)` — exposé
+  exactement au même problème. Nouveau fichier **`admin/lib/site.ts`** (URL fixe
+  `https://admin.creadeline16.fr` en prod), `proxy.ts` corrigé pour l'utiliser.
+- **Vérifié en prod après déploiement** : `curl` sur `/orders`, `/products` de l'admin redirige bien
+  vers `https://admin.creadeline16.fr/login` (plus vers localhost). Julien a confirmé sur son
+  téléphone que le bouton retour Stripe ne plante plus.
+
+**Non résolu à date de fin de session** : Julien signale un décalage du panier vers la droite en
+mobile (deux fois, deux screenshots) — jamais reproduit malgré des tests en émulation mobile Chrome
+DevTools (390-500px) ni en relisant attentivement les screenshots envoyés. Besoin d'un détail plus
+précis (élément concerné, ou zoom Safari à vérifier) avant de pouvoir corriger quoi que ce soit —
+**ne pas deviner un correctif à l'aveugle là-dessus**.
+
+### 3. Google Analytics 4 — intégré techniquement, mais aucune donnée ne part (non résolu)
+
+- **`app/components/GoogleAnalytics.tsx`** créé, même architecture que `PostHogProvider.tsx` :
+  chargement paresseux de `gtag.js` (aucun script injecté avant consentement), gated par le même
+  flag de consentement que PostHog (`lib/consent.ts`, un seul bandeau pour les deux outils).
+  Pageviews envoyées manuellement au changement de route (`send_page_view: false` + événement
+  `page_view` manuel dans un `useEffect`), même pattern que PostHog. Un correctif ultérieur a ajouté
+  `gtag('consent', 'default', {analytics_storage: 'granted', ad_storage/ad_user_data/
+  ad_personalization: 'denied'})` avant `js`/`config`, conformément aux instructions officielles
+  Google (l'appel de consentement par défaut doit précéder toute commande de mesure).
+- **Pages légales mises à jour** (`app/app/cookies/page.tsx`, `app/app/confidentialite/page.tsx`,
+  `components/CookieConsent.tsx`) pour mentionner les deux outils (PostHog + Google Analytics) au
+  lieu d'un seul.
+- **Problème constaté, non résolu** : après déploiement et vérification technique poussée
+  (navigateur automatisé Chrome DevTools MCP + Tag Assistant Google + test sur l'iPhone/Mac réel de
+  Julien), **aucune requête de collecte n'est jamais envoyée vers les serveurs Google**, malgré :
+  - le script `gtag.js` qui se charge bien (200) avec le bon ID de mesure ;
+  - l'objet interne `window.google_tag_manager` qui s'initialise correctement (bootstrap, pas
+    d'erreur console) ;
+  - `gtag('consent','default',...)` correctement placé avant `config` ;
+  - un test avec `send_page_view` par défaut (sans le mettre à `false`) — aucun changement ;
+  - un événement `page_view` envoyé manuellement — aucun changement ;
+  - Google Tag Assistant lui-même confirmant **"Aucun hit n'a été envoyé par cette balise"** et
+    **"Consentement non configuré"** sur un événement `gtm.init` capturé avant le correctif consent
+    default (à retester si besoin, mais le nouvel essai après correctif n'a rien changé non plus).
+  - **Propriété GA4 entièrement recréée** (`G-18XP8S05ZS` → nouvelle propriété `G-KY8550DXTK`,
+    installation manuelle via le code plutôt que la détection automatique Google, pour éviter de
+    réutiliser l'ancienne "balise Google" potentiellement en cause) — **même résultat, zéro hit**,
+    y compris testé directement par Julien sur son propre Mac (Rapports → Temps réel : rien).
+  - Conclusion de la session : le problème n'est ni dans notre code (vérifié de façon exhaustive,
+    suit le snippet officiel Google à la lettre) ni dans une propriété GA4 mal configurée (deux
+    propriétés différentes, même résultat) — probablement un souci au niveau du **compte** Google
+    Analytics lui-même, hors de portée sans accès au support Google. **Mis en pause volontairement**
+    (non bloquant pour le business) — ID actif dans Coolify (`NEXT_PUBLIC_GA_MEASUREMENT_ID`) :
+    `G-KY8550DXTK`. À reprendre plus tard : attendre 24h et retester, ou contacter le support
+    Google Analytics avec les deux ID de mesure créés.
+
+### 4. Incident VPS : ne jamais redéployer les deux apps Coolify en même temps
+
+Julien a lancé un déploiement de `creadeline-app` et `creadeline-admin` simultanément → crash. Le
+VPS n'a pas de swap (déjà documenté plus haut, règle de non-régression n°9) : deux builds Next.js en
+parallèle peuvent saturer la RAM. **Redémarrage du VPS effectué par Julien pour repartir sur une
+base saine — aucune perte de données** (Postgres et Garage vivent dans des volumes/bind mounts
+persistants sur disque, pas dans la mémoire des conteneurs). Tout le code de la session était déjà
+commité dans le monorepo et poussé sur GitHub (`creadeline-site`) avant le redémarrage, donc rien à
+risque de ce côté non plus. **Règle à respecter strictement désormais** : déployer une ressource
+Coolify à la fois, attendre "Rolling update completed" avant de lancer la suivante.
+
+### 5. Admin : erreur "This page couldn't load / A server error occurred" — non résolu, cause inconnue
+
+Julien rapporte cette erreur à plusieurs reprises en essayant d'accéder à `admin.creadeline16.fr`
+(screenshot identique envoyé deux fois). **Vérifié côté serveur à chaque fois : tout répond
+normalement** (`curl` sur `/login`, `/orders`, `/products` → 200/307 corrects, redirections vers le
+bon domaine depuis le correctif du point 2). Impossible de reproduire l'erreur depuis l'extérieur.
+Hypothèses non vérifiées : lié au redémarrage du VPS (conteneur pas encore stable au moment du test,
+le point 4 ayant eu lieu juste avant), ou spécifique à l'app/navigateur utilisé par Julien pour y
+accéder (pas confirmé s'il s'agit de Safari standard ou d'un autre contexte). **À reprendre au
+prochain message de Julien** : demander l'URL exacte affichée, si ça arrive avant ou après avoir
+tapé les identifiants, et dans quelle app/navigateur.
+
+### Reste à faire après cette session
+
+1. **Confirmer l'admin accessible** (point 5 ci-dessus, bloquant pour tester quoi que ce soit côté
+   commandes/Sendcloud).
+2. **Vérifier que `SENDCLOUD_PUBLIC_KEY` et `SENDCLOUD_SECRET_KEY` sont bien dans les variables
+   d'environnement Coolify de `creadeline-admin`** — fonctionnalité déjà entièrement codée
+   (`admin/lib/sendcloud/client.ts`, bouton de génération d'étiquette sur la page détail commande,
+   fait le 2026-09-21), jamais testée en conditions réelles faute d'accès admin stable.
+3. **Stripe en mode Live** : Julien gère lui-même l'activation du compte (vérification
+   d'identité/bancaire obligatoire, ne peut pas être fait par un agent) — dès qu'il a les 3 valeurs
+   (clé publique live, clé secrète live, nouveau webhook secret live), les brancher dans Coolify et
+   redéployer.
+4. **Panier décalé mobile** (point 2) et **GA4 zéro donnée** (point 3) — non bloquants, en attente
+   d'informations supplémentaires ou de patience respectivement.
+5. **Une fois tout ça stable** : premier vrai test de commande de bout en bout (paiement Stripe
+   réel → décrément stock → étiquette Sendcloud → email) avant d'considérer le site prêt à annoncer.

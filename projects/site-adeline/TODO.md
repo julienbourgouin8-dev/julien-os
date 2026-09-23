@@ -254,7 +254,7 @@ relations DB.
 
 ## 8. To-do d'exécution
 
-- [ ] Choisir et acheter le nom de domaine
+- [x] Choisir et acheter le nom de domaine (`creadeline16.fr`, OVH — site en ligne dessus)
 - [x] Setup Next.js + déploiement Vercel (2026-08 — Netlify prévu au départ, changé pour
       Vercel, voir §5)
 - [x] Setup Base de données (Neon Postgres) + auth admin + schéma
@@ -272,5 +272,9 @@ relations DB.
 - [x] Pages légales FR : CGV, mentions légales, politique de confidentialité RGPD, droit
       de rétractation 14 jours (placeholders à compléter avec les infos d'Adeline)
 - [ ] Mention TVA si franchise en base ("TVA non applicable, art. 293B du CGI")
-- [ ] SEO produit : meta tags + schema.org Product
+- [x] SEO de base : `sitemap.ts` + `robots.ts`, meta description corrigée et resserrée sur des
+      mots-clés réels, Google Search Console connecté (propriété de domaine, TXT OVH) + sitemap
+      soumis + indexation demandée (2026-09-23)
+- [ ] SEO produit avancé : `generateMetadata` par page (boutique/fiche produit), Open Graph/Twitter
+      Card, JSON-LD `schema.org/Product`
 - [ ] Vérifier l'activation de Stripe Radar
