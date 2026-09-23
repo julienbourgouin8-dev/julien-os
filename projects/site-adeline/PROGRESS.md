@@ -2284,3 +2284,95 @@ test —, séquence email Brevo avec image dynamique de l'article + bouton de su
 Consignée dans `TODO.md` §8 (nouvelle sous-section) avec priorités à discuter — pas de quoi improviser
 une refonte du dashboard sans validation, contrairement aux correctifs Sendcloud ci-dessus qui étaient
 des bugs francs à corriger.
+
+## Mise à jour — session 2026-09-23 (fin de soirée) : référence commande tronquée, nettoyage complet des étiquettes de test, email de confirmation
+
+### Référence de commande tronquée chez DEUX transporteurs (Mondial Relay ET Chronopost)
+
+Sur la toute première étiquette Chronopost testée, même symptôme que le nom du casier plus tôt, mais
+cette fois sur un champ qu'on contrôle réellement : `Reference : 62810a49-fb30-4585-9ae1-` — notre UUID
+de commande complet (36 caractères), tronqué en plein milieu par le gabarit de référence du
+transporteur. Contrairement au nom du point relais (jamais envoyé par nous), **ici c'est nous qui
+envoyions l'UUID complet** comme `order_number` dans `createParcelAndLabel` (`app/lib/sendcloud/client.ts`
+**et** son doublon `admin/lib/sendcloud/client.ts` — même fonction dupliquée dans les deux apps).
+
+- **Corrigé dans les deux fichiers** : `order_number: params.orderId.slice(0, 8).toUpperCase()` — la
+  même référence courte déjà affichée au client partout ailleurs sur le site ("Commande #62810A49").
+- **Revérifié avec une vraie commande après déploiement** : nouvelle étiquette Chronopost,
+  `Reference : 52CD27C8` — propre, plus de coupure. Confirmé en conditions réelles.
+
+### Nettoyage : les 6 étiquettes de test de la journée toutes annulées côté Sendcloud
+
+Constaté que annuler une commande dans l'admin (`cancelOrderAndRestock`) ne annule PAS l'étiquette/le
+shipment côté Sendcloud — ce sont deux systèmes séparés, une commande "annulée" chez nous peut laisser
+un vrai colis actif (et facturable) chez le transporteur. Après chaque test réel de la soirée, annulation
+manuelle du shipment via `POST /v3/shipments/{id}/cancel` (l'id du **shipment**, une UUID différente du
+`shipping_parcel_id` numérique stocké en base — retrouvé via `GET /v3/shipments?order_number=...`).
+Les 6 étiquettes de test (5 Mondial Relay + 1 Chronopost initiale, remplacée par une 2e Chronopost après
+le correctif de référence) toutes confirmées annulées ou déjà en cours d'annulation. `GET /v3/invoices`
+vérifié vide à chaque fois — aucun frais réel engagé sur le compte Sendcloud de Julien à ce jour.
+
+**Point d'attention pour la suite** : en usage réel (pas des tests), annuler une commande dans l'admin
+ne doit PAS annuler automatiquement l'étiquette Sendcloud sans réflexion — une fois le colis remis au
+transporteur, l'annuler peut ne plus être possible ou pertinent. Cette procédure manuelle (API) est
+seulement pour nettoyer des commandes de test, pas un comportement à automatiser tel quel sur
+`cancelOrderAndRestock`.
+
+### Petit ajustement visuel page confirmation de commande
+
+Julien : pas un bug fonctionnel, juste "pas joli" — les chiffres (prix par article et Total) se
+retrouvaient visuellement proches quand le nom d'article était assez long pour passer à la ligne
+(`flex justify-between` sans `gap` ni `shrink-0` sur le prix). Corrigé dans
+`app/app/commande/confirmee/page.tsx` : `gap-4`, `items-start`, prix en `shrink-0 whitespace-nowrap`,
+espacement vertical légèrement augmenté avant le total. Build vérifié OK.
+
+### Nouveau : email de confirmation de commande (Resend), prêt côté code mais bloqué en pratique
+
+Julien a demandé "absolument" la séquence email (remerciement + image réelle de l'article + prix +
+bouton "Suivre mon colis"). Découverte en vérifiant les secrets disponibles : **le provider déjà
+configuré et déjà utilisé (pour le formulaire de contact) est Resend, pas Brevo** comme le supposait
+`TODO.md` — `RESEND_API_KEY` déjà dans Coolify, package `resend` déjà en dépendance.
+
+- **Construit** : `app/lib/email/orderConfirmation.ts` (`sendOrderConfirmationEmail`) — récupère
+  l'image réelle de chaque article via `getProductById` au moment de l'envoi (jamais une image
+  statique), affiche prix/total, et un bouton "Suivre mon colis" vers `shipping_tracking_url` s'il est
+  déjà disponible (le webhook Sendcloud tourne juste avant dans le même handler) — sinon un message
+  "étiquette en préparation", et un message dédié retrait pour les commandes `retrait`. Appelé depuis
+  `app/app/api/webhooks/stripe/route.ts` juste après la tentative Sendcloud, jamais bloquant (erreur
+  d'envoi loggée, n'empêche jamais l'enregistrement d'une commande payée). Build vérifié OK.
+- **⚠️ Bloqué en pratique, pas juste une formalité** : le compte Resend n'a **aucun domaine vérifié** —
+  `onboarding@resend.dev` (l'expéditeur actuellement utilisé, y compris pour le formulaire de contact)
+  ne peut délivrer **qu'à l'adresse du propriétaire du compte Resend lui-même**
+  (`julienbourgouinai@gmail.com`, voir `lib/contact.ts`), jamais à une adresse cliente arbitraire —
+  vérifié via recherche, comportement documenté de Resend, pas une supposition. **Concrètement : tant
+  que le domaine n'est pas vérifié, cet email ne partira jamais vers un vrai client en prod**, même si
+  le code tourne sans erreur.
+  - **Pour débloquer** : Julien doit aller dans le dashboard Resend (identifiants connus de lui seul)
+    → Domains → ajouter `creadeline16.fr` → copier les enregistrements DNS (TXT/DKIM) donnés par
+    Resend → les coller dans la zone DNS OVH (même geste que pour le domaine lui-même). La clé API
+    actuelle (`RESEND_API_KEY`) est volontairement restreinte à l'envoi seul (`"restricted to only
+    send emails"`, vérifié) — ne permet pas de gérer les domaines par API ; soit Julien fait la
+    vérification lui-même dans le dashboard, soit il crée une clé avec les droits domaines et la colle
+    dans un fichier local si on veut que ce soit fait par API.
+  - Une fois vérifié, changer `FROM` dans `orderConfirmation.ts` **et** `app/api/contact/route.ts` de
+    `onboarding@resend.dev` vers une adresse `@creadeline16.fr` (ex. `commandes@creadeline16.fr`).
+
+### Stripe mode live : toujours bloqué, cette fois pour une raison concrète et vérifiable
+
+Julien a demandé de passer Stripe en mode live. Vérifié `.secrets/stripe-live.env` : la clé publique
+(`NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`) est bien présente (107 caractères), **mais
+`STRIPE_SECRET_KEY` est vide** (0 caractère) — jamais réellement collée dans le fichier malgré la note
+de session précédente comme quoi Julien "a maintenant accès" à cette clé. **Pas possible de basculer
+en live sans cette clé** — à récupérer par Julien dans son dashboard Stripe (Developers → API keys,
+mode Live) et coller dans `.secrets/stripe-live.env` (jamais dans le chat, même protocole que
+d'habitude) avant de pouvoir continuer.
+
+### Reste à faire après cette session
+
+1. **Domaine Resend à vérifier** (bloque l'email client réel) — action Julien dans le dashboard Resend.
+2. **Clé secrète Stripe live manquante** — action Julien dans le dashboard Stripe.
+3. Grosse liste UX/dashboard (§8 TODO.md) toujours pas commencée : commandes visibles + notifications
+   sur le dashboard admin, autofill (déjà expliqué : comportement Stripe par défaut, rien à coder),
+   flux confirmation dispo/stock (explicitement différé par Julien).
+4. Reste de TODO.md §8 inchangé par ailleurs (mention TVA, SEO produit avancé, Stripe Radar, poids
+   réel des produits, décalage mobile).

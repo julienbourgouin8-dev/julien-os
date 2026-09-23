@@ -60,19 +60,21 @@ export default async function CommandeConfirmeePage({
                 <p className="text-[0.65rem] font-semibold uppercase tracking-[0.15em] text-ink/40">
                   Commande #{order.id.slice(0, 8).toUpperCase()}
                 </p>
-                <div className="mt-4 space-y-3 border-t border-dashed border-line pt-4">
+                <div className="mt-4 space-y-3.5 border-t border-dashed border-line pt-4">
                   {order.items.map((item) => (
-                    <div key={item.product_id} className="flex justify-between text-sm text-ink">
-                      <span>
+                    <div key={item.product_id} className="flex items-start justify-between gap-4 text-sm text-ink">
+                      <span className="min-w-0 flex-1">
                         {item.name} × {item.quantity}
                       </span>
-                      <span className="font-semibold">{formatPrice(item.price_cents * item.quantity)}</span>
+                      <span className="shrink-0 whitespace-nowrap font-semibold">
+                        {formatPrice(item.price_cents * item.quantity)}
+                      </span>
                     </div>
                   ))}
                 </div>
-                <div className="mt-4 flex justify-between border-t border-line pt-4 text-sm font-bold text-ink">
+                <div className="mt-5 flex items-baseline justify-between gap-4 border-t border-line pt-4 text-sm font-bold text-ink">
                   <span>Total</span>
-                  <span>{formatPrice(order.total_cents)}</span>
+                  <span className="whitespace-nowrap">{formatPrice(order.total_cents)}</span>
                 </div>
               </div>
             </>

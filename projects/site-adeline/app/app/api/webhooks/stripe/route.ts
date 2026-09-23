@@ -11,6 +11,7 @@ import {
 } from "@/lib/db/orders";
 import { createParcelAndLabel, type ServicePointDelivery } from "@/lib/sendcloud/client";
 import { getCartWeightGrams } from "@/lib/shipping";
+import { sendOrderConfirmationEmail } from "@/lib/email/orderConfirmation";
 
 // Source de vérité du paiement : Stripe appelle cette route, jamais le
 // navigateur du client. Signature vérifiée avant toute lecture du contenu
@@ -78,6 +79,12 @@ export async function POST(request: NextRequest) {
         weightGrams,
       });
 
+      // Rempli par la génération d'étiquette ci-dessous si elle réussit à
+      // temps — l'email de confirmation part juste après, avec ou sans lien
+      // de suivi selon que Sendcloud a répondu à temps.
+      let trackingUrl: string | null = null;
+      let trackingNumber: string | null = null;
+
       if (
         session.metadata?.shippingMethod !== "retrait" &&
         shippingAddress &&
@@ -113,12 +120,31 @@ export async function POST(request: NextRequest) {
               trackingUrl: shippingResult.trackingUrl,
               parcelId: shippingResult.parcelId,
             });
+            trackingUrl = shippingResult.trackingUrl ?? null;
+            trackingNumber = shippingResult.trackingNumber ?? null;
           } else {
             console.warn(`[Sendcloud] Génération automatique d'étiquette non complétée (${order.id}):`, shippingResult.error);
           }
         } catch (shippingErr) {
           console.error(`[Sendcloud] Erreur d'expédition pour la commande ${order.id}:`, shippingErr);
         }
+      }
+
+      try {
+        await sendOrderConfirmationEmail({
+          customerEmail: order.customer_email,
+          customerName,
+          orderId: order.id,
+          items,
+          totalCents: order.total_cents,
+          shippingMethod: session.metadata?.shippingMethod ?? null,
+          trackingUrl,
+          trackingNumber,
+        });
+      } catch (emailErr) {
+        // Jamais bloquant : une commande payée et bien enregistrée ne doit
+        // jamais échouer à cause d'un souci d'envoi d'email.
+        console.error(`[Email] Échec de l'envoi de confirmation pour la commande ${order.id}:`, emailErr);
       }
     }
   }

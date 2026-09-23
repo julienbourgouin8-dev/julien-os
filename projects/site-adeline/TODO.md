@@ -279,7 +279,12 @@ relations DB.
       d'essai, nécessite le Web Inspector Safari sur le vrai iPhone de Julien pour avancer
 - [ ] Remplacer les statistiques PostHog du dashboard admin par Google Analytics (ordre confirmé par
       Julien le 2026-09-23, pas commencé)
-- [ ] Emails transactionnels via Brevo (confirmation commande, notif expédition)
+- [x] Email de confirmation de commande — **Resend** (pas Brevo, déjà configuré/utilisé pour le
+      formulaire de contact), image réelle de l'article + prix + bouton "Suivre mon colis"
+      (`app/lib/email/orderConfirmation.ts`, 2026-09-23). **Prêt côté code, bloqué en pratique tant
+      que le domaine `creadeline16.fr` n'est pas vérifié sur Resend** — `onboarding@resend.dev` ne
+      délivre qu'à l'adresse du compte, jamais à un vrai client. Action Julien : dashboard Resend →
+      Domains → ajouter le domaine → coller les enregistrements DNS chez OVH.
 - [x] Pages légales FR : CGV, mentions légales, politique de confidentialité RGPD, droit
       de rétractation 14 jours (placeholders à compléter avec les infos d'Adeline)
 - [ ] Mention TVA si franchise en base ("TVA non applicable, art. 293B du CGI")
@@ -289,8 +294,9 @@ relations DB.
 - [ ] SEO produit avancé : `generateMetadata` par page (boutique/fiche produit), Open Graph/Twitter
       Card, JSON-LD `schema.org/Product`
 - [ ] Vérifier l'activation de Stripe Radar
-- [ ] Stripe en mode live (Julien a la clé secrète via Adeline, bloqué plus tôt par une passkey
-      WebAuthn liée au téléphone d'Adeline — à reprendre)
+- [ ] Stripe en mode live — vérifié le 2026-09-23 : `.secrets/stripe-live.env` a la clé publique mais
+      `STRIPE_SECRET_KEY` est toujours vide. Action Julien : dashboard Stripe (Developers → API keys,
+      mode Live) → coller dans le fichier local (jamais dans le chat).
 - [x] Casier Mondial Relay : détection `general_shop_type` (pas `shop_type`) + préférence
       systématique de l'étiquette classique imprimée sur la variante QR "labelless" à prix
       égal + troncature propre (jamais en plein mot) d'`address_line_2` (2026-09-23, vérifié
