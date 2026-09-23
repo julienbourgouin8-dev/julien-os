@@ -2045,6 +2045,50 @@ donc gratuit) plutôt que supposée fonctionnelle après coup. Résumé par thè
   notre côté. Julien pensait se souvenir d'une étiquette casier avec du texte — non confirmé ni infirmé,
   à clarifier auprès du support Sendcloud si besoin, pas quelque chose qu'on peut corriger nous-mêmes
   (on affiche exactement le PDF qu'ils nous donnent).
+
+### Vérification complémentaire — session 2026-09-23 (re-doute de Julien sur l'étiquette casier)
+
+Julien a redemandé à vérifier ce point (souvenir d'une étiquette casier "plus complète"). Re-testé en
+profondeur pour trancher définitivement :
+
+- **Re-téléchargé directement en direct via l'API** (`GET /v3/parcels/{id}/documents/label` avec les
+  clés du compte) la vraie commande casier de test (`shipping_parcel_id = 717986861`, commande
+  `efb176b7-...`, trouvée en interrogeant la base Postgres de prod) : PDF relu page par page — confirmé
+  visuellement, un seul QR code en haut à gauche d'une page immense, rien d'autre nulle part sur la page.
+  Écarte l'hypothèse d'un deuxième document ("label" texte + "qr" séparé) qu'on aurait raté : l'endpoint
+  générique `/v3/parcels/{id}/documents` (sans préciser le type) renvoie le même unique fichier.
+- **Confirmé côté doc Mondial Relay elle-même** (recherche web, pas juste supposé) : le "Zéro étiquette
+  en Locker" est un vrai service officiel Mondial Relay — le QR carré scanné à l'écran du casier est
+  volontairement différent du code-barres vertical de l'étiquette classique, et aucune impression n'est
+  nécessaire pour un dépôt en casier. Le casier imprime lui-même son propre reçu si besoin ; ce n'est
+  jamais Sendcloud/nous qui devons fournir une étiquette papier complète pour ce mode.
+- **Conclusion tranchée** : ce n'est pas un bug, c'est le comportement normal et documenté de Mondial
+  Relay pour les casiers. Le souvenir de Julien correspond probablement au cas boutique (point relais
+  tenu par un commerçant), qui lui génère bien une étiquette classique complète (code-barres, adresse,
+  poids) — déjà vérifié séparément ci-dessus avec la commande Vival. Rien à corriger dans le code.
+
+### Vrai bug trouvé juste après, en testant réellement le widget avec un casier
+
+Julien a testé lui-même la sélection d'un casier sur le site : le badge affichait "Boutique" au lieu de
+"Casier". La détection `isLockerShopType` (session précédente) était en fait cassée depuis le début,
+jamais vérifiée sur un vrai casier via le widget — seulement supposée "robuste" sur un vocabulaire non
+documenté.
+
+- **Vérifié en direct via `GET /v2/service-points`** (recherche de vrais points près de Balzac 16430)
+  sur deux lockers réels ("LOCKER 24/7 ALDI CHAMPNIERS", "LOCKER 24/7 PARKING INTERMARCHE") et deux
+  boutiques réelles (Vival, Intermarché) : `shop_type` est en fait un **code à une seule lettre**
+  (`"C"` pour un casier, `"E"` pour une boutique chez Mondial Relay) — ne contient jamais le mot
+  "locker". Le champ normalisé qui vaut littéralement `"locker"` / `"servicepoint"` est
+  **`general_shop_type`**, un champ distinct que le code ne lisait pas du tout.
+- **Corrigé** dans `app/components/ShippingMethodPicker.tsx` : `isLockerShopType` lit maintenant
+  `sp.general_shop_type` au lieu de `sp.shop_type`. Build vérifié OK.
+- **Impact du bug tant qu'il était en prod** : un client choisissant un vrai casier se voyait afficher
+  le badge "Boutique" (juste visuel — sans conséquence pour lui), mais surtout `effectivePointRelais`
+  et `/api/checkout` réservaient l'option "boutique" au lieu de "casier" pour ce transporteur
+  (`matchPointRelaisOption` dans `rates.ts` cherche `isLocker === false`) — un client casier aurait donc
+  potentiellement payé le tarif boutique et généré une étiquette/réservation du mauvais type de service
+  côté Sendcloud à la commande réelle. Pas encore re-testé de bout en bout avec une vraie commande
+  casier après ce correctif — **à faire avant la prochaine commande réelle**.
 - **Choix tranché avec Julien** : garder casiers + boutiques dans le pool "Point Relais" (le moins cher
   gagne), pas de restriction aux boutiques seules.
 - Légende de prix par transporteur ajoutée au-dessus du bouton "Choisir mon point relais" (le widget

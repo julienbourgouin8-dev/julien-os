@@ -43,13 +43,17 @@ type SendcloudServicePointRaw = {
   country?: string;
   carrier?: string;
   shop_type?: string;
+  general_shop_type?: string;
 };
 
-// Toutes les valeurs de shop_type vues (locker automatique) contiennent le
-// mot "locker" — approche robuste plutôt que d'essayer d'énumérer le
-// vocabulaire exact par transporteur (non documenté par Sendcloud).
-function isLockerShopType(shopType: string | undefined): boolean {
-  return Boolean(shopType && /locker/i.test(shopType));
+// `shop_type` est un code à une seule lettre par transporteur (ex. "C"/"E"
+// chez Mondial Relay, non documenté) — jamais le mot "locker". Le champ
+// normalisé et documenté par Sendcloud est `general_shop_type`
+// ("locker" | "servicepoint" | ...), vérifié en direct sur l'API
+// `/v2/service-points` (ex. "LOCKER 24/7 ALDI CHAMPNIERS" renvoie
+// shop_type: "C", general_shop_type: "locker").
+function isLockerShopType(generalShopType: string | undefined): boolean {
+  return Boolean(generalShopType && /locker/i.test(generalShopType));
 }
 
 declare global {
@@ -207,7 +211,7 @@ export default function ShippingMethodPicker({
           city: sp.city,
           country: sp.country,
           carrier: sp.carrier,
-          isLocker: isLockerShopType(sp.shop_type),
+          isLocker: isLockerShopType(sp.general_shop_type),
         });
       },
       () => {
