@@ -1,8 +1,7 @@
 import type { MetadataRoute } from "next";
 import { categories } from "@/lib/categories";
 import { getAllActiveProducts } from "@/lib/db/products";
-
-const SITE_URL = "https://creadeline16.fr";
+import { SITE_URL } from "@/lib/site";
 
 const STATIC_PAGES = ["", "/cgv", "/mentions-legales", "/confidentialite", "/cookies"];
 

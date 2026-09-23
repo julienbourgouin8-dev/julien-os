@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getProductById } from "@/lib/db/products";
 import { SHIPPING_CENTS } from "@/lib/shipping";
 import { getStripe } from "@/lib/stripe/client";
+import { SITE_URL } from "@/lib/site";
 
 type CheckoutRequest = {
   items: { productId: string; quantity: number }[];
@@ -25,7 +26,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Panier vide." }, { status: 400 });
   }
 
-  const origin = request.nextUrl.origin;
+  const origin = SITE_URL;
   const lineItems: {
     price_data: {
       currency: string;

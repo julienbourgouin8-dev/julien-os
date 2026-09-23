@@ -70,7 +70,7 @@ export default function CookieConsent() {
         <p className="font-script text-2xl text-ink">CréA&apos;deline</p>
         <h2 className="mt-3 font-display text-xl font-semibold text-ink">Gestion des cookies</h2>
         <p className="mt-3 text-sm leading-relaxed text-ink/70">
-          Ce site utilise un outil de mesure d&apos;audience pour comprendre comment
+          Ce site utilise des outils de mesure d&apos;audience pour comprendre comment
           il est visité et l&apos;améliorer. Aucune donnée n&apos;est revendue ni
           utilisée à des fins publicitaires.{" "}
           <Link href="/cookies" className="underline decoration-line underline-offset-2 hover:text-denim">

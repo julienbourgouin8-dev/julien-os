@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { verifySessionToken, COOKIE_NAME } from "@/lib/auth/session";
+import { SITE_URL } from "@/lib/site";
 
 // Next.js 16 a renommé middleware.ts en proxy.ts — voir node_modules/next/dist/docs.
 //
@@ -21,7 +22,7 @@ export function proxy(request: NextRequest) {
   const valid = verifySessionToken(request.cookies.get(COOKIE_NAME)?.value);
 
   if (!valid && !isLoginRoute && !isUploadsRoute) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL("/login", SITE_URL));
   }
 
   return NextResponse.next();
