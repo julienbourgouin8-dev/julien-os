@@ -79,6 +79,11 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
   return new NextResponse(Buffer.from(output), {
     headers: {
       "Content-Type": contentType,
+      // Sans ça, un navigateur peut mettre en cache une réponse antérieure
+      // (constaté en test réel : Julien a reçu deux fois le PDF sans marge
+      // après le déploiement du correctif, jusqu'à ce que son navigateur
+      // renomme le fichier "-2" en évitant une vraie nouvelle requête).
+      "Cache-Control": "no-store",
       "Content-Disposition": `inline; filename="etiquette-${parcelId}.pdf"`,
     },
   });
