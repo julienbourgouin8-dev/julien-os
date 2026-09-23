@@ -78,14 +78,14 @@ export default async function CategoryPage({
         )}
       </div>
 
-      <main className="mx-auto w-full max-w-7xl px-10 pb-16 pt-4">
+      <main className="w-full px-4 pb-16 pt-4 sm:px-10">
       {products.length === 0 && demoProducts.length === 0 && !isFiltered && !subcategory ? (
         <p className="mt-4 text-ink/50">
           Aucune pièce publiée dans cette catégorie pour l&apos;instant — revenez bientôt.
         </p>
       ) : (
-        <div className="mt-4 grid grid-cols-1 gap-x-16 gap-y-12 md:grid-cols-[200px_1fr]">
-          <aside className="max-w-xs md:max-w-none">
+        <div className="relative mt-4 grid grid-cols-1 gap-y-12 md:grid-cols-[200px_1fr] md:gap-x-12 xl:block">
+          <aside className="max-w-xs md:max-w-none xl:absolute xl:left-0 xl:top-0 xl:w-40">
             <p className="font-display text-lg italic text-ink">Filtrer par</p>
             <details className="group mt-4 border-t border-line py-4" open>
               <summary className="flex cursor-pointer list-none items-center justify-between text-xs font-semibold uppercase tracking-[0.15em] text-ink">
@@ -154,7 +154,7 @@ export default async function CategoryPage({
             </div>
           </aside>
 
-          <div>
+          <div className="xl:mx-auto xl:w-fit">
             {products.length === 0 && demoProducts.length === 0 ? (
               <p className="text-ink/50">Aucune pièce ne correspond à ce filtre.</p>
             ) : (
@@ -170,7 +170,7 @@ export default async function CategoryPage({
                  100%)` plafonne le minimum à la largeur réellement
                  disponible, donc la colonne peut redescendre sous 360px
                  sur un écran étroit au lieu de déborder. */
-              <div className="grid justify-center grid-cols-[repeat(auto-fit,minmax(min(390px,100%),420px))] gap-x-10 gap-y-16 md:translate-x-7">
+              <div className="grid justify-center grid-cols-[repeat(auto-fit,minmax(min(390px,100%),420px))] gap-x-10 gap-y-16 xl:grid-cols-[repeat(2,420px)]">
                 {products.map((p) => (
                   <ProductCard
                     key={p.id}
