@@ -34,6 +34,16 @@ export async function getActiveProductsByCategory(category: string): Promise<Pro
   return rows.map(fromRow);
 }
 
+// Utilisé par app/sitemap.ts pour lister toutes les fiches produit, toutes
+// catégories confondues.
+export async function getAllActiveProducts(): Promise<Product[]> {
+  await ensureSchema();
+  const rows = (await sql`
+    SELECT * FROM products WHERE status = 'active' ORDER BY updated_at DESC
+  `) as Product[];
+  return rows.map(fromRow);
+}
+
 export async function getProductBySlug(category: string, slug: string): Promise<Product | null> {
   await ensureSchema();
   const rows = (await sql`
