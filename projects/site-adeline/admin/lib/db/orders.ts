@@ -80,6 +80,27 @@ export async function markOrderFulfilled(id: string): Promise<void> {
   await sql`UPDATE orders SET status = 'fulfilled', updated_at = ${new Date().toISOString()} WHERE id = ${id}`;
 }
 
+// Annule une commande et remet en stock les articles qu'elle avait
+// décrémentés (webhook Stripe, anti-survente) — sinon un article annulé
+// reste indisponible à la vente indéfiniment. Idempotent : une commande
+// déjà annulée n'est pas re-créditée une seconde fois.
+export async function cancelOrderAndRestock(id: string): Promise<{ error?: string }> {
+  await ensureSchema();
+  const rows = (await sql`SELECT * FROM orders WHERE id = ${id}`) as Order[];
+  const order = rows[0] ? fromRow(rows[0]) : null;
+  if (!order) return { error: "Commande introuvable." };
+  if (order.status === "cancelled") return {};
+
+  for (const item of order.items) {
+    await sql`
+      UPDATE products SET stock = stock + ${item.quantity}, updated_at = ${new Date().toISOString()}
+      WHERE id = ${item.product_id}
+    `;
+  }
+  await sql`UPDATE orders SET status = 'cancelled', updated_at = ${new Date().toISOString()} WHERE id = ${id}`;
+  return {};
+}
+
 // Droit à l'effacement (RGPD Art. 17) : efface l'email et l'adresse de
 // livraison, mais garde items/montant/date/statut — ce sont les pièces
 // comptables (obligation légale de conservation, Art. 17(3)(b)), pas les

@@ -4,6 +4,7 @@ import { getOrderById } from "@/lib/db/orders";
 import MarkFulfilledButton from "../MarkFulfilledButton";
 import AnonymizeOrderButton from "../AnonymizeOrderButton";
 import GenerateShippingLabelButton from "../GenerateShippingLabelButton";
+import CancelOrderButton from "../CancelOrderButton";
 
 const CARD =
   "rounded-2xl border border-ink/[0.05] bg-[#fffdf8] shadow-[0_1px_2px_rgba(36,27,21,0.05),0_10px_28px_rgba(36,27,21,0.07)]";
@@ -37,8 +38,16 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
             {formatDate(order.created_at)}
           </p>
           <h1 className="mt-1 font-display text-3xl text-ink">{formatPrice(order.total_cents)}</h1>
+          {order.status === "cancelled" && (
+            <p className="mt-1 text-xs font-semibold uppercase tracking-[0.15em] text-rust">Annulée</p>
+          )}
         </div>
-        {order.status !== "fulfilled" && <MarkFulfilledButton id={order.id} />}
+        {order.status !== "cancelled" && (
+          <div className="flex items-center gap-3">
+            {order.status !== "fulfilled" && <MarkFulfilledButton id={order.id} />}
+            <CancelOrderButton id={order.id} />
+          </div>
+        )}
       </div>
 
       <div className="mt-8 grid gap-6 md:grid-cols-[1.3fr_1fr]">

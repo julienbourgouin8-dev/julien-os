@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { markOrderFulfilled, anonymizeOrder, getOrderById, updateOrderShipping } from "@/lib/db/orders";
+import { markOrderFulfilled, anonymizeOrder, getOrderById, updateOrderShipping, cancelOrderAndRestock } from "@/lib/db/orders";
 import { createParcelAndLabel } from "@/lib/sendcloud/client";
 import { logAction } from "@/lib/audit";
 
@@ -10,6 +10,18 @@ export async function markOrderFulfilledAction(id: string): Promise<void> {
   await logAction("order_fulfilled", id);
   revalidatePath("/orders");
   revalidatePath(`/orders/${id}`);
+}
+
+// Remet en stock les articles de la commande et la marque annulée — utilisé
+// pour une vraie annulation client, ou pour nettoyer une commande de test.
+export async function cancelOrderAction(id: string): Promise<{ error?: string }> {
+  const result = await cancelOrderAndRestock(id);
+  if (!result.error) {
+    await logAction("order_cancelled", id);
+    revalidatePath("/orders");
+    revalidatePath(`/orders/${id}`);
+  }
+  return result;
 }
 
 export async function generateShippingLabelAction(id: string): Promise<{ success: boolean; error?: string }> {
