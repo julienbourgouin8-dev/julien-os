@@ -2468,7 +2468,42 @@ deux. Vérifié en direct via l'API (`POST /v3/shipping-options`, pas une suppos
 2. **Clé secrète Stripe live manquante** — action Julien dans le dashboard Stripe.
 3. **Flux "confirmer la disponibilité avant expédition"** — toujours volontairement pas construit,
    en attendant un feu vert explicite de Julien (voir ci-dessus).
-4. **Retester une vraie commande domicile** avec le numéro de téléphone maintenant collecté — pas
-   encore fait après ce correctif.
-5. Reste de TODO.md §8 inchangé par ailleurs (mention TVA, SEO produit avancé, Stripe Radar, poids
-   réel des produits, décalage mobile, test Chronopost déjà fait ce soir — à cocher).
+4. Reste de TODO.md §8 inchangé par ailleurs (mention TVA, SEO produit avancé, Stripe Radar, poids
+   réel des produits, décalage mobile).
+
+## Mise à jour — session 2026-09-23 (nuit, suite) : téléphone confirmé en vrai + marge blanche sur toutes les étiquettes
+
+Nouvelle commande domicile réelle testée après le correctif téléphone : `customer_phone` bien rempli
+(`+33614107027`), `shipping_tracking_number` bien généré (`72162634`) — **la livraison à domicile
+fonctionne enfin de bout en bout**, plus de colis fantôme.
+
+### Marge blanche ajoutée sur toutes les étiquettes (tous transporteurs/modes)
+
+Sur cette étiquette domicile Mondial Relay ("HOM"), le bloc noir de tri touchait vraiment le bord
+droit de la page cette fois (contrairement à l'étiquette Chronopost vérifiée plus tôt, où tout avait
+déjà de la marge) — confirmé en rendant le PDF en PNG haute résolution (`pdftoppm`, Poppler) avant/après
+comparaison, pas juste en le lisant tel quel.
+
+- **Retraitement ajouté dans le proxy d'étiquette** (`admin/app/api/sendcloud-label/[parcelId]/route.ts`,
+  seul et unique endroit par lequel toute étiquette est téléchargée — la marge s'applique donc
+  automatiquement peu importe le transporteur ou le mode de livraison) : la page du PDF original est
+  rétrécie à 88% et recentrée dans une page de **mêmes dimensions exactes** (jamais agrandie — reste
+  compatible aussi bien avec un rouleau d'étiquettes thermique qu'une impression A4 "taille réelle",
+  qui aurait pu re-couper une page agrandie). Implémenté avec `pdf-lib` (nouvelle dépendance,
+  `embedPdf` + `drawPage` à l'échelle).
+  - Jamais bloquant : si le retraitement échoue pour une raison quelconque, le PDF original est
+    servi tel quel plutôt que de faire échouer le téléchargement.
+- **Vérifié visuellement avant/après** (rendu PNG 200dpi, pas juste supposé) : marge blanche nette et
+  identique sur les 4 côtés, "HOM" ne touche plus le bord. Build vérifié OK.
+- On ne génère toujours pas ces PDF nous-mêmes (Sendcloud/le transporteur les composent), mais rien
+  n'empêchait de les retraiter avant de les servir — contrairement au nom du point relais ou à la
+  référence tronquée (des champs internes au gabarit qu'on ne peut pas rouvrir), ici c'est la mise en
+  page globale de la page qu'on peut retoucher de l'extérieur.
+
+### Reste à faire après cette session
+
+1. Domaine Resend à vérifier (toujours en attente).
+2. Clé secrète Stripe live manquante (toujours en attente).
+3. Flux "confirmer la disponibilité avant expédition" (toujours volontairement pas construit).
+4. Reste de TODO.md §8 inchangé (mention TVA, SEO produit avancé, Stripe Radar, poids réel des
+   produits, décalage mobile).

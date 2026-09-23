@@ -307,8 +307,14 @@ relations DB.
       colis "ANNOUNCEMENT_FAILED" côté transporteur, traité à tort comme un succès faute de vérifier
       `status.code`/`errors` dans la réponse. Téléphone collecté via Stripe
       (`phone_number_collection`), stocké (`orders.customer_phone`) et transmis à Sendcloud ; échec
-      réel maintenant détecté et affiché. 4 colis de test dupliqués annulés (2026-09-23). **À
-      revérifier avec une vraie commande domicile après ce correctif.**
+      réel maintenant détecté et affiché. 4 colis de test dupliqués annulés (2026-09-23).
+      **Revérifié avec une vraie commande domicile — téléphone bien collecté, tracking bien
+      généré, fonctionne de bout en bout (2026-09-23).**
+- [x] **Marge blanche sur toutes les étiquettes** : certains gabarits transporteur (ex. Mondial Relay
+      domicile "HOM") collent du contenu au bord de la page. Retraité dans l'unique proxy de
+      téléchargement (`admin/app/api/sendcloud-label/[parcelId]/route.ts`, `pdf-lib`) — page
+      rétrécie à 88% et recentrée, mêmes dimensions exactes. Vérifié par rendu PNG avant/après
+      (2026-09-23).
 - [x] Retrait à l'entrepôt (0€, pas de transporteur) comme 3e mode de livraison, toujours
       proposé sur la page panier (2026-09-23)
 - [ ] Clarifier/masquer le champ adresse Stripe pour les commandes point relais — message
