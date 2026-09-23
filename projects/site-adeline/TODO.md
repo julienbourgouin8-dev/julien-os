@@ -343,17 +343,39 @@ autres (ex. la séquence email a besoin du lien de tracking, déjà disponible v
       statut `paid`), + badge compteur sur "Commandes" dans la sidebar (`AdminSidebar.tsx`, visible
       sur toutes les pages admin, pas juste le tableau de bord). **Notification email à Adeline**
       aussi ajoutée (`app/lib/email/newOrderNotification.ts`, via Resend, appelée depuis le webhook
-      Stripe) — même limitation de domaine non vérifié que l'email de confirmation client (voir plus
-      bas), donc n'atteint pour l'instant que `CONTACT_EMAIL` (Julien), pas encore Adeline en vrai.
+      Stripe) — atteint maintenant la vraie adresse d'Adeline (domaine vérifié le 2026-09-23, voir
+      plus haut).
 - [ ] **Flux "confirmer la disponibilité"** : bouton admin pour qu'Adeline confirme qu'une pièce
       (souvent unique, fait main) est bien disponible avant expédition — une fois confirmé, l'article
       disparaît du site et le panier d'un client qui l'avait encore dedans se vide. **Julien a dit
       explicitement de ne le mettre en vraie fonctionnalité qu'une fois la période de test terminée** —
       ne pas l'activer prématurément.
 - [x] **Séquence email post-achat** — construite avec **Resend** (pas Brevo), voir entrée détaillée
-      plus haut dans ce fichier et `PROGRESS.md`. Bloquée en pratique tant que le domaine n'est pas
-      vérifié sur Resend (action Julien).
+      plus haut dans ce fichier et `PROGRESS.md`. **Testé en vrai avec un vrai paiement live le
+      2026-09-23 : email bien reçu, confirmé par Julien.**
 - [ ] **Autofill navigateur sur Stripe Checkout** : Julien doit retaper email/adresse à chaque test.
       Stripe gère lui-même l'autocomplete de sa page hébergée — à vérifier si "Link" (réseau
       one-click de Stripe) est activé dans le dashboard Stripe du compte ; on ne contrôle pas le HTML
       de la page Stripe nous-mêmes, donc pas un correctif côté code a priori.
+
+### Trois manques identifiés par Julien après le premier vrai paiement live (2026-09-23, pas commencés)
+
+- [ ] **Synchroniser les remboursements Stripe avec l'admin** : Julien a remboursé son paiement test
+      depuis le dashboard Stripe — la commande est restée "payée" dans notre admin, aucune trace du
+      remboursement. Il manque un event webhook supplémentaire (`charge.refunded`, à ajouter à la
+      configuration de la destination Stripe existante + gérer dans
+      `app/app/api/webhooks/stripe/route.ts`) qui retrouve la commande via le `payment_intent`/
+      `charge` et passe son statut à un nouvel état (`refunded`, distinct de `cancelled` pour
+      distinguer une annulation manuelle d'un vrai remboursement client).
+- [ ] **Remise en stock automatique sur remboursement** : dépend du point précédent — une fois le
+      webhook de remboursement détecté, réutiliser la même logique que `cancelOrderAndRestock`
+      (`admin/lib/db/orders.ts`) pour remettre l'article en stock automatiquement, sans action
+      manuelle d'Adeline.
+- [ ] **Article épuisé (stock 0) reste visible et achetable sur la boutique** — bug confirmé en
+      lisant le code (`app/lib/db/products.ts`) : `getAllProducts`, `getProductsByCategory`,
+      `getProductBySlug`, `getProductById` filtrent uniquement sur `status = 'active'`, jamais sur
+      `stock`. Comme la plupart des pièces d'Adeline sont faites à l'unité (stock 1), un article
+      acheté reste acheté-able par un autre client tant que son statut n'est pas changé à la main.
+      **À trancher avec Julien/Adeline avant de coder** : masquer complètement (`stock > 0` dans la
+      requête) vs. afficher grisé "Épuisé" sans bouton d'achat (peut avoir un intérêt marketing/
+      vitrine à garder visible) — deux comportements différents, pas juste un détail d'implémentation.

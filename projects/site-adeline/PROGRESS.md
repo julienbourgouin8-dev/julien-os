@@ -2604,3 +2604,54 @@ vérifiés : `sk_live_...` et `pk_live_...`, préfixes corrects confirmés).
   espace au milieu, pas seulement un problème de format RTF vs texte brut.
 - **Pas encore fait à ce stade** : coller dans Coolify, redéployer, premier vrai paiement live test
   (petit montant) pour confirmer que ça fonctionne avant d'annoncer le site "en vente réelle".
+
+## Mise à jour — session 2026-09-23/24 (nuit, clôture) : premier vrai paiement live réussi de bout en bout
+
+### Premier vrai test en conditions réelles : succès complet
+
+Julien a passé une vraie commande en Stripe live (livraison point relais, Mondial Relay), remboursée
+ensuite depuis le dashboard Stripe. Résultat confirmé par Julien lui-même : commande enregistrée,
+étiquette Sendcloud téléchargeable, email de confirmation bien reçu. **Toutes les briques construites
+ce soir fonctionnent ensemble en vrai** — Stripe live (clés + webhook), Sendcloud (étiquette + tracking),
+Resend (domaine vérifié, email réel reçu).
+
+- **Nettoyage après test** : 2 commandes trouvées avec un colis Sendcloud actif (celle du test de
+  Julien + une autre commande de test oubliée de plus tôt dans la soirée, même schéma d'email de
+  test `julienbourgouin07@gmail.com`) — les deux shipments annulés via l'API (`POST
+  /v3/shipments/{id}/cancel`, 202 les deux fois), les deux commandes marquées annulées + stock
+  remis, puis supprimées de la base (même geste que plus tôt ce soir).
+- **Logs vérifiés** (conteneurs `app` et `admin`, dernière heure) : aucune erreur. `GET /v3/invoices`
+  revérifié vide — aucun frais réel engagé sur l'ensemble de la soirée malgré des dizaines de colis de
+  test créés et annulés.
+- **Repéré en vérifiant les produits** : "Trousse de toilette artisanale" (`c8d9c2eb...`) toujours à
+  **1,00€** (prix de test laissé en place) — **pas corrigé moi-même**, prix réel à confirmer par
+  Julien avant remise en ligne à la vraie valeur.
+
+### Trois manques identifiés par Julien après le test, à construire — pas commencés ce soir
+
+Julien a listé ces points immédiatement après avoir vu le remboursement Stripe ne pas se refléter
+dans l'admin. Consignés en détail dans `TODO.md` §8 (nouvelle sous-section) :
+
+1. **Synchroniser les remboursements Stripe** : rembourser dans le dashboard Stripe ne change rien
+   dans notre admin (la commande reste "payée"). Il manque un webhook Stripe supplémentaire
+   (`charge.refunded` ou équivalent) qui mette à jour le statut de la commande.
+2. **Remise en stock automatique sur remboursement** : aujourd'hui, la remise en stock ne se
+   déclenche que via notre propre bouton "Annuler la commande" en admin — jamais automatiquement si
+   le remboursement est fait côté Stripe directement. Dépend du point 1 (une fois le remboursement
+   détecté, réutiliser `cancelOrderAndRestock`).
+3. **Article épuisé toujours visible sur la boutique** — **vérifié directement dans le code, pas une
+   supposition** : `lib/db/products.ts`, toutes les requêtes de la boutique publique
+   (`getAllProducts`, `getProductsByCategory`, `getProductBySlug`, `getProductById`) filtrent
+   uniquement sur `status = 'active'`, **jamais sur `stock`**. Un article à stock 0 (le cas normal
+   pour la plupart des pièces d'Adeline, faites à l'unité) reste visible et achetable sur le site
+   après achat. Correction nécessaire : soit exclure `stock <= 0` des requêtes publiques, soit
+   l'afficher grisé "Épuisé" sans bouton d'achat — à trancher avec Julien/Adeline (cacher
+   complètement vs. afficher indisponible peut avoir un intérêt marketing différent).
+
+### Reste à faire (mis à jour, cumulatif)
+
+1. Les 3 points ci-dessus (refund sync, restock auto, épuisé caché) — nouveaux ce soir.
+2. Prix du produit test (1€) à corriger avec la vraie valeur.
+3. Flux "confirmer la disponibilité avant expédition" — toujours volontairement pas construit.
+4. Reste de TODO.md §8 inchangé (mention TVA, SEO produit avancé, Stripe Radar, poids réel des
+   produits, décalage mobile).
