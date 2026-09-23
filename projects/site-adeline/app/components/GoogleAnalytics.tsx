@@ -28,6 +28,21 @@ function loadGtag(measurementId: string) {
   window.gtag = function gtag(...args: unknown[]) {
     window.dataLayer.push(args);
   };
+  // Consent Mode : loadGtag() n'est appelé qu'après acceptation explicite du
+  // toggle "Mesure d'audience" (voir plus bas), donc analytics_storage est
+  // toujours "granted" ici — mais Google exige un signal de consentement
+  // explicite (même juste celui-ci) avant de accepter d'envoyer le moindre
+  // hit ; sans cet appel, le tag charge et traite les commandes en interne
+  // (dataLayer, window.google_tag_manager) mais n'émet jamais de requête
+  // réseau vers google-analytics.com (constaté en prod le 2026-09-23,
+  // zéro hit malgré un tag correctement initialisé). ad_storage reste
+  // "denied" : le bandeau ne demande jamais de consentement publicitaire.
+  window.gtag("consent", "default", {
+    analytics_storage: "granted",
+    ad_storage: "denied",
+    ad_user_data: "denied",
+    ad_personalization: "denied",
+  });
   window.gtag("js", new Date());
   // send_page_view désactivé : les vues de page sont envoyées manuellement
   // au changement de route (GAPageView plus bas), pour ne pas doubler le
