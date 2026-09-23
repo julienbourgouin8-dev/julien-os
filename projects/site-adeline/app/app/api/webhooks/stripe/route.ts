@@ -79,6 +79,7 @@ export async function POST(request: NextRequest) {
       });
 
       if (
+        session.metadata?.shippingMethod !== "retrait" &&
         shippingAddress &&
         shippingAddress.postal_code &&
         shippingAddress.city &&

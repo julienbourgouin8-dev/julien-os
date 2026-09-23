@@ -54,13 +54,18 @@ export type ServicePointDelivery = {
   postNumber?: string;
 };
 
-const ADDRESS_LINE_1_MAX = 32;
+const ADDRESS_LINE_MAX = 32;
 
-function splitAddressLine1(line1: string, maxLen = ADDRESS_LINE_1_MAX): { line1: string; overflow: string } {
-  if (line1.length <= maxLen) return { line1, overflow: "" };
-  let cut = line1.lastIndexOf(" ", maxLen);
+// Coupe au dernier espace avant la limite plutôt qu'en plein milieu d'un mot
+// — utilisé pour address_line_1 (limite documentée par Sendcloud) ET
+// address_line_2 (non documentée, mais l'étiquette Mondial Relay réelle
+// tranche elle-même la ligne 2 en plein mot si on ne le fait pas nous-mêmes
+// proprement avant, constaté en test réel avec un nom de point relais long).
+function splitAtWordBoundary(text: string, maxLen = ADDRESS_LINE_MAX): { head: string; overflow: string } {
+  if (text.length <= maxLen) return { head: text, overflow: "" };
+  let cut = text.lastIndexOf(" ", maxLen);
   if (cut <= 0) cut = maxLen; // pas d'espace trouvé (mot unique très long) : coupe brute
-  return { line1: line1.slice(0, cut).trim(), overflow: line1.slice(cut).trim() };
+  return { head: text.slice(0, cut).trim(), overflow: text.slice(cut).trim() };
 }
 
 export async function createParcelAndLabel(params: {
@@ -121,8 +126,13 @@ export async function createParcelAndLabel(params: {
   // Bourguignole", 34 caractères, rencontré en test réel). On coupe au
   // dernier espace avant la limite et on renvoie le surplus sur la ligne 2
   // plutôt que de faire échouer toute la commande.
-  const { line1: addressLine1, overflow } = splitAddressLine1(params.address.line1 || fromAddress.address_line_1);
-  const addressLine2 = [overflow, params.address.line2].filter(Boolean).join(", ") || undefined;
+  const { head: addressLine1, overflow } = splitAtWordBoundary(params.address.line1 || fromAddress.address_line_1);
+  const rawLine2 = [overflow, params.address.line2].filter(Boolean).join(", ");
+  // Même règle sur la ligne 2 : si le cumul (surplus de la ligne 1 + vraie
+  // ligne 2 du client) dépasse encore la largeur imprimable, on tronque
+  // proprement plutôt que de laisser Mondial Relay couper en plein mot —
+  // ce qui reste dépasse simplement, jamais de ligne 3 sur ce format.
+  const addressLine2 = rawLine2 ? splitAtWordBoundary(rawLine2).head : undefined;
 
   const payload = {
     from_address: fromAddress,

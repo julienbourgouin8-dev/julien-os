@@ -69,10 +69,17 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
           <div className={`${CARD} p-6`}>
             <div className="flex items-center justify-between">
               <p className="text-xs font-semibold uppercase tracking-[0.1em] text-ink/45">Expédition & Suivi</p>
-              <span className="text-xs font-medium text-ink/50">{order.shipping_carrier || "Sendcloud"}</span>
+              {order.shipping_method !== "retrait" && (
+                <span className="text-xs font-medium text-ink/50">{order.shipping_carrier || "Sendcloud"}</span>
+              )}
             </div>
 
-            {order.shipping_tracking_number ? (
+            {order.shipping_method === "retrait" ? (
+              <p className="mt-4 text-sm text-ink/70">
+                📦 Retrait à l&apos;entrepôt — la cliente vient chercher sa commande directement à l&apos;atelier,
+                aucune étiquette à générer.
+              </p>
+            ) : order.shipping_tracking_number ? (
               <div className="mt-4 space-y-4">
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <div>
@@ -120,7 +127,9 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
           <p className="mt-3 text-sm text-ink">{order.customer_email ?? "Email non fourni"}</p>
 
           <p className="mt-5 text-xs font-semibold uppercase tracking-[0.1em] text-ink/45">Livraison</p>
-          {address ? (
+          {order.shipping_method === "retrait" ? (
+            <p className="mt-3 text-sm text-ink">Retrait à l&apos;entrepôt</p>
+          ) : address ? (
             <p className="mt-3 text-sm leading-relaxed text-ink">
               {address.line1}
               {address.line2 ? <> · {address.line2}</> : null}

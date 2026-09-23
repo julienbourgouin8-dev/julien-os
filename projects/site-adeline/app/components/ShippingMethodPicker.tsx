@@ -20,7 +20,7 @@ export type ServicePoint = {
   isLocker?: boolean;
 };
 
-type ShippingMethod = "domicile" | "point_relais";
+type ShippingMethod = "domicile" | "point_relais" | "retrait";
 type Quote = { method: ShippingMethod; label: string; priceCents: number } | null;
 type PointRelaisOption = { carrierCode: string; isLocker: boolean; priceCents: number; label: string };
 
@@ -176,7 +176,11 @@ export default function ShippingMethodPicker({
         : method === "point_relais"
           ? (effectivePointRelais?.priceCents ?? 0)
           : 0;
-    const ready = !hasQuotes || method === "domicile" || (method === "point_relais" && Boolean(servicePoint));
+    const ready =
+      !hasQuotes ||
+      method === "domicile" ||
+      method === "retrait" ||
+      (method === "point_relais" && Boolean(servicePoint));
     onChange({ method, priceCents, servicePoint, ready });
     // onChange volontairement omis des deps : le parent doit passer une
     // fonction stable (useCallback) sous peine de boucle de rendu.
@@ -224,22 +228,15 @@ export default function ShippingMethodPicker({
     return <p className="text-sm text-ink/50">Calcul des frais de port…</p>;
   }
 
-  if (!domicile && !pointRelais) {
-    return (
-      <div className="flex justify-between text-ink/60">
-        <span>Livraison</span>
-        <span className="font-medium text-teal">Offerte</span>
-      </div>
-    );
-  }
-
   return (
     <>
-      <Script
-        src="https://embed.sendcloud.sc/spp/1.0.0/api.min.js"
-        strategy="afterInteractive"
-        onReady={() => setWidgetReady(true)}
-      />
+      {pointRelais && (
+        <Script
+          src="https://embed.sendcloud.sc/spp/1.0.0/api.min.js"
+          strategy="afterInteractive"
+          onReady={() => setWidgetReady(true)}
+        />
+      )}
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.1em] text-ink/45">Livraison</p>
         <div className="mt-2 space-y-2">
@@ -306,6 +303,19 @@ export default function ShippingMethodPicker({
               onSelect={() => setMethod("domicile")}
             />
           )}
+
+          {/* Toujours proposé, indépendant de Sendcloud — Adeline remet la
+              commande en main propre à son atelier, jamais de transporteur. */}
+          <ShippingOption
+            icon={<BoxIcon />}
+            label="Retrait à l'entrepôt"
+            priceCents={0}
+            selected={method === "retrait"}
+            onSelect={() => {
+              setServicePoint(null);
+              setMethod("retrait");
+            }}
+          />
         </div>
       </div>
     </>
@@ -359,6 +369,16 @@ function PinIcon() {
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
       <path d="M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12Z" />
       <circle cx="12" cy="9" r="2.5" />
+    </svg>
+  );
+}
+
+function BoxIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M21 8 12 3 3 8l9 5 9-5Z" />
+      <path d="M3 8v8l9 5 9-5V8" />
+      <path d="M12 13v8" />
     </svg>
   );
 }

@@ -1,6 +1,10 @@
 import "server-only";
 
-export type ShippingMethod = "domicile" | "point_relais";
+// "retrait" (retrait à l'entrepôt d'Adeline, 0€) ne passe jamais par
+// Sendcloud — jamais renvoyé par getShippingQuotes, géré séparément dans
+// /api/checkout. Fait partie du type ici pour rester la seule source de
+// vérité des méthodes de livraison partagée par le front et l'API.
+export type ShippingMethod = "domicile" | "point_relais" | "retrait";
 
 export type ShippingQuote = {
   method: ShippingMethod;

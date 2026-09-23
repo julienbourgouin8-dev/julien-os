@@ -133,6 +133,10 @@ export async function POST(request: NextRequest) {
         quantity: 1,
       });
     }
+  } else if (body.shippingMethod === "retrait") {
+    // 0€, jamais de ligne Stripe ni d'adresse à collecter — Adeline remet
+    // la commande en main propre à son atelier, aucun transporteur impliqué.
+    metadata.shippingMethod = "retrait";
   } else if (FALLBACK_SHIPPING_CENTS > 0) {
     lineItems.push({
       price_data: {
@@ -148,7 +152,24 @@ export async function POST(request: NextRequest) {
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
     line_items: lineItems,
-    shipping_address_collection: { allowed_countries: ["FR"] },
+    // Pas d'adresse à collecter pour un retrait à l'entrepôt — rien à
+    // expédier, ça n'ajouterait qu'une étape inutile au paiement.
+    ...(body.shippingMethod === "retrait" ? {} : { shipping_address_collection: { allowed_countries: ["FR"] } }),
+    // Point relais/casier : le colis part vers le point choisi juste avant,
+    // pas vers cette adresse (Sendcloud l'exige quand même pour
+    // identité/facturation) — sans ce message, un client tape n'importe
+    // quoi ici en pensant redonner l'adresse du point relais, ce qui finit
+    // tel quel sur l'étiquette d'expédition (constaté en test réel).
+    ...(body.shippingMethod === "point_relais"
+      ? {
+          custom_text: {
+            shipping_address: {
+              message:
+                "Cette adresse sert uniquement à l'identification de la commande — votre colis sera bien livré au point relais choisi précédemment, pas à cette adresse.",
+            },
+          },
+        }
+      : {}),
     success_url: `${origin}/commande/confirmee?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${origin}/panier?checkout=annule`,
     metadata,

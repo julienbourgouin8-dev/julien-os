@@ -2219,3 +2219,68 @@ pas laisser un tirage au sort selon l'ordre de réponse de l'API.
    plus tôt, pas commencé).
 6. Reste de TODO.md §8 inchangé : emails Brevo, mention TVA, SEO produit avancé (`generateMetadata` par
    page, JSON-LD Product), vérifier Stripe Radar actif.
+
+## Mise à jour — session 2026-09-23 (suite, soirée) : premier vrai colis casier confirmé + retrait entrepôt + adresse tronchée en plein mot
+
+### Confirmation en vrai des deux correctifs Sendcloud du début de session
+
+Julien a passé une vraie commande casier après déploiement : le PDF généré est cette fois une vraie
+étiquette Mondial Relay complète (code-barres, poids 0,20kg, n° d'expédition `72156599`, adresse
+destinataire lisible) — plus un simple QR. Confirme que la détection `general_shop_type` et la
+préférence pour l'option non-`labelless` fonctionnent bien de bout en bout en conditions réelles, pas
+seulement via l'API de cotation.
+
+### Nouveau bug trouvé sur cette même étiquette : le nom du point relais coupé en plein mot
+
+Sur l'étiquette réelle, la case Destinataire affichait `Bourgouin` (nom du client, correct) puis en
+dessous `locker 24/7 lidl paris gond pon` : le nom du casier, tronqué en plein mot au milieu de
+"Pontouvre", juste avant sa vraie adresse physique ("390 ROUTE DE PARIS / 16160 GOND PONTOUVRE").
+
+- **Fausse piste explorée puis écartée** : d'abord supposé que ce texte venait de l'adresse tapée par
+  le client dans Stripe Checkout (la casse en minuscules, contrastant avec le reste de l'étiquette en
+  MAJUSCULES, semblait le confirmer) — **Julien a confirmé avoir tapé sa vraie adresse personnelle**,
+  écartant cette hypothèse.
+- **Diagnostic corrigé** : cette ligne est en fait la mise en page standard d'une étiquette Mondial
+  Relay point relais — `Nom du client / Nom du point / Adresse du point`. Le nom du point relais est
+  injecté automatiquement par Mondial Relay/Sendcloud à partir du seul `to_service_point.id` transmis
+  (notre code n'envoie jamais le nom du point lui-même, voir `createParcelAndLabel` dans
+  `app/lib/sendcloud/client.ts` — seul l'`id` du point est dans le payload `to_service_point`). La
+  coupure vient donc très probablement d'un champ à largeur fixe dans le gabarit d'étiquette de
+  Mondial Relay, qui ne gère pas le retour à la ligne pour un nom de point long — **même catégorie que
+  la découverte du QR seul ce matin : une limite côté Mondial Relay, pas quelque chose qu'on peut
+  corriger depuis notre code.**
+- **Corrections faites quand même, utiles indépendamment de cette cause précise** : troncature
+  défensive au dernier espace généralisée à `address_line_2` (`splitAtWordBoundary` dans
+  `app/lib/sendcloud/client.ts`, évite qu'une VRAIE ligne 2 client trop longue coupe en plein mot) +
+  message `custom_text.shipping_address` sur la session Stripe Checkout pour les commandes point
+  relais, expliquant que cette adresse ne sert qu'à l'identification (utile en soi, mais ne corrige
+  pas la coupure observée ici puisque son origine est ailleurs). Build vérifié OK.
+- **À clarifier si ça gêne vraiment** : demander à Sendcloud/Mondial Relay si le nom d'un point
+  relais peut être tronqué proprement ou affiché sur deux lignes côté eux — hors de portée du code ici.
+
+### Nouveau mode de livraison : retrait à l'entrepôt (0€)
+
+Ajouté comme troisième option sur `ShippingMethodPicker.tsx`, toujours proposée (indépendante de
+Sendcloud, jamais de transporteur) :
+- `ShippingMethod` élargi à `"domicile" | "point_relais" | "retrait"` (source de vérité dans
+  `lib/sendcloud/rates.ts`, réutilisé partout).
+- Le composant ne fait plus de retour anticipé "Livraison Offerte" quand Sendcloud ne renvoie aucune
+  option — il affiche toujours au moins le retrait, plus domicile/point relais si disponibles.
+- `/api/checkout` : pas de ligne Stripe pour le retrait (0€), pas de `shipping_address_collection`
+  (rien à expédier, éviter une étape inutile), `metadata.shippingMethod = "retrait"`.
+- Webhook Stripe : garde explicite `session.metadata?.shippingMethod !== "retrait"` avant de tenter
+  un appel Sendcloud (la commande n'a de toute façon pas d'adresse collectée, mais défense en
+  profondeur plutôt que de compter uniquement sur ce fait).
+- Admin (`orders/[id]/page.tsx`) : affichage dédié "Retrait à l'entrepôt — aucune étiquette à générer"
+  à la place du bloc Sendcloud/adresse habituel.
+- Build des deux apps (`app/`, `admin/`) vérifié OK. **Pas encore testé de bout en bout** avec une
+  vraie commande retrait.
+
+### Grosse liste de demandes UX/dashboard, pas commencée
+
+Julien a énuméré en vrac (dashboard admin avec commandes visibles + notifications, flux de
+confirmation de disponibilité avant expédition — explicitement à activer seulement après la période de
+test —, séquence email Brevo avec image dynamique de l'article + bouton de suivi, autofill Stripe).
+Consignée dans `TODO.md` §8 (nouvelle sous-section) avec priorités à discuter — pas de quoi improviser
+une refonte du dashboard sans validation, contrairement aux correctifs Sendcloud ci-dessus qui étaient
+des bugs francs à corriger.

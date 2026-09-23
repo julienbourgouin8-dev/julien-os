@@ -291,3 +291,38 @@ relations DB.
 - [ ] Vérifier l'activation de Stripe Radar
 - [ ] Stripe en mode live (Julien a la clé secrète via Adeline, bloqué plus tôt par une passkey
       WebAuthn liée au téléphone d'Adeline — à reprendre)
+- [x] Casier Mondial Relay : détection `general_shop_type` (pas `shop_type`) + préférence
+      systématique de l'étiquette classique imprimée sur la variante QR "labelless" à prix
+      égal + troncature propre (jamais en plein mot) d'`address_line_2` (2026-09-23, vérifié
+      en vrai — étiquette casier complète avec code-barres obtenue)
+- [x] Retrait à l'entrepôt (0€, pas de transporteur) comme 3e mode de livraison, toujours
+      proposé sur la page panier (2026-09-23)
+- [ ] Clarifier/masquer le champ adresse Stripe pour les commandes point relais — message
+      `custom_text` ajouté (2026-09-23) expliquant que l'adresse ne sert qu'à l'identification,
+      **à revérifier avec une vraie commande** que ça évite bien la confusion constatée
+      (le nom du casier avait fini tapé dans ce champ, tronché en plein mot sur l'étiquette)
+
+### Backlog UX/dashboard demandé par Julien (2026-09-23, pas commencé — dump de fin de session)
+
+Julien a listé plusieurs améliorations d'affilée pendant qu'on corrigeait les bugs Sendcloud. Prioriser
+avec lui avant de partir sur les plus gros morceaux — certains items se recoupent/dépendent les uns des
+autres (ex. la séquence email a besoin du lien de tracking, déjà disponible via `shipping_tracking_url`).
+
+- [ ] **Dashboard admin — visibilité immédiate des commandes en cours** : ajouter les commandes
+      récentes/à traiter directement sur la page d'accueil admin (pas besoin d'aller dans "Commandes"),
+      + une notification (badge, compteur) quand une nouvelle commande arrive. Adeline doit pouvoir
+      suivre le colis sans naviguer.
+- [ ] **Flux "confirmer la disponibilité"** : bouton admin pour qu'Adeline confirme qu'une pièce
+      (souvent unique, fait main) est bien disponible avant expédition — une fois confirmé, l'article
+      disparaît du site et le panier d'un client qui l'avait encore dedans se vide. **Julien a dit
+      explicitement de ne le mettre en vraie fonctionnalité qu'une fois la période de test terminée** —
+      ne pas l'activer prématurément.
+- [ ] **Séquence email post-achat (Brevo)** : email de remerciement avec l'image réelle de l'article
+      acheté (variable, jamais une image statique) + prix + bouton "Suivre mon article" qui renvoie
+      vers le lien de tracking Mondial Relay/Chronopost (`shipping_tracking_url`, déjà stocké en base,
+      mais pas encore rempli au moment de l'envoi de l'email de confirmation initiale — voir si un
+      2e email "colis expédié" séparé est nécessaire une fois l'étiquette générée).
+- [ ] **Autofill navigateur sur Stripe Checkout** : Julien doit retaper email/adresse à chaque test.
+      Stripe gère lui-même l'autocomplete de sa page hébergée — à vérifier si "Link" (réseau
+      one-click de Stripe) est activé dans le dashboard Stripe du compte ; on ne contrôle pas le HTML
+      de la page Stripe nous-mêmes, donc pas un correctif côté code a priori.
