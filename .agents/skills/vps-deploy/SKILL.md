@@ -17,6 +17,12 @@ Julien a **un seul VPS partagé** pour tous ses sites (objectif explicite : arr�
 services tiers facturés à la pièce — Vercel + Neon + Blob storage — et tout regrouper). Chaque
 nouveau site ajoute des ressources sur ce même VPS via Coolify, pas un nouveau serveur.
 
+**Site e-commerce (paiement/expédition/email)** : ce skill ne couvre que l'infra (Coolify, Postgres,
+Garage, DNS, SSL). Pour tout ce qui touche Stripe, Sendcloud ou Resend — mode live, webhooks,
+détection d'échec, secrets, vérification post-déploiement — voir le skill séparé `ecommerce-apis`,
+distillé de la même migration CréA'deline. Utiliser les deux ensemble pour un nouveau site qui vend
+en ligne.
+
 ## Infrastructure existante (ne pas recréer)
 
 - **VPS** : Hostinger KVM 1, Frankfurt (UE), IP `179.198.209.59`, Ubuntu 24.04.
