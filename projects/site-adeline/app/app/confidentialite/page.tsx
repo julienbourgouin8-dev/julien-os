@@ -29,10 +29,12 @@ export default function ConfidentialitePage() {
           traiter votre demande, puis supprimées.
         </li>
         <li>
-          <strong>Mesure d&apos;audience (PostHog)</strong> : pages visitées, type d&apos;appareil,
-          provenance — uniquement si vous avez donné votre accord via le bandeau cookies (voir{" "}
-          <a href="/cookies">politique de cookies</a>). Hébergé en Union Européenne. Conservé 12
-          mois maximum.
+          <strong>Mesure d&apos;audience (PostHog et Google Analytics)</strong> : pages visitées,
+          type d&apos;appareil, provenance — uniquement si vous avez donné votre accord via le
+          bandeau cookies (voir <a href="/cookies">politique de cookies</a>). PostHog est hébergé
+          en Union Européenne (conservé 12 mois maximum) ; Google Analytics est hébergé par
+          Google aux États-Unis, encadré par les clauses contractuelles types européennes
+          (conservé 14 mois maximum).
         </li>
         <li>
           <strong>Performance technique (Vercel Speed Insights)</strong> : temps de chargement des
@@ -62,9 +64,10 @@ export default function ConfidentialitePage() {
         Vos données ne sont jamais vendues. Elles sont partagées uniquement avec les
         prestataires nécessaires au fonctionnement du site : Stripe (paiement, États-Unis/UE),
         Resend (envoi du formulaire de contact, États-Unis, clauses contractuelles types
-        européennes), PostHog (mesure d&apos;audience, avec votre accord, hébergé dans
-        l&apos;Union Européenne), Vercel (hébergement, États-Unis — encadré par leurs clauses
-        contractuelles types européennes).
+        européennes), PostHog et Google Analytics (mesure d&apos;audience, avec votre accord —
+        PostHog hébergé dans l&apos;Union Européenne, Google Analytics aux États-Unis sous
+        clauses contractuelles types européennes), Vercel (hébergement, États-Unis — encadré par
+        leurs clauses contractuelles types européennes).
       </p>
     </LegalPage>
   );

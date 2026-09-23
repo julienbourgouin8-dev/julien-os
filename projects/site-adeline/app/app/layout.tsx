@@ -3,6 +3,7 @@ import { Fraunces, Jost, Caveat } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import ScrollToTopOnLoad from "@/components/ScrollToTopOnLoad";
 import PostHogProvider from "@/components/PostHogProvider";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 import CookieConsent from "@/components/CookieConsent";
 import { CartProvider } from "@/lib/cart/CartProvider";
 import "./globals.css";
@@ -73,6 +74,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             {children}
           </CartProvider>
         </PostHogProvider>
+        <GoogleAnalytics />
         <CookieConsent />
         {/* Vercel Speed Insights — mesure les Core Web Vitals réels des
             visiteuses (LCP, CLS...) pour suivre la rapidité du site dans le
