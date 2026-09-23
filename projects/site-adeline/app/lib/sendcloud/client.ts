@@ -153,7 +153,13 @@ export async function createParcelAndLabel(params: {
       type: "shipping_option_code",
       properties: { shipping_option_code: params.shippingOptionCode },
     },
-    order_number: params.orderId,
+    // UUID complet (36 caractères) tronqué en plein milieu par le gabarit de
+    // référence de plusieurs transporteurs (constaté en test réel sur
+    // Mondial Relay ET Chronopost) — on envoie la même référence courte que
+    // celle déjà affichée au client partout ailleurs sur le site
+    // ("Commande #62810A49"), assez pour identifier une commande sans
+    // dépasser la largeur de leur champ.
+    order_number: params.orderId.slice(0, 8).toUpperCase(),
     total_order_price: { currency: "EUR", value: totalValue },
     parcels: [{ weight: { value: weightKg, unit: "kg" } }],
   };
