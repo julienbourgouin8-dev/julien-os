@@ -277,10 +277,19 @@ function AutoplayVideo({
 
   return (
     <video
-      ref={ref}
+      ref={(node) => {
+        ref.current = node;
+        // Safari évalue sa politique d'autoplay très tôt, parfois avant les
+        // effets React. Poser les propriétés directement pendant l'attache
+        // de la ref garantit que la vidéo est déjà muette à ce moment-là.
+        if (node) {
+          node.muted = true;
+          node.defaultMuted = true;
+        }
+      }}
       src={src}
       poster={poster}
-      autoPlay={eager}
+      autoPlay
       muted
       loop
       playsInline
