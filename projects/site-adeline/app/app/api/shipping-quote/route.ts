@@ -1,7 +1,7 @@
 import "server-only";
 import { NextResponse, type NextRequest } from "next/server";
 import { getCartWeightGrams } from "@/lib/shipping";
-import { getShippingQuotes } from "@/lib/sendcloud/rates";
+import { getShippingQuotes, cheapestPointRelais } from "@/lib/sendcloud/rates";
 
 type QuoteRequest = {
   items: { productId: string; quantity: number }[];
@@ -26,7 +26,11 @@ export async function POST(request: NextRequest) {
   const quotes = await getShippingQuotes(weightGrams);
 
   return NextResponse.json({
-    domicile: quotes?.find((q) => q.method === "domicile") ?? null,
-    point_relais: quotes?.find((q) => q.method === "point_relais") ?? null,
+    domicile: quotes?.domicile ?? null,
+    // Prix "à partir de" affiché avant que le client choisisse un point
+    // précis — le prix par transporteur complet est renvoyé à côté pour que
+    // la page panier facture le bon montant une fois un point choisi.
+    point_relais: quotes ? cheapestPointRelais(quotes) : null,
+    pointRelaisByCarrier: quotes?.pointRelaisByCarrier ?? {},
   });
 }

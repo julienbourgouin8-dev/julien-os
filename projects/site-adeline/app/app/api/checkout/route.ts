@@ -15,6 +15,7 @@ type ServicePoint = {
   postal_code?: string;
   city?: string;
   country?: string;
+  carrier?: string;
 };
 
 type CheckoutRequest = {
@@ -90,11 +91,20 @@ export async function POST(request: NextRequest) {
   if (body.shippingMethod === "domicile" || body.shippingMethod === "point_relais") {
     const weightGrams = await getCartWeightGrams(body.items);
     const quotes = await getShippingQuotes(weightGrams);
-    const quote = quotes?.find((q) => q.method === body.shippingMethod);
 
     if (body.shippingMethod === "point_relais" && !body.servicePoint) {
       return NextResponse.json({ error: "Choisis un point relais avant de payer." }, { status: 400 });
     }
+
+    // Le prix suit le transporteur du point relais réellement choisi par le
+    // client (Mondial Relay et Chronopost n'ont pas le même tarif) — jamais
+    // un prix générique décidé avant que le client ait cliqué sur un point.
+    const quote =
+      body.shippingMethod === "domicile"
+        ? quotes?.domicile
+        : body.servicePoint?.carrier
+          ? quotes?.pointRelaisByCarrier[body.servicePoint.carrier]
+          : undefined;
 
     if (quote) {
       lineItems.push({

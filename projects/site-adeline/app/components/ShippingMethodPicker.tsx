@@ -13,6 +13,7 @@ export type ServicePoint = {
   postal_code?: string;
   city?: string;
   country?: string;
+  carrier?: string;
 };
 
 type ShippingMethod = "domicile" | "point_relais";
@@ -35,6 +36,7 @@ type SendcloudServicePointRaw = {
   postal_code?: string;
   city?: string;
   country?: string;
+  carrier?: string;
 };
 
 declare global {
@@ -51,6 +53,43 @@ declare global {
   }
 }
 
+// Doit rester synchronisé avec POINT_RELAIS_CARRIERS dans lib/sendcloud/rates.ts.
+const POINT_RELAIS_CARRIERS = "mondial_relay,chronopost";
+
+// Reverse-géocodage gratuit, sans clé API (Nominatim/OpenStreetMap) — juste
+// pour centrer le widget près du client, jamais stocké ni envoyé au serveur.
+async function reverseGeocode(lat: number, lon: number): Promise<{ postalCode?: string; city?: string } | null> {
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=16&addressdetails=1`,
+      { headers: { Accept: "application/json" } },
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    const addr = data.address ?? {};
+    return {
+      postalCode: addr.postcode,
+      city: addr.city || addr.town || addr.village || addr.municipality,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function locateUser(): Promise<{ postalCode?: string; city?: string } | null> {
+  return new Promise((resolve) => {
+    if (!("geolocation" in navigator)) {
+      resolve(null);
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => resolve(await reverseGeocode(pos.coords.latitude, pos.coords.longitude)),
+      () => resolve(null), // permission refusée/indisponible : le client tapera lui-même dans le widget
+      { timeout: 5000, maximumAge: 300000 },
+    );
+  });
+}
+
 export default function ShippingMethodPicker({
   items,
   onChange,
@@ -60,10 +99,12 @@ export default function ShippingMethodPicker({
 }) {
   const [domicile, setDomicile] = useState<Quote>(null);
   const [pointRelais, setPointRelais] = useState<Quote>(null);
+  const [pointRelaisByCarrier, setPointRelaisByCarrier] = useState<Record<string, Quote>>({});
   const [loadingQuotes, setLoadingQuotes] = useState(true);
   const [method, setMethod] = useState<ShippingMethod | null>(null);
   const [servicePoint, setServicePoint] = useState<ServicePoint | null>(null);
   const [widgetReady, setWidgetReady] = useState(false);
+  const [locating, setLocating] = useState(false);
 
   const itemsKey = JSON.stringify(items);
 
@@ -80,11 +121,13 @@ export default function ShippingMethodPicker({
         if (cancelled) return;
         setDomicile(data.domicile ?? null);
         setPointRelais(data.point_relais ?? null);
+        setPointRelaisByCarrier(data.pointRelaisByCarrier ?? {});
       })
       .catch(() => {
         if (!cancelled) {
           setDomicile(null);
           setPointRelais(null);
+          setPointRelaisByCarrier({});
         }
       })
       .finally(() => !cancelled && setLoadingQuotes(false));
@@ -93,22 +136,44 @@ export default function ShippingMethodPicker({
     };
   }, [itemsKey]);
 
+  // Une fois un point précis choisi, le prix suit le transporteur réel de ce
+  // point (Mondial Relay et Chronopost n'ont pas le même tarif) plutôt que
+  // l'estimation "le moins cher" affichée avant le choix.
+  const effectivePointRelais =
+    method === "point_relais" && servicePoint?.carrier ? (pointRelaisByCarrier[servicePoint.carrier] ?? pointRelais) : pointRelais;
+
   useEffect(() => {
     const hasQuotes = Boolean(domicile || pointRelais);
     const priceCents =
-      method === "domicile" ? (domicile?.priceCents ?? 0) : method === "point_relais" ? (pointRelais?.priceCents ?? 0) : 0;
+      method === "domicile"
+        ? (domicile?.priceCents ?? 0)
+        : method === "point_relais"
+          ? (effectivePointRelais?.priceCents ?? 0)
+          : 0;
     const ready = !hasQuotes || method === "domicile" || (method === "point_relais" && Boolean(servicePoint));
     onChange({ method, priceCents, servicePoint, ready });
     // onChange volontairement omis des deps : le parent doit passer une
     // fonction stable (useCallback) sous peine de boucle de rendu.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [method, servicePoint, domicile, pointRelais]);
+  }, [method, servicePoint, domicile, pointRelais, effectivePointRelais]);
 
-  const openPicker = () => {
+  const openPicker = async () => {
     const apiKey = process.env.NEXT_PUBLIC_SENDCLOUD_PUBLIC_KEY;
     if (!widgetReady || !apiKey || !window.sendcloud) return;
+
+    setLocating(true);
+    const located = await locateUser();
+    setLocating(false);
+
     window.sendcloud.servicePoints.open(
-      { apiKey, country: "FR", carriers: "mondial_relay", language: "fr-fr" },
+      {
+        apiKey,
+        country: "FR",
+        carriers: POINT_RELAIS_CARRIERS,
+        language: "fr-fr",
+        ...(located?.postalCode ? { postalCode: located.postalCode } : {}),
+        ...(located?.city ? { city: located.city } : {}),
+      },
       (sp, postNumber) => {
         setServicePoint({
           id: sp.id,
@@ -119,6 +184,7 @@ export default function ShippingMethodPicker({
           postal_code: sp.postal_code,
           city: sp.city,
           country: sp.country,
+          carrier: sp.carrier,
         });
       },
       () => {
@@ -153,8 +219,8 @@ export default function ShippingMethodPicker({
           {pointRelais && (
             <ShippingOption
               icon={<PinIcon />}
-              label={pointRelais.label}
-              priceCents={pointRelais.priceCents}
+              label={servicePoint?.carrier ? (effectivePointRelais?.label ?? pointRelais.label) : `${pointRelais.label} (à partir de)`}
+              priceCents={effectivePointRelais?.priceCents ?? pointRelais.priceCents}
               selected={method === "point_relais"}
               onSelect={() => setMethod("point_relais")}
             >
@@ -178,9 +244,10 @@ export default function ShippingMethodPicker({
                   <button
                     type="button"
                     onClick={openPicker}
-                    className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-denim/40 py-2 text-xs font-semibold text-denim transition-colors hover:bg-denim/[0.06]"
+                    disabled={locating}
+                    className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-denim/40 py-2 text-xs font-semibold text-denim transition-colors hover:bg-denim/[0.06] disabled:opacity-60"
                   >
-                    Choisir mon point relais
+                    {locating ? "Localisation…" : "Choisir mon point relais"}
                   </button>
                 ))}
             </ShippingOption>

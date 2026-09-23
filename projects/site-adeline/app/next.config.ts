@@ -37,7 +37,10 @@ const nextConfig: NextConfig = {
           },
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+          // geolocation=(self) : nécessaire pour centrer le sélecteur de
+          // point relais (ShippingMethodPicker) près du client — camera/
+          // microphone restent désactivés, jamais utilisés sur ce site.
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(self)" },
         ],
       },
       // Migration VPS (2026-09-22) : les pages statiquement pré-rendues
