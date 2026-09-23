@@ -77,7 +77,17 @@ const nextConfig: NextConfig = {
       // rafraîchisse vite, assez long pour ne jamais forcer une
       // revalidation vidéo par vidéo.
       {
-        source: "/(brand|products|uploads)/:path*",
+        // Les médias de marque et produit sont versionnés par leur nom.
+        // Toute future modification doit donc créer un nouveau nom de
+        // fichier, ce qui permet un cache navigateur long et sûr.
+        source: "/(brand|products)/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
+      {
+        // Les uploads administrables peuvent conserver le même chemin lors
+        // d'une correction : cache court pour ne pas figer une ancienne
+        // photo produit pendant un an.
+        source: "/uploads/:path*",
         headers: [{ key: "Cache-Control", value: "public, max-age=3600, stale-while-revalidate=86400" }],
       },
     ];

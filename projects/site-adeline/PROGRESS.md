@@ -27,6 +27,14 @@ Process générique de déploiement (VPS Hostinger + Coolify), réutilisable pou
   une petite latence perceptible car les cinq sources sont actuellement attribuées et amorcées dans
   le même `touchstart`. Prochaine optimisation : conserver l'autorisation donnée par ce geste tout
   en réduisant fortement le travail réseau/décodage effectué sur cette première frame.
+- Optimisation préparée après ce point de restauration : le premier toucher ne charge plus les cinq
+  vraies vidéos. Il fait jouer dans chaque élément un micro-MP4 blanc commun de **1,5 Kio** pendant
+  150 ms, ce qui conserve l'autorisation Safari attachée au geste avec un coût réseau et décodage
+  négligeable. Les vraies sources ne sont attribuées qu'à 250 px de l'écran, contre 500 px avant.
+- Les cinq affiches ont été redimensionnées de 720 à 480 px et passent d'environ 114 Kio à 61 Kio.
+  `/brand` et `/products` ont maintenant un cache immutable d'un an ; `/uploads` garde son cache
+  court car les images issues de l'admin peuvent changer sans nouveau chemin. ESLint ciblé et build
+  Next.js production validés. Cette optimisation reste à valider sur vrai iPhone après déploiement.
 
 ### Correctif Safari + centrage catalogue du 23 septembre au matin
 

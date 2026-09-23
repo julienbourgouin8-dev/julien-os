@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as R
 import WriteOnHeading from "@/components/WriteOnHeading";
 
 const IMAGE = "/brand/vitrine-composite-v4.jpg";
+const MOBILE_UNLOCK_VIDEO = "/products/videos/mobile-unlock.mp4";
 
 type Hotspot = {
   name: string;
@@ -271,7 +272,7 @@ function AutoplayVideo({
         setSourceReady(true);
         observer.disconnect();
       },
-      { rootMargin: "500px 0px", threshold: 0 },
+      { rootMargin: "250px 0px", threshold: 0 },
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -363,13 +364,15 @@ export default function VitrineArc() {
       );
 
       videos.forEach((video) => {
-        const source = video.dataset.videoSrc;
         video.muted = true;
         video.defaultMuted = true;
-        if (source && !video.getAttribute("src")) {
-          video.src = source;
+        if (!video.getAttribute("src")) {
+          // Un seul fichier blanc de 1,5 Kio, partagé par les cinq lecteurs.
+          // Le `play()` reste bien lié au geste utilisateur, mais on évite
+          // d'amorcer 3,3 Mio de MP4 et cinq décodages complexes sur la
+          // première frame du scroll.
+          video.src = MOBILE_UNLOCK_VIDEO;
           video.preload = "auto";
-          video.load();
         }
         // Appelé synchroniquement depuis `touchstart` : Safari considère
         // ceci comme une lecture demandée par l'utilisatrice, y compris en
@@ -385,7 +388,7 @@ export default function VitrineArc() {
           const rect = video.getBoundingClientRect();
           if (rect.bottom < -120 || rect.top > window.innerHeight + 120) video.pause();
         });
-      }, 250);
+      }, 150);
     };
 
     document.addEventListener("touchstart", unlockMobileVideos, {
