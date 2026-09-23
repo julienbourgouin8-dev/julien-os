@@ -108,7 +108,7 @@ export default function ShippingMethodPicker({
     const apiKey = process.env.NEXT_PUBLIC_SENDCLOUD_PUBLIC_KEY;
     if (!widgetReady || !apiKey || !window.sendcloud) return;
     window.sendcloud.servicePoints.open(
-      { apiKey, country: "FR", carriers: "mondial_relay" },
+      { apiKey, country: "FR", carriers: "mondial_relay", language: "fr-fr" },
       (sp, postNumber) => {
         setServicePoint({
           id: sp.id,
