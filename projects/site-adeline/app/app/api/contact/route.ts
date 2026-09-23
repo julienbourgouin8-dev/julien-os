@@ -11,12 +11,10 @@ type ContactRequest = {
   message: string;
 };
 
-// Domaine pas encore vérifié sur Resend (site sur creadeline.vercel.app,
-// pas de nom de domaine propre — voir PROGRESS.md) : on envoie depuis
-// l'adresse de test resend.dev, seule autorisée sans domaine vérifié.
-// `reply_to` pointe vers le visiteur pour qu'Adeline puisse répondre
-// directement depuis son mail.
-const FROM = "CréA'deline <onboarding@resend.dev>";
+// Domaine creadeline16.fr vérifié sur Resend (2026-09-23) — plus besoin de
+// l'adresse de test resend.dev. `reply_to` pointe vers le visiteur pour
+// qu'Adeline puisse répondre directement depuis son mail.
+const FROM = "CréA'deline <contact@creadeline16.fr>";
 
 export async function POST(request: NextRequest) {
   const apiKey = process.env.RESEND_API_KEY;

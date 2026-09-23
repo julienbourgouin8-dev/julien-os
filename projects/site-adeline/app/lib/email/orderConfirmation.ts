@@ -6,13 +6,9 @@ import { formatPrice } from "@/components/ProductCard";
 import { getProductById } from "@/lib/db/products";
 import type { OrderItem } from "@/lib/db/orders";
 
-// Même contrainte que app/api/contact (voir lib/contact.ts) : compte Resend
-// sans domaine vérifié, `onboarding@resend.dev` ne peut délivrer qu'à
-// l'adresse propriétaire du compte (CONTACT_EMAIL) — donc cette fonction
-// est prête côté code, mais ne joindra un vrai client qu'une fois le
-// domaine creadeline16.fr vérifié sur Resend (à faire par Julien dans leur
-// dashboard, voir PROGRESS.md).
-const FROM = "CréA'deline <onboarding@resend.dev>";
+// Domaine creadeline16.fr vérifié sur Resend (2026-09-23) — envoie
+// maintenant vers n'importe quel client, plus limité à l'adresse du compte.
+const FROM = "CréA'deline <commandes@creadeline16.fr>";
 
 export async function sendOrderConfirmationEmail(params: {
   customerEmail: string | null;

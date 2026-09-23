@@ -282,10 +282,10 @@ relations DB.
       Julien le 2026-09-23, pas commencé)
 - [x] Email de confirmation de commande — **Resend** (pas Brevo, déjà configuré/utilisé pour le
       formulaire de contact), image réelle de l'article + prix + bouton "Suivre mon colis"
-      (`app/lib/email/orderConfirmation.ts`, 2026-09-23). **Prêt côté code, bloqué en pratique tant
-      que le domaine `creadeline16.fr` n'est pas vérifié sur Resend** — `onboarding@resend.dev` ne
-      délivre qu'à l'adresse du compte, jamais à un vrai client. Action Julien : dashboard Resend →
-      Domains → ajouter le domaine → coller les enregistrements DNS chez OVH.
+      (`app/lib/email/orderConfirmation.ts`, 2026-09-23). **Domaine `creadeline16.fr` vérifié sur
+      Resend (2026-09-23)** — adresses passées à `commandes@`/`contact@creadeline16.fr`,
+      `CONTACT_EMAIL` remis sur la vraie adresse d'Adeline. Reste à faire : un vrai email de test
+      pour confirmer la délivrabilité vers une boîte externe.
 - [x] Pages légales FR : CGV, mentions légales, politique de confidentialité RGPD, droit
       de rétractation 14 jours (placeholders à compléter avec les infos d'Adeline)
 - [ ] Mention TVA si franchise en base ("TVA non applicable, art. 293B du CGI")
@@ -295,9 +295,11 @@ relations DB.
 - [ ] SEO produit avancé : `generateMetadata` par page (boutique/fiche produit), Open Graph/Twitter
       Card, JSON-LD `schema.org/Product`
 - [ ] Vérifier l'activation de Stripe Radar
-- [ ] Stripe en mode live — vérifié le 2026-09-23 : `.secrets/stripe-live.env` a la clé publique mais
-      `STRIPE_SECRET_KEY` est toujours vide. Action Julien : dashboard Stripe (Developers → API keys,
-      mode Live) → coller dans le fichier local (jamais dans le chat).
+- [ ] Stripe en mode live — clé secrète collée par Julien dans `.secrets/stripe-live.env`
+      (2026-09-23), préfixes vérifiés (`sk_live_`/`pk_live_`). Reste : coller les deux clés dans
+      Coolify (Developer View, ressource `creadeline-app`, pas d'accès dashboard depuis ici) +
+      redéployer + un premier vrai paiement test à faible montant avant d'annoncer le site en vente
+      réelle.
 - [x] Casier Mondial Relay : détection `general_shop_type` (pas `shop_type`) + préférence
       systématique de l'étiquette classique imprimée sur la variante QR "labelless" à prix
       égal + troncature propre (jamais en plein mot) d'`address_line_2` (2026-09-23, vérifié

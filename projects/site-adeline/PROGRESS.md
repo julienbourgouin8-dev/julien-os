@@ -2551,3 +2551,56 @@ aux fausses pistes précédentes sur les étiquettes) :
 3. Flux "confirmer la disponibilité avant expédition" (toujours volontairement pas construit).
 4. Reste de TODO.md §8 inchangé (mention TVA, SEO produit avancé, Stripe Radar, poids réel des
    produits, décalage mobile).
+
+## Mise à jour — session 2026-09-23/24 (nuit, suite) : domaine Resend vérifié, Stripe live en cours
+
+### Comparatif fournisseur email demandé par Julien avant de continuer
+
+Julien a demandé de vérifier s'il n'y avait pas mieux que Resend en gratuit (Sendcloud ? Stripe ?)
+avant d'aller plus loin. Vérifié :
+- **Resend** : 3000 emails/mois gratuits (plafond 100/jour) — largement suffisant pour le volume
+  réel d'une petite boutique artisanale.
+- **Sendcloud (le nôtre, expédition)** ne fait pas d'email transactionnel personnalisé. Piège
+  identifié : une recherche fait remonter une société chinoise sans rapport nommée aussi "SendCloud"
+  (sendcloud.net) — pure coïncidence de nom, aucun lien avec panel.sendcloud.sc (notre compte
+  logistique néerlandais). Ne pas confondre.
+- **Stripe** envoie déjà un reçu de paiement automatique et gratuit, mais générique — impossible d'y
+  mettre l'image du produit ou un bouton de suivi personnalisé comme construit ce soir.
+- **Décision** : rester sur Resend, quota confortable, déjà construit et fonctionnel.
+
+### Domaine `creadeline16.fr` vérifié sur Resend
+
+Julien a ajouté les 4 enregistrements DNS (TXT DKIM `resend._domainkey`, 2 CNAME SPF `rsend`/`send`,
+TXT DMARC `_dmarc`) chez OVH à partir de la page "Add domain" de Resend, guidé étape par étape
+(attention donnée sur le fait que les valeurs affichées à l'écran étaient tronquées — copier depuis
+Resend, jamais retaper ce qui est visible). Vérification confirmée peu après.
+
+- **Adresses d'expédition basculées de `onboarding@resend.dev` vers `@creadeline16.fr`** dans les
+  trois endroits qui envoient des emails : `app/lib/email/orderConfirmation.ts` et
+  `app/lib/email/newOrderNotification.ts` → `commandes@creadeline16.fr`, `app/app/api/contact/route.ts`
+  → `contact@creadeline16.fr`.
+- **`CONTACT_EMAIL` remis sur la vraie adresse d'Adeline** (`deline1001@yahoo.fr`, `app/lib/contact.ts`)
+  — c'était prévu depuis le début dans un commentaire "TEMPORAIRE... remettre une fois le domaine
+  vérifié", maintenant fait. Le formulaire de contact ET la notification nouvelle commande arrivent
+  donc directement chez Adeline à partir de maintenant, plus chez Julien.
+- Build vérifié OK. **Reste à faire** : premier vrai email de test (commande + contact) pour
+  confirmer la délivrabilité réelle vers une boîte externe, pas juste l'absence d'erreur API.
+
+### Stripe mode live : clé secrète collée, fichier corrompu par TextEdit puis réparé
+
+Julien a collé la clé secrète Stripe live dans `.secrets/stripe-live.env` (ouvert via `open -e`,
+protocole habituel). **Incident technique repéré avant tout usage** : le fichier comptait 5 lignes
+au lieu de 3 — TextEdit avait coupé la clé secrète en plein milieu au collage/enregistrement,
+répartie sur 3 lignes distinctes. Réparé avec un script Python qui rejoint les lignes cassées sans
+jamais afficher le contenu de la clé en clair (seuls les 8 premiers caractères de chaque clé
+vérifiés : `sk_live_...` et `pk_live_...`, préfixes corrects confirmés).
+
+- **Je n'ai pas accès au dashboard Coolify** (identifiants connus de Julien seul) — impossible de
+  pousser ces variables moi-même. Julien doit coller `STRIPE_SECRET_KEY` et
+  `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` (Developer View) dans la ressource `creadeline-app`, puis
+  redéployer.
+- **Point de vigilance pour toute future collecte de secret via TextEdit** : vérifier le nombre de
+  lignes du fichier après collage avant de l'utiliser — TextEdit peut couper une longue chaîne sans
+  espace au milieu, pas seulement un problème de format RTF vs texte brut.
+- **Pas encore fait à ce stade** : coller dans Coolify, redéployer, premier vrai paiement live test
+  (petit montant) pour confirmer que ça fonctionne avant d'annoncer le site "en vente réelle".
