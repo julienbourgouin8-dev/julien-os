@@ -13,6 +13,21 @@ Process générique de déploiement (VPS Hostinger + Coolify), réutilisable pou
 
 ## ÉTAT AU 2026-09-23 (fin de session) — à lire en premier
 
+### Point de restauration validé sur vrai iPhone — 23 septembre, 10 h
+
+- Version production validée : commit extrait `f922e1d` (monorepo `4d5c48c`).
+- Safari mobile après refresh : les vidéos restent visibles et se lancent normalement.
+- Mode économie d'énergie iOS : le premier toucher utilisé pour commencer à faire défiler la page
+  déverrouille bien les vidéos sans bouton supplémentaire. Validation faite par Julien sur son vrai
+  iPhone, pas en émulation.
+- Catalogue : centrage PC validé et filtre mobile recentré.
+- PageSpeed mobile après ces corrections : **91/100**. Le chargement initial ne contient plus les
+  cinq MP4 complets.
+- Seul défaut restant observé : en mode économie d'énergie, le premier geste de défilement présente
+  une petite latence perceptible car les cinq sources sont actuellement attribuées et amorcées dans
+  le même `touchstart`. Prochaine optimisation : conserver l'autorisation donnée par ce geste tout
+  en réduisant fortement le travail réseau/décodage effectué sur cette première frame.
+
 ### Correctif Safari + centrage catalogue du 23 septembre au matin
 
 - Correctif économie d'énergie iOS : les MP4 mobiles n'ont plus de `src` dans le HTML initial.
