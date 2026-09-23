@@ -174,7 +174,7 @@ export async function createParcelAndLabel(params: {
           id?: number;
           tracking_number?: string;
           tracking_url?: string;
-          documents?: { type?: string; link?: string }[];
+          documents?: { type?: string; document_type?: string; link?: string }[];
         }[];
       };
     };
@@ -185,7 +185,11 @@ export async function createParcelAndLabel(params: {
       return { success: false, error: "Réponse Sendcloud vide." };
     }
 
-    const labelUrl = parcel.documents?.find((d) => d.type === "label")?.link ?? null;
+    // `document_type` porte le sens ("label", "customs-declaration"...),
+    // `type` décrit juste le format visuel ("qr", "a6"...) — confondre les
+    // deux fait rater le document même quand Sendcloud renvoie bien une
+    // étiquette (constaté en test réel : type="qr", document_type="label").
+    const labelUrl = parcel.documents?.find((d) => d.document_type === "label")?.link ?? null;
     const carrierName = shipment?.carrier?.name || shipment?.carrier?.code || "Sendcloud";
 
     return {

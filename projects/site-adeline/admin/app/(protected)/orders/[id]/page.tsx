@@ -91,10 +91,10 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
                   )}
                 </div>
 
-                {order.shipping_label_url && (
+                {order.shipping_parcel_id && (
                   <div className="pt-2">
                     <a
-                      href={order.shipping_label_url}
+                      href={`/api/sendcloud-label/${order.shipping_parcel_id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 rounded-xl bg-denim px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-denim/90"
