@@ -50,7 +50,7 @@ const NAV = [
   { href: "/orders", label: "Commandes", icon: OrdersIcon },
 ];
 
-export default function AdminSidebar() {
+export default function AdminSidebar({ pendingOrdersCount = 0 }: { pendingOrdersCount?: number }) {
   const pathname = usePathname();
 
   return (
@@ -79,6 +79,17 @@ export default function AdminSidebar() {
             >
               <Icon className="h-[18px] w-[18px] shrink-0" />
               {item.label}
+              {item.href === "/orders" && pendingOrdersCount > 0 && (
+                <span
+                  className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[0.7rem] font-bold"
+                  style={{
+                    backgroundColor: active ? "var(--color-paper)" : "var(--color-rust)",
+                    color: active ? "var(--color-denim)" : "var(--color-paper)",
+                  }}
+                >
+                  {pendingOrdersCount}
+                </span>
+              )}
             </Link>
           );
         })}

@@ -314,20 +314,21 @@ Julien a listé plusieurs améliorations d'affilée pendant qu'on corrigeait les
 avec lui avant de partir sur les plus gros morceaux — certains items se recoupent/dépendent les uns des
 autres (ex. la séquence email a besoin du lien de tracking, déjà disponible via `shipping_tracking_url`).
 
-- [ ] **Dashboard admin — visibilité immédiate des commandes en cours** : ajouter les commandes
-      récentes/à traiter directement sur la page d'accueil admin (pas besoin d'aller dans "Commandes"),
-      + une notification (badge, compteur) quand une nouvelle commande arrive. Adeline doit pouvoir
-      suivre le colis sans naviguer.
+- [x] **Dashboard admin — visibilité immédiate des commandes en cours** (2026-09-23) : carte "X
+      commande(s) à traiter" en haut du tableau de bord (`app/(protected)/page.tsx`, commandes au
+      statut `paid`), + badge compteur sur "Commandes" dans la sidebar (`AdminSidebar.tsx`, visible
+      sur toutes les pages admin, pas juste le tableau de bord). **Notification email à Adeline**
+      aussi ajoutée (`app/lib/email/newOrderNotification.ts`, via Resend, appelée depuis le webhook
+      Stripe) — même limitation de domaine non vérifié que l'email de confirmation client (voir plus
+      bas), donc n'atteint pour l'instant que `CONTACT_EMAIL` (Julien), pas encore Adeline en vrai.
 - [ ] **Flux "confirmer la disponibilité"** : bouton admin pour qu'Adeline confirme qu'une pièce
       (souvent unique, fait main) est bien disponible avant expédition — une fois confirmé, l'article
       disparaît du site et le panier d'un client qui l'avait encore dedans se vide. **Julien a dit
       explicitement de ne le mettre en vraie fonctionnalité qu'une fois la période de test terminée** —
       ne pas l'activer prématurément.
-- [ ] **Séquence email post-achat (Brevo)** : email de remerciement avec l'image réelle de l'article
-      acheté (variable, jamais une image statique) + prix + bouton "Suivre mon article" qui renvoie
-      vers le lien de tracking Mondial Relay/Chronopost (`shipping_tracking_url`, déjà stocké en base,
-      mais pas encore rempli au moment de l'envoi de l'email de confirmation initiale — voir si un
-      2e email "colis expédié" séparé est nécessaire une fois l'étiquette générée).
+- [x] **Séquence email post-achat** — construite avec **Resend** (pas Brevo), voir entrée détaillée
+      plus haut dans ce fichier et `PROGRESS.md`. Bloquée en pratique tant que le domaine n'est pas
+      vérifié sur Resend (action Julien).
 - [ ] **Autofill navigateur sur Stripe Checkout** : Julien doit retaper email/adresse à chaque test.
       Stripe gère lui-même l'autocomplete de sa page hébergée — à vérifier si "Link" (réseau
       one-click de Stripe) est activé dans le dashboard Stripe du compte ; on ne contrôle pas le HTML

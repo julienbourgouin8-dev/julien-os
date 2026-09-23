@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { getAllProductsForAdmin } from "@/lib/db/products";
+import { getAllOrdersForAdmin } from "@/lib/db/orders";
 import { getCategoryLabel } from "@/lib/categories";
 import { isPostHogConfigured } from "@/lib/posthog";
 import {
@@ -63,9 +64,18 @@ function StatSkeleton() {
   return <div className="mt-1 h-10 w-16 animate-pulse rounded bg-ink/[0.06]" />;
 }
 
+function formatPrice(cents: number): string {
+  return `${(cents / 100).toFixed(2).replace(".", ",")} €`;
+}
+
 export default async function DashboardPage() {
   const posthogReady = isPostHogConfigured();
   const products = await getAllProductsForAdmin();
+  const orders = await getAllOrdersForAdmin();
+  // "paid" = payée, pas encore marquée traitée — la vraie file d'attente
+  // d'Adeline. Affichée en premier sur le tableau de bord : plus besoin
+  // d'ouvrir "Commandes" pour savoir qu'il y a quelque chose à faire.
+  const pendingOrders = orders.filter((o) => o.status === "paid");
 
   const active = products.filter((p) => p.status === "active").length;
   const draft = products.filter((p) => p.status === "draft").length;
@@ -119,6 +129,38 @@ export default async function DashboardPage() {
           <StatTile value={draft} label="Brouillons" />
         )}
       </div>
+
+      {pendingOrders.length > 0 && (
+        <div className={CARD} style={{ borderColor: "rgba(180,83,60,0.25)" }}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Stitch color="var(--color-rust)" />
+              <h2 className="font-display text-lg italic text-ink">
+                {pendingOrders.length} commande{pendingOrders.length > 1 ? "s" : ""} à traiter
+              </h2>
+            </div>
+            <Link href="/orders" className="text-xs font-semibold uppercase tracking-[0.1em] text-denim hover:underline">
+              Tout voir →
+            </Link>
+          </div>
+          <div className="mt-3 divide-y divide-ink/[0.06]">
+            {pendingOrders.slice(0, 5).map((o) => (
+              <Link
+                key={o.id}
+                href={`/orders/${o.id}`}
+                className="flex items-center justify-between gap-4 py-3 text-sm transition-colors hover:text-denim"
+              >
+                <span className="min-w-0 flex-1 truncate text-ink">
+                  <span className="font-mono text-ink/50">#{o.id.slice(0, 8).toUpperCase()}</span>
+                  {o.customer_email ? <span className="ml-2 text-ink/60">{o.customer_email}</span> : null}
+                </span>
+                <span className="shrink-0 whitespace-nowrap text-ink/40">{relativeDate(o.created_at)}</span>
+                <span className="shrink-0 whitespace-nowrap font-semibold text-ink">{formatPrice(o.total_cents)}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       {products.length === 0 && (
         <div className={`${CARD} max-w-md text-center`}>

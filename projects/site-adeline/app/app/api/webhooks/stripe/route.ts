@@ -12,6 +12,7 @@ import {
 import { createParcelAndLabel, type ServicePointDelivery } from "@/lib/sendcloud/client";
 import { getCartWeightGrams } from "@/lib/shipping";
 import { sendOrderConfirmationEmail } from "@/lib/email/orderConfirmation";
+import { sendNewOrderNotification } from "@/lib/email/newOrderNotification";
 
 // Source de vérité du paiement : Stripe appelle cette route, jamais le
 // navigateur du client. Signature vérifiée avant toute lecture du contenu
@@ -145,6 +146,18 @@ export async function POST(request: NextRequest) {
         // Jamais bloquant : une commande payée et bien enregistrée ne doit
         // jamais échouer à cause d'un souci d'envoi d'email.
         console.error(`[Email] Échec de l'envoi de confirmation pour la commande ${order.id}:`, emailErr);
+      }
+
+      try {
+        await sendNewOrderNotification({
+          orderId: order.id,
+          items,
+          totalCents: order.total_cents,
+          shippingMethod: session.metadata?.shippingMethod ?? null,
+          customerEmail: order.customer_email,
+        });
+      } catch (notifErr) {
+        console.error(`[Email] Échec de la notification nouvelle commande ${order.id}:`, notifErr);
       }
     }
   }

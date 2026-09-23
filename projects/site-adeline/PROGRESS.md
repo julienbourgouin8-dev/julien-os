@@ -2367,12 +2367,35 @@ en live sans cette clé** — à récupérer par Julien dans son dashboard Strip
 mode Live) et coller dans `.secrets/stripe-live.env` (jamais dans le chat, même protocole que
 d'habitude) avant de pouvoir continuer.
 
+### Suite immédiate : dashboard admin (commandes + notifications) construit
+
+Julien a demandé l'explication détaillée de la vérification de domaine Resend (donnée en clair, étapes
+Resend + DNS OVH, pas de nouveau compte à créer) puis d'enchaîner sur tout le reste du backlog UX.
+
+- **Carte "X commande(s) à traiter" sur le tableau de bord admin** (`app/(protected)/page.tsx`) :
+  liste les commandes au statut `paid` (payées, pas encore marquées traitées par Adeline), en tête de
+  page, avant même les stats produits — email client, montant, date relative, lien direct vers la
+  fiche commande.
+- **Badge compteur sur "Commandes" dans la sidebar** (`AdminSidebar.tsx`), calculé une fois dans le
+  layout serveur (`app/(protected)/layout.tsx`, `getAllOrdersForAdmin` filtré sur `status === "paid"`)
+  et passé en prop — visible sur **toutes** les pages admin, pas seulement le tableau de bord, pour
+  qu'Adeline n'ait jamais besoin d'ouvrir "Commandes" pour savoir qu'il y a quelque chose à traiter.
+- **Notification email nouvelle commande** (`app/lib/email/newOrderNotification.ts`) : envoyée à
+  chaque commande payée (webhook Stripe, juste après l'email de confirmation client), avec le
+  contenu, le total, le mode de livraison et un lien direct vers la fiche commande admin
+  (`admin.creadeline16.fr/orders/{id}`). **Même limitation Resend que l'email client** (domaine non
+  vérifié) — atteint `CONTACT_EMAIL` (Julien) en attendant, pas encore Adeline directement.
+- Build des deux apps vérifié OK.
+- **Volontairement pas touché** : le flux "confirmer la disponibilité avant expédition" — Julien avait
+  dit explicitement plus tôt dans la session de ne l'activer qu'après la période de test ; pas
+  réinterprété comme inclus dans "fais tout le reste" sans confirmation explicite de sa part.
+
 ### Reste à faire après cette session
 
-1. **Domaine Resend à vérifier** (bloque l'email client réel) — action Julien dans le dashboard Resend.
+1. **Domaine Resend à vérifier** (bloque l'email client ET la notification Adeline en vrai) — action
+   Julien dans le dashboard Resend, étapes détaillées données dans la conversation.
 2. **Clé secrète Stripe live manquante** — action Julien dans le dashboard Stripe.
-3. Grosse liste UX/dashboard (§8 TODO.md) toujours pas commencée : commandes visibles + notifications
-   sur le dashboard admin, autofill (déjà expliqué : comportement Stripe par défaut, rien à coder),
-   flux confirmation dispo/stock (explicitement différé par Julien).
+3. **Flux "confirmer la disponibilité avant expédition"** — toujours volontairement pas construit,
+   en attendant un feu vert explicite de Julien (voir ci-dessus).
 4. Reste de TODO.md §8 inchangé par ailleurs (mention TVA, SEO produit avancé, Stripe Radar, poids
-   réel des produits, décalage mobile).
+   réel des produits, décalage mobile, test Chronopost déjà fait ce soir — à cocher).
