@@ -276,8 +276,9 @@ relations DB.
 - [x] Tester Chronopost de bout en bout (2026-09-23, point relais — étiquette complète obtenue,
       référence tronquée corrigée en cours de route, voir `PROGRESS.md`)
 - [ ] Poids réel des produits (seule une estimation à 200g est renseignée sur les 4 trousses actives)
-- [ ] Corriger le décalage mobile (panier) — non reproductible en émulation même à plusieurs sessions
-      d'essai, nécessite le Web Inspector Safari sur le vrai iPhone de Julien pour avancer
+- [x] Corriger le décalage mobile (panier) — cause trouvée le 2026-09-24 sur le vrai iPhone : la
+      grille `/panier` n'avait pas de colonne mobile explicite, `grid-cols-1` + `min-w-0` réglé
+      (voir `PROGRESS.md`, "ÉTAT AU 2026-09-24")
 - [ ] Remplacer les statistiques PostHog du dashboard admin par Google Analytics (ordre confirmé par
       Julien le 2026-09-23, pas commencé)
 - [x] Email de confirmation de commande — **Resend** (pas Brevo, déjà configuré/utilisé pour le
@@ -292,8 +293,9 @@ relations DB.
 - [x] SEO de base : `sitemap.ts` + `robots.ts`, meta description corrigée et resserrée sur des
       mots-clés réels, Google Search Console connecté (propriété de domaine, TXT OVH) + sitemap
       soumis + indexation demandée (2026-09-23)
-- [ ] SEO produit avancé : `generateMetadata` par page (boutique/fiche produit), Open Graph/Twitter
-      Card, JSON-LD `schema.org/Product`
+- [x] `generateMetadata` par page (boutique/fiche produit) — fait le 2026-09-24, chaque page
+      partageait auparavant le title/description de l'accueil (constaté dans les résultats Google)
+- [ ] SEO produit avancé restant : Open Graph/Twitter Card, JSON-LD `schema.org/Product`
 - [ ] Vérifier l'activation de Stripe Radar
 - [ ] Stripe en mode live — clé secrète collée par Julien dans `.secrets/stripe-live.env`
       (2026-09-23), préfixes vérifiés (`sk_live_`/`pk_live_`). Reste : coller les deux clés dans
@@ -371,11 +373,8 @@ autres (ex. la séquence email a besoin du lien de tracking, déjà disponible v
       webhook de remboursement détecté, réutiliser la même logique que `cancelOrderAndRestock`
       (`admin/lib/db/orders.ts`) pour remettre l'article en stock automatiquement, sans action
       manuelle d'Adeline.
-- [ ] **Article épuisé (stock 0) reste visible et achetable sur la boutique** — bug confirmé en
-      lisant le code (`app/lib/db/products.ts`) : `getAllProducts`, `getProductsByCategory`,
-      `getProductBySlug`, `getProductById` filtrent uniquement sur `status = 'active'`, jamais sur
-      `stock`. Comme la plupart des pièces d'Adeline sont faites à l'unité (stock 1), un article
-      acheté reste acheté-able par un autre client tant que son statut n'est pas changé à la main.
-      **À trancher avec Julien/Adeline avant de coder** : masquer complètement (`stock > 0` dans la
-      requête) vs. afficher grisé "Épuisé" sans bouton d'achat (peut avoir un intérêt marketing/
-      vitrine à garder visible) — deux comportements différents, pas juste un détail d'implémentation.
+- [x] **Article épuisé (stock 0) reste visible et achetable sur la boutique** — corrigé le
+      2026-09-24 : choix fait d'afficher grisé "Épuisé" (portfolio + SEO conservés) plutôt que
+      masquer, bouton d'achat remplacé par une invitation à commander une pièce sur mesure
+      (`ProductCard.tsx`, pages boutique/fiche produit). `getProductById` (checkout) inchangé, son
+      propre contrôle de stock reste la garde-fou réelle.
