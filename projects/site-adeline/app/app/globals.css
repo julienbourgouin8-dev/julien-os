@@ -42,15 +42,23 @@
    overflow horizontal non contenu. Plutôt que traquer l'élément exact à
    chaque fois qu'un nouveau composant l'introduit, on coupe la possibilité
    même de déborder au niveau racine. */
+/* `overflow-x: hidden` (seul, sans overflow-y explicite) force le
+   navigateur à calculer overflow-y en `auto` en arrière-plan (règle du
+   spec CSS) sur html ET body — deux conteneurs de défilement superposés
+   qui cassent `position: sticky` pour absolument tous les éléments collants
+   du site (constaté sur la fiche produit : colonne de texte censée rester
+   fixe pendant que la galerie défile, page.tsx). `clip` a le même effet de
+   garde-fou anti-débordement horizontal sans ce piège de calcul automatique
+   sur l'autre axe — supporté par tous les navigateurs modernes. */
 html {
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body {
   background: var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-body), sans-serif;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 .font-display {
