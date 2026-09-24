@@ -35,6 +35,16 @@ export async function getActiveProductsByCategory(category: string): Promise<Pro
   return rows.map(fromRow);
 }
 
+// Section "Nouveautés" de la home — les pièces les plus RÉCEMMENT créées
+// (created_at, jamais updated_at qui bouge à chaque modif de stock/prix).
+export async function getLatestActiveProducts(limit: number): Promise<Product[]> {
+  await ensureSchema();
+  const rows = (await sql`
+    SELECT * FROM products WHERE status = 'active' ORDER BY created_at DESC LIMIT ${limit}
+  `) as Product[];
+  return rows.map(fromRow);
+}
+
 // Utilisé par app/sitemap.ts pour lister toutes les fiches produit, toutes
 // catégories confondues.
 export async function getAllActiveProducts(): Promise<Product[]> {
