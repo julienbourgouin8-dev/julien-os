@@ -13,7 +13,10 @@ import {
   TopProductsSection,
   TrafficSourcesSection,
   DeviceBreakdownSection,
+  LiveVisitorsSection,
 } from "./DashboardPostHogSections";
+import AutoRefresh from "./AutoRefresh";
+import NewOrderPulse from "./NewOrderPulse";
 
 const LOW_STOCK_THRESHOLD = 2;
 const CARD = "rounded-2xl border border-ink/[0.05] bg-[#fffdf8] p-6 shadow-[0_1px_2px_rgba(36,27,21,0.05),0_10px_28px_rgba(36,27,21,0.07)]";
@@ -96,6 +99,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-10">
+      <AutoRefresh />
       <div className="flex items-baseline justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">Tableau de bord</p>
@@ -141,6 +145,7 @@ export default async function DashboardPage() {
               <h2 className="font-display text-lg italic text-ink">
                 {pendingOrders.length} commande{pendingOrders.length > 1 ? "s" : ""} à traiter
               </h2>
+              <NewOrderPulse count={pendingOrders.length} />
             </div>
             <Link href="/orders" className="text-xs font-semibold uppercase tracking-[0.1em] text-denim hover:underline">
               Tout voir →
@@ -238,6 +243,17 @@ export default async function DashboardPage() {
             <div className="mt-4">
               <Suspense fallback={<ChartSkeleton />}>
                 <TopProductsSection />
+              </Suspense>
+            </div>
+          </div>
+
+          <div className={CARD}>
+            <Stitch color="var(--color-denim)" />
+            <h2 className="font-display text-lg italic text-ink">Visiteurs en direct</h2>
+            <p className="text-xs text-ink/40">15 dernières minutes — localisation approximative par IP</p>
+            <div className="mt-4">
+              <Suspense fallback={<ChartSkeleton height="h-24" />}>
+                <LiveVisitorsSection />
               </Suspense>
             </div>
           </div>

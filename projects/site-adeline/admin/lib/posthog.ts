@@ -11,6 +11,7 @@ export type CategoryCount = { category: string; count: number };
 export type ProductViewCount = { productId: string; productName: string; views: number };
 export type TrafficSource = { source: string; visits: number };
 export type DeviceCount = { device: string; visits: number };
+export type LiveVisitor = { city: string | null; country: string | null; pathname: string; lastSeen: string };
 
 function configured(): boolean {
   return Boolean(process.env.POSTHOG_PERSONAL_API_KEY && process.env.POSTHOG_PROJECT_ID && process.env.POSTHOG_HOST);
@@ -176,6 +177,28 @@ export async function getDeviceBreakdown(days: number): Promise<DeviceCount[]> {
     ORDER BY visits DESC
   `);
   return rows.map(([device, visits]) => ({ device, visits }));
+}
+
+// Liste détaillée des sessions actives récentes (pas juste un compte) —
+// $geoip_city_name/$geoip_country_name sont enrichis automatiquement par
+// PostHog à partir de l'IP au moment de l'ingestion, aucun code de tracking
+// supplémentaire nécessaire côté site public. `argMax` prend la valeur au
+// moment du timestamp le plus récent de la session (dernière page vue).
+export async function getLiveVisitors(minutes = 15, limit = 8): Promise<LiveVisitor[]> {
+  if (!configured()) return [];
+  const rows = await queryHogQL<[string | null, string | null, string, string]>(`
+    SELECT
+      argMax(properties.$geoip_city_name, timestamp) AS city,
+      argMax(properties.$geoip_country_name, timestamp) AS country,
+      argMax(properties.$pathname, timestamp) AS pathname,
+      max(timestamp) AS last_seen
+    FROM events
+    WHERE event = '$pageview' AND timestamp >= now() - INTERVAL ${minutes} MINUTE
+    GROUP BY properties.$session_id
+    ORDER BY last_seen DESC
+    LIMIT ${limit}
+  `);
+  return rows.map(([city, country, pathname, lastSeen]) => ({ city, country, pathname, lastSeen }));
 }
 
 export function isPostHogConfigured(): boolean {

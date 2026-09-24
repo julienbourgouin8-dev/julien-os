@@ -16,6 +16,7 @@ import {
   getTopViewedProducts,
   getTrafficSources,
   getDeviceBreakdown,
+  getLiveVisitors,
 } from "@/lib/posthog";
 import { getUnitsSoldByProduct } from "@/lib/db/orders";
 import { getCategoryLabel } from "@/lib/categories";
@@ -121,6 +122,38 @@ export async function TopProductsSection() {
 export async function TrafficSourcesSection() {
   const sources = await getTrafficSources(TOP_PAGES_RANGE_DAYS);
   return <BarChart data={sources.map((s) => ({ label: s.source, value: s.visits }))} />;
+}
+
+function minutesAgo(iso: string): string {
+  const mins = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60_000));
+  if (mins === 0) return "à l'instant";
+  if (mins === 1) return "il y a 1 min";
+  return `il y a ${mins} min`;
+}
+
+// Liste (pas juste un compte) des sessions actives récentes, avec
+// localisation approximative (ville/pays déduits de l'IP par PostHog) et
+// dernière page vue — rafraîchi périodiquement avec le reste du tableau de
+// bord (voir AutoRefresh.tsx), pas besoin de websocket pour un usage
+// "je vérifie régulièrement" plutôt que du temps réel seconde par seconde.
+export async function LiveVisitorsSection() {
+  const visitors = await getLiveVisitors(15);
+  if (visitors.length === 0) {
+    return <p className="text-sm text-ink/40">Personne sur le site pour l&apos;instant.</p>;
+  }
+  return (
+    <div className="divide-y divide-ink/[0.06]">
+      {visitors.map((v, i) => (
+        <div key={i} className="flex items-center justify-between gap-4 py-2.5 text-sm">
+          <span className="min-w-0 flex-1 truncate text-ink/80">
+            {v.city && v.country ? `${v.city}, ${v.country}` : v.country || "Localisation inconnue"}
+            <span className="text-ink/40"> · {v.pathname}</span>
+          </span>
+          <span className="shrink-0 text-xs text-ink/40">{minutesAgo(v.lastSeen)}</span>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export async function DeviceBreakdownSection() {
