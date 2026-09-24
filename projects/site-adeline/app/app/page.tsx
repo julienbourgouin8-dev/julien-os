@@ -127,7 +127,7 @@ export default function Home() {
                   (1536×2752), les hauteurs calculées ci-dessus restent
                   valables. */}
               <Image
-                src="/brand/hero-mobile-v9.png"
+                src="/brand/hero-mobile-v9.jpg"
                 alt="Sac cabas, portefeuille et pochette assortis, en simili cuir bleu et écru, CréA'deline"
                 fill
                 priority
@@ -136,7 +136,7 @@ export default function Home() {
                 className="object-contain object-top sm:hidden"
               />
               <Image
-                src="/brand/hero-v16.png"
+                src="/brand/hero-v16.jpg"
                 alt="Sac cabas, portefeuille et pochette assortis, en simili cuir bleu et écru, CréA'deline"
                 fill
                 priority
@@ -227,7 +227,7 @@ export default function Home() {
             </div>
 
             {/* Tagline éclatée autour du sac, mobile uniquement (retour Julien
-                2026-09-16). Repères mesurés sur `hero-mobile-v9.png`
+                2026-09-16). Repères mesurés sur `hero-mobile-v9.jpg`
                 (1536×2752, en % de la hauteur = % du conteneur puisque
                 celui-ci est dimensionné exactement sur le ratio de
                 l'image) : bas du header ≈8%, pointe de la boucle des anses
