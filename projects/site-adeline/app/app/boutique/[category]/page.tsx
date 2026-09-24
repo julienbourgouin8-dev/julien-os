@@ -189,8 +189,12 @@ export default async function CategoryPage({
                  right:400px dans un parent large de 310px). `min(360px,
                  100%)` plafonne le minimum à la largeur réellement
                  disponible, donc la colonne peut redescendre sous 360px
-                 sur un écran étroit au lieu de déborder. */
-              <div className="grid justify-center grid-cols-[repeat(auto-fit,minmax(min(390px,100%),420px))] gap-x-10 gap-y-16 xl:grid-cols-[repeat(2,420px)]">
+                 sur un écran étroit au lieu de déborder. xl:gap-x-24 (retour
+                 Julien 2026-09-24, capture annotée) : marge horizontale
+                 nettement plus large entre les 2 colonnes desktop —
+                 gap-x-10 par défaut inchangé en dessous de xl, où il n'y a
+                 qu'une seule colonne visible de toute façon. */
+              <div className="grid justify-center grid-cols-[repeat(auto-fit,minmax(min(390px,100%),420px))] gap-x-10 gap-y-16 xl:grid-cols-[repeat(2,420px)] xl:gap-x-24">
                 {products.map((p) => (
                   <ProductCard
                     key={p.id}
