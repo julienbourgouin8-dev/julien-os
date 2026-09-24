@@ -40,7 +40,6 @@ export default function NouveauteCard({
               fill
               sizes="(min-width: 640px) 45vw, 92vw"
               quality={85}
-              unoptimized={src.startsWith("/uploads/")}
               className="object-contain transition-opacity duration-700 ease-in-out"
               style={{ opacity: i === active ? 1 : 0 }}
             />
