@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import PasswordInput from "@/components/PasswordInput";
 import { changePassword } from "./actions";
 
 const CARD =
@@ -16,42 +17,19 @@ export default function ChangePasswordForm() {
           <label htmlFor="current" className="text-xs font-semibold uppercase tracking-[0.1em] text-ink/45">
             Mot de passe actuel
           </label>
-          <input
-            id="current"
-            name="current"
-            type="password"
-            required
-            autoComplete="current-password"
-            className="mt-1.5 w-full rounded-xl bg-ink/[0.04] px-4 py-3 text-sm text-ink outline-none ring-1 ring-transparent transition-all focus:bg-white focus:ring-denim"
-          />
+          <PasswordInput id="current" name="current" required autoComplete="current-password" />
         </div>
         <div>
           <label htmlFor="next" className="text-xs font-semibold uppercase tracking-[0.1em] text-ink/45">
             Nouveau mot de passe
           </label>
-          <input
-            id="next"
-            name="next"
-            type="password"
-            required
-            minLength={8}
-            autoComplete="new-password"
-            className="mt-1.5 w-full rounded-xl bg-ink/[0.04] px-4 py-3 text-sm text-ink outline-none ring-1 ring-transparent transition-all focus:bg-white focus:ring-denim"
-          />
+          <PasswordInput id="next" name="next" required minLength={8} autoComplete="new-password" />
         </div>
         <div>
           <label htmlFor="confirm" className="text-xs font-semibold uppercase tracking-[0.1em] text-ink/45">
             Confirme-le
           </label>
-          <input
-            id="confirm"
-            name="confirm"
-            type="password"
-            required
-            minLength={8}
-            autoComplete="new-password"
-            className="mt-1.5 w-full rounded-xl bg-ink/[0.04] px-4 py-3 text-sm text-ink outline-none ring-1 ring-transparent transition-all focus:bg-white focus:ring-denim"
-          />
+          <PasswordInput id="confirm" name="confirm" required minLength={8} autoComplete="new-password" />
         </div>
 
         {state?.error && <p className="text-sm text-rust">{state.error}</p>}

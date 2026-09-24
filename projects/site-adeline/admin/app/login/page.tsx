@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import Link from "next/link";
+import PasswordInput from "@/components/PasswordInput";
 import { signIn } from "./actions";
 
 export default function LoginPage() {
@@ -43,14 +44,7 @@ export default function LoginPage() {
             <label htmlFor="password" className="text-xs font-semibold uppercase tracking-[0.1em] text-ink/45">
               Mot de passe
             </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              autoComplete="current-password"
-              className="mt-1.5 w-full rounded-xl bg-ink/[0.04] px-4 py-3 text-sm text-ink outline-none ring-1 ring-transparent transition-all focus:bg-white focus:ring-denim"
-            />
+            <PasswordInput id="password" name="password" required autoComplete="current-password" />
           </div>
         </div>
 
