@@ -1,11 +1,6 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { formatPrice } from "@/components/ProductCard";
-
-const ROTATE_INTERVAL_MS = 2600;
 
 export type NouveauteProduct = {
   href: string;
@@ -15,45 +10,26 @@ export type NouveauteProduct = {
   images: string[];
 };
 
-// Fait défiler tout seul les photos d'UNE pièce (face, dos, intérieur...) —
-// pas de survol nécessaire, demande explicite de Julien. Fondu + très léger
-// zoom arrière (scale 1.04 → 1) plutôt qu'un fondu plat : distinct de la
-// transition de glissement entre pièces (voir NouveautesSlider), qui elle
-// déplace au lieu d'estomper — deux mouvements différents, jamais confondus.
-// `startDelayMs` décale le départ de chaque carte pour qu'elles ne changent
-// pas toutes de face en même temps.
+// Purement présentationnel : ne gère plus son propre minuteur — `activeIndex`
+// vient du parent (NouveautesSlider), pour que toutes les cartes visibles
+// changent de face EXACTEMENT en même temps (retour Julien : "face avant
+// pour les deux produits, face arrière pour les deux produits..."). Fondu
+// simple, sans zoom — la version avec léger zoom ne plaisait pas à Julien.
 export default function NouveauteCard({
   href,
   category,
   name,
   price_cents,
   images,
-  startDelayMs = 0,
-}: NouveauteProduct & { startDelayMs?: number }) {
-  const [active, setActive] = useState(0);
-  const indexRef = useRef(0);
-
-  useEffect(() => {
-    if (images.length <= 1) return;
-    let intervalId: ReturnType<typeof setInterval> | undefined;
-    const timeoutId = setTimeout(() => {
-      intervalId = setInterval(() => {
-        indexRef.current = (indexRef.current + 1) % images.length;
-        setActive(indexRef.current);
-      }, ROTATE_INTERVAL_MS);
-    }, startDelayMs);
-    return () => {
-      clearTimeout(timeoutId);
-      if (intervalId) clearInterval(intervalId);
-    };
-  }, [images.length, startDelayMs]);
+  activeIndex,
+}: NouveauteProduct & { activeIndex: number }) {
+  const active = images.length > 0 ? activeIndex % images.length : 0;
 
   return (
     <Link href={href} className="group block">
       {/* 16/9 = ratio réel des photos produit (même convention que
           ProductCard.tsx) — un autre ratio ferait apparaître des bandes
-          blanches au-dessus/dessous de la photo (`object-contain` dans un
-          cadre trop haut), constaté par Julien en 4/3 sur la v1 mobile. */}
+          blanches au-dessus/dessous de la photo. */}
       <div className="relative aspect-[16/9] overflow-hidden bg-white">
         {images.length > 0 ? (
           images.map((src, i) => (
@@ -65,11 +41,8 @@ export default function NouveauteCard({
               sizes="(min-width: 640px) 45vw, 92vw"
               quality={85}
               unoptimized={src.startsWith("/uploads/")}
-              className="object-contain transition-[opacity,transform] duration-[900ms] ease-out"
-              style={{
-                opacity: i === active ? 1 : 0,
-                transform: i === active ? "scale(1)" : "scale(1.045)",
-              }}
+              className="object-contain transition-opacity duration-700 ease-in-out"
+              style={{ opacity: i === active ? 1 : 0 }}
             />
           ))
         ) : (
@@ -80,8 +53,7 @@ export default function NouveauteCard({
       </div>
 
       {/* Catégorie seule sur sa ligne, puis nom + prix alignés sur la même
-          ligne (items-center) — avant, le prix s'alignait avec la catégorie
-          plutôt qu'avec le nom, décalage visible signalé par Julien. */}
+          ligne (items-center). */}
       <p className="mt-4 text-xs font-bold uppercase tracking-[0.1em] text-ink/50 sm:text-sm">{category}</p>
       <div className="mt-1 flex items-center justify-between gap-4">
         <p className="min-w-0 flex-1 truncate text-lg text-ink sm:text-xl">{name}</p>
