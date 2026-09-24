@@ -9,6 +9,15 @@ import Nouveautes from "@/components/Nouveautes";
 // commentaire dans MarchesLazy.tsx.
 import Marches from "@/components/MarchesLazy";
 
+// Sans ça, Next.js prérend cette page une seule fois au build et la sert
+// figée pour toujours ensuite (Full Route Cache) — la section Nouveautés
+// n'aurait alors jamais montré les vrais derniers produits ni le bon ordre
+// de photos sans un redéploiement complet à chaque fois. Constaté en
+// prod : le correctif d'ordre des photos (écrit en base, pas dans le
+// code) restait invisible sur creadeline16.fr tant que cette ligne
+// n'existait pas.
+export const dynamic = "force-dynamic";
+
 export default function Home() {
   return (
     <>

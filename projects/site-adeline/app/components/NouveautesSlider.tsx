@@ -22,10 +22,14 @@ function chunk<T>(arr: T[], size: number): T[][] {
 // instantanément à l'index 0 réel, transition coupée le temps du saut —
 // invisible puisque le clone et l'original sont pixel pour pixel les mêmes.
 //
-// Toutes les cartes visibles changent de face EN MÊME TEMPS (un seul
-// minuteur partagé, `imageStep`, passé à chaque carte) plutôt que chacune
-// son propre minuteur décalé — retour Julien : "face avant pour les deux
-// produits, face arrière pour les deux produits...".
+// Toutes les cartes visibles changent de face EN MÊME TEMPS, et chaque
+// nouvelle paire redémarre TOUJOURS sur la face avant (image 0, garantie en
+// position 1 par l'admin) — retour Julien explicite après un premier essai
+// désynchronisé : la trousse corail a 4 photos quand les autres n'en ont
+// que 3, donc un simple minuteur global qui ne s'arrête jamais dérive dès
+// que deux produits d'une même paire n'ont pas le même nombre de photos.
+// Le cycle est donc plafonné au plus petit nombre de photos DE LA PAIRE
+// ACTIVE, et repart de zéro à chaque fois qu'une nouvelle paire apparaît.
 export default function NouveautesSlider({ products, groupSize }: { products: NouveauteProduct[]; groupSize: number }) {
   const groups = chunk(products, groupSize);
   const loop = groups.length > 1;
@@ -53,13 +57,22 @@ export default function NouveautesSlider({ products, groupSize }: { products: No
     return () => clearTimeout(t);
   }, [groupIndex, groups.length, loop]);
 
-  useEffect(() => {
-    const id = setInterval(() => setImageStep((s) => s + 1), ROTATE_INTERVAL_MS);
-    return () => clearInterval(id);
-  }, []);
-
   if (groups.length === 0) return null;
   const activeDot = groupIndex % groups.length;
+  const activeGroup = groups[activeDot];
+  const cycleLength = Math.max(1, Math.min(...activeGroup.map((p) => p.images.length || 1)));
+
+  // Redémarre à 0 (face avant) à chaque nouvelle paire, et ne boucle que
+  // sur ce que TOUTES les pièces de cette paire ont en commun — jamais
+  // au-delà, sinon celle qui a le plus de photos se désynchronise des
+  // autres avant la fin de son propre cycle.
+  useEffect(() => {
+    setImageStep(0);
+    if (cycleLength <= 1) return;
+    const id = setInterval(() => setImageStep((s) => (s + 1) % cycleLength), ROTATE_INTERVAL_MS);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeDot, cycleLength]);
 
   return (
     <div className="overflow-hidden">
