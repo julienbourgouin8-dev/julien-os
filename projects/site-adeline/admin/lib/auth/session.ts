@@ -1,8 +1,9 @@
 import "server-only";
 import { createHmac, timingSafeEqual } from "node:crypto";
 
-// Remplace Supabase Auth : un seul compte admin (voir login/actions.ts),
-// session = cookie signé HMAC-SHA256 avec expiration embarquée, pas de
+// Remplace Supabase Auth : plusieurs comptes admin possibles (voir
+// login/actions.ts et app/(protected)/compte/), session = cookie signé
+// HMAC-SHA256 avec expiration ET identifiant du compte embarqués, pas de
 // table sessions ni de lib externe. Sûr côté proxy.ts : dans cette version
 // de Next, proxy.ts tourne par défaut en runtime Node.js (plus Edge), donc
 // node:crypto y est utilisable — voir node_modules/next/dist/docs/.../proxy.md.
@@ -19,21 +20,38 @@ function sign(payload: string): string {
   return createHmac("sha256", secret()).update(payload).digest("hex");
 }
 
-export function createSessionToken(): string {
+// Payload = "<expiration>|<email du compte>" — l'email peut contenir des
+// points (adresse réelle), donc on sépare payload/signature sur le DERNIER
+// "." du token, jamais un split naïf sur tous les points.
+export function createSessionToken(email: string): string {
   const exp = Date.now() + MAX_AGE_SECONDS * 1000;
-  const payload = String(exp);
+  const payload = `${exp}|${email}`;
   return `${payload}.${sign(payload)}`;
 }
 
-export function verifySessionToken(token: string | undefined): boolean {
-  if (!token) return false;
-  const [payload, signature] = token.split(".");
-  if (!payload || !signature) return false;
+// Retourne l'email du compte si le token est valide (signature correcte,
+// pas expiré), sinon null. `verifySessionToken` ci-dessous n'en garde que
+// le booléen pour proxy.ts, qui n'a pas besoin de savoir QUI est connecté.
+export function getSessionEmailFromToken(token: string | undefined): string | null {
+  if (!token) return null;
+  const sepIdx = token.lastIndexOf(".");
+  if (sepIdx === -1) return null;
+  const payload = token.slice(0, sepIdx);
+  const signature = token.slice(sepIdx + 1);
 
   const expected = Buffer.from(sign(payload));
   const actual = Buffer.from(signature);
-  if (expected.length !== actual.length || !timingSafeEqual(expected, actual)) return false;
+  if (expected.length !== actual.length || !timingSafeEqual(expected, actual)) return null;
 
-  const exp = Number(payload);
-  return Number.isFinite(exp) && Date.now() < exp;
+  const barIdx = payload.lastIndexOf("|");
+  if (barIdx === -1) return null;
+  const exp = Number(payload.slice(0, barIdx));
+  if (!Number.isFinite(exp) || Date.now() >= exp) return null;
+
+  const email = payload.slice(barIdx + 1);
+  return email || null;
+}
+
+export function verifySessionToken(token: string | undefined): boolean {
+  return getSessionEmailFromToken(token) !== null;
 }

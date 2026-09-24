@@ -1,7 +1,7 @@
 "use server";
 
 import { consumeResetToken } from "@/lib/auth/reset-tokens";
-import { updateAdminPassword } from "@/lib/auth/credentials";
+import { updateAdminPasswordByEmail } from "@/lib/auth/credentials";
 import { hashPassword } from "@/lib/auth/password";
 import { logAction } from "@/lib/audit";
 
@@ -28,13 +28,14 @@ export async function resetPassword(
 
   // Consommé (marqué utilisé) seulement si tout le reste est valide — sinon
   // une erreur de saisie sur un mot de passe trop court grillerait le lien
-  // pour rien.
-  const valid = await consumeResetToken(token);
-  if (!valid) {
+  // pour rien. Retourne l'email du COMPTE concerné (Adeline ou Julien) —
+  // c'est lui qui indique quel mot de passe changer.
+  const accountEmail = await consumeResetToken(token);
+  if (!accountEmail) {
     return { error: "Ce lien a expiré ou a déjà été utilisé. Refais une demande." };
   }
 
-  await updateAdminPassword(hashPassword(password));
+  await updateAdminPasswordByEmail(accountEmail, hashPassword(password));
   await logAction("password_reset_completed");
   return { done: true };
 }

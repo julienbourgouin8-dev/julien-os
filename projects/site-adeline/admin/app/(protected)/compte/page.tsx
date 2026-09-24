@@ -1,77 +1,33 @@
-"use client";
+import { cookies } from "next/headers";
+import { COOKIE_NAME, getSessionEmailFromToken } from "@/lib/auth/session";
+import { listAdminAccounts } from "@/lib/auth/credentials";
+import ChangePasswordForm from "./ChangePasswordForm";
+import CreateAccountForm from "./CreateAccountForm";
 
-import { useActionState } from "react";
-import { changePassword } from "./actions";
-
-const CARD =
-  "rounded-2xl border border-ink/[0.05] bg-[#fffdf8] p-6 shadow-[0_1px_2px_rgba(36,27,21,0.05),0_10px_28px_rgba(36,27,21,0.07)]";
-
-export default function ComptePage() {
-  const [state, action, pending] = useActionState(changePassword, undefined);
+export default async function ComptePage() {
+  const cookieStore = await cookies();
+  const email = getSessionEmailFromToken(cookieStore.get(COOKIE_NAME)?.value);
+  const accounts = await listAdminAccounts();
 
   return (
     <div className="max-w-md space-y-10">
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">Mon compte</p>
         <h1 className="mt-1 font-display text-3xl text-ink">Changer mon mot de passe</h1>
+        {email && <p className="mt-1 text-sm text-ink/45">Connecté en tant que {email}</p>}
       </div>
 
-      <div className={CARD}>
-        <form key={state?.success ? "reset" : "form"} action={action} className="space-y-4">
-          <div>
-            <label htmlFor="current" className="text-xs font-semibold uppercase tracking-[0.1em] text-ink/45">
-              Mot de passe actuel
-            </label>
-            <input
-              id="current"
-              name="current"
-              type="password"
-              required
-              autoComplete="current-password"
-              className="mt-1.5 w-full rounded-xl bg-ink/[0.04] px-4 py-3 text-sm text-ink outline-none ring-1 ring-transparent transition-all focus:bg-white focus:ring-denim"
-            />
-          </div>
-          <div>
-            <label htmlFor="next" className="text-xs font-semibold uppercase tracking-[0.1em] text-ink/45">
-              Nouveau mot de passe
-            </label>
-            <input
-              id="next"
-              name="next"
-              type="password"
-              required
-              minLength={8}
-              autoComplete="new-password"
-              className="mt-1.5 w-full rounded-xl bg-ink/[0.04] px-4 py-3 text-sm text-ink outline-none ring-1 ring-transparent transition-all focus:bg-white focus:ring-denim"
-            />
-          </div>
-          <div>
-            <label htmlFor="confirm" className="text-xs font-semibold uppercase tracking-[0.1em] text-ink/45">
-              Confirme-le
-            </label>
-            <input
-              id="confirm"
-              name="confirm"
-              type="password"
-              required
-              minLength={8}
-              autoComplete="new-password"
-              className="mt-1.5 w-full rounded-xl bg-ink/[0.04] px-4 py-3 text-sm text-ink outline-none ring-1 ring-transparent transition-all focus:bg-white focus:ring-denim"
-            />
-          </div>
+      <ChangePasswordForm />
 
-          {state?.error && <p className="text-sm text-rust">{state.error}</p>}
-          {state?.success && <p className="text-sm text-teal">Mot de passe mis à jour.</p>}
-
-          <button
-            type="submit"
-            disabled={pending}
-            className="rounded-full bg-denim px-6 py-3 text-sm font-semibold text-paper shadow-[0_8px_20px_rgba(79,108,143,0.3)] transition-transform hover:-translate-y-0.5 disabled:opacity-60"
-          >
-            {pending ? "Enregistrement…" : "Enregistrer"}
-          </button>
-        </form>
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">Comptes administrateurs</p>
+        <h2 className="mt-1 font-display text-2xl text-ink">Ajouter un accès</h2>
+        {accounts.length > 0 && (
+          <p className="mt-1 text-sm text-ink/45">Comptes existants : {accounts.map((a) => a.email).join(", ")}.</p>
+        )}
       </div>
+
+      <CreateAccountForm />
     </div>
   );
 }

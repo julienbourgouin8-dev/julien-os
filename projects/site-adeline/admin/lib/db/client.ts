@@ -125,6 +125,11 @@ export function ensureSchema(): Promise<void> {
           updated_at TIMESTAMPTZ NOT NULL
         )
       `;
+      // Plusieurs comptes admin depuis le 2026-09-24 (Adeline + Julien) :
+      // `email` (l'identifiant de connexion) doit être unique sans
+      // distinction de casse, sinon "Adeline" et "adeline" pourraient
+      // coexister comme deux comptes différents.
+      await sql`CREATE UNIQUE INDEX IF NOT EXISTS admin_credentials_email_lower_idx ON admin_credentials (lower(email))`;
       // Réinitialisation de mot de passe par email. Seul le hash du token
       // est stocké (même logique qu'un mot de passe) : un accès en
       // lecture à la DB seule ne permet pas de forger un lien valide.
@@ -136,6 +141,10 @@ export function ensureSchema(): Promise<void> {
           created_at TIMESTAMPTZ NOT NULL
         )
       `;
+      // Quel compte ce token concerne — nécessaire depuis qu'il y a
+      // plusieurs comptes admin : sans ça, un lien de réinitialisation
+      // changerait le mot de passe du mauvais compte.
+      await sql`ALTER TABLE password_reset_tokens ADD COLUMN IF NOT EXISTS email TEXT NOT NULL DEFAULT ''`;
     })();
   }
   return schemaReady;

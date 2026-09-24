@@ -14,18 +14,19 @@ function hashToken(token: string): string {
 }
 
 // Retourne le token EN CLAIR (à mettre dans le lien de l'email, jamais
-// stocké tel quel) — un seul jeton actif à la fois : les anciens sont
-// purgés pour qu'un lien de reset précédent, non utilisé, ne traîne pas
-// indéfiniment.
-export async function createResetToken(): Promise<string> {
+// stocké tel quel) — un seul jeton actif à la fois PAR COMPTE : les anciens
+// tokens non utilisés DU MÊME compte sont purgés pour qu'un lien de reset
+// précédent ne traîne pas indéfiniment, sans toucher à ceux d'un autre
+// compte admin.
+export async function createResetToken(accountEmail: string): Promise<string> {
   await ensureSchema();
-  await sql`DELETE FROM password_reset_tokens WHERE used_at IS NULL`;
+  await sql`DELETE FROM password_reset_tokens WHERE used_at IS NULL AND lower(email) = lower(${accountEmail})`;
 
   const token = randomBytes(TOKEN_BYTES).toString("hex");
   const expiresAt = new Date(Date.now() + EXPIRY_MINUTES * 60_000).toISOString();
   await sql`
-    INSERT INTO password_reset_tokens (token_hash, expires_at, created_at)
-    VALUES (${hashToken(token)}, ${expiresAt}, ${new Date().toISOString()})
+    INSERT INTO password_reset_tokens (token_hash, email, expires_at, created_at)
+    VALUES (${hashToken(token)}, ${accountEmail}, ${expiresAt}, ${new Date().toISOString()})
   `;
   return token;
 }
@@ -43,14 +44,19 @@ export async function isResetTokenValid(token: string): Promise<boolean> {
   return new Date(row.expires_at).getTime() > Date.now();
 }
 
-// Marque le token comme utilisé — false si déjà invalide/expiré/consommé,
-// pour empêcher de rejouer le même lien deux fois.
-export async function consumeResetToken(token: string): Promise<boolean> {
+// Marque le token comme utilisé et retourne l'email du COMPTE concerné
+// (null si déjà invalide/expiré/consommé) — c'est cet email qui indique à
+// l'appelant quel compte mettre à jour, maintenant qu'il y en a plusieurs.
+export async function consumeResetToken(token: string): Promise<string | null> {
   await ensureSchema();
-  const valid = await isResetTokenValid(token);
-  if (!valid) return false;
+  const rows = (await sql`
+    SELECT email, expires_at, used_at FROM password_reset_tokens WHERE token_hash = ${hashToken(token)}
+  `) as { email: string; expires_at: string; used_at: string | null }[];
+  const row = rows[0];
+  if (!row || row.used_at || new Date(row.expires_at).getTime() <= Date.now()) return null;
+
   await sql`
     UPDATE password_reset_tokens SET used_at = ${new Date().toISOString()} WHERE token_hash = ${hashToken(token)}
   `;
-  return true;
+  return row.email;
 }

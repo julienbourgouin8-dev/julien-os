@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import { verifyPassword } from "@/lib/auth/password";
 import { createSessionToken, COOKIE_NAME, MAX_AGE_SECONDS } from "@/lib/auth/session";
 import { checkLoginAllowed, recordLoginFailure, recordLoginSuccess } from "@/lib/auth/rate-limit";
-import { getAdminCredentials } from "@/lib/auth/credentials";
+import { getAdminCredentialsByEmail } from "@/lib/auth/credentials";
 import { logAction } from "@/lib/audit";
 
 export type LoginState = { error?: string } | undefined;
@@ -24,11 +24,11 @@ export async function signIn(_state: LoginState, formData: FormData): Promise<Lo
 
   // Identifiants en DB (admin_credentials), plus dans .env.local/Coolify —
   // migrés automatiquement une seule fois depuis les anciennes variables
-  // d'env au premier appel (voir lib/auth/credentials.ts). Adeline peut
-  // désormais changer son mot de passe elle-même (page /compte) sans
-  // dépendre d'un redéploiement.
-  const creds = await getAdminCredentials();
-  if (!creds || email !== creds.email || !verifyPassword(password, creds.passwordHash)) {
+  // d'env au premier appel (voir lib/auth/credentials.ts). Plusieurs
+  // comptes admin possibles (Adeline + Julien) : chacun peut changer son
+  // propre mot de passe (page /compte) sans dépendre d'un redéploiement.
+  const creds = await getAdminCredentialsByEmail(email);
+  if (!creds || !verifyPassword(password, creds.passwordHash)) {
     await recordLoginFailure(email);
     await logAction("login_failed");
     return { error: "Identifiants incorrects." };
@@ -38,7 +38,7 @@ export async function signIn(_state: LoginState, formData: FormData): Promise<Lo
   await logAction("login_success");
 
   const cookieStore = await cookies();
-  cookieStore.set(COOKIE_NAME, createSessionToken(), {
+  cookieStore.set(COOKIE_NAME, createSessionToken(creds.email), {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
