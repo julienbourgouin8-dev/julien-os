@@ -199,6 +199,7 @@ export default async function CategoryPage({
                     name={p.name}
                     price_cents={p.price_cents}
                     images={p.images}
+                    soldOut={p.stock <= 0}
                   />
                 ))}
                 {demoProducts.map((p) => (

@@ -13,14 +13,22 @@ type ProductCardProps = {
   price_cents: number | null;
   images: string[];
   comingSoon?: boolean;
+  soldOut?: boolean;
 };
 
-export default function ProductCard({ href, category, name, price_cents, images, comingSoon }: ProductCardProps) {
+export default function ProductCard({ href, category, name, price_cents, images, comingSoon, soldOut }: ProductCardProps) {
   return (
     <div className="relative">
       {comingSoon && (
         <span className="absolute left-0 top-0 z-10 rounded-full border border-ink/15 bg-white px-3 py-1.5 text-[0.65rem] font-bold uppercase tracking-[0.08em] text-ink">
           Bientôt
+        </span>
+      )}
+      {/* pièces uniques : une fois vendue, on la laisse visible (portfolio +
+          SEO) plutôt que de la faire disparaître — juste marquée épuisée. */}
+      {soldOut && (
+        <span className="absolute left-0 top-0 z-10 rounded-full border border-ink/15 bg-white px-3 py-1.5 text-[0.65rem] font-bold uppercase tracking-[0.08em] text-ink/70">
+          Épuisé
         </span>
       )}
       {/* favori — hors du <Link> (un <button> ne peut pas être imbriqué
@@ -52,7 +60,7 @@ export default function ProductCard({ href, category, name, price_cents, images,
               sizes="(min-width: 1280px) 420px, (min-width: 768px) calc((100vw - 344px) / 2), 100vw"
               quality={82}
               unoptimized={images[0].startsWith("/uploads/")}
-              className="object-contain"
+              className={`object-contain ${soldOut ? "opacity-50" : ""}`}
             />
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center gap-2">

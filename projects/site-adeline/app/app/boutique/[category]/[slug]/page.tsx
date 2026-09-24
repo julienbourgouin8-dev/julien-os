@@ -58,6 +58,10 @@ export default async function ProductPage({
   // Un produit démo peut avoir de vraies photos/description prêtes avec
   // juste le prix final qui manque (comingSoon: false) — voir demo-products.ts.
   const comingSoon = !product && (demo?.comingSoon ?? true);
+  // Pièce unique déjà vendue : on la laisse consultable (portfolio + SEO)
+  // mais sans possibilité de l'ajouter au panier — voir lib/db/products.ts,
+  // les requêtes publiques ne filtrent plus du tout sur le stock.
+  const soldOut = Boolean(product && product.stock <= 0);
   const name = product?.name ?? demo!.name;
   const description = product?.description ?? demo!.description;
   const price_cents = product?.price_cents ?? demo!.price_cents;
@@ -127,13 +131,16 @@ export default async function ProductPage({
           <h1 className="mt-1 font-display text-3xl text-ink">{name}</h1>
           <p className="mt-3 text-xl font-bold text-ink">{formatPrice(price_cents)}</p>
 
-          {!comingSoon && (
+          {!comingSoon && !soldOut && (
             <p className="mt-2 flex items-center gap-2 text-sm font-medium text-teal">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M20 6 9 17l-5-5" />
               </svg>
               En stock · Pièce unique prête à être expédiée
             </p>
+          )}
+          {soldOut && (
+            <p className="mt-2 text-sm font-medium text-ink/50">Pièce unique déjà vendue</p>
           )}
 
           {/* liseré pointillé — motif couture du reste du site, sépare le
@@ -157,6 +164,10 @@ export default async function ProductPage({
           {comingSoon ? (
             <p className="mt-8 flex w-full items-center justify-center gap-2 rounded-lg bg-mustard/20 px-6 py-4 text-sm font-semibold text-ink/70">
               Bientôt disponible — repassez faire un tour
+            </p>
+          ) : soldOut ? (
+            <p className="mt-8 flex w-full items-center justify-center gap-2 rounded-lg bg-ink/5 px-6 py-4 text-sm font-semibold text-ink/60">
+              Épuisé — une envie similaire ? Contactez Adeline pour une pièce sur mesure
             </p>
           ) : product && product.price_cents !== null ? (
             // Panier réel : seules les vraies pièces en base (avec un prix
