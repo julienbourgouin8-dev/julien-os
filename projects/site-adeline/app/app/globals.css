@@ -163,7 +163,14 @@ body {
 
 .write-on {
   display: inline-block;
-  animation: write-on 0.9s cubic-bezier(0.45, 0, 0.2, 1) both;
+  /* 0.9s → 0.55s (audit perf 2026-09-24, PSI mobile : LCP 3.5s, "Délai
+     d'affichage de l'élément" 2330ms) — le texte du hero reste invisible
+     (opacity 0) jusqu'à ce que React hydrate ET que le délai en cascade de
+     chaque mot soit passé (voir MobileHeroTagline.tsx) : sur mobile, ce
+     texte EST souvent l'élément LCP, donc chaque ms de cette animation
+     compte directement contre le score. Durée resserrée pour que la
+     cascade se termine plus vite sans supprimer l'effet lui-même. */
+  animation: write-on 0.55s cubic-bezier(0.45, 0, 0.2, 1) both;
 }
 
 /* Sur un vrai refresh, Safari affiche d'abord son instantané de l'ancienne

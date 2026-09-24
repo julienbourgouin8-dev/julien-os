@@ -195,7 +195,11 @@ export default function MobileHeroTagline() {
           en dernier avant "vous correspondent" pour lire comme une seule
           phrase qui s'écrit de haut en bas. `lineHeight`/`paddingBottom`
           sur chaque span : même garde-fou que `WriteOnHeading` pour ne pas
-          tronquer la descendante du "q" de "qui" sous `clip-path`. */}
+          tronquer la descendante du "q" de "qui" sous `clip-path`. Délais
+          resserrés à ~60% de leur valeur d'origine (audit perf 2026-09-24) :
+          tant que `animationReady` est faux, chaque mot reste à opacity 0,
+          et ce texte est souvent l'élément LCP sur mobile — la cascade
+          entière doit se terminer vite, pas juste paraître fluide. */}
       <p
         className="absolute inset-x-0 -translate-y-1/2 px-6 text-center font-display font-medium italic leading-tight text-ink sm:hidden"
         style={{
@@ -210,7 +214,7 @@ export default function MobileHeroTagline() {
         <span
           className={`${animationReady ? "write-on" : "opacity-0"} mobile-hero-motion not-italic font-sans font-bold text-denim`}
           onAnimationEnd={clearFilterOnEnd}
-          style={{ animationDelay: "0.3s", lineHeight: 1.35, paddingBottom: "0.12em" }}
+          style={{ animationDelay: "0.18s", lineHeight: 1.35, paddingBottom: "0.12em" }}
         >
           créations
         </span>
@@ -226,7 +230,7 @@ export default function MobileHeroTagline() {
         <span
           className={`${animationReady ? "write-on" : "opacity-0"} mobile-hero-motion`}
           onAnimationEnd={clearFilterOnEnd}
-          style={{ animationDelay: "0.6s", lineHeight: 1.35, paddingBottom: "0.12em" }}
+          style={{ animationDelay: "0.36s", lineHeight: 1.35, paddingBottom: "0.12em" }}
         >
           qui
         </span>
@@ -245,14 +249,14 @@ export default function MobileHeroTagline() {
           <span
             className={`${animationReady ? "write-on" : "opacity-0"} mobile-hero-motion`}
             onAnimationEnd={clearFilterOnEnd}
-            style={{ animationDelay: "0.9s", lineHeight: 1.35, paddingBottom: "0.12em" }}
+            style={{ animationDelay: "0.54s", lineHeight: 1.35, paddingBottom: "0.12em" }}
           >
             vous
           </span>{" "}
           <span
             className={`${animationReady ? "write-on" : "opacity-0"} mobile-hero-motion text-denim`}
             onAnimationEnd={clearFilterOnEnd}
-            style={{ animationDelay: "1.15s", lineHeight: 1.35, paddingBottom: "0.12em" }}
+            style={{ animationDelay: "0.7s", lineHeight: 1.35, paddingBottom: "0.12em" }}
           >
             correspondent
           </span>
@@ -260,7 +264,7 @@ export default function MobileHeroTagline() {
         <a
           href="#vitrine"
           className={`${animationReady ? "hero-pop" : "opacity-0"} mobile-hero-motion group mt-4 inline-flex items-center gap-2 rounded-full bg-denim px-8 py-3.5 text-sm font-semibold text-paper shadow-[0_8px_20px_rgba(79,108,143,0.35)] transition-transform hover:-translate-y-0.5`}
-          style={{ animationDelay: "1.45s" }}
+          style={{ animationDelay: "0.88s" }}
         >
           Voir les créations
           <span className="transition-transform group-hover:translate-x-1">→</span>
