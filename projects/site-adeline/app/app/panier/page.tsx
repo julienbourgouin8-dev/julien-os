@@ -76,8 +76,8 @@ export default function PanierPage() {
             </Link>
           </div>
         ) : (
-          <div className="mt-10 grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:items-start">
-            <div className="flex flex-col gap-4">
+          <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-[1.4fr_1fr] lg:items-start">
+            <div className="min-w-0 flex flex-col gap-4">
               {items.map((item) => (
                 <div
                   key={item.productId}
