@@ -25,6 +25,8 @@ export default function MentionsLegalesPage() {
         <br />
         Immatriculée au Registre National des Entreprises (RNE)
         <br />
+        TVA non applicable, article 293 B du Code général des impôts (franchise en base de TVA)
+        <br />
         Adresse : 16 route de la Gabote, 16430 Balzac, France
         <br />
         Email : deline1001@yahoo.fr

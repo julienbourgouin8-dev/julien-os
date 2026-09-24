@@ -29,8 +29,8 @@ export default function ConfidentialitePage() {
           <strong>Formulaire de contact</strong> : nom, email, message et préférences (type de
           pièce, tissu). Ces informations sont transmises à Adeline par email via notre serveur
           et le prestataire d&apos;envoi Resend (États-Unis, encadré par des clauses
-          contractuelles types européennes). Elles sont conservées le temps nécessaire pour
-          traiter votre demande, puis supprimées.
+          contractuelles types européennes). Elles sont conservées 3 ans à compter de votre
+          dernier contact, puis supprimées.
         </li>
         <li>
           <strong>Mesure d&apos;audience (PostHog et Google Analytics)</strong> : pages visitées,
@@ -47,12 +47,15 @@ export default function ConfidentialitePage() {
         </li>
         <li>
           <strong>Commande en ligne</strong> (si vous achetez une pièce) : email, adresse de
-          livraison, contenu de la commande. Le paiement lui-même est géré par Stripe, qui ne
-          transmet jamais votre numéro de carte à CréA&apos;deline. Ces données sont stockées
-          dans une base de données hébergée en Union Européenne. Votre email et votre adresse
-          sont effacés automatiquement 3 ans après la commande ; le montant et le contenu de la
-          commande sont conservés 10 ans, sans donnée permettant de vous identifier, pour
-          répondre aux obligations comptables légales.
+          livraison, téléphone, contenu de la commande. Le paiement lui-même est géré par
+          Stripe, qui ne transmet jamais votre numéro de carte à CréA&apos;deline. Votre nom,
+          votre adresse et votre téléphone sont transmis à Sendcloud (Pays-Bas, Union Européenne)
+          pour générer l&apos;étiquette d&apos;expédition et sont ensuite communiqués au
+          transporteur choisi (Mondial Relay, Chronopost) le temps de la livraison. Ces données
+          sont stockées dans une base de données hébergée en Union Européenne. Votre email et
+          votre adresse sont effacés automatiquement 3 ans après la commande ; le montant et le
+          contenu de la commande sont conservés 10 ans, sans donnée permettant de vous
+          identifier, pour répondre aux obligations comptables légales.
         </li>
       </ul>
 
@@ -68,8 +71,10 @@ export default function ConfidentialitePage() {
       <p>
         Vos données ne sont jamais vendues. Elles sont partagées uniquement avec les
         prestataires nécessaires au fonctionnement du site : Stripe (paiement, États-Unis/UE),
-        Resend (envoi du formulaire de contact, États-Unis, clauses contractuelles types
-        européennes), PostHog et Google Analytics (mesure d&apos;audience, avec votre accord —
+        Sendcloud (génération de l&apos;étiquette d&apos;expédition, Pays-Bas, Union Européenne),
+        les transporteurs Mondial Relay et Chronopost (livraison de votre colis), Resend (envoi
+        du formulaire de contact, États-Unis, clauses contractuelles types européennes), PostHog
+        et Google Analytics (mesure d&apos;audience, avec votre accord —
         PostHog hébergé dans l&apos;Union Européenne, Google Analytics aux États-Unis sous
         clauses contractuelles types européennes), Hostinger (hébergement principal, Union
         Européenne), Vercel (hébergement de secours, États-Unis — encadré par leurs clauses

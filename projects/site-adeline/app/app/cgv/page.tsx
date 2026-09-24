@@ -60,7 +60,11 @@ export default function CGVPage() {
         <strong>Pièces vendues prêtes, non personnalisées (boutique)</strong> : vous disposez
         d&apos;un délai de 14 jours à compter de la réception pour exercer votre droit de
         rétractation, sans avoir à justifier de motif, conformément à l&apos;article L221-18 du
-        Code de la consommation. La pièce doit être retournée dans son état d&apos;origine.
+        Code de la consommation. Pour l&apos;exercer, envoyez une déclaration dénuée
+        d&apos;ambiguïté (par exemple via le{" "}
+        <a href="/#contact">formulaire de contact</a> ou à deline1001@yahoo.fr) indiquant votre
+        décision de vous rétracter, puis retournez la pièce dans son état d&apos;origine à
+        l&apos;adresse qui vous sera communiquée en réponse.
       </p>
       <p>
         <strong>Pièces confectionnées sur-mesure (commande via le formulaire de contact,
@@ -86,14 +90,29 @@ export default function CGVPage() {
         <li>Le remboursement est effectué avec le même moyen de paiement que celui utilisé pour la commande.</li>
       </ul>
 
+      <h2>Garanties légales</h2>
+      <p>
+        Toute pièce vendue bénéficie de la garantie légale de conformité (articles L217-3 et
+        suivants du Code de la consommation) et de la garantie légale contre les vices cachés
+        (articles 1641 et suivants du Code civil). Ces garanties s&apos;appliquent indépendamment
+        de la politique de remboursement décrite ci-dessus et vous permettent d&apos;obtenir la
+        réparation, le remplacement ou le remboursement d&apos;une pièce défectueuse, sans frais
+        de votre part. Pour les faire valoir, contactez CréA&apos;deline via le{" "}
+        <a href="/#contact">formulaire de contact</a>.
+      </p>
+
+      {/* Pas encore pleinement conforme : la loi (art. L616-1 Code conso)
+          impose de donner les coordonnées d'UN médiateur réel, pas une
+          formule générique. Adeline doit choisir et adhérer à un service de
+          médiation agréé (ex. CMAP, Médicys, ou celui de sa chambre de
+          métiers) — étape à faire par elle, pas inventable ici. Remplacer ce
+          paragraphe par son nom/adresse/site dès l'adhésion faite. */}
       <h2>Litiges</h2>
       <p>
-        En cas de litige, vous pouvez recourir gratuitement à un médiateur de la consommation.
-        [Coordonnées du médiateur à compléter dès qu&apos;Adeline aura adhéré à un service de
-        médiation agréé — obligatoire pour tout professionnel vendant à des consommateurs,
-        ex. CMAP, Médicys ou le médiateur de la chambre de métiers et de l&apos;artisanat. Cette
-        adhésion ne peut pas être inventée ici, c&apos;est la seule étape encore bloquante avant
-        une mise en conformité complète des CGV.]
+        En cas de litige, vous pouvez d&apos;abord contacter CréA&apos;deline via le{" "}
+        <a href="/#contact">formulaire de contact</a> pour trouver une solution amiable. À
+        défaut d&apos;accord, vous pouvez recourir gratuitement à un médiateur de la
+        consommation, conformément à l&apos;article L616-1 du Code de la consommation.
       </p>
     </LegalPage>
   );
