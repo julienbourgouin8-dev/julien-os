@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import WriteOnHeading from "@/components/WriteOnHeading";
@@ -8,6 +9,25 @@ import { getCategoryBySlug } from "@/lib/categories";
 import { getActiveProductsByCategory, type Product } from "@/lib/db/products";
 import { demoProductsByCategory } from "@/lib/demo-products";
 import { subcategoriesByCategory } from "@/lib/subcategories";
+
+// Sans ceci, la page héritait du title/description génériques du layout
+// racine — identiques sur tout le site, donc Google ne pouvait pas
+// distinguer cette page de la home ni des autres catégories (constaté :
+// les mêmes title/description génériques ressortaient sur "Toilette" et
+// sur "Politique de cookies" dans les résultats de recherche).
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ category: string }>;
+}): Promise<Metadata> {
+  const { category } = await params;
+  const cat = getCategoryBySlug(category);
+  if (!cat) return {};
+  return {
+    title: `${cat.label} — CréA'deline`,
+    description: `Créations "${cat.label}" de CréA'deline : accessoires en tissu cousus main sur mesure en Charente, pièces uniques et idées cadeaux personnalisées.`,
+  };
+}
 
 export default async function CategoryPage({
   params,

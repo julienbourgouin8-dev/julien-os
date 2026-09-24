@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
 import LegalPage from "@/components/LegalPage";
 
-export const metadata: Metadata = { title: "Politique de confidentialité — CréA'deline" };
+export const metadata: Metadata = {
+  title: "Politique de confidentialité — CréA'deline",
+  description:
+    "Quelles données sont collectées sur creadeline16.fr, pourquoi, et comment les faire modifier ou supprimer.",
+};
 
 // Responsable de traitement identifié à partir de l'attestation
 // d'immatriculation INPI/RNE (SIREN 878 826 536, voir mentions-legales).
 export default function ConfidentialitePage() {
   return (
-    <LegalPage title="Politique de confidentialité" updated="2026-09-19">
+    <LegalPage title="Politique de confidentialité" updated="2026-09-24">
       <p>
         Cette page explique quelles données sont collectées sur ce site, pourquoi, et comment
         les faire modifier ou supprimer.
@@ -44,7 +48,8 @@ export default function ConfidentialitePage() {
         <li>
           <strong>Commande en ligne</strong> (si vous achetez une pièce) : email, adresse de
           livraison, contenu de la commande. Le paiement lui-même est géré par Stripe, qui ne
-          transmet jamais votre numéro de carte à CréA&apos;deline. Votre email et votre adresse
+          transmet jamais votre numéro de carte à CréA&apos;deline. Ces données sont stockées
+          dans une base de données hébergée en Union Européenne. Votre email et votre adresse
           sont effacés automatiquement 3 ans après la commande ; le montant et le contenu de la
           commande sont conservés 10 ans, sans donnée permettant de vous identifier, pour
           répondre aux obligations comptables légales.
@@ -66,8 +71,9 @@ export default function ConfidentialitePage() {
         Resend (envoi du formulaire de contact, États-Unis, clauses contractuelles types
         européennes), PostHog et Google Analytics (mesure d&apos;audience, avec votre accord —
         PostHog hébergé dans l&apos;Union Européenne, Google Analytics aux États-Unis sous
-        clauses contractuelles types européennes), Vercel (hébergement, États-Unis — encadré par
-        leurs clauses contractuelles types européennes).
+        clauses contractuelles types européennes), Hostinger (hébergement principal, Union
+        Européenne), Vercel (hébergement de secours, États-Unis — encadré par leurs clauses
+        contractuelles types européennes, le temps de finaliser la migration).
       </p>
     </LegalPage>
   );

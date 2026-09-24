@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import LegalPage from "@/components/LegalPage";
 
-export const metadata: Metadata = { title: "CGV & remboursement — CréA'deline" };
+export const metadata: Metadata = {
+  title: "CGV & remboursement — CréA'deline",
+  description:
+    "Conditions générales de vente CréA'deline : livraison, paiement et droit de rétractation pour vos achats de créations en tissu faites main.",
+};
 
 // Identité reprise de l'attestation d'immatriculation INPI/RNE (voir
 // mentions-legales). Régime de TVA déduit du statut (entrepreneur

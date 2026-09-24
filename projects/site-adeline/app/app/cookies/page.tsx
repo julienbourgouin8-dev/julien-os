@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import LegalPage from "@/components/LegalPage";
 
-export const metadata: Metadata = { title: "Politique de cookies — CréA'deline" };
+export const metadata: Metadata = {
+  title: "Politique de cookies — CréA'deline",
+  description:
+    "Quels outils de mesure d'audience sont utilisés sur creadeline16.fr et comment gérer votre consentement.",
+};
 
 export default function CookiesPage() {
   return (

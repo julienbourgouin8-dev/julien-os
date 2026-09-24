@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCategoryBySlug } from "@/lib/categories";
@@ -9,6 +10,35 @@ import ProductGallery from "@/components/ProductGallery";
 import AddToCartButton from "@/components/AddToCartButton";
 import TrackEvent from "@/components/TrackEvent";
 import Header from "@/components/Header";
+
+// Comme pour la page catégorie : sans metadata dédiée, chaque fiche produit
+// héritait mot pour mot du title/description de la home, alors que ce sont
+// justement les pages qui devraient le mieux ressortir sur une recherche du
+// nom d'une pièce précise.
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ category: string; slug: string }>;
+}): Promise<Metadata> {
+  const { category, slug } = await params;
+  const cat = getCategoryBySlug(category);
+  if (!cat) return {};
+
+  const product = await getProductBySlug(category, slug);
+  const demo = product ? null : getDemoProduct(category, slug);
+  if (!product && !demo) return {};
+
+  const name = product?.name ?? demo!.name;
+  const description = (product?.description ?? demo!.description)
+    .replace(/\r\n|\n/g, " ")
+    .trim()
+    .slice(0, 155);
+
+  return {
+    title: `${name} — CréA'deline`,
+    description: description || `${name}, création artisanale en tissu cousue main par CréA'deline, en Charente.`,
+  };
+}
 
 export default async function ProductPage({
   params,
