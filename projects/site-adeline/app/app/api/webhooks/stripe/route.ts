@@ -44,9 +44,18 @@ export async function POST(request: NextRequest) {
 
       // Anti-survente (TODO.md §6) : décrémenté ici, jamais au clic
       // "acheter" — un panier abandonné ne doit jamais bloquer de stock.
+      // `decrementStock` ne décrémente que si le stock restant suffit encore
+      // (requête atomique) : sur une pièce unique commandée deux fois
+      // quasi simultanément, la seconde décrémentation renvoie `false` — la
+      // cliente a déjà payé à ce stade, donc on ne peut plus bloquer la
+      // commande, mais on doit au moins ne pas l'expédier automatiquement et
+      // alerter Adeline (voir plus bas, `oversoldItems`).
+      const oversoldItems: string[] = [];
       for (const item of items) {
-        await decrementStock(item.product_id, item.quantity);
+        const ok = await decrementStock(item.product_id, item.quantity);
+        if (!ok) oversoldItems.push(item.name);
       }
+      const hasOversold = oversoldItems.length > 0;
 
       // Lecture robuste des coordonnées de livraison (selon version API Stripe)
       const shippingDetails =
@@ -98,6 +107,7 @@ export async function POST(request: NextRequest) {
       let trackingNumber: string | null = null;
 
       if (
+        !hasOversold &&
         session.metadata?.shippingMethod !== "retrait" &&
         shippingAddress &&
         shippingAddress.postal_code &&
@@ -167,6 +177,7 @@ export async function POST(request: NextRequest) {
           totalCents: order.total_cents,
           shippingMethod: session.metadata?.shippingMethod ?? null,
           customerEmail: order.customer_email,
+          oversoldItems,
         });
       } catch (notifErr) {
         console.error(`[Email] Échec de la notification nouvelle commande ${order.id}:`, notifErr);
@@ -189,6 +200,11 @@ export async function POST(request: NextRequest) {
         const result = await refundOrderAndRestock(order.id);
         if (result.error) {
           console.error(`[Stripe] Échec de la remise en stock après remboursement (${order.id}):`, result.error);
+        } else if (result.notRestocked?.length) {
+          console.warn(
+            `[Stripe] Remboursement traité (${order.id}) mais impossible de recréditer le stock, produit(s) supprimé(s) depuis :`,
+            result.notRestocked,
+          );
         }
       } else {
         console.warn(`[Stripe] charge.refunded reçu sans commande correspondante (payment_intent ${paymentIntentId}).`);

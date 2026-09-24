@@ -107,21 +107,29 @@ export async function updateOrderShipping(
 // depuis le dashboard Stripe, pour que le stock et le statut se remettent à
 // jour sans action manuelle. Idempotent (une commande déjà réglée —
 // annulée ou remboursée — n'est jamais recréditée deux fois).
-export async function refundOrderAndRestock(id: string): Promise<{ error?: string }> {
+export async function refundOrderAndRestock(id: string): Promise<{ error?: string; notRestocked?: string[] }> {
   await ensureSchema();
   const rows = (await sql`SELECT * FROM orders WHERE id = ${id}`) as Order[];
   const order = rows[0] ? fromRow(rows[0]) : null;
   if (!order) return { error: "Commande introuvable." };
   if (order.status === "cancelled" || order.status === "refunded") return {};
 
+  // Un produit supprimé depuis (pièce unique déjà vendue, retirée du
+  // catalogue) n'a plus de ligne à créditer — sans ce contrôle, l'UPDATE ne
+  // touche silencieusement rien. Ce chemin (webhook Stripe) n'a personne en
+  // face pour voir un message, donc on remonte juste la liste à l'appelant
+  // pour qu'il la journalise clairement.
+  const notRestocked: string[] = [];
   for (const item of order.items) {
-    await sql`
+    const updated = (await sql`
       UPDATE products SET stock = stock + ${item.quantity}, updated_at = ${new Date().toISOString()}
       WHERE id = ${item.product_id}
-    `;
+      RETURNING id
+    `) as { id: string }[];
+    if (updated.length === 0) notRestocked.push(item.name);
   }
   await sql`UPDATE orders SET status = 'refunded', updated_at = ${new Date().toISOString()} WHERE id = ${id}`;
-  return {};
+  return notRestocked.length > 0 ? { notRestocked } : {};
 }
 
 // Anti-survente (TODO.md §6) : une seule requête atomique qui ne décrémente
