@@ -9,14 +9,22 @@ import Nouveautes from "@/components/Nouveautes";
 // commentaire dans MarchesLazy.tsx.
 import Marches from "@/components/MarchesLazy";
 
-// Sans ça, Next.js prérend cette page une seule fois au build et la sert
-// figée pour toujours ensuite (Full Route Cache) — la section Nouveautés
-// n'aurait alors jamais montré les vrais derniers produits ni le bon ordre
-// de photos sans un redéploiement complet à chaque fois. Constaté en
-// prod : le correctif d'ordre des photos (écrit en base, pas dans le
-// code) restait invisible sur creadeline16.fr tant que cette ligne
-// n'existait pas.
-export const dynamic = "force-dynamic";
+// Sans un minimum de fraîcheur forcée, Next.js prérend cette page une seule
+// fois au build et la sert figée pour toujours ensuite (Full Route Cache) —
+// la section Nouveautés n'aurait alors jamais montré les vrais derniers
+// produits ni le bon ordre de photos sans un redéploiement complet à chaque
+// fois (constaté en prod, voir PROGRESS.md 2026-09-24).
+//
+// `force-dynamic` (essayé en premier) réglait ça mais refaisait le rendu
+// complet + une requête DB à CHAQUE visite, sans aucun cache — repéré via
+// PageSpeed Insights : le temps de réponse serveur (TTFB) est passé à
+// ~1,9s, la cause n°1 du score mobile qui a chuté. `revalidate` (ISR) donne
+// la même fraîcheur avec un vrai coût : la page reste servie depuis le
+// cache (quasi instantané) pendant 60s, puis Next.js la régénère UNE fois
+// en arrière-plan au prochain visiteur après ce délai — largement assez
+// réactif pour une section "derniers produits" qui n'a pas besoin d'être
+// exacte à la seconde près.
+export const revalidate = 60;
 
 export default function Home() {
   return (
