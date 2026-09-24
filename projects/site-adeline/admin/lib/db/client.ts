@@ -84,6 +84,9 @@ export function ensureSchema(): Promise<void> {
       // Requis par Mondial Relay pour la livraison à domicile — voir
       // app/lib/db/client.ts (même migration, dupliquée dans les deux apps).
       await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS customer_phone TEXT`;
+      // Voir app/lib/db/client.ts (même migration, dupliquée) : nécessaire au
+      // webhook `charge.refunded` pour retrouver la commande.
+      await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS stripe_payment_intent_id TEXT`;
       // Traçabilité des actions admin sur des données personnelles (RGPD
       // Art. 5(2), accountability) — qui a fait quoi et quand, pas le
       // contenu complet.

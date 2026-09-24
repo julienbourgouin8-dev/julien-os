@@ -6,6 +6,8 @@ import {
   createOrder,
   decrementStock,
   getOrderByStripeSessionId,
+  getOrderByPaymentIntentId,
+  refundOrderAndRestock,
   updateOrderShipping,
   type OrderItem,
 } from "@/lib/db/orders";
@@ -72,8 +74,12 @@ export async function POST(request: NextRequest) {
           })()
         : undefined;
 
+      const paymentIntentId =
+        typeof session.payment_intent === "string" ? session.payment_intent : (session.payment_intent?.id ?? null);
+
       const order = await createOrder({
         stripeSessionId: session.id,
+        stripePaymentIntentId: paymentIntentId,
         items,
         totalCents: session.amount_total ?? 0,
         customerEmail: session.customer_details?.email ?? null,
@@ -164,6 +170,28 @@ export async function POST(request: NextRequest) {
         });
       } catch (notifErr) {
         console.error(`[Email] Échec de la notification nouvelle commande ${order.id}:`, notifErr);
+      }
+    }
+  }
+
+  // Remboursement fait directement depuis le dashboard Stripe (pas via notre
+  // admin) : sans ce handler, la commande restait marquée "payée" et
+  // l'article ne revenait jamais en stock — bug remonté par Julien après le
+  // premier vrai test de remboursement (voir PROGRESS.md 2026-09-23).
+  if (event.type === "charge.refunded") {
+    const charge = event.data.object as Stripe.Charge;
+    const paymentIntentId =
+      typeof charge.payment_intent === "string" ? charge.payment_intent : (charge.payment_intent?.id ?? null);
+
+    if (paymentIntentId) {
+      const order = await getOrderByPaymentIntentId(paymentIntentId);
+      if (order) {
+        const result = await refundOrderAndRestock(order.id);
+        if (result.error) {
+          console.error(`[Stripe] Échec de la remise en stock après remboursement (${order.id}):`, result.error);
+        }
+      } else {
+        console.warn(`[Stripe] charge.refunded reçu sans commande correspondante (payment_intent ${paymentIntentId}).`);
       }
     }
   }

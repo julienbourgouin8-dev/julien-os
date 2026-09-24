@@ -1,7 +1,7 @@
 import "server-only";
 import { sql, ensureSchema, parseJsonb } from "./client";
 
-export type OrderStatus = "pending" | "paid" | "fulfilled" | "cancelled";
+export type OrderStatus = "pending" | "paid" | "fulfilled" | "cancelled" | "refunded";
 
 export type OrderItem = {
   product_id: string;
@@ -13,6 +13,7 @@ export type OrderItem = {
 export type Order = {
   id: string;
   stripe_session_id: string | null;
+  stripe_payment_intent_id: string | null;
   status: OrderStatus;
   items: OrderItem[];
   total_cents: number;
@@ -84,13 +85,15 @@ export async function markOrderFulfilled(id: string): Promise<void> {
 // Annule une commande et remet en stock les articles qu'elle avait
 // décrémentés (webhook Stripe, anti-survente) — sinon un article annulé
 // reste indisponible à la vente indéfiniment. Idempotent : une commande
-// déjà annulée n'est pas re-créditée une seconde fois.
+// déjà annulée OU déjà remboursée (webhook charge.refunded, voir
+// app/lib/db/orders.ts refundOrderAndRestock) n'est jamais re-créditée
+// une seconde fois.
 export async function cancelOrderAndRestock(id: string): Promise<{ error?: string }> {
   await ensureSchema();
   const rows = (await sql`SELECT * FROM orders WHERE id = ${id}`) as Order[];
   const order = rows[0] ? fromRow(rows[0]) : null;
   if (!order) return { error: "Commande introuvable." };
-  if (order.status === "cancelled") return {};
+  if (order.status === "cancelled" || order.status === "refunded") return {};
 
   for (const item of order.items) {
     await sql`

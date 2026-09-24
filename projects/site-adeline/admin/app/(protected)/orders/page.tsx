@@ -9,6 +9,7 @@ const STATUS_STYLE: Record<string, { label: string; bg: string; fg: string }> = 
   paid: { label: "Payée", bg: "rgba(47,95,99,0.12)", fg: "var(--color-teal)" },
   fulfilled: { label: "Expédiée", bg: "rgba(79,108,143,0.12)", fg: "var(--color-denim)" },
   cancelled: { label: "Annulée", bg: "rgba(173,74,52,0.1)", fg: "var(--color-rust)" },
+  refunded: { label: "Remboursée", bg: "rgba(173,74,52,0.1)", fg: "var(--color-rust)" },
 };
 
 function formatPrice(cents: number): string {

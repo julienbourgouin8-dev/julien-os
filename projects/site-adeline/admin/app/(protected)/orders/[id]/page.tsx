@@ -25,6 +25,9 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
   const address = order.shipping_address as
     | { line1?: string; line2?: string; postal_code?: string; city?: string; country?: string }
     | null;
+  // Une commande annulée ou remboursée (webhook charge.refunded) est un état
+  // final identique du point de vue de l'admin : plus d'action possible.
+  const isSettled = order.status === "cancelled" || order.status === "refunded";
 
   return (
     <div>
@@ -38,11 +41,13 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
             {formatDate(order.created_at)}
           </p>
           <h1 className="mt-1 font-display text-3xl text-ink">{formatPrice(order.total_cents)}</h1>
-          {order.status === "cancelled" && (
-            <p className="mt-1 text-xs font-semibold uppercase tracking-[0.15em] text-rust">Annulée</p>
+          {isSettled && (
+            <p className="mt-1 text-xs font-semibold uppercase tracking-[0.15em] text-rust">
+              {order.status === "refunded" ? "Remboursée" : "Annulée"}
+            </p>
           )}
         </div>
-        {order.status !== "cancelled" && (
+        {!isSettled && (
           <div className="flex items-center gap-3">
             {order.status !== "fulfilled" && <MarkFulfilledButton id={order.id} />}
             <CancelOrderButton id={order.id} />

@@ -1,7 +1,7 @@
 import "server-only";
 import { sql, ensureSchema, parseJsonb } from "./client";
 
-export type OrderStatus = "pending" | "paid" | "fulfilled" | "cancelled";
+export type OrderStatus = "pending" | "paid" | "fulfilled" | "cancelled" | "refunded";
 
 export type OrderItem = {
   product_id: string;
@@ -13,6 +13,7 @@ export type OrderItem = {
 export type Order = {
   id: string;
   stripe_session_id: string | null;
+  stripe_payment_intent_id: string | null;
   status: OrderStatus;
   items: OrderItem[];
   total_cents: number;
@@ -47,8 +48,17 @@ export async function getOrderByStripeSessionId(stripeSessionId: string): Promis
   return rows[0] ? fromRow(rows[0]) : null;
 }
 
+// Le webhook `charge.refunded` ne porte pas l'id de session Checkout, juste
+// le PaymentIntent — seule clé disponible pour retrouver la commande.
+export async function getOrderByPaymentIntentId(paymentIntentId: string): Promise<Order | null> {
+  await ensureSchema();
+  const rows = (await sql`SELECT * FROM orders WHERE stripe_payment_intent_id = ${paymentIntentId}`) as Order[];
+  return rows[0] ? fromRow(rows[0]) : null;
+}
+
 export async function createOrder(input: {
   stripeSessionId: string;
+  stripePaymentIntentId?: string | null;
   items: OrderItem[];
   totalCents: number;
   customerEmail: string | null;
@@ -63,8 +73,8 @@ export async function createOrder(input: {
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
   await sql`
-    INSERT INTO orders (id, stripe_session_id, status, items, total_cents, customer_email, customer_phone, shipping_address, shipping_method, shipping_option_code, service_point, weight_grams, created_at, updated_at)
-    VALUES (${id}, ${input.stripeSessionId}, 'paid', ${JSON.stringify(input.items)}, ${input.totalCents}, ${input.customerEmail}, ${input.customerPhone ?? null}, ${input.shippingAddress ? JSON.stringify(input.shippingAddress) : null}, ${input.shippingMethod ?? null}, ${input.shippingOptionCode ?? null}, ${input.servicePoint ? JSON.stringify(input.servicePoint) : null}, ${input.weightGrams ?? null}, ${now}, ${now})
+    INSERT INTO orders (id, stripe_session_id, stripe_payment_intent_id, status, items, total_cents, customer_email, customer_phone, shipping_address, shipping_method, shipping_option_code, service_point, weight_grams, created_at, updated_at)
+    VALUES (${id}, ${input.stripeSessionId}, ${input.stripePaymentIntentId ?? null}, 'paid', ${JSON.stringify(input.items)}, ${input.totalCents}, ${input.customerEmail}, ${input.customerPhone ?? null}, ${input.shippingAddress ? JSON.stringify(input.shippingAddress) : null}, ${input.shippingMethod ?? null}, ${input.shippingOptionCode ?? null}, ${input.servicePoint ? JSON.stringify(input.servicePoint) : null}, ${input.weightGrams ?? null}, ${now}, ${now})
   `;
   return (await getOrderByStripeSessionId(input.stripeSessionId))!;
 }
@@ -90,6 +100,28 @@ export async function updateOrderShipping(
       updated_at = ${new Date().toISOString()}
     WHERE id = ${orderId}
   `;
+}
+
+// Symétrique de cancelOrderAndRestock (admin/lib/db/orders.ts) : appelé
+// depuis le webhook `charge.refunded` quand Adeline rembourse directement
+// depuis le dashboard Stripe, pour que le stock et le statut se remettent à
+// jour sans action manuelle. Idempotent (une commande déjà réglée —
+// annulée ou remboursée — n'est jamais recréditée deux fois).
+export async function refundOrderAndRestock(id: string): Promise<{ error?: string }> {
+  await ensureSchema();
+  const rows = (await sql`SELECT * FROM orders WHERE id = ${id}`) as Order[];
+  const order = rows[0] ? fromRow(rows[0]) : null;
+  if (!order) return { error: "Commande introuvable." };
+  if (order.status === "cancelled" || order.status === "refunded") return {};
+
+  for (const item of order.items) {
+    await sql`
+      UPDATE products SET stock = stock + ${item.quantity}, updated_at = ${new Date().toISOString()}
+      WHERE id = ${item.product_id}
+    `;
+  }
+  await sql`UPDATE orders SET status = 'refunded', updated_at = ${new Date().toISOString()} WHERE id = ${id}`;
+  return {};
 }
 
 // Anti-survente (TODO.md §6) : une seule requête atomique qui ne décrémente

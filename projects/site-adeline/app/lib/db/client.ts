@@ -90,6 +90,10 @@ export function ensureSchema(): Promise<void> {
       // pour que le bouton manuel "Générer l'étiquette" en admin puisse
       // aussi le renvoyer, pas seulement la première tentative du webhook.
       await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS customer_phone TEXT`;
+      // Nécessaire pour retrouver une commande depuis un webhook
+      // `charge.refunded` — cet événement ne porte pas l'id de session
+      // Checkout, seulement le PaymentIntent (voir lib/db/orders.ts).
+      await sql`ALTER TABLE orders ADD COLUMN IF NOT EXISTS stripe_payment_intent_id TEXT`;
       // Poids en grammes, nécessaire pour demander un tarif de port réel à
       // l'API Sendcloud (voir lib/shipping.ts) — nullable, les produits déjà
       // créés n'en ont pas encore, à compléter en admin.
