@@ -108,6 +108,34 @@ export function ensureSchema(): Promise<void> {
           updated_at TIMESTAMPTZ NOT NULL
         )
       `;
+      // Identifiants admin déplacés des variables d'env (ADMIN_EMAIL/
+      // ADMIN_PASSWORD_HASH, figées, nécessitaient de redéployer pour
+      // changer) vers la DB, pour qu'Adeline puisse changer son mot de
+      // passe elle-même. Une seule ligne (id fixe). `recovery_email` sert
+      // UNIQUEMENT au lien de réinitialisation — distinct de `email`
+      // (l'identifiant de connexion, ex. "Adeline", pas forcément une
+      // vraie adresse) : envoyer un lien sensible au mauvais endroit
+      // serait pire que ne pas en envoyer du tout.
+      await sql`
+        CREATE TABLE IF NOT EXISTS admin_credentials (
+          id TEXT PRIMARY KEY DEFAULT 'default',
+          email TEXT NOT NULL,
+          password_hash TEXT NOT NULL,
+          recovery_email TEXT NOT NULL,
+          updated_at TIMESTAMPTZ NOT NULL
+        )
+      `;
+      // Réinitialisation de mot de passe par email. Seul le hash du token
+      // est stocké (même logique qu'un mot de passe) : un accès en
+      // lecture à la DB seule ne permet pas de forger un lien valide.
+      await sql`
+        CREATE TABLE IF NOT EXISTS password_reset_tokens (
+          token_hash TEXT PRIMARY KEY,
+          expires_at TIMESTAMPTZ NOT NULL,
+          used_at TIMESTAMPTZ,
+          created_at TIMESTAMPTZ NOT NULL
+        )
+      `;
     })();
   }
   return schemaReady;

@@ -1,0 +1,67 @@
+"use client";
+
+import { useActionState } from "react";
+import Link from "next/link";
+import { requestPasswordReset } from "./actions";
+
+export default function ForgotPasswordPage() {
+  const [state, action, pending] = useActionState(requestPasswordReset, undefined);
+
+  return (
+    <div
+      className="flex min-h-screen items-center justify-center px-6"
+      style={{
+        background:
+          "radial-gradient(circle at 50% 0%, rgba(79,108,143,0.10), transparent 55%), var(--color-paper)",
+      }}
+    >
+      <div
+        className="w-full max-w-sm rounded-2xl bg-[#fffdf8] p-9"
+        style={{ boxShadow: "0 1px 2px rgba(36,27,21,0.04), 0 24px 48px -12px rgba(36,27,21,0.12)" }}
+      >
+        <p className="text-center font-script text-3xl text-ink">CréA&apos;deline</p>
+        <p className="mt-1 text-center text-xs font-semibold uppercase tracking-[0.2em] text-ink/35">
+          Mot de passe oublié
+        </p>
+
+        {state?.sent ? (
+          <p className="mt-8 text-center text-sm text-ink/70">
+            Si cette adresse est associée au compte admin, un email vient d&apos;être envoyé avec un lien pour
+            choisir un nouveau mot de passe (valable 45 minutes).
+          </p>
+        ) : (
+          <form action={action} className="mt-8">
+            <label htmlFor="email" className="text-xs font-semibold uppercase tracking-[0.1em] text-ink/45">
+              Ton adresse email
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              autoComplete="email"
+              className="mt-1.5 w-full rounded-xl bg-ink/[0.04] px-4 py-3 text-sm text-ink outline-none ring-1 ring-transparent transition-all focus:bg-white focus:ring-denim"
+            />
+
+            {state?.error && <p className="mt-4 text-center text-sm text-rust">{state.error}</p>}
+
+            <button
+              type="submit"
+              disabled={pending}
+              className="mt-6 w-full rounded-xl bg-denim px-6 py-3 text-sm font-semibold text-paper shadow-[0_8px_20px_rgba(79,108,143,0.35)] transition-transform hover:-translate-y-0.5 disabled:opacity-60"
+            >
+              {pending ? "Envoi…" : "Recevoir le lien"}
+            </button>
+          </form>
+        )}
+
+        <Link
+          href="/login"
+          className="mt-6 block text-center text-xs font-semibold uppercase tracking-[0.1em] text-ink/40 hover:text-ink"
+        >
+          ← Retour à la connexion
+        </Link>
+      </div>
+    </div>
+  );
+}

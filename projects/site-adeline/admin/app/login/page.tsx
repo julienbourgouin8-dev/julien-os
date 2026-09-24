@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import Link from "next/link";
 import { signIn } from "./actions";
 
 export default function LoginPage() {
@@ -62,6 +63,13 @@ export default function LoginPage() {
         >
           {pending ? "Connexion…" : "Se connecter"}
         </button>
+
+        <Link
+          href="/mot-de-passe-oublie"
+          className="mt-5 block text-center text-xs font-semibold uppercase tracking-[0.1em] text-ink/40 hover:text-ink"
+        >
+          Mot de passe oublié ?
+        </Link>
       </form>
     </div>
   );

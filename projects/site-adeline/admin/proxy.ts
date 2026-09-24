@@ -5,9 +5,9 @@ import { SITE_URL } from "@/lib/site";
 // Next.js 16 a renommé middleware.ts en proxy.ts — voir node_modules/next/dist/docs.
 //
 // Toute cette app est de l'admin (contrairement au site public où seul
-// /admin/** était protégé) : on protège tout sauf /login et /uploads. Check
-// "optimiste" (cookie présent/valide ou non) — le vrai verrou est
-// `verifySessionToken` rappelé dans app/(protected)/layout.tsx.
+// /admin/** était protégé) : on protège tout sauf les routes publiques
+// listées ci-dessous. Check "optimiste" (cookie présent/valide ou non) — le
+// vrai verrou est `verifySessionToken` rappelé dans app/(protected)/layout.tsx.
 //
 // /uploads exclu volontairement : quand next/image charge une miniature
 // produit, c'est une requête serveur-à-serveur (l'optimiseur d'images de
@@ -16,12 +16,17 @@ import { SITE_URL } from "@/lib/site";
 // /login (HTML, pas une image) et next/image affichait une image cassée.
 // Pas un souci de sécurité : ce sont les mêmes photos déjà publiques sur la
 // boutique.
+// Mot de passe oublié : forcément accessible SANS être connecté, sinon
+// personne ne peut jamais l'atteindre (c'est tout le but).
+const PUBLIC_PATHS = ["/login", "/mot-de-passe-oublie"];
+const PUBLIC_PREFIXES = ["/uploads/", "/reinitialiser-mot-de-passe/"];
+
 export function proxy(request: NextRequest) {
-  const isLoginRoute = request.nextUrl.pathname === "/login";
-  const isUploadsRoute = request.nextUrl.pathname.startsWith("/uploads/");
+  const { pathname } = request.nextUrl;
+  const isPublic = PUBLIC_PATHS.includes(pathname) || PUBLIC_PREFIXES.some((p) => pathname.startsWith(p));
   const valid = verifySessionToken(request.cookies.get(COOKIE_NAME)?.value);
 
-  if (!valid && !isLoginRoute && !isUploadsRoute) {
+  if (!valid && !isPublic) {
     return NextResponse.redirect(new URL("/login", SITE_URL));
   }
 

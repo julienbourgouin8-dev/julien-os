@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import { verifyPassword } from "@/lib/auth/password";
 import { createSessionToken, COOKIE_NAME, MAX_AGE_SECONDS } from "@/lib/auth/session";
 import { checkLoginAllowed, recordLoginFailure, recordLoginSuccess } from "@/lib/auth/rate-limit";
+import { getAdminCredentials } from "@/lib/auth/credentials";
 import { logAction } from "@/lib/audit";
 
 export type LoginState = { error?: string } | undefined;
@@ -21,9 +22,13 @@ export async function signIn(_state: LoginState, formData: FormData): Promise<Lo
     return { error: `Trop de tentatives. Réessayez dans ${gate.retryAfterMinutes} min.` };
   }
 
-  const adminEmail = process.env.ADMIN_EMAIL;
-  const adminHash = process.env.ADMIN_PASSWORD_HASH;
-  if (!adminEmail || !adminHash || email !== adminEmail || !verifyPassword(password, adminHash)) {
+  // Identifiants en DB (admin_credentials), plus dans .env.local/Coolify —
+  // migrés automatiquement une seule fois depuis les anciennes variables
+  // d'env au premier appel (voir lib/auth/credentials.ts). Adeline peut
+  // désormais changer son mot de passe elle-même (page /compte) sans
+  // dépendre d'un redéploiement.
+  const creds = await getAdminCredentials();
+  if (!creds || email !== creds.email || !verifyPassword(password, creds.passwordHash)) {
     await recordLoginFailure(email);
     await logAction("login_failed");
     return { error: "Identifiants incorrects." };
