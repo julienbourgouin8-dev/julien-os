@@ -279,8 +279,12 @@ relations DB.
 - [x] Corriger le décalage mobile (panier) — cause trouvée le 2026-09-24 sur le vrai iPhone : la
       grille `/panier` n'avait pas de colonne mobile explicite, `grid-cols-1` + `min-w-0` réglé
       (voir `PROGRESS.md`, "ÉTAT AU 2026-09-24")
-- [ ] Remplacer les statistiques PostHog du dashboard admin par Google Analytics (ordre confirmé par
-      Julien le 2026-09-23, pas commencé)
+- [x] ~~Remplacer les statistiques PostHog du dashboard admin par Google Analytics~~ — décision
+      inversée le 2026-09-24 : PostHog capture déjà plus de données que ce qui était affiché
+      (autocapture device/référent, propriétés produit riches) et convient mieux à ce cas d'usage
+      que GA4 (HogQL sur mesure). Le dashboard a été enrichi avec ces données existantes à la place
+      (top produits + taux de conversion, sources de trafic, répartition mobile/desktop, visiteurs
+      en direct avec localisation) plutôt que migré vers GA4.
 - [x] Email de confirmation de commande — **Resend** (pas Brevo, déjà configuré/utilisé pour le
       formulaire de contact), image réelle de l'article + prix + bouton "Suivre mon colis"
       (`app/lib/email/orderConfirmation.ts`, 2026-09-23). **Domaine `creadeline16.fr` vérifié sur
@@ -289,7 +293,9 @@ relations DB.
       pour confirmer la délivrabilité vers une boîte externe.
 - [x] Pages légales FR : CGV, mentions légales, politique de confidentialité RGPD, droit
       de rétractation 14 jours (placeholders à compléter avec les infos d'Adeline)
-- [ ] Mention TVA si franchise en base ("TVA non applicable, art. 293B du CGI")
+- [x] Mention TVA si franchise en base ("TVA non applicable, art. 293B du CGI") — déjà dans les CGV,
+      ajoutée aux mentions légales le 2026-09-24 ; Adeline a confirmé le même jour ne pas avoir
+      dépassé le seuil de franchise, la mention est donc exacte
 - [x] SEO de base : `sitemap.ts` + `robots.ts`, meta description corrigée et resserrée sur des
       mots-clés réels, Google Search Console connecté (propriété de domaine, TXT OVH) + sitemap
       soumis + indexation demandée (2026-09-23)
@@ -297,11 +303,10 @@ relations DB.
       partageait auparavant le title/description de l'accueil (constaté dans les résultats Google)
 - [ ] SEO produit avancé restant : Open Graph/Twitter Card, JSON-LD `schema.org/Product`
 - [ ] Vérifier l'activation de Stripe Radar
-- [ ] Stripe en mode live — clé secrète collée par Julien dans `.secrets/stripe-live.env`
-      (2026-09-23), préfixes vérifiés (`sk_live_`/`pk_live_`). Reste : coller les deux clés dans
-      Coolify (Developer View, ressource `creadeline-app`, pas d'accès dashboard depuis ici) +
-      redéployer + un premier vrai paiement test à faible montant avant d'annoncer le site en vente
-      réelle.
+- [x] Stripe en mode live — clés branchées dans Coolify, redéployé, **premier vrai paiement live
+      réussi de bout en bout le 2026-09-23/24** (Stripe + Sendcloud + Resend), voir `PROGRESS.md`.
+      Reste un résidu mineur : le produit test "Trousse de toilette artisanale" (`c8d9c2eb...`) est
+      resté au prix de 1,00 € — à corriger avec la vraie valeur avant d'annoncer le site.
 - [x] Casier Mondial Relay : détection `general_shop_type` (pas `shop_type`) + préférence
       systématique de l'étiquette classique imprimée sur la variante QR "labelless" à prix
       égal + troncature propre (jamais en plein mot) d'`address_line_2` (2026-09-23, vérifié
@@ -362,19 +367,80 @@ autres (ex. la séquence email a besoin du lien de tracking, déjà disponible v
 
 ### Trois manques identifiés par Julien après le premier vrai paiement live (2026-09-23, pas commencés)
 
-- [ ] **Synchroniser les remboursements Stripe avec l'admin** : Julien a remboursé son paiement test
-      depuis le dashboard Stripe — la commande est restée "payée" dans notre admin, aucune trace du
-      remboursement. Il manque un event webhook supplémentaire (`charge.refunded`, à ajouter à la
-      configuration de la destination Stripe existante + gérer dans
-      `app/app/api/webhooks/stripe/route.ts`) qui retrouve la commande via le `payment_intent`/
-      `charge` et passe son statut à un nouvel état (`refunded`, distinct de `cancelled` pour
-      distinguer une annulation manuelle d'un vrai remboursement client).
-- [ ] **Remise en stock automatique sur remboursement** : dépend du point précédent — une fois le
-      webhook de remboursement détecté, réutiliser la même logique que `cancelOrderAndRestock`
-      (`admin/lib/db/orders.ts`) pour remettre l'article en stock automatiquement, sans action
-      manuelle d'Adeline.
+- [x] **Synchroniser les remboursements Stripe avec l'admin** — corrigé le 2026-09-24 : webhook
+      `charge.refunded` géré (`app/app/api/webhooks/stripe/route.ts`), commande retrouvée via
+      `stripe_payment_intent_id` (nouvelle colonne, l'événement ne porte pas l'id de session
+      Checkout), nouveau statut `refunded` distinct de `cancelled`, affiché dans l'admin.
+- [x] **Remise en stock automatique sur remboursement** — fait dans le même correctif :
+      `refundOrderAndRestock` (symétrique de `cancelOrderAndRestock`), appelé depuis le webhook.
+      Adeline doit encore cocher l'événement `charge.refunded` dans le dashboard Stripe
+      (Développeurs → Webhooks) si ce n'est pas déjà fait — action de compte, pas de code.
 - [x] **Article épuisé (stock 0) reste visible et achetable sur la boutique** — corrigé le
       2026-09-24 : choix fait d'afficher grisé "Épuisé" (portfolio + SEO conservés) plutôt que
       masquer, bouton d'achat remplacé par une invitation à commander une pièce sur mesure
       (`ProductCard.tsx`, pages boutique/fiche produit). `getProductById` (checkout) inchangé, son
       propre contrôle de stock reste la garde-fou réelle.
+
+### Session "gros point global" (2026-09-24, suite) — audit complet + corrections + Nouveautés
+
+Julien a demandé un audit global (parcours client, parcours admin, sécurité, conformité légale) puis
+d'attaquer les points trouvés par ordre de gravité. Détail complet dans `PROGRESS.md`. Fait :
+
+- [x] Audit sécurité : rien de critique/haut trouvé (SQL paramétré partout, auth admin scrypt+HMAC,
+      upload validé par signature binaire, `npm audit` 0 vuln). Quelques points bas notés, non
+      bloquants.
+- [x] Légal : TODO brut ("[Coordonnées du médiateur à compléter...]") qui fuitait en prod dans les
+      CGV remplacé par un texte propre ; garanties légales (conformité + vices cachés) ajoutées ;
+      Sendcloud ajouté comme sous-traitant dans la politique de confidentialité (recevait déjà les
+      données de livraison sans être déclaré) ; modalités du droit de rétractation précisées.
+- [x] Survente silencieuse corrigée : le webhook Stripe décrémentait le stock sans jamais vérifier
+      le retour — une pièce unique achetée deux fois quasi simultanément générait quand même une
+      étiquette automatique pour l'article fantôme. Skip auto de l'étiquette + email "action
+      requise" à Adeline si ça arrive.
+- [x] Admin plus robuste pour une utilisatrice non technique : page d'erreur en français (`error.tsx`,
+      remplace l'écran générique Next), avertissement si annuler/rembourser une commande dont le
+      produit a été supprimé depuis (stock plus recrédité silencieusement), messages Sendcloud en
+      langage clair au lieu du JSON brut d'API.
+- [x] Vignettes admin cassées pour la trousse corail (photos antérieures à la migration Garage,
+      jamais copiées côté admin) — fichiers copiés dans `admin/public/uploads/`.
+- [x] **Nouvelle section "Nouveautés"** sous le hero de la home (`components/Nouveautes.tsx`) : les
+      4 dernières pièces créées, desktop 2 par 2 (grandes), mobile 1 par 1, glissement infini à sens
+      unique entre paires (technique du clone), chaque carte fait défiler ses propres photos en
+      fondu — **toutes les cartes d'une paire strictement synchronisées** (même minuteur partagé,
+      plafonné au plus petit nombre de photos de la paire, remis à zéro à chaque nouvelle paire pour
+      toujours repartir sur la face avant). A nécessité 3 itérations de retours Julien (alignement,
+      boucle vraiment infinie, synchro) + 2 vrais bugs trouvés en cours de route :
+      - perf : `unoptimized` copié par réflexe depuis `ProductCard.tsx` servait les photos en pleine
+        résolution (1600×900) au lieu de les laisser redimensionner par Next.js — repéré par Julien
+        via PageSpeed Insights, corrigé ;
+      - la home page n'avait rien forçant un rendu dynamique, donc **Next.js la générait une seule
+        fois au build et la servait figée indéfiniment** (`export const dynamic = "force-dynamic"`
+        ajouté) — sans ça, "Nouveautés" n'aurait jamais montré les vrais nouveaux produits sans un
+        redéploiement à chaque fois, contraire au but de la fonctionnalité.
+      - ordre des photos incohérent entre produits (face/intérieur/côté pas dans le même ordre selon
+        le produit) corrigé directement en base (pas un bug de code, une pièce donnée par Adeline).
+- [x] Dashboard admin enrichi (voir décision GA4 plus haut) : top produits vus + taux de conversion
+      réel (croisé avec les vraies ventes), sources de trafic, répartition mobile/desktop, liste des
+      visiteurs en direct avec localisation approximative — tout depuis des données déjà captées par
+      PostHog, sans nouveau tracking. Auto-refresh de la page toutes les 45s + petit indicateur qui
+      pulse quand une nouvelle commande arrive.
+- [x] Fiche Google Business Profile créée, vérifiée, complétée (catégorie, description, téléphone,
+      lien d'avis récupéré et partageable).
+
+**Reste ouvert de cette session** :
+- [ ] Adeline doit choisir et payer un médiateur de la consommation agréé (obligation légale claire,
+      la mention actuelle dans les CGV ne fait que promettre de la compléter) — ~50-150 €/an,
+      CM2C semble une option abordable pour une TPE ; vérifier l'agrément avant de choisir (Médicys
+      a perdu le sien).
+- [ ] Récupération de mot de passe admin — inexistante, si Adeline l'oublie il faut régénérer le
+      hash à la main.
+- [ ] Pas de recherche/filtre sur `/orders` et `/products` en admin — deviendra pénible avec le
+      volume.
+- [ ] Pas d'export comptable depuis l'admin.
+- [ ] Lien nav "À propos" toujours mort (`#apropos` n'existe pas) — décision à prendre : retirer le
+      lien ou écrire une vraie section.
+- [ ] Bouton "favoris" décoratif sur les fiches produit (aucun effet).
+- [ ] `www.creadeline16.fr` en DNS mismatch dans Coolify.
+- [ ] Prix de test 1,00 € toujours en place sur "Trousse de toilette artisanale" (`c8d9c2eb...`).
+- [ ] Confirmer que l'événement `charge.refunded` est bien coché dans Stripe Dashboard → Webhooks
+      (action de compte, le code est prêt à le recevoir).
