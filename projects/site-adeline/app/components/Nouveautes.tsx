@@ -1,14 +1,10 @@
 import { getLatestActiveProducts } from "@/lib/db/products";
 import { getCategoryLabel } from "@/lib/categories";
 import WriteOnHeading from "@/components/WriteOnHeading";
-import NouveauteCard from "@/components/NouveauteCard";
-import NouveautesMobileCarousel, { type NouveauteProduct } from "@/components/NouveautesMobileCarousel";
+import NouveautesSlider from "@/components/NouveautesSlider";
+import type { NouveauteProduct } from "@/components/NouveauteCard";
 
 const PRODUCT_COUNT = 4;
-// Décalage entre le démarrage du défilement de chaque carte desktop, pour
-// qu'elles ne changent pas toutes de face en même temps (retour Julien :
-// il veut du dynamique, pas un flip synchronisé qui ferait "gadget").
-const CARD_STAGGER_MS = 500;
 
 export default async function Nouveautes() {
   const products = await getLatestActiveProducts(PRODUCT_COUNT);
@@ -33,20 +29,20 @@ export default async function Nouveautes() {
           blueWords={["pièces"]}
           className="mt-2 font-display text-[clamp(1.4rem,4.5vw,2.5rem)] text-ink"
         />
+      </div>
 
-        {/* Desktop/tablette : les 4 pièces côte à côte, chacune fait
-            défiler ses propres photos toute seule. */}
-        <div className="mt-10 hidden gap-8 sm:grid sm:grid-cols-2 lg:grid-cols-4">
-          {items.map((item, i) => (
-            <NouveauteCard key={item.href} {...item} startDelayMs={i * CARD_STAGGER_MS} />
-          ))}
-        </div>
+      {/* Desktop/tablette : 2 grandes pièces à la fois (conteneur resserré
+          à max-w-5xl, pas 7xl, pour qu'elles restent grandes plutôt que
+          diluées sur toute la largeur) — glisse vers les 2 suivantes,
+          boucle à l'infini. Retour Julien : 4 côte à côte les rendait trop
+          petites. */}
+      <div className="mx-auto mt-10 hidden max-w-5xl sm:block">
+        <NouveautesSlider products={items} groupSize={2} />
+      </div>
 
-        {/* Mobile : une seule pièce à la fois, le défilement enchaîne les
-            photos puis passe à la pièce suivante tout seul. */}
-        <div className="mx-auto mt-10 max-w-sm sm:hidden">
-          <NouveautesMobileCarousel products={items} />
-        </div>
+      {/* Mobile : une seule pièce à la fois, même mécanique. */}
+      <div className="mx-auto mt-10 max-w-sm sm:hidden">
+        <NouveautesSlider products={items} groupSize={1} />
       </div>
     </section>
   );
