@@ -10,6 +10,9 @@ import {
   VisitsBarSection,
   ProductViewsSection,
   TopPagesSection,
+  TopProductsSection,
+  TrafficSourcesSection,
+  DeviceBreakdownSection,
 } from "./DashboardPostHogSections";
 
 const LOW_STOCK_THRESHOLD = 2;
@@ -223,6 +226,41 @@ export default async function DashboardPage() {
               <div className="mt-6">
                 <Suspense fallback={<ChartSkeleton />}>
                   <TopPagesSection />
+                </Suspense>
+              </div>
+            </div>
+          </div>
+
+          <div className={CARD}>
+            <Stitch color="var(--color-teal)" />
+            <h2 className="font-display text-lg italic text-ink">Meilleures pièces</h2>
+            <p className="text-xs text-ink/40">Vues, ventes et taux de conversion — 30 derniers jours</p>
+            <div className="mt-4">
+              <Suspense fallback={<ChartSkeleton />}>
+                <TopProductsSection />
+              </Suspense>
+            </div>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
+            <div className={CARD}>
+              <Stitch color="var(--color-rust)" />
+              <h2 className="font-display text-lg italic text-ink">D&apos;où viennent les visiteuses</h2>
+              <p className="text-xs text-ink/40">30 derniers jours</p>
+              <div className="mt-6">
+                <Suspense fallback={<ChartSkeleton />}>
+                  <TrafficSourcesSection />
+                </Suspense>
+              </div>
+            </div>
+
+            <div className={CARD}>
+              <Stitch color="var(--color-mustard)" />
+              <h2 className="font-display text-lg italic text-ink">Mobile ou ordinateur</h2>
+              <p className="text-xs text-ink/40">30 derniers jours</p>
+              <div className="mt-6">
+                <Suspense fallback={<ChartSkeleton />}>
+                  <DeviceBreakdownSection />
                 </Suspense>
               </div>
             </div>

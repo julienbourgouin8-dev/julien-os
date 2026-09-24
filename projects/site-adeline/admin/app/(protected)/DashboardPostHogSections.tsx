@@ -13,15 +13,26 @@ import {
   getTotalProductViews,
   getTotalProductViewsBetween,
   getCategoryBreakdown,
+  getTopViewedProducts,
+  getTrafficSources,
+  getDeviceBreakdown,
 } from "@/lib/posthog";
+import { getUnitsSoldByProduct } from "@/lib/db/orders";
 import { getCategoryLabel } from "@/lib/categories";
 import { categoryColor } from "@/lib/chart-colors";
 import TimeBarChart from "@/components/TimeBarChart";
 import DonutChart from "@/components/DonutChart";
 import BarChart from "@/components/BarChart";
+import ProductPerformanceTable from "@/components/ProductPerformanceTable";
 
 const VISITS_RANGE_DAYS = 14;
 const TOP_PAGES_RANGE_DAYS = 30;
+const PRODUCT_PERFORMANCE_RANGE_DAYS = 30;
+
+// Device/domaine référent ne sont pas dans la palette catégorielle (celle-ci
+// est réservée 1:1 aux 6 catégories boutique, voir chart-colors.ts) — teintes
+// de la marque réutilisées dans un ordre fixe, distinct de PALETTE.
+const NEUTRAL_PALETTE = ["var(--color-denim)", "var(--color-teal)", "var(--color-rust)", "var(--color-mustard)"];
 
 function pctDelta(current: number, previous: number): number | null {
   if (previous === 0) return current > 0 ? null : 0;
@@ -88,4 +99,36 @@ export async function ProductViewsSection() {
 export async function TopPagesSection() {
   const topPages = await getTopPages(TOP_PAGES_RANGE_DAYS);
   return <BarChart data={topPages.map((p) => ({ label: p.url, value: p.views }))} />;
+}
+
+// Quelles pièces précises génèrent le plus de vues, et combien se
+// transforment vraiment en vente (croise PostHog et la vraie table
+// `orders` — deux sources de données, une seule requête chacune).
+export async function TopProductsSection() {
+  const [topViewed, unitsSold] = await Promise.all([
+    getTopViewedProducts(PRODUCT_PERFORMANCE_RANGE_DAYS),
+    getUnitsSoldByProduct(PRODUCT_PERFORMANCE_RANGE_DAYS),
+  ]);
+  const rows = topViewed.map((p) => ({
+    productId: p.productId,
+    productName: p.productName,
+    views: p.views,
+    sold: unitsSold[p.productId] ?? 0,
+  }));
+  return <ProductPerformanceTable data={rows} />;
+}
+
+export async function TrafficSourcesSection() {
+  const sources = await getTrafficSources(TOP_PAGES_RANGE_DAYS);
+  return <BarChart data={sources.map((s) => ({ label: s.source, value: s.visits }))} />;
+}
+
+export async function DeviceBreakdownSection() {
+  const devices = await getDeviceBreakdown(TOP_PAGES_RANGE_DAYS);
+  const donutData = devices.map((d, i) => ({
+    label: d.device,
+    value: d.visits,
+    color: NEUTRAL_PALETTE[i % NEUTRAL_PALETTE.length],
+  }));
+  return <DonutChart data={donutData} />;
 }

@@ -8,6 +8,9 @@ import "server-only";
 export type DayCount = { day: string; visitors: number; views: number };
 export type TopPage = { url: string; views: number };
 export type CategoryCount = { category: string; count: number };
+export type ProductViewCount = { productId: string; productName: string; views: number };
+export type TrafficSource = { source: string; visits: number };
+export type DeviceCount = { device: string; visits: number };
 
 function configured(): boolean {
   return Boolean(process.env.POSTHOG_PERSONAL_API_KEY && process.env.POSTHOG_PROJECT_ID && process.env.POSTHOG_HOST);
@@ -119,6 +122,60 @@ export async function getTotalProductViewsBetween(daysAgoStart: number, daysAgoE
       AND timestamp < now() - INTERVAL ${daysAgoEnd} DAY
   `);
   return rows[0]?.[0] ?? 0;
+}
+
+// Quelles pièces précises génèrent le plus de vues — pas juste le total par
+// catégorie déjà affiché. `product_viewed` porte déjà product_id/product_name
+// (voir TrackEvent sur la fiche produit, app/app/boutique/[category]/[slug]/page.tsx).
+export async function getTopViewedProducts(days: number, limit = 8): Promise<ProductViewCount[]> {
+  if (!configured()) return [];
+  const rows = await queryHogQL<[string, string, number]>(`
+    SELECT properties.product_id AS product_id, properties.product_name AS product_name, count() AS views
+    FROM events
+    WHERE event = 'product_viewed' AND timestamp >= now() - INTERVAL ${days} DAY AND properties.product_id IS NOT NULL
+    GROUP BY product_id, product_name
+    ORDER BY views DESC
+    LIMIT ${limit}
+  `);
+  return rows.map(([productId, productName, views]) => ({ productId, productName, views }));
+}
+
+// D'où viennent les visiteuses (recherche Google, réseaux sociaux, direct...)
+// — $referring_domain est une propriété standard PostHog, déjà capturée sur
+// chaque $pageview sans code supplémentaire de notre côté. PostHog vaut
+// "$direct" (littéral) pour un accès direct, jamais NULL en pratique, mais
+// les deux cas sont couverts par prudence.
+export async function getTrafficSources(days: number, limit = 6): Promise<TrafficSource[]> {
+  if (!configured()) return [];
+  const rows = await queryHogQL<[string, number]>(`
+    SELECT
+      multiIf(
+        properties.$referring_domain IS NULL OR properties.$referring_domain IN ('', '$direct'),
+        'Accès direct',
+        properties.$referring_domain
+      ) AS source,
+      count(DISTINCT properties.$session_id) AS visits
+    FROM events
+    WHERE event = '$pageview' AND timestamp >= now() - INTERVAL ${days} DAY
+    GROUP BY source
+    ORDER BY visits DESC
+    LIMIT ${limit}
+  `);
+  return rows.map(([source, visits]) => ({ source, visits }));
+}
+
+// $device_type ("Desktop"/"Mobile"/"Tablet") est aussi une propriété
+// standard PostHog calculée depuis le user-agent, capturée automatiquement.
+export async function getDeviceBreakdown(days: number): Promise<DeviceCount[]> {
+  if (!configured()) return [];
+  const rows = await queryHogQL<[string, number]>(`
+    SELECT properties.$device_type AS device, count(DISTINCT properties.$session_id) AS visits
+    FROM events
+    WHERE event = '$pageview' AND timestamp >= now() - INTERVAL ${days} DAY AND properties.$device_type IS NOT NULL
+    GROUP BY device
+    ORDER BY visits DESC
+  `);
+  return rows.map(([device, visits]) => ({ device, visits }));
 }
 
 export function isPostHogConfigured(): boolean {

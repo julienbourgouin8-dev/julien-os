@@ -130,6 +130,22 @@ export async function anonymizeOrder(id: string): Promise<void> {
   `;
 }
 
+// Unités réellement vendues par produit sur la fenêtre donnée — sert à
+// calculer un taux de conversion vue → achat en croisant avec PostHog
+// (lib/posthog.ts, getTopViewedProducts). Une commande annulée ou
+// remboursée n'a jamais généré de vraie vente, donc exclue.
+export async function getUnitsSoldByProduct(days: number): Promise<Record<string, number>> {
+  await ensureSchema();
+  const rows = (await sql`
+    SELECT item->>'product_id' AS product_id, SUM((item->>'quantity')::int) AS qty
+    FROM orders, jsonb_array_elements(items) AS item
+    WHERE created_at >= now() - (${days} || ' days')::interval
+      AND status NOT IN ('cancelled', 'refunded')
+    GROUP BY product_id
+  `) as { product_id: string; qty: string }[];
+  return Object.fromEntries(rows.map((r) => [r.product_id, Number(r.qty)]));
+}
+
 // Pour le script de purge : commandes dont les données personnelles n'ont
 // pas encore été effacées et qui datent d'avant `beforeIso`.
 export async function getOrdersWithPiiOlderThan(beforeIso: string): Promise<{ id: string; created_at: string }[]> {
