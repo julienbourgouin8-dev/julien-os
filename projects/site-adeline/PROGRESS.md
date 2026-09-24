@@ -1,15 +1,135 @@
-# Site CréA'deline — journal de session (dernière mise à jour 2026-09-23)
+# Site CréA'deline — journal de session (dernière mise à jour 2026-09-24)
 
 ⚠️ **Ce fichier est un journal chronologique, pas un état courant.** Pour reprendre après une
 coupure de session, lire dans l'ordre : (1) `MEMORY.md` → mémoire `project_site_adeline_hero.md`
 (état condensé à jour), (2) ce fichier en partant de la section
-**"ÉTAT AU 2026-09-23, 10 h 35 — à lire en premier"** juste en dessous, (3) `TODO.md` (plan
+**"ÉTAT AU 2026-09-24 — à lire en premier"** juste en dessous, (3) `TODO.md` (plan
 e-commerce brique par brique, toujours valable). Les sections plus bas ("Où on en est", etc.) sont
 l'historique brut des sessions précédentes, gardé pour référence mais **partiellement obsolète**
 (ex. mentionne encore Vercel comme hébergement principal — plus vrai, voir ci-dessous).
 
 Process générique de déploiement (VPS Hostinger + Coolify), réutilisable pour d'autres sites :
 **`.agents/skills/vps-deploy/SKILL.md`**.
+
+## ÉTAT AU 2026-09-24 — à lire en premier
+
+### Panier mobile remis droit avec des marges identiques
+
+#### Symptôme observé sur le vrai iPhone
+
+Sur `/panier`, les deux cartes (ligne produit et récapitulatif) commençaient à la bonne distance du
+bord gauche, mais arrivaient jusqu'au bord droit de l'écran. Visuellement, toute la colonne semblait
+décalée vers la droite. Le problème avait déjà été recherché en émulation sans résultat :
+`document.documentElement.scrollWidth === window.innerWidth` et aucun élément n'était officiellement
+mesuré hors du viewport. La capture du vrai iPhone a finalement montré que le problème n'était pas la
+marge du `<main>`, mais la largeur minimale choisie par la grille qui contenait les cartes.
+
+#### Cause CSS exacte
+
+Dans `app/app/panier/page.tsx`, le conteneur avait `display: grid` mais aucune colonne explicite avant
+le breakpoint `lg`. La piste mobile implicite gardait donc le minimum `auto` de CSS Grid. La ligne
+produit contient plusieurs éléments difficiles à réduire en même temps (photo fixe, quantité, prix et
+bouton de suppression) : sa largeur intrinsèque minimale pouvait imposer une piste plus large que la
+zone intérieure du `<main>`. La carte récapitulative, placée dans la même grille, s'étirait ensuite à
+la même largeur. Le masquage horizontal général empêchait ce dépassement de se manifester comme un
+`scrollWidth` supérieur au viewport, d'où les diagnostics précédents trompeurs.
+
+Correctif appliqué :
+
+- ajout de `grid-cols-1` au conteneur mobile. Tailwind génère une colonne
+  `minmax(0, 1fr)`, donc la piste ne peut plus conserver le minimum intrinsèque trop large de son
+  contenu ;
+- ajout de `min-w-0` sur la colonne contenant les produits, pour autoriser ses enfants flexibles à
+  rétrécir réellement dans la largeur disponible ;
+- conservation exacte de `lg:grid-cols-[1.4fr_1fr]` : la mise en page ordinateur n'a pas changé.
+
+Diff conceptuel :
+
+```tsx
+// Avant
+<div className="mt-10 grid gap-10 lg:grid-cols-[1.4fr_1fr] ...">
+  <div className="flex flex-col gap-4">
+
+// Après
+<div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-[1.4fr_1fr] ...">
+  <div className="min-w-0 flex flex-col gap-4">
+```
+
+#### Vérification mesurée et visuelle
+
+Test automatisé sur la vraie page avec un viewport mobile de **414 px** (largeur CSS correspondant à
+la capture iPhone) et un panier injecté dans `localStorage` :
+
+- largeur du viewport : 414 px ;
+- largeur du document : 414 px, donc aucun débordement horizontal ;
+- bord gauche des deux cartes : 24 px ;
+- bord droit des deux cartes : 390 px ;
+- marge droite calculée : `414 - 390 = 24 px` ;
+- largeur de chaque carte : 366 px, soit `414 - 24 - 24`.
+
+Les deux cartes ont donc maintenant **24 px de marge de chaque côté**, exactement symétriques. Le
+rendu a été inspecté sur une capture pleine page, puis recontrôlé de la même manière sur la production.
+Commit monorepo : `607dcc3` (`fix(site-adeline): align cart cards on mobile`). Commit extrait dans le
+repo privé de production : `efc9a7429df4fed927dd04be211ac4c0a3b7b4d4`.
+
+### Incident de déploiement puis sécurisation durable du VPS
+
+#### Incident
+
+Le premier déploiement de `efc9a74` a reproduit l'incident mémoire du 23 septembre : l'ancien
+conteneur de production restait actif pendant que BuildKit construisait la nouvelle image, et le VPS
+KVM 1 (3,8 Gio de RAM, aucun swap à ce moment-là) est entré en forte pression mémoire. Le site,
+Coolify et SSH ont cessé de répondre. **Un seul déploiement avait été lancé** ; la coexistence de
+l'ancien conteneur et du build est le fonctionnement normal d'un rolling update, pas deux builds en
+parallèle. Julien a redémarré le VPS depuis Hostinger. Coolify a ensuite marqué ce premier essai
+`failed`, sans remplacer l'ancienne image fonctionnelle.
+
+#### Protections système installées après redémarrage
+
+- création de `/swapfile`, **4 Gio**, permissions `0600`, activation immédiate et entrée persistante
+  dans `/etc/fstab` ;
+- réglages persistants dans `/etc/sysctl.d/99-creadeline-memory.conf` : `vm.swappiness=10` et
+  `vm.vfs_cache_pressure=50` ;
+- script `/usr/local/sbin/coolify-build-guard` qui applique au builder Railpack : **1 CPU**, **2 Gio
+  de RAM maximum**, réservation souple de 1,5 Gio, **4 Gio RAM+swap au total** et 1 024 processus
+  maximum ;
+- service `coolify-build-guard.service` + timer `coolify-build-guard.timer`, actif toutes les
+  60 secondes et après chaque démarrage. Le plafond est donc réappliqué même si Coolify recrée le
+  conteneur BuildKit.
+
+Le builder avait d'abord été limité à 0,75 CPU. Le déploiement protégé a alors duré 2 min 11 s, dont
+30 s d'attente fixe avant le healthcheck. Après validation avec Julien, le builder a été remonté à
+**1 CPU complet** et le start period du healthcheck réduit à **10 s**. Les protections mémoire ne
+changent pas ; les prochains builds devraient revenir autour de 1 min à 1 min 30 selon le cache.
+
+#### Protections Coolify
+
+- builds simultanés par serveur : **1** au lieu de 2 ;
+- file de déploiement : **2** au lieu de 25 ;
+- durée maximale d'un déploiement : **1 200 s** (20 min) au lieu de 3 600 s ;
+- métriques Sentinel activées ; seuil d'alerte disque abaissé à 75 % ;
+- healthcheck HTTP activé sur `GET http://localhost:3000/` : intervalle 30 s, timeout 5 s,
+  3 tentatives, start period 10 s ;
+- limites du site : 768 Mio maximum, réservation 256 Mio, 1 Gio RAM+swap, 0,75 CPU ;
+- limites de l'admin : 512 Mio maximum, réservation 256 Mio, 768 Mio RAM+swap, 0,5 CPU ;
+- limite de redémarrages enregistrée à 5 pour les deux applications.
+
+Les limites runtime ont été appliquées immédiatement aux conteneurs existants. Le site a reçu son
+healthcheck lors du nouveau rolling update. L'admin possède le réglage enregistré dans Coolify ; son
+healthcheck sera matérialisé dans Docker lors de sa prochaine recréation par Coolify. Le canal email
+Coolify n'a actuellement aucun transport SMTP/Resend activé : les événements d'échec, serveur
+injoignable et disque plein sont sélectionnés, mais ils ne peuvent pas encore envoyer d'email tant
+qu'un canal n'est pas configuré.
+
+#### Validation finale en production
+
+- second déploiement de `efc9a74` terminé avec succès ;
+- pendant le build, BuildKit est resté entre environ 500 et 625 Mio sur son plafond de 2 Gio ;
+- plus de 2 Gio de mémoire sont restés disponibles ; le swap n'a absorbé qu'environ 18 à 21 Mio ;
+- nouveau conteneur `ksbifcf2nwdthwrbxa1yb555:efc9a742...` déclaré `healthy`, ancien conteneur
+  supprimé seulement après réussite du healthcheck ;
+- `https://creadeline16.fr/` et `/panier` répondent HTTP 200 ;
+- contrôle production à 414 px : cartes de 366 px avec 24 px de marge à gauche et à droite.
 
 ## ÉTAT AU 2026-09-23, 10 h 35 — à lire en premier
 
@@ -2655,3 +2775,121 @@ dans l'admin. Consignés en détail dans `TODO.md` §8 (nouvelle sous-section) :
 3. Flux "confirmer la disponibilité avant expédition" — toujours volontairement pas construit.
 4. Reste de TODO.md §8 inchangé (mention TVA, SEO produit avancé, Stripe Radar, poids réel des
    produits, décalage mobile).
+
+## Mise à jour — session 2026-09-24 (après-midi/soirée) : "gros point global" — audit, corrections, Nouveautés, dashboard
+
+Julien a demandé un audit complet (parcours client, parcours admin, sécurité, conformité légale) puis
+d'attaquer les trouvailles par ordre de gravité, avant de repartir sur une nouvelle section homepage
+et un dashboard admin enrichi. Détail exhaustif des cases dans `TODO.md` (nouvelle section en fin de
+fichier) — résumé ici des points qui ne sont QUE des notes de contexte, pas de simples cases à cocher.
+
+### Audit (4 agents en parallèle, lecture seule)
+
+- **Sécurité** : rien de critique/haut. SQL toujours paramétré, aucune concaténation brute trouvée ;
+  auth admin scrypt+sel + session HMAC signée + rate-limit anti-bruteforce ; upload validé par
+  signature binaire (pas l'extension) et systématiquement réencodé ; `npm audit` : 0 vulnérabilité
+  dans `app/` et `admin/`. Quelques points bas notés (message d'erreur webhook un peu verbeux, pas de
+  HSTS applicatif à vérifier côté Coolify) — non bloquants, pas traités.
+- **Légal** : trouvaille la plus sérieuse — un **TODO de développeur brut publié en prod** dans les
+  CGV (`[Coordonnées du médiateur à compléter dès qu'Adeline aura adhéré...]`), visible par de vrais
+  clients. Aussi : garanties légales (conformité + vices cachés) absentes des CGV, Sendcloud jamais
+  déclaré comme sous-traitant dans la politique de confidentialité alors qu'il reçoit nom/adresse/
+  téléphone pour l'étiquette, modalités d'exercice du droit de rétractation pas précisées.
+- **Parcours client** : survente silencieuse (voir plus bas), lien "À propos" toujours mort, pas de
+  garde-fou de quantité au panier face au stock réel, retour "paiement annulé" Stripe invisible.
+- **Parcours admin** : pas de récupération de mot de passe, pas de page d'erreur française, la
+  suppression d'un produit avec commandes liées fait échouer silencieusement un futur remboursement/
+  annulation à remettre le stock à jour, messages Sendcloud bruts affichés à Adeline.
+
+### Corrigé suite à l'audit
+
+- **Légal** : TODO du médiateur remplacé par un texte propre (⚠️ pas pleinement conforme pour
+  autant — Adeline doit réellement souscrire à un médiateur agréé, ex. CM2C ~50-150€/an ; Médicys a
+  perdu son agrément CECMC, à vérifier avant de choisir n'importe qui). Garanties légales ajoutées.
+  Sendcloud ajouté à la politique de confidentialité. Modalités de rétractation précisées. Mention
+  TVA ajoutée aux mentions légales (déjà dans les CGV) — Adeline a confirmé le jour même ne pas avoir
+  dépassé le seuil de franchise, la mention reste donc exacte.
+- **Survente silencieuse** (`app/app/api/webhooks/stripe/route.ts`) : `decrementStock` peut renvoyer
+  `false` (pièce unique achetée deux fois quasi simultanément) mais la valeur de retour n'était
+  jamais vérifiée — la seconde cliente payait quand même, recevait confirmation + étiquette
+  automatique pour un article qui n'existe plus. Corrigé : étiquette auto sautée + email "action
+  requise" à Adeline si ça arrive, au lieu de continuer comme si de rien n'était.
+- **Admin plus robuste** : `error.tsx` français (remplace l'écran générique Next), avertissement
+  visible si annuler/rembourser une commande dont le produit a été supprimé depuis (le stock n'est
+  alors plus recrédité, mais Adeline le sait maintenant au lieu que ça se passe en silence), messages
+  Sendcloud reformulés en langage clair (détail brut gardé dans les logs serveur pour debug).
+- **Webhook `charge.refunded`** : un remboursement fait depuis le dashboard Stripe ne mettait à jour
+  ni le statut de la commande ni le stock. Ajout d'une colonne `stripe_payment_intent_id` (l'événement
+  refund ne porte pas l'id de session Checkout, seulement le PaymentIntent), nouveau statut
+  `refunded` distinct de `cancelled`, `refundOrderAndRestock` (symétrique de `cancelOrderAndRestock`
+  côté admin). **Reste une action de compte pour Adeline/Julien** : cocher l'événement
+  `charge.refunded` dans Stripe Dashboard → Webhooks, sinon Stripe n'envoie jamais l'event malgré le
+  code prêt à le recevoir.
+- **Vignettes admin corail cassées** : ses 4 photos datent d'avant la migration Garage et n'existaient
+  qu'en fichiers statiques côté site public, jamais copiées côté admin (deux apps, deux dossiers
+  `public/` distincts) — copiées dans `admin/public/uploads/`.
+
+### Nouvelle section "Nouveautés" sous le hero (`components/Nouveautes.tsx`)
+
+Les 4 dernières pièces créées (`getLatestActiveProducts`, triées par `created_at`, jamais
+`updated_at`). Desktop : 2 grandes cartes par paire, glissement horizontal infini à sens unique entre
+paires (technique du clone de la première paire en fin de liste + saut instantané transition coupée,
+invisible). Mobile : 1 carte à la fois, même mécanique. Chaque carte fait défiler ses propres photos
+en fondu simple. Après plusieurs allers-retours avec Julien (4 cartes trop petites → 2 grandes ;
+alignement nom/prix cassé ; slide qui faisait des allers-retours au lieu d'une vraie boucle ; cartes
+désynchronisées ; transition avec zoom pas appréciée), **trois vrais bugs trouvés en cours de
+route, pas juste des préférences de design** :
+
+1. **Vraie cause de la désynchro entre cartes** : les produits n'ont pas tous le même nombre de
+   photos (la trousse corail en a 4, les autres 3) — un simple minuteur global partagé dérive dès
+   que deux produits d'une même paire n'ont pas le même compte. Corrigé : le cycle est plafonné au
+   plus petit nombre de photos **de la paire actuellement affichée**, et redémarre à 0 (face avant,
+   garantie en position 1 côté admin) à chaque nouvelle paire.
+2. **Perf** : `unoptimized={src.startsWith("/uploads/")}` copié par réflexe depuis `ProductCard.tsx`
+   servait les photos en pleine résolution (1600×900, jusqu'à 256 Kio chacune) au lieu de laisser
+   Next.js les redimensionner à leur taille réelle d'affichage (~500-665px) — repéré par Julien via
+   un vrai rapport PageSpeed Insights détaillé (mobile 75→ score attendu bien meilleur après fix,
+   desktop 88). Retiré, vérifié que `next/image` sert désormais un `srcset` correct (`currentSrc`
+   ~750px au lieu de 1600px brut).
+3. **La home page n'avait rien forçant un rendu dynamique** : Next.js la prérendait une seule fois
+   au build (Full Route Cache) et la servait figée indéfiniment ensuite. Un correctif d'ordre des
+   photos écrit directement en base (voir ci-dessous) restait invisible en prod tant que cette ligne
+   n'existait pas — `export const dynamic = "force-dynamic"` ajouté à `app/app/page.tsx`. Sans ça,
+   "Nouveautés" n'aurait jamais montré les vrais nouveaux produits sans un redéploiement complet à
+   chaque fois, à l'encontre du but même de la fonctionnalité. **Piège à retenir pour toute future
+   section de home page pilotée par la DB.**
+4. **Ordre des photos incohérent entre produits** (pas un bug de code, une donnée) : 3 produits
+   suivaient déjà face→intérieur→côté, mais un avait intérieur/côté inversés et corail avait une
+   photo de face en double. Vérifié en ouvrant chaque photo une par une, corrigé directement en base
+   (`UPDATE products SET images = ...`) pour les deux produits concernés — effectif immédiatement,
+   sans déploiement (c'est une donnée, pas du code).
+
+### Dashboard admin enrichi (`app/(protected)/DashboardPostHogSections.tsx`, `AutoRefresh.tsx`, `NewOrderPulse.tsx`)
+
+Décision actée : ne PAS migrer les stats du dashboard de PostHog vers Google Analytics (ordre du
+2026-09-23) — PostHog capture déjà plus de données que ce qui était affiché (device/référent
+automatiques, propriétés produit riches sur `product_viewed`) et convient mieux à ce cas d'usage que
+GA4. Ajouté à la place : top pièces vues + taux de conversion réel (croisé avec les vraies ventes de
+la table `orders`, pas juste PostHog), sources de trafic (`$referring_domain`), répartition mobile/
+desktop (`$device_type`), liste de visiteurs en direct avec localisation approximative
+(`$geoip_city_name`/`$geoip_country_name`, enrichissement automatique PostHog par IP) — tout depuis
+des propriétés déjà captées, aucun nouveau tracking ajouté côté site public. Rafraîchissement auto de
+la page toutes les 45s (`router.refresh()`) et petit point qui pulse à côté de "commandes à traiter"
+quand ce nombre augmente entre deux rafraîchissements.
+
+### Fiche Google Business Profile
+
+Créée et vérifiée le 2026-09-24 (catégorie Artisanat, zone de service sans adresse publique visible,
+description rédigée, téléphone/horaires complétés par Julien). Lien d'avis récupéré et partageable :
+`g.page/r/CSglIVAOhAJ3EBM/review`. Concurrence de noms quasi-identiques identifiée ("Créa's de Line",
+"Cré'Adeline", "Créa'Line") qui pollue le référencement de la marque exacte — pas un bug technique,
+combat de différenciation/temps/avis. Favicon Google (rond à gauche de l'URL en recherche) vérifié
+correctement configuré et servi mais prend plusieurs jours/semaines à apparaître — normal.
+
+### Reste ouvert après cette session
+
+Liste complète et à jour dans `TODO.md` (fin de fichier, section "Session 'gros point global'"). En
+bref : médiateur de la consommation à souscrire (Adeline), récupération mot de passe admin, recherche/
+filtre admin, export comptable, décision sur le lien "À propos" mort, bouton favoris décoratif,
+`www.creadeline16.fr` DNS mismatch, prix de test 1€ toujours en place, confirmer que
+`charge.refunded` est bien coché côté Stripe Dashboard.
