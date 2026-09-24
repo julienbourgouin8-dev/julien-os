@@ -67,7 +67,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: `Pièce indisponible : ${productId}` }, { status: 400 });
     }
     if (product.stock < quantity) {
-      return NextResponse.json({ error: `Stock insuffisant pour "${product.name}".` }, { status: 400 });
+      const remaining =
+        product.stock <= 0
+          ? `il n'en reste plus`
+          : `il n'en reste que ${product.stock} exemplaire${product.stock > 1 ? "s" : ""}`;
+      return NextResponse.json(
+        { error: `Stock insuffisant pour "${product.name}" — ${remaining}. Ajustez la quantité dans votre panier.` },
+        { status: 400 },
+      );
     }
     const image = product.images[0];
     lineItems.push({

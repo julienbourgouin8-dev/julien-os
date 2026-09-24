@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Header from "@/components/Header";
 import { formatPrice } from "@/components/ProductCard";
 import ShippingMethodPicker, { type ShippingState } from "@/components/ShippingMethodPicker";
@@ -15,6 +15,18 @@ export default function PanierPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [shipping, setShipping] = useState<ShippingState>(INITIAL_SHIPPING_STATE);
+  // Retour du bouton "Précédent" de Stripe Checkout (cancel_url, voir
+  // api/checkout/route.ts) : sans ça, la cliente atterrit sur un panier
+  // parfaitement normal sans savoir si son paiement a abouti ou non — lu en
+  // JS plutôt que useSearchParams pour ne pas exiger un Suspense boundary
+  // sur cette page entièrement cliente.
+  const [checkoutCancelled, setCheckoutCancelled] = useState(false);
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("checkout") === "annule") {
+      setCheckoutCancelled(true);
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  }, []);
 
   const cartItems = items.map((i) => ({ productId: i.productId, quantity: i.quantity }));
   const handleShippingChange = useCallback((state: ShippingState) => setShipping(state), []);
@@ -58,6 +70,13 @@ export default function PanierPage() {
             </span>
           )}
         </h1>
+
+        {checkoutCancelled && (
+          <p className="mt-4 rounded-lg bg-mustard/20 px-4 py-3 text-sm font-medium text-ink/70">
+            Le paiement a été annulé — vous n&apos;avez pas été débité(e). Votre panier est
+            toujours là, vous pouvez réessayer quand vous voulez.
+          </p>
+        )}
 
         {items.length === 0 ? (
           <div className="mt-16 flex flex-col items-center text-center">
