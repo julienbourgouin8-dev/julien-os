@@ -88,21 +88,32 @@ export async function markOrderFulfilled(id: string): Promise<void> {
 // déjà annulée OU déjà remboursée (webhook charge.refunded, voir
 // app/lib/db/orders.ts refundOrderAndRestock) n'est jamais re-créditée
 // une seconde fois.
-export async function cancelOrderAndRestock(id: string): Promise<{ error?: string }> {
+export async function cancelOrderAndRestock(id: string): Promise<{ error?: string; warning?: string }> {
   await ensureSchema();
   const rows = (await sql`SELECT * FROM orders WHERE id = ${id}`) as Order[];
   const order = rows[0] ? fromRow(rows[0]) : null;
   if (!order) return { error: "Commande introuvable." };
   if (order.status === "cancelled" || order.status === "refunded") return {};
 
+  // Un produit supprimé depuis (cas fréquent : pièce unique déjà vendue,
+  // retirée du catalogue) n'a plus de ligne à créditer — sans ce contrôle,
+  // l'UPDATE ne touche silencieusement rien et Adeline ne sait jamais que
+  // son stock affiché n'a pas bougé.
+  const notRestocked: string[] = [];
   for (const item of order.items) {
-    await sql`
+    const updated = (await sql`
       UPDATE products SET stock = stock + ${item.quantity}, updated_at = ${new Date().toISOString()}
       WHERE id = ${item.product_id}
-    `;
+      RETURNING id
+    `) as { id: string }[];
+    if (updated.length === 0) notRestocked.push(item.name);
   }
   await sql`UPDATE orders SET status = 'cancelled', updated_at = ${new Date().toISOString()} WHERE id = ${id}`;
-  return {};
+  return notRestocked.length > 0
+    ? {
+        warning: `Commande annulée, mais "${notRestocked.join(", ")}" n'existe plus au catalogue — pense à vérifier ton stock à la main si besoin.`,
+      }
+    : {};
 }
 
 // Droit à l'effacement (RGPD Art. 17) : efface l'email et l'adresse de

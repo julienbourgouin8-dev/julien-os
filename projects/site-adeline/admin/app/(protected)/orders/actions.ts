@@ -14,7 +14,7 @@ export async function markOrderFulfilledAction(id: string): Promise<void> {
 
 // Remet en stock les articles de la commande et la marque annulée — utilisé
 // pour une vraie annulation client, ou pour nettoyer une commande de test.
-export async function cancelOrderAction(id: string): Promise<{ error?: string }> {
+export async function cancelOrderAction(id: string): Promise<{ error?: string; warning?: string }> {
   const result = await cancelOrderAndRestock(id);
   if (!result.error) {
     await logAction("order_cancelled", id);

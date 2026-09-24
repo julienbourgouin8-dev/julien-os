@@ -182,10 +182,13 @@ export async function createParcelAndLabel(params: {
 
     if (!response.ok) {
       const errorText = await response.text();
+      // Détail brut gardé dans les logs serveur pour debug (Julien) — jamais
+      // affiché tel quel à Adeline, qui n'a aucun moyen d'agir sur un JSON
+      // technique en anglais.
       console.error("[Sendcloud API Error]", response.status, errorText);
       return {
         success: false,
-        error: `Erreur Sendcloud (${response.status}): ${errorText}`,
+        error: "Sendcloud n'a pas pu générer l'étiquette pour le moment. Réessaie dans quelques minutes ; si ça persiste, préviens Julien.",
       };
     }
 

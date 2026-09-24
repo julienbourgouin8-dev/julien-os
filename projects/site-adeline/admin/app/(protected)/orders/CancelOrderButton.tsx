@@ -6,12 +6,14 @@ import { cancelOrderAction } from "./actions";
 export default function CancelOrderButton({ id }: { id: string }) {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [warning, setWarning] = useState<string | null>(null);
 
   const handleClick = () => {
     if (!confirm("Annuler cette commande et remettre les articles en stock ?")) return;
     startTransition(async () => {
       const result = await cancelOrderAction(id);
       setError(result.error ?? null);
+      setWarning(result.warning ?? null);
     });
   };
 
@@ -26,6 +28,7 @@ export default function CancelOrderButton({ id }: { id: string }) {
         {pending ? "…" : "Annuler la commande"}
       </button>
       {error && <p className="mt-2 text-xs text-rust">{error}</p>}
+      {warning && <p className="mt-2 text-xs text-ink/60">{warning}</p>}
     </div>
   );
 }
