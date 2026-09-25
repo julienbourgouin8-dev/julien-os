@@ -1366,3 +1366,153 @@ normale, plus de scroll-jacking).
 `.blend1` et playblasts, chantier previz abandonné) **ne doit pas être ajouté en bloc** avec
 `git add projects/drivingsens-site/`, cibler les fichiers un par un (source du site + assets
 réellement utilisés) sous peine de committer plusieurs Go de binaires inutiles.
+
+## Session Codex + Claude du 2026-09-24/25 — variantes header/hero/badge, architecture complète du site
+
+Chantier "petits challenges" mené en parallèle par Codex et Claude sur une seule soirée/matinée,
+jamais documenté au fil de l'eau (rattrapé ici après coup, donc pas de sous-sections datées
+horodatées comme au-dessus — tout ce qui suit est l'état à la fin de cette session). Nouveaux
+dossiers créés à la racine du projet, tous non documentés ailleurs : `hero-concepts/` (5 directions
+hero), `hero-claude/` (5 pistes hero produites par Claude en comparaison, dont une piste miroir de
+porsche.com), `dual-variants/` (déclinaisons de l'écran "deux univers" Particulier/Entreprise),
+`client-preview/` (4 grades couleur pour montrer au client : acier/contraste/marine/mono),
+`typography-variants/` (essais de polices titre : Cormorant Garamond/Instrument Sans/Manrope/
+Sora/Urbanist), `header-variants/` (page qui **converge** tout ce travail, voir ci-dessous),
+`badge-variants/` (comparateur du badge "420+", voir plus bas).
+
+### `header-variants/` — état à date (ce qui compte pour reprendre)
+
+- **Vidéo** : `hero-concepts/assets/hero-driving-sens-clean.mp4` (`?v=4`), remplacée deux fois dans
+  cette session par des fichiers fournis par Julien depuis `~/Downloads` (jamais gardés tels quels,
+  toujours réencodés H.264 web muet `crf 16 preset slower` + poster régénéré + cache-bust `?v=`
+  bumpé, même process que documenté plus haut pour le hero principal).
+  - 1ère vidéo de remplacement (26,4 s) : contenait de VRAIS portiques avec texte incrusté par
+    génération IA (ex. "Retrouvez de la sérénité derrière un volant", le portique final avec les 4
+    catégories lisibles). Un système de fenêtres cachées avait été construit pour que le titre
+    flottant du site ne chevauche jamais ce texte incrusté (mesuré frame par frame).
+  - **2e vidéo de remplacement (25,1 s, actuelle)** : Julien l'a explicitement raccourcie et a retiré
+    les portiques/panneaux avant de l'envoyer. **Le système de fenêtres cachées a été entièrement
+    supprimé à sa demande** ("il faut pas que tu calcules quoi que ce soit, je les ai enlevés") —
+    remplacé par la logique d'origine, plus simple : les 6 phrases du titre se répartissent
+    uniformément sur toute la durée réelle de la vidéo (`film.duration/stories.length`, recalculé
+    dynamiquement), **aucun moment sans texte**. Le retour à la 1ère phrase à chaque boucle vidéo
+    est un effet de bord naturel de cette logique (pas de hack `seeked`), vérifié en lecture réelle
+    via Playwright headless (jamais par seek — le serveur `python -m http.server` sur `127.0.0.1:8123`
+    ne supporte pas les requêtes `Range` et casse tout seek programmatique ou manuel ; utiliser
+    `localhost:8123` qui route vers l'autre process, `npx serve`, qui supporte `Range` — les deux
+    process coexistent sur le même port, IPv4 vs IPv6).
+- **Header** : direction "îlot" retenue (nav en pilule flottante centrée, `head--island`), CTA
+  "02 — équilibrée" appliqué par défaut (`head--2`).
+- **Badges de preuve** : revenus et **laissés volontairement** sur la version à **deux badges gris**
+  ("9 ans d'expérience" + "420+ clients accompagnés chaque année", style de base `client-preview`,
+  aucun fond bleu). Un aller-retour a eu lieu dans la session (badge unique fusionné → bleu compact
+  5 variantes → Julien a demandé de tout remettre comme avant "on changera les boutons après") —
+  **ne pas re-fusionner ni re-colorer sans demande explicite**, l'infrastructure `proof-*`
+  (padding/taille par variante, plus de couleur) reste dans `styles.css` mais est inerte par défaut.
+- Police par défaut : **Urbanist** (`type=urban`, actif quand `?type=` est absent) — ne pas changer
+  sans demande explicite, Julien y tient particulièrement.
+- Lien de test courant : `http://localhost:8123/header-variants/?filter=soft`
+
+### `badge-variants/` (nouveau, 2026-09-25) — comparateur cliquable pour un futur badge "420+" unique
+
+Créé après que Julien a précisé qu'il ne voulait ni changer l'URL à la main, ni que le comparateur
+vive sur le même lien que `header-variants` (qui doit rester stable). Reprend la mécanique de
+`typography-variants/type-picker` (attribut `data-proof` sur `body`, bouton `.is-active` togglé en
+JS, **pas de paramètre d'URL à taper**, un sélecteur fixe en bas à droite). 5 traitements, tous en
+dégradé bleu, badge compact (bien plus petit que les essais précédents sur `header-variants`), texte
+différent par variante pour tester la longueur : Slim ("clients / an") / Capsule ("clients
+accompagnés") / Glass ("accompagnés / an") / Glow ("clients par an") / Signature ("clients
+accompagnés chaque année"). **Aucune décision prise** — Julien : "je vais laisser comme ça
+actuellement, je vais pas changer le badge". Lien : `http://localhost:8123/badge-variants/`.
+
+### Commit git (2026-09-25) — premier commit de tout le projet
+
+Ce projet n'avait jamais été committé avant cette session (voir note plus haut). Premier commit
+`27a99d1` (41 fichiers, 1849 lignes) regroupant tout ce qui précède **et** des changements déjà en
+cours sur `index.html`/`css/`/`js/`/`assets/` (hero.mp4, hero-poster.jpg, hero-end.jpg, header.css,
+hero.css, hero-video.js) qui dataient d'avant cette session et n'avaient jamais été sauvegardés.
+`assets/blender/` exclu et ajouté au `.gitignore` racine du repo
+(`projects/drivingsens-site/assets/blender/`) — confirmé qu'il ne doit jamais être commité.
+
+### Architecture complète du site — plan reçu de Julien le 2026-09-25 (source externe, probablement la femme d'Elie / un outil de wireframe)
+
+**8 pages, structure figée à respecter pour la suite de la construction :**
+
+- `index.html` — Accueil : ticker, nav hamburger + logo centré, hero plein écran (celui qu'on
+  construit dans `header-variants`), **simulateur de qualification (Particulier/Pro, 3 questions —
+  voir décision de flux ci-dessous)**, 12 cards prestations, section immersive route, à propos court
+  (Elie), réassurance FFSA/RC Pro, 3 témoignages, calendrier Google Agenda, CTA WhatsApp + email,
+  footer.
+- `offre.html` — L'Offre : 12 prestations en 3 formats visuels (hero plein écran / split 50-50
+  alterné / cards compactes), bloc options payantes, CTA final.
+- `tarifs.html` — Tarifs : calendrier Prestige/Privilège, grille tarifaire particuliers, grille
+  entreprises, aide à l'achat 3 formules, options payantes, conditions générales, calendrier, CTA.
+- `blog.html` — Blog : 1 article complet SEO (stage circuit Île-de-France) + 2 "bientôt disponible",
+  newsletter, CTA.
+- `apropos.html` — À propos : hero plein écran, introduction FFSA, 4 chiffres (420+ clients/an,
+  10 ans, 3 continents, FFSA), 3 valeurs, timeline parcours 7 étapes, logo slider marques auto, 2
+  citations éditoriales + 4 cards témoignages, CTA.
+- `mentions-legales.html`, `confidentialite.html`, `cgv.html` — pages légales (8 articles mentions
+  légales, RGPD complet, 11 articles CGV secteur automobile).
+
+**Décision — flux de qualification, validée explicitement par Julien** : ce n'est **pas** un widget
+séparé plus bas sur la page. L'écran à cartes de fin de vidéo hero (déjà construit, 4 catégories
+Performance & Passion / Sérénité & Confiance / Entreprise & Collectif / Industrie & Marques) **est**
+la 1ère question du simulateur ("Particulier ou Pro ?"). 1-2 questions supplémentaires affinent
+ensuite. Le résultat met en avant un sous-ensemble des 12 cards prestations sur la home, chaque
+carte renvoyant vers son détail complet sur `offre.html`. Résumé validé par Julien : **Hero →
+Qualification (clic, clic, clic) → Offres**.
+
+**Décision — mapping Particulier/Entreprise vs les 4 catégories du hero** (proposé par Claude,
+suivi sans correction dans la suite de la conversation — à reconfirmer explicitement si un doute
+survient) :
+- **Particulier** = Performance & Passion + Sérénité & Confiance.
+- **Entreprise** = Entreprise & Collectif + Industrie & Marques.
+
+**Liste des 12 prestations Particulier, reçue de Julien (via la femme d'Elie) le 2026-09-25** —
+présentée par Julien comme LA liste des 12 prestations grand public à mettre sur le site (pas liée à
+un sous-profil étroit, malgré le libellé initial qui l'accompagnait, "profil Passionné Sport →
+Performance & Sensations") :
+1. Stage circuit découverte
+2. Perfectionnement au pilotage
+3. Maîtrise du freinage
+4. Track Day accompagné
+5. Sensations en zone contrôlée
+6. Bilan de conduite personnalisé
+7. Prise en main véhicule haute performance
+8. Aide décisionnelle à l'achat de véhicule
+9. Essai accompagné avant achat
+10. Audit véhicule d'occasion
+11. Prise en main véhicule haute technologie
+12. Conseil technologies embarquées
+
+**Attention, piège pour la suite** : cette liste ne correspond **pas** à l'ancienne liste de "12
+prestations" mentionnée dans le plan de sitemap pour `offre.html` (Stages circuit/Coaching VIP/Team
+Building/Sécurité/Voyages/Éco-conduite/Conciergerie/Réhabilitation/Seniors/Aide achat/Launch/
+Événements, qui mélangeait particulier et pro) — cette dernière est probablement une ébauche
+antérieure, à considérer périmée au profit de la liste ci-dessus pour la partie Particulier. **La
+liste équivalente côté Professionnels/Entreprise n'est pas encore arrivée** — ne pas construire
+`offre.html` en entier avant de l'avoir, mais la partie Particulier (12 cards + détail) peut être
+construite dès maintenant avec la liste ci-dessus (accord de principe de Julien).
+
+### Ouvert / en attente à la fin de cette session (2026-09-25)
+
+- **Vidéos de référence pour les effets de navigation/transition** demandées par Julien (scroll
+  horizontal, zoom dans une image, cartes qui sortent — "il faut vraiment un effet incroyable de
+  fluidité", surtout pas un site qui scrolle juste de haut en bas) — **pas encore reçues**. Utiliser
+  le process `video-teardown` (extraction frame par frame au frame-rate natif, jamais un fps réduit
+  arbitraire — leçon déjà apprise le 2026-09-13, voir plus haut) dès réception.
+- **Vraies photos de voiture de la femme d'Elie** — Julien a donné 11 chemins locaux
+  (`~/Pictures/Photos Library.photoslibrary/resources/derivatives/...`) qui se sont révélés être des
+  **captures d'écran de Reels Instagram** (jakeuiux, ayzz.thedesigner — les mêmes références déjà
+  analysées le 2026-09-13), **pas des photos de voiture**. Un lien Google Drive a aussi été fourni
+  (`https://drive.google.com/drive/folders/1NXrW0dneiQ2SZwALwUhGK3-t8MJBJAHE`, jamais ouvert).
+  **Clarification demandée à Julien, réponse pas encore reçue** au moment de cette sauvegarde : où
+  sont les vraies photos de voiture (dans le Drive ?) et les 11 chemins locaux sont-ils en fait des
+  références vidéo/effets mal étiquetées (auquel cas ils restent utiles pour le teardown) ?
+- **Liste des 12 prestations côté Professionnels/Entreprise** — pas encore reçue.
+- **Choix final du badge "420+"** — volontairement laissé en pause sur les 2 badges gris,
+  `badge-variants/` reste disponible pour trancher plus tard, aucune urgence.
+- **Prochaine étape actionnable dès la reprise** : construire les 12 cards prestations Particulier
+  (accueil) + leur détail (`offre.html`) avec la liste reçue ci-dessus, en parallèle de l'attente des
+  photos/vidéos et de la liste Pro.
