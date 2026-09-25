@@ -1,0 +1,1 @@
+(function(){var buttons=[].slice.call(document.querySelectorAll('[data-type]'));buttons.forEach(function(button){button.addEventListener('click',function(){document.body.dataset.type=button.dataset.type;buttons.forEach(function(item){item.classList.toggle('is-active',item===button)})})})})();

@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#1E3A6E" />
+<title>Driving Sens — 5 pistes pour le hero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@200;300;400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body data-piste="1">
+
+<video id="bgVideo" class="bg-video" autoplay muted loop playsinline preload="auto">
+  <source src="assets/hero.mp4" type="video/mp4" />
+</video>
+
+<!-- ============ PISTE 1 — SILENCE (miroir structurel porsche.com/france) ============ -->
+<section class="piste piste--silence" data-piste-id="1" aria-label="Direction 1, Silence">
+  <header class="hdr hdr--silence">
+    <button class="hdr__burger" type="button" aria-label="Menu">
+      <span></span><span></span>
+    </button>
+    <a class="hdr__mark" href="#top" aria-label="Driving Sens, accueil">
+      <img src="assets/logo-white.png" alt="Driving Sens" />
+    </a>
+    <button class="hdr__account" type="button" aria-label="Réserver">
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="8.2" r="3.4"/><path d="M4.8 19.4c1.6-3.4 4.3-5.1 7.2-5.1s5.6 1.7 7.2 5.1"/></svg>
+    </button>
+  </header>
+
+  <div class="silence__stage">
+    <p class="silence__eyebrow">Perfectionnement au pilotage</p>
+    <h1 class="silence__title">Pilotez<br />l&rsquo;exception<span class="silence__dot">.</span></h1>
+    <a class="silence__cta" href="#reserver">
+      <span>Réserve ta session</span>
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+
+  <button class="silence__scroll" type="button" aria-label="Défiler">
+    <span></span>
+  </button>
+</section>
+
+<!-- ============ PISTE 2 — RÉSEAU (miroir structurel byd.com/fr) ============ -->
+<section class="piste piste--reseau" data-piste-id="2" aria-label="Direction 2, Réseau">
+  <header class="hdr hdr--reseau">
+    <a class="hdr__mark hdr__mark--reseau" href="#top">
+      <img src="assets/logo-white.png" alt="Driving Sens" />
+    </a>
+    <nav class="hdr__nav" aria-label="Navigation principale">
+      <a href="#particuliers">Particuliers</a>
+      <a href="#entreprises">Entreprises</a>
+      <a href="#eco-conduite">Éco&#8209;conduite</a>
+      <a href="#tarifs">Tarifs</a>
+      <a href="#apropos">À propos</a>
+    </nav>
+    <a class="hdr__btn" href="#reserver">Réserve ta session</a>
+  </header>
+
+  <div class="reseau__grid">
+    <div class="reseau__panel">
+      <p class="reseau__eyebrow">Coaching automobile premium</p>
+      <h1 class="reseau__title">Une expérience<br />automobile<br />d&rsquo;exception.</h1>
+      <p class="reseau__lead">Un accompagnement encadré par un expert certifié, pour particuliers exigeants et entreprises qui roulent avec méthode.</p>
+      <div class="reseau__entries">
+        <a class="reseau__entry" href="#particuliers">
+          <span class="reseau__entry-label">Particulier</span>
+          <span class="reseau__entry-sub">Stages circuit · Coaching VIP</span>
+        </a>
+        <a class="reseau__entry" href="#entreprises">
+          <span class="reseau__entry-label">Entreprise</span>
+          <span class="reseau__entry-sub">Éco&#8209;conduite · Prévention</span>
+        </a>
+      </div>
+    </div>
+    <div class="reseau__stats">
+      <div class="reseau__stat"><b>420+</b><span>clients par an</span></div>
+      <div class="reseau__stat"><b>9 ans</b><span>d&rsquo;expérience</span></div>
+      <div class="reseau__stat"><b>FFSA</b><span>Academy · Le Mans</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PISTE 3 — POSTE DE PILOTAGE (précision instructeur) ============ -->
+<section class="piste piste--poste" data-piste-id="3" aria-label="Direction 3, Poste de pilotage">
+  <header class="hdr hdr--poste">
+    <a class="hdr__mark" href="#top">
+      <img src="assets/logo-white.png" alt="Driving Sens" />
+    </a>
+    <nav class="hdr__nav hdr__nav--minimal" aria-label="Navigation principale">
+      <a href="#particuliers">Particuliers</a>
+      <a href="#entreprises">Entreprises</a>
+      <a href="#apropos">L&rsquo;expertise</a>
+    </nav>
+    <a class="hdr__btn hdr__btn--ghost" href="#reserver">Réserve ta session</a>
+  </header>
+
+  <div class="poste__frame" aria-hidden="true">
+    <span class="poste__corner poste__corner--tl"></span>
+    <span class="poste__corner poste__corner--tr"></span>
+    <span class="poste__corner poste__corner--bl"></span>
+    <span class="poste__corner poste__corner--br"></span>
+  </div>
+
+  <div class="poste__badge">
+    <span class="poste__badge-line"></span>
+    <span>Programme élite FFSA Academy · Le Mans</span>
+  </div>
+
+  <div class="poste__content">
+    <h1 class="poste__title">La précision<br /><em>d&rsquo;un instructeur.</em><br />La passion<br />d&rsquo;un pilote.</h1>
+    <p class="poste__lead">Coaching de perfectionnement premium, encadré par un expert automobile certifié au plus haut niveau.</p>
+    <a class="poste__cta" href="#reserver">Configurer ma session</a>
+  </div>
+
+  <div class="poste__telemetry">
+    <span>DS&nbsp;/&nbsp;INSTRUCTEUR</span>
+    <span class="poste__telemetry-rule"></span>
+    <span>~9&nbsp;ANS D&rsquo;EXPÉRIENCE</span>
+    <span class="poste__telemetry-rule"></span>
+    <span>420+&nbsp;CLIENTS&nbsp;/&nbsp;AN</span>
+  </div>
+</section>
+
+<!-- ============ PISTE 4 — DUO (entrée particulier / entreprise, littérale) ============ -->
+<section class="piste piste--duo" data-piste-id="4" aria-label="Direction 4, Duo">
+  <header class="hdr hdr--duo">
+    <a class="hdr__mark" href="#top">
+      <img src="assets/logo-white.png" alt="Driving Sens" />
+    </a>
+    <nav class="hdr__nav" aria-label="Navigation principale">
+      <a href="#eco-conduite">Éco&#8209;conduite</a>
+      <a href="#tarifs">Tarifs</a>
+      <a href="#apropos">À propos</a>
+      <a href="#blog">Blog</a>
+    </nav>
+    <a class="hdr__btn" href="#reserver">Réserve ta session</a>
+  </header>
+
+  <div class="duo__title-wrap">
+    <h1 class="duo__title">Deux mondes. <span>Une même exigence.</span></h1>
+  </div>
+
+  <div class="duo__split">
+    <a class="duo__half duo__half--part" href="#particuliers">
+      <video class="duo__half-video" autoplay muted loop playsinline preload="auto"><source src="assets/hero.mp4" type="video/mp4" /></video>
+      <span class="duo__half-veil"></span>
+      <span class="duo__half-index">01</span>
+      <span class="duo__half-body">
+        <span class="duo__half-kicker">Pour vous</span>
+        <span class="duo__half-name">Particulier</span>
+        <span class="duo__half-sub">Stages circuit, coaching VIP, réhabilitation à la confiance.</span>
+      </span>
+    </a>
+    <a class="duo__half duo__half--pro" href="#entreprises">
+      <video class="duo__half-video" autoplay muted loop playsinline preload="auto"><source src="assets/hero.mp4" type="video/mp4" /></video>
+      <span class="duo__half-veil"></span>
+      <span class="duo__half-index">02</span>
+      <span class="duo__half-body">
+        <span class="duo__half-kicker">Pour vos équipes</span>
+        <span class="duo__half-name">Entreprise</span>
+        <span class="duo__half-sub">Éco&#8209;conduite, prévention du risque, team building.</span>
+      </span>
+    </a>
+  </div>
+
+  <p class="duo__proof">420+ clients accompagnés chaque année · certification FFSA Academy</p>
+</section>
+
+<!-- ============ PISTE 5 — STUDIO (fond clair, cadre produit) ============ -->
+<section class="piste piste--studio" data-piste-id="5" aria-label="Direction 5, Studio">
+  <header class="hdr hdr--studio">
+    <a class="hdr__mark hdr__mark--dark" href="#top">
+      <img src="assets/logo-color.png" alt="Driving Sens" />
+    </a>
+    <nav class="hdr__nav hdr__nav--dark" aria-label="Navigation principale">
+      <a href="#particuliers">Particuliers</a>
+      <a href="#entreprises">Entreprises</a>
+      <a href="#eco-conduite">Éco&#8209;conduite</a>
+      <a href="#apropos">À propos</a>
+    </nav>
+    <a class="hdr__btn hdr__btn--dark" href="#reserver">Réserve ta session</a>
+  </header>
+
+  <div class="studio__layout">
+    <div class="studio__copy">
+      <p class="studio__eyebrow">Driving Sens · Expériences automobiles</p>
+      <h1 class="studio__title">L&rsquo;exigence,<br />au chaque virage.</h1>
+      <p class="studio__lead">Depuis 9 ans, Driving Sens façonne des expériences automobiles sur mesure pour particuliers passionnés et entreprises qui roulent avec méthode &mdash; encadrées par un instructeur certifié FFSA Academy.</p>
+      <div class="studio__actions">
+        <a class="studio__cta" href="#reserver">Réserve ta session</a>
+        <a class="studio__link" href="#apropos">La méthode d&rsquo;Élie &rarr;</a>
+      </div>
+      <div class="studio__stats">
+        <div><b>420+</b><span>clients / an</span></div>
+        <div><b>9 ans</b><span>d&rsquo;expérience</span></div>
+      </div>
+    </div>
+    <div class="studio__frame">
+      <video class="studio__frame-video" autoplay muted loop playsinline preload="auto"><source src="assets/hero.mp4" type="video/mp4" /></video>
+      <div class="studio__frame-inner"></div>
+    </div>
+  </div>
+</section>
+
+<aside class="switcher" id="switcher">
+  <button class="switcher__toggle" type="button" aria-expanded="true">
+    <span>Direction</span><b id="switcherNum">01</b>
+  </button>
+  <div class="switcher__list">
+    <button type="button" data-piste="1" class="is-active"><b>01</b><span>Silence</span></button>
+    <button type="button" data-piste="2"><b>02</b><span>Réseau</span></button>
+    <button type="button" data-piste="3"><b>03</b><span>Poste de pilotage</span></button>
+    <button type="button" data-piste="4"><b>04</b><span>Duo</span></button>
+    <button type="button" data-piste="5"><b>05</b><span>Studio</span></button>
+  </div>
+</aside>
+
+<script src="script.js"></script>
+</body>
+</html>

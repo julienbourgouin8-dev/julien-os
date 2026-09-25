@@ -18,3 +18,4 @@ projects/site-adeline/data/uploads/*
 !projects/site-adeline/data/uploads/.gitkeep
 .vercel
 .secrets/
+projects/drivingsens-site/assets/blender/

@@ -39,6 +39,65 @@
   }
 }
 
+.hero__video-bg {
+  display: none;
+}
+
+/* Tall phones: instead of flat black letterbox bars above/below the
+   contained video, a heavily blurred + scaled copy of the same video
+   fills the gaps — an ambient glow extension (same trick as Spotify
+   Canvas / Apple TV+ backdrops) rather than a second, different image. */
+@media (max-aspect-ratio: 4/5) {
+  .hero__video-bg {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transform: scale(1.4);
+    filter: blur(60px) saturate(1.3) brightness(0.75);
+    z-index: 0;
+  }
+
+  .hero__video {
+    background: transparent;
+    z-index: 1;
+  }
+}
+
+.hero__end-frame {
+  display: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  filter: brightness(0.35) saturate(0.7);
+  transition: opacity 900ms ease;
+  z-index: 2;
+}
+
+.hero__end-frame.is-active {
+  opacity: 1;
+}
+
+/* On tall/narrow screens the video letterboxes (object-fit: contain
+   above) instead of filling edge-to-edge — a dedicated portrait shot
+   covers the full screen there instead once the loop ends. */
+@media (max-aspect-ratio: 4/5) {
+  .hero__end-frame {
+    display: block;
+  }
+
+  .hero__video.is-dimmed {
+    opacity: 0;
+  }
+}
+
 .hero__chooser {
   position: absolute;
   inset: 0;
@@ -119,11 +178,26 @@
 .hero__chooser.is-active .hero__chooser-card:nth-child(4) { transition-delay: 450ms; }
 
 @media (max-width: 720px) {
+  .hero__chooser {
+    gap: var(--sp-3);
+    justify-content: center;
+  }
+
+  .hero__chooser-title {
+    font-size: 22px;
+  }
+
   .hero__chooser-cards {
     flex-direction: column;
     width: 100%;
+    gap: var(--sp-2);
   }
+
   .hero__chooser-card {
     min-width: 0;
+    font-size: 12.5px;
+    letter-spacing: 0.06em;
+    padding: var(--sp-2) var(--sp-3);
+    border-radius: 10px;
   }
 }

@@ -1,0 +1,35 @@
+/* Badge unique "420+", compact, dégradé bleu — 5 traitements cliquables en direct (voir
+   proof-picker plus bas). Le fond va sur .proofs (pas sur le span) pour rester un seul bloc net,
+   volontairement petit : plus un gros bandeau, juste une petite preuve sous le titre. */
+.proofs{display:inline-flex;border:0;background:none;backdrop-filter:none;box-shadow:none;transition:background .25s,border-color .25s,box-shadow .25s}
+.proofs>span{padding:0;background:none;border:0;white-space:nowrap}
+.proofs b{font-variant-numeric:tabular-nums;color:#fff}
+.proofs small{opacity:.94;color:#eef6ff;text-transform:uppercase;transition:font-size .2s,letter-spacing .2s}
+
+body[data-proof="slim"] .proofs{border-radius:4px;padding:6px 14px;gap:7px;background:linear-gradient(105deg,rgba(25,53,103,.95),rgba(78,112,160,.78));border:1px solid rgba(190,214,244,.4);box-shadow:0 6px 16px rgba(2,8,18,.22)}
+body[data-proof="slim"] .proofs b{font-size:14px}body[data-proof="slim"] .proofs small{font-size:7px;letter-spacing:.09em}
+
+body[data-proof="capsule"] .proofs{border-radius:999px;padding:7px 18px;gap:8px;background:linear-gradient(110deg,rgba(20,47,96,.98),rgba(91,128,177,.82));border:1px solid rgba(210,229,252,.48);box-shadow:0 8px 18px rgba(2,8,18,.26)}
+body[data-proof="capsule"] .proofs b{font-size:15px}body[data-proof="capsule"] .proofs small{font-size:7px;letter-spacing:.12em}
+
+body[data-proof="glass"] .proofs{border-radius:8px;padding:7px 15px;gap:7px;background:linear-gradient(120deg,rgba(33,69,128,.6),rgba(151,181,216,.26));border:1px solid rgba(220,235,252,.46);backdrop-filter:blur(12px) saturate(1.1);box-shadow:0 8px 20px rgba(2,8,18,.24)}
+body[data-proof="glass"] .proofs b{font-size:15px}body[data-proof="glass"] .proofs small{font-size:7px;letter-spacing:.08em}
+
+body[data-proof="glow"] .proofs{border-radius:5px;padding:7px 16px;gap:7px;background:linear-gradient(105deg,#17376f,#4d78ac 60%,#7ea6d1);border:1px solid rgba(224,239,255,.58);box-shadow:0 0 14px rgba(73,119,180,.42),0 8px 18px rgba(2,8,18,.26)}
+body[data-proof="glow"] .proofs b{font-size:15px;color:#fff}body[data-proof="glow"] .proofs small{font-size:7px;color:#fff;letter-spacing:.08em}
+
+body[data-proof="signature"] .proofs{border-radius:3px 999px 999px 3px;padding:7px 18px 7px 14px;gap:9px;background:linear-gradient(110deg,rgba(18,43,88,.98),rgba(54,94,147,.94));border:1px solid rgba(200,222,248,.52);box-shadow:0 10px 22px rgba(2,8,18,.3),inset 3px 0 0 #8db7e5}
+body[data-proof="signature"] .proofs b{font-size:16px}body[data-proof="signature"] .proofs small{font-size:7px;letter-spacing:.13em}
+
+/* Sélecteur cliquable, même mécanique que typography-variants/type-picker */
+.proof-picker{position:fixed;z-index:80;right:18px;bottom:16px;display:flex;padding:5px;background:rgba(3,12,25,.82);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(18px)}
+.proof-picker button{font-family:"Urbanist",sans-serif;border:0;background:transparent;color:#fff;padding:10px 12px;display:flex;align-items:center;gap:8px;cursor:pointer}
+.proof-picker b{font-size:8px;font-weight:300;opacity:.48}
+.proof-picker span{font-size:9px;font-weight:300;letter-spacing:.07em}
+.proof-picker button.is-active{background:#fff;color:#1e3a6e}
+
+@media(max-width:900px){
+  .proof-picker{left:12px;right:auto;bottom:12px;max-width:calc(100vw - 24px);overflow-x:auto}
+  .proof-picker button{padding:9px 8px}
+  .proof-picker span{font-size:8px}
+}

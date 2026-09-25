@@ -68,3 +68,23 @@
   background: var(--white);
   color: var(--ink);
 }
+
+@media (max-width: 640px) {
+  .site-header {
+    padding: var(--sp-2) var(--sp-2);
+  }
+
+  .site-header__inner {
+    gap: var(--sp-2);
+  }
+
+  .site-header__brand img {
+    height: 26px;
+  }
+
+  .site-header__cta {
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    padding: 8px 14px;
+  }
+}
