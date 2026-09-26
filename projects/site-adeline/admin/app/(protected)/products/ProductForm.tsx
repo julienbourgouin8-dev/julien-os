@@ -1,12 +1,14 @@
 "use client";
 
 import { startTransition, useActionState, useState } from "react";
-import Image from "next/image";
 import { categories } from "@/lib/categories";
 import { subcategoriesByCategory } from "@/lib/subcategories";
 import type { Product } from "@/lib/db/products";
 import { compressImageForUpload, imageWidth } from "@/lib/compress-image-client";
 import type { ProductFormState } from "./actions";
+
+type NewPhoto = { id: string; kind: "new"; file: File; preview: string };
+type Photo = { id: string; kind: "existing"; url: string } | NewPhoto;
 
 type Action = (state: ProductFormState, formData: FormData) => Promise<ProductFormState>;
 
@@ -23,45 +25,38 @@ export default function ProductForm({
 }) {
   const shared = product ?? source;
   const [state, formAction, pending] = useActionState(action, undefined);
-  const [existingImages, setExistingImages] = useState<string[]>(Array.from(new Set(product?.images ?? [])));
-  const [newFiles, setNewFiles] = useState<File[]>([]);
+  // Liste unique des photos, dans l'ordre d'affichage sur la boutique : la
+  // 1re est la photo principale. On la réorganise par glisser-déposer.
+  const [photos, setPhotos] = useState<Photo[]>(() =>
+    Array.from(new Set(product?.images ?? [])).map((url) => ({ id: `e:${url}`, kind: "existing" as const, url })),
+  );
+  const [dragId, setDragId] = useState<string | null>(null);
+  const [overId, setOverId] = useState<string | null>(null);
   // largeur réelle des nouvelles photos (px), pour signaler celles trop petites
   const [widths, setWidths] = useState<Record<string, number>>({});
-  const fileKey = (f: File) => `${f.name}-${f.lastModified}-${f.size}`;
-  const [primaryImage, setPrimaryImage] = useState<{ type: "existing" | "new"; value: string } | null>(
-    product?.images[0] ? { type: "existing", value: product.images[0] } : null,
-  );
+
+  const newPhotos = photos.filter((p): p is NewPhoto => p.kind === "new");
+  const photoOrder = photos.map((p) => (p.kind === "existing" ? `e:${p.url}` : `n:${newPhotos.indexOf(p)}`));
+  const move = (from: number, to: number) => {
+    if (from === to || to < 0) return;
+    setPhotos((list) => {
+      if (from >= list.length || to >= list.length) return list;
+      const next = [...list];
+      const [item] = next.splice(from, 1);
+      next.splice(to, 0, item);
+      return next;
+    });
+  };
+  const dropOn = (targetId: string) => {
+    const from = photos.findIndex((p) => p.id === dragId);
+    const to = photos.findIndex((p) => p.id === targetId);
+    setDragId(null);
+    setOverId(null);
+    if (from >= 0 && to >= 0) move(from, to);
+  };
 
   const [category, setCategory] = useState(shared?.category ?? categories[0].slug);
   const subcategoryOptions = subcategoriesByCategory[category] ?? [];
-
-  // Position finale de chaque photo sur la boutique : la principale est en 1,
-  // les autres suivent dans l'ordre d'ajout (2, 3, 4… sans limite).
-  const isPrimary = (type: "existing" | "new", value: string) =>
-    primaryImage?.type === type && primaryImage.value === value;
-  const positionOf = (type: "existing" | "new", value: string) => {
-    if (isPrimary(type, value)) return 1;
-    const order = [
-      ...existingImages.map((u) => ({ type: "existing" as const, value: u })),
-      ...newFiles.map((_, i) => ({ type: "new" as const, value: String(i) })),
-    ].filter((p) => !isPrimary(p.type, p.value));
-    const index = order.findIndex((p) => p.type === type && p.value === value);
-    return index + (primaryImage ? 2 : 1);
-  };
-
-  const removeExisting = (url: string) => {
-    setExistingImages((imgs) => imgs.filter((u) => u !== url));
-    if (primaryImage?.type === "existing" && primaryImage.value === url) setPrimaryImage(null);
-  };
-  const removeNew = (index: number) => {
-    setNewFiles((files) => files.filter((_, i) => i !== index));
-    setPrimaryImage((primary) => {
-      if (primary?.type !== "new") return primary;
-      const currentIndex = Number(primary.value);
-      if (currentIndex === index) return null;
-      return currentIndex > index ? { type: "new", value: String(currentIndex - 1) } : primary;
-    });
-  };
 
   return (
     <form
@@ -218,82 +213,103 @@ export default function ProductForm({
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.1em] text-ink/45">Photos</p>
         <p className="mt-1 text-xs leading-relaxed text-ink/55">
-          Choisis la vue de face comme photo principale. Elle sera toujours affichée en premier sur la boutique.
+          Glisse les photos pour les mettre dans l&apos;ordre (ou utilise les flèches). La photo n°1, à gauche, est la
+          photo principale : mets-y la vue de face, elle s&apos;affiche en premier sur la boutique.
         </p>
+        <input type="hidden" name="photoOrder" value={JSON.stringify(photoOrder)} />
         <div className="mt-2 flex flex-wrap gap-3">
-          {existingImages.map((url) => (
-            <div key={url} className="group relative h-24 w-24">
-              <input type="hidden" name="existingImages" value={url} />
-              <Image
-                src={url}
-                alt=""
-                fill
-                className={`rounded-lg object-cover ring-2 ${
-                  primaryImage?.type === "existing" && primaryImage.value === url
-                    ? "ring-denim"
-                    : "ring-transparent"
+          {photos.map((photo, i) => {
+            const width = photo.kind === "new" ? widths[photo.id] : undefined;
+            return (
+              <div
+                key={photo.id}
+                draggable
+                onDragStart={(e) => {
+                  setDragId(photo.id);
+                  e.dataTransfer.effectAllowed = "move";
+                }}
+                onDragOver={(e) => {
+                  if (!dragId) return;
+                  e.preventDefault();
+                  if (overId !== photo.id) setOverId(photo.id);
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  dropOn(photo.id);
+                }}
+                onDragEnd={() => {
+                  setDragId(null);
+                  setOverId(null);
+                }}
+                className={`group relative h-24 w-24 cursor-grab active:cursor-grabbing ${
+                  dragId === photo.id ? "opacity-40" : ""
                 }`}
-              />
-              <span className="absolute left-1.5 top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-ink/80 px-1 text-[0.65rem] font-bold text-paper">
-                {positionOf("existing", url)}
-              </span>
-              <button
-                type="button"
-                onClick={() => setPrimaryImage({ type: "existing", value: url })}
-                className="absolute inset-x-1 bottom-1 rounded-full bg-white/95 px-2 py-1 text-[0.58rem] font-bold uppercase tracking-wide text-ink shadow-sm"
               >
-                {primaryImage?.type === "existing" && primaryImage.value === url ? "Principale ✓" : "Mettre en 1er"}
-              </button>
-              <button
-                type="button"
-                onClick={() => removeExisting(url)}
-                className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-ink text-xs text-paper"
-                aria-label="Retirer cette photo"
-              >
-                ×
-              </button>
-            </div>
-          ))}
-          {newFiles.map((file, i) => (
-            <div key={`${fileKey(file)}-${i}`} className="group relative h-24 w-24">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={URL.createObjectURL(file)}
-                alt=""
-                className={`h-full w-full rounded-lg object-cover ring-2 ${
-                  primaryImage?.type === "new" && primaryImage.value === String(i)
-                    ? "ring-denim"
-                    : "ring-transparent"
-                }`}
-              />
-              <span className="absolute left-1.5 top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-ink/80 px-1 text-[0.65rem] font-bold text-paper">
-                {positionOf("new", String(i))}
-              </span>
-              <button
-                type="button"
-                onClick={() => setPrimaryImage({ type: "new", value: String(i) })}
-                className="absolute inset-x-1 bottom-1 rounded-full bg-white/95 px-2 py-1 text-[0.58rem] font-bold uppercase tracking-wide text-ink shadow-sm"
-              >
-                {primaryImage?.type === "new" && primaryImage.value === String(i) ? "Principale ✓" : "Mettre en 1er"}
-              </button>
-              {(widths[fileKey(file)] ?? 9999) < 1400 && (
-                <span
-                  title={`Photo de ${widths[fileKey(file)]} px de large : trop petite, elle sera floue sur le site (idéal : 1600 px ou plus).`}
-                  className="absolute inset-x-1 top-8 rounded bg-rust px-1 py-0.5 text-center text-[0.55rem] font-bold uppercase leading-tight text-paper"
-                >
-                  Trop petite · floue
+                {photo.kind === "existing" && <input type="hidden" name="existingImages" value={photo.url} />}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={photo.kind === "existing" ? photo.url : photo.preview}
+                  alt=""
+                  draggable={false}
+                  className={`h-full w-full rounded-lg object-cover ring-2 ${
+                    overId === photo.id && dragId !== photo.id
+                      ? "ring-rust"
+                      : i === 0
+                        ? "ring-denim"
+                        : "ring-transparent"
+                  }`}
+                />
+                <span className="absolute left-1.5 top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-ink/80 px-1 text-[0.65rem] font-bold text-paper">
+                  {i + 1}
                 </span>
-              )}
-              <button
-                type="button"
-                onClick={() => removeNew(i)}
-                className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-ink text-xs text-paper"
-                aria-label="Retirer cette photo"
-              >
-                ×
-              </button>
-            </div>
-          ))}
+                {i === 0 && (
+                  <span className="absolute inset-x-1 bottom-1 rounded-full bg-white/95 px-2 py-1 text-center text-[0.58rem] font-bold uppercase tracking-wide text-ink shadow-sm">
+                    Principale
+                  </span>
+                )}
+                {width !== undefined && width < 1400 && (
+                  <span
+                    title={`Photo de ${width} px de large : trop petite, elle sera floue sur le site (idéal : 1600 px ou plus).`}
+                    className="absolute inset-x-1 top-8 rounded bg-rust px-1 py-0.5 text-center text-[0.55rem] font-bold uppercase leading-tight text-paper"
+                  >
+                    Trop petite · floue
+                  </span>
+                )}
+                <div className="absolute inset-x-1 bottom-1 flex justify-between opacity-0 transition-opacity group-hover:opacity-100">
+                  {i > 0 ? (
+                    <button
+                      type="button"
+                      onClick={() => move(i, i - 1)}
+                      aria-label="Décaler vers la gauche"
+                      className="flex h-6 w-6 items-center justify-center rounded-full bg-white/95 text-sm font-bold text-ink shadow"
+                    >
+                      ‹
+                    </button>
+                  ) : (
+                    <span />
+                  )}
+                  {i < photos.length - 1 && (
+                    <button
+                      type="button"
+                      onClick={() => move(i, i + 1)}
+                      aria-label="Décaler vers la droite"
+                      className="flex h-6 w-6 items-center justify-center rounded-full bg-white/95 text-sm font-bold text-ink shadow"
+                    >
+                      ›
+                    </button>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setPhotos((list) => list.filter((p) => p.id !== photo.id))}
+                  className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-ink text-xs text-paper"
+                  aria-label="Retirer cette photo"
+                >
+                  ×
+                </button>
+              </div>
+            );
+          })}
         </div>
 
         <input
@@ -304,23 +320,18 @@ export default function ProductForm({
             const input = e.target;
             const selected = await Promise.all(Array.from(input.files ?? []).map(compressImageForUpload));
             input.value = "";
-            const found = await Promise.all(selected.map(async (f) => [fileKey(f), await imageWidth(f)] as const));
+            const added: NewPhoto[] = selected.map((file) => ({
+              id: `n:${crypto.randomUUID()}`,
+              kind: "new",
+              file,
+              preview: URL.createObjectURL(file),
+            }));
+            setPhotos((list) => [...list, ...added]);
+            const found = await Promise.all(added.map(async (p) => [p.id, await imageWidth(p.file)] as const));
             setWidths((w) => ({ ...w, ...Object.fromEntries(found.filter((e): e is readonly [string, number] => e[1] !== null)) }));
-            setNewFiles((prev) => {
-              return [...prev, ...selected];
-            });
-            if (!primaryImage && selected.length > 0) {
-              setPrimaryImage({ type: "new", value: String(newFiles.length) });
-            }
           }}
           className="mt-3 text-sm text-ink/60"
         />
-        {primaryImage && (
-          <>
-            <input type="hidden" name="primaryImageType" value={primaryImage.type} />
-            <input type="hidden" name="primaryImageValue" value={primaryImage.value} />
-          </>
-        )}
         {/* DataTransfer permet d'attacher la sélection de fichiers courante à
             un <input type="file"> normal, seul type que FormData sait lire. */}
         <input
@@ -331,7 +342,7 @@ export default function ProductForm({
           ref={(el) => {
             if (!el) return;
             const dt = new DataTransfer();
-            newFiles.forEach((f) => dt.items.add(f));
+            newPhotos.forEach((p) => dt.items.add(p.file));
             el.files = dt.files;
           }}
         />

@@ -79,28 +79,30 @@ async function uploadNewImages(formData: FormData): Promise<string[]> {
   return uploadProductImages(files);
 }
 
-function missingPrimaryImage(formData: FormData, existingCount: number): boolean {
-  const newCount = formData
-    .getAll("newImages")
-    .filter((file): file is File => file instanceof File && file.size > 0).length;
-  return existingCount + newCount > 1 && !formData.get("primaryImageType");
-}
-
-function putPrimaryImageFirst(existingImages: string[], newImages: string[], formData: FormData): string[] {
-  const allImages = [...existingImages, ...newImages];
-  const primaryType = formData.get("primaryImageType");
-  const primaryValue = formData.get("primaryImageValue");
-
-  let primaryUrl: string | undefined;
-  if (primaryType === "existing" && typeof primaryValue === "string") {
-    primaryUrl = existingImages.find((url) => url === primaryValue);
-  } else if (primaryType === "new" && typeof primaryValue === "string") {
-    const index = Number.parseInt(primaryValue, 10);
-    if (Number.isInteger(index)) primaryUrl = newImages[index];
+// Ordre final des photos = ordre choisi dans le formulaire (glisser-déposer) :
+// `photoOrder` est un JSON de jetons "e:<url>" (photo déjà enregistrée) ou
+// "n:<index>" (index dans les fichiers envoyés). La première est la photo
+// principale de la boutique. Tout ce qui manque dans la liste est ajouté à
+// la fin plutôt que perdu.
+function orderImages(existingImages: string[], newImages: string[], formData: FormData): string[] {
+  const all = [...existingImages, ...newImages];
+  const raw = formData.get("photoOrder");
+  let tokens: unknown = [];
+  try {
+    tokens = typeof raw === "string" ? JSON.parse(raw) : [];
+  } catch {
+    tokens = [];
   }
 
-  if (!primaryUrl) return allImages;
-  return [primaryUrl, ...allImages.filter((url) => url !== primaryUrl)];
+  const ordered: string[] = [];
+  for (const token of Array.isArray(tokens) ? tokens : []) {
+    if (typeof token !== "string") continue;
+    let url: string | undefined;
+    if (token.startsWith("e:")) url = existingImages.find((u) => u === token.slice(2));
+    else if (token.startsWith("n:")) url = newImages[Number.parseInt(token.slice(2), 10)];
+    if (url && !ordered.includes(url)) ordered.push(url);
+  }
+  return [...ordered, ...all.filter((u) => !ordered.includes(u))];
 }
 
 export async function createProductAction(
@@ -109,10 +111,6 @@ export async function createProductAction(
 ): Promise<ProductFormState> {
   const parsed = parseInput(formData);
   if ("error" in parsed) return parsed;
-  if (missingPrimaryImage(formData, parsed.images.length)) {
-    return { error: "Choisis la vue de face comme photo principale avant d’enregistrer." };
-  }
-
   let newImages: string[];
   try {
     newImages = await uploadNewImages(formData);
@@ -141,7 +139,7 @@ export async function createProductAction(
     ...parsed,
     ...shared,
     collection_id: collectionId,
-    images: putPrimaryImageFirst(parsed.images, newImages, formData),
+    images: orderImages(parsed.images, newImages, formData),
   });
   await logAction("product_created", product.id);
 
@@ -156,10 +154,6 @@ export async function updateProductAction(
 ): Promise<ProductFormState> {
   const parsed = parseInput(formData);
   if ("error" in parsed) return parsed;
-  if (missingPrimaryImage(formData, parsed.images.length)) {
-    return { error: "Choisis la vue de face comme photo principale avant d’enregistrer." };
-  }
-
   let newImages: string[];
   try {
     newImages = await uploadNewImages(formData);
@@ -168,7 +162,7 @@ export async function updateProductAction(
   }
   await dbUpdateProduct(id, {
     ...parsed,
-    images: putPrimaryImageFirst(parsed.images, newImages, formData),
+    images: orderImages(parsed.images, newImages, formData),
   });
   await logAction("product_updated", id);
 
