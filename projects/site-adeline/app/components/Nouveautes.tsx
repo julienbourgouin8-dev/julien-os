@@ -5,12 +5,14 @@ import WriteOnHeading from "@/components/WriteOnHeading";
 import NouveautesSlider from "@/components/NouveautesSlider";
 import type { NouveauteProduct } from "@/components/NouveauteCard";
 
-const PRODUCT_COUNT = 4;
+// Toutes les pièces publiées (plafond de sécurité), plus seulement les 4
+// dernières — retour Julien 2026-09-26.
+const MAX_ITEMS = 24;
 
 export default async function Nouveautes() {
-  // On récupère plus de lignes que d'emplacements : les déclinaisons d'une
-  // même collection ne forment qu'une seule carte (voir lib/collections.ts).
-  const groups = groupByCollection(await getLatestActiveProducts(PRODUCT_COUNT * 3)).slice(0, PRODUCT_COUNT);
+  // Les déclinaisons d'une même collection ne forment qu'une seule carte
+  // (voir lib/collections.ts).
+  const groups = groupByCollection(await getLatestActiveProducts(200)).slice(0, MAX_ITEMS);
   if (groups.length === 0) return null;
 
   const items: NouveauteProduct[] = groups.map(({ product: p, images }) => ({

@@ -339,6 +339,13 @@ export default function VitrineArc() {
   // matche le comportement mobile par défaut avant hydratation, cohérent
   // avec `hidden sm:block` en CSS pour le reste du composant.
   const [isDesktop, setIsDesktop] = useState(false);
+  // Les 5 vidéos du panneau desktop (~3,3 Mo) ne démarrent leur téléchargement
+  // que lorsque la section approche de l'écran. Avant (`.load()` dès le
+  // montage) elles se disputaient la bande passante avec l'image du hero :
+  // Speed Index desktop 5,4 s sur PageSpeed (2026-09-26). Le survol reste
+  // instantané : elles sont prêtes dès que le visiteur défile vers la vitrine.
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const [videosArmed, setVideosArmed] = useState(false);
   useEffect(() => {
     const mql = window.matchMedia("(min-width: 640px)");
     const frame = window.requestAnimationFrame(() => setIsDesktop(mql.matches));
@@ -404,9 +411,32 @@ export default function VitrineArc() {
   // Une fois les cinq éléments desktop réellement montés, `.load()` force
   // leur préchargement tout de suite pour que le hover ne reste pas figé.
   useEffect(() => {
-    if (!isDesktop) return;
+    if (!isDesktop || videosArmed) return;
+    const el = rootRef.current;
+    if (!el) return;
+    // Déclencheurs : la section est à moins de 100 px de l'écran, OU le
+    // visiteur commence à défiler (il se dirige vers la vitrine : on prépare
+    // les vidéos pendant le trajet). Un simple chargement de page sans
+    // défilement — ce que mesure PageSpeed — ne télécharge rien.
+    const arm = () => setVideosArmed(true);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) arm();
+      },
+      { rootMargin: "100px 0px" },
+    );
+    observer.observe(el);
+    window.addEventListener("scroll", arm, { once: true, passive: true });
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", arm);
+    };
+  }, [isDesktop, videosArmed]);
+
+  useEffect(() => {
+    if (!isDesktop || !videosArmed) return;
     videoRefs.current.forEach((video) => video?.load());
-  }, [isDesktop]);
+  }, [isDesktop, videosArmed]);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dragStartX = useRef<number | null>(null);
@@ -503,7 +533,7 @@ export default function VitrineArc() {
   }, [open]);
 
   return (
-    <div className="relative w-full">
+    <div ref={rootRef} className="relative w-full">
       {/* Titre en flux normal, au-dessus de la photo — pas superposé dessus.
           Il était posé sur l'image (façon hero) via `position: absolute` en
           %, mais cette photo n'a pas la même marge que le hero à toutes les
@@ -728,7 +758,7 @@ export default function VitrineArc() {
                   // Les versions 720p sont visuellement suffisantes dans un
                   // panneau de 640 px et pèsent environ trois fois moins :
                   // elles sont prêtes même si l'on descend immédiatement.
-                  src={spot.mobileVideo ?? spot.video}
+                  src={videosArmed ? (spot.mobileVideo ?? spot.video) : undefined}
                   muted
                   loop
                   playsInline
@@ -740,7 +770,7 @@ export default function VitrineArc() {
                   // après le chargement initial de la page coûte quelques Mo
                   // de bande passante desktop (pas mobile), en échange d'une
                   // lecture instantanée au survol au lieu d'une image figée.
-                  preload="auto"
+                  preload={videosArmed ? "auto" : "none"}
                   className="pointer-events-none absolute inset-0 h-full w-full object-contain transition-opacity duration-150"
                   style={{ opacity: open && activeIndex === i ? 1 : 0 }}
                 />
