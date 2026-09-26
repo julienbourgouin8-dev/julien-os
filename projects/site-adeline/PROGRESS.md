@@ -501,8 +501,11 @@ Coolify sur le même VPS Hostinger (Frankfurt) :
    `public/uploads/`), confirmer l'affichage sur le site public, passer une commande test
    (Stripe + décrément de stock), confirmer Sendcloud (étiquette d'expédition) et PostHog
    (événements reçus).
-2. **`www.creadeline16.fr`** en "DNS mismatch" dans Coolify — OVH a une redirection TXT
-   préexistante pour `www`, pas un simple A/CNAME. Pas résolu.
+2. **Résolu le 2026-09-25 — `www.creadeline16.fr`.** L'entrée A OVH pointe désormais vers
+   `179.198.209.59` et le TXT de redirection `3|welcome` a été supprimé. Le certificat Let's
+   Encrypt, déjà émis mais non chargé automatiquement par Traefik, est déclaré dans la
+   configuration TLS dynamique de Coolify. Vérification finale : DNS autoritatif correct,
+   HTTPS valide et réponse HTTP 200 sur `www` ; domaine racine et admin inchangés.
 3. **Décider et restreindre l'accès à `admin.creadeline16.fr`** — actuellement exposée sur
    internet avec pour seule protection le login applicatif (email + mot de passe hashé). Pas de
    Cloudflare Access, pas de VPN, pas de restriction IP. Discuter avec Julien si un niveau de
@@ -2893,3 +2896,21 @@ bref : médiateur de la consommation à souscrire (Adeline), récupération mot 
 filtre admin, export comptable, décision sur le lien "À propos" mort, bouton favoris décoratif,
 `www.creadeline16.fr` DNS mismatch, prix de test 1€ toujours en place, confirmer que
 `charge.refunded` est bien coché côté Stripe Dashboard.
+
+## Session 2026-09-26 — collections, sous-catégories, admin photos, régression perf corrigée
+
+Livré (commits monorepo `33bc3bb` → `1396b16`, extrait vers `creadeline-site` jusqu'à `1396b16`) :
+collections de déclinaisons (une ligne `products` par pièce, regroupées par `collection_id`, champs communs
+synchronisés sauf nom/photos/stock/statut), sous-catégories (`subcategory`, `lib/subcategories.ts`,
+« Pièces cadeaux » supprimée), admin photos (glisser-déposer + numérotation, dédoublonnage, envoi manuel du
+formulaire pour éviter le `form.reset()` de React 19), compression (WebP serveur q92, pré-compression navigateur
+seulement > 3 Mo).
+
+**Régression perf puis correctif (résultat validé par Julien : mobile 93, desktop 100).** Deux causes, toutes
+deux « du téléchargement au chargement qui concurrence le hero » : (1) les 5 vidéos du panneau desktop
+(`VitrineArc.tsx`, ~3,3 Mo, `.load()` au montage) → Speed Index desktop 5,4 s ; désormais armées à l'approche
+de la vitrine ou au premier scroll. (2) Slider Nouveautés passé de 4 à toutes les pièces → Speed Index mobile
+2,2 s → 6,0 s ; désormais photos chargées seulement quand ≥150 px du slider sont visibles (toutes pour la
+diapositive active, la 1re pour les voisines). **Règle : tout ce qui est sous le hero se charge à
+l'intersection, jamais au montage.** Test local fiable = vrai Chrome (chrome-devtools), pas le panneau intégré
+(page « hidden » → `requestAnimationFrame` bloqué).
