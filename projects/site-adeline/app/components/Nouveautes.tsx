@@ -1,5 +1,6 @@
 import { getLatestActiveProducts } from "@/lib/db/products";
 import { getCategoryLabel } from "@/lib/categories";
+import { groupByCollection } from "@/lib/collections";
 import WriteOnHeading from "@/components/WriteOnHeading";
 import NouveautesSlider from "@/components/NouveautesSlider";
 import type { NouveauteProduct } from "@/components/NouveauteCard";
@@ -7,15 +8,17 @@ import type { NouveauteProduct } from "@/components/NouveauteCard";
 const PRODUCT_COUNT = 4;
 
 export default async function Nouveautes() {
-  const products = await getLatestActiveProducts(PRODUCT_COUNT);
-  if (products.length === 0) return null;
+  // On récupère plus de lignes que d'emplacements : les déclinaisons d'une
+  // même collection ne forment qu'une seule carte (voir lib/collections.ts).
+  const groups = groupByCollection(await getLatestActiveProducts(PRODUCT_COUNT * 6)).slice(0, PRODUCT_COUNT);
+  if (groups.length === 0) return null;
 
-  const items: NouveauteProduct[] = products.map((p) => ({
+  const items: NouveauteProduct[] = groups.map(({ product: p, images }) => ({
     href: `/boutique/${p.category}/${p.slug}`,
     category: getCategoryLabel(p.category),
     name: p.name,
     price_cents: p.price_cents,
-    images: p.images,
+    images,
   }));
 
   return (

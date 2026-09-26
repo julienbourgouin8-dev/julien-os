@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCategoryBySlug } from "@/lib/categories";
-import { getProductBySlug } from "@/lib/db/products";
+import { getProductBySlug, getCollectionVariants } from "@/lib/db/products";
 import { getDemoProduct } from "@/lib/demo-products";
 import { CONTACT_EMAIL } from "@/lib/contact";
 import { formatPrice } from "@/components/ProductCard";
 import ProductGallery from "@/components/ProductGallery";
+import VariantPicker from "@/components/VariantPicker";
 import AddToCartButton from "@/components/AddToCartButton";
 import TrackEvent from "@/components/TrackEvent";
 import Header from "@/components/Header";
@@ -62,6 +63,7 @@ export default async function ProductPage({
   // mais sans possibilité de l'ajouter au panier — voir lib/db/products.ts,
   // les requêtes publiques ne filtrent plus du tout sur le stock.
   const soldOut = Boolean(product && product.stock <= 0);
+  const variants = product?.collection_id ? await getCollectionVariants(product.collection_id) : [];
   const name = product?.name ?? demo!.name;
   const description = product?.description ?? demo!.description;
   const price_cents = product?.price_cents ?? demo!.price_cents;
@@ -130,6 +132,8 @@ export default async function ProductPage({
           </div>
           <h1 className="mt-1 font-display text-3xl text-ink">{name}</h1>
           <p className="mt-3 text-xl font-bold text-ink">{formatPrice(price_cents)}</p>
+
+          {product && <VariantPicker variants={variants} currentId={product.id} />}
 
           {!comingSoon && !soldOut && (
             <p className="mt-2 flex items-center gap-2 text-sm font-medium text-teal">

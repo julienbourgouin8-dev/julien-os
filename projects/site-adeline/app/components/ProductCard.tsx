@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import FadeImages from "@/components/FadeImages";
 
 export function formatPrice(cents: number | null): string {
   if (cents === null) return "Sur devis";
@@ -14,9 +15,11 @@ type ProductCardProps = {
   images: string[];
   comingSoon?: boolean;
   soldOut?: boolean;
+  // collection : fondu entre la photo principale de chaque déclinaison
+  fade?: boolean;
 };
 
-export default function ProductCard({ href, category, name, price_cents, images, comingSoon, soldOut }: ProductCardProps) {
+export default function ProductCard({ href, category, name, price_cents, images, comingSoon, soldOut, fade }: ProductCardProps) {
   return (
     <div className="relative">
       {comingSoon && (
@@ -52,7 +55,9 @@ export default function ProductCard({ href, category, name, price_cents, images,
             en plus de celles déjà dans la photo — on ne doit voir QUE la
             photo d'origine, pas une marge ajoutée par le gabarit. */}
         <div className="relative aspect-[16/9] bg-white">
-          {images[0] ? (
+          {fade && images.length > 1 ? (
+            <FadeImages images={images} name={name} soldOut={soldOut} />
+          ) : images[0] ? (
             <Image
               src={images[0]}
               alt={name}

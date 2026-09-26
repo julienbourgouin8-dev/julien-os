@@ -6,11 +6,16 @@ import {
   createProduct as dbCreateProduct,
   updateProduct as dbUpdateProduct,
   deleteProduct as dbDeleteProduct,
+  ensureCollection,
+  attachToCollection,
+  detachFromCollection,
+  getProductById,
   uploadProductImages,
   type ProductInput,
   type ProductStatus,
 } from "@/lib/db/products";
 import { categories } from "@/lib/categories";
+import { isValidSubcategory } from "@/lib/subcategories";
 import { logAction } from "@/lib/audit";
 
 export type ProductFormState = { error?: string } | undefined;
@@ -18,6 +23,8 @@ export type ProductFormState = { error?: string } | undefined;
 function parseInput(formData: FormData): ProductInput | { error: string } {
   const name = formData.get("name");
   const category = formData.get("category");
+  const subcategoryRaw = formData.get("subcategory");
+  const variantLabelRaw = formData.get("variantLabel");
   const description = formData.get("description");
   const priceEuros = formData.get("price");
   const stock = formData.get("stock");
@@ -27,6 +34,14 @@ function parseInput(formData: FormData): ProductInput | { error: string } {
   if (typeof name !== "string" || !name.trim()) return { error: "Le nom est requis." };
   if (typeof category !== "string" || !categories.some((c) => c.slug === category)) {
     return { error: "Catégorie invalide." };
+  }
+  const subcategory = typeof subcategoryRaw === "string" && subcategoryRaw !== "" ? subcategoryRaw : null;
+  if (subcategory !== null && !isValidSubcategory(category, subcategory)) {
+    return { error: "Sous-catégorie invalide pour cette catégorie." };
+  }
+  const variant_label = typeof variantLabelRaw === "string" && variantLabelRaw.trim() ? variantLabelRaw.trim() : null;
+  if (formData.get("inCollection") === "1" && !variant_label) {
+    return { error: "Donne un nom à cette déclinaison (ex. « Bleu marine »)." };
   }
   if (typeof status !== "string" || !["draft", "active", "archived"].includes(status)) {
     return { error: "Statut invalide." };
@@ -50,6 +65,9 @@ function parseInput(formData: FormData): ProductInput | { error: string } {
   return {
     name: name.trim(),
     category,
+    subcategory,
+    collection_id: null,
+    variant_label,
     description: typeof description === "string" ? description.trim() : "",
     price_cents,
     stock: stockNum,
@@ -105,8 +123,29 @@ export async function createProductAction(
   } catch (err) {
     return { error: (err as Error).message };
   }
+  // Création d'une déclinaison depuis « + Ajouter une déclinaison » : le
+  // produit source entre (si besoin) dans une collection, et la nouvelle
+  // pièce y est rattachée en reprenant ses champs communs.
+  let collectionId: string | null = null;
+  let shared: Partial<typeof parsed> = {};
+  const fromId = formData.get("fromProductId");
+  if (typeof fromId === "string" && fromId) {
+    const source = await getProductById(fromId);
+    if (!source) return { error: "Le produit d'origine est introuvable." };
+    collectionId = await ensureCollection(fromId);
+    shared = {
+      name: source.name,
+      category: source.category,
+      subcategory: source.subcategory,
+      description: source.description,
+      price_cents: source.price_cents,
+      weight_grams: source.weight_grams,
+    };
+  }
   const product = await dbCreateProduct({
     ...parsed,
+    ...shared,
+    collection_id: collectionId,
     images: putPrimaryImageFirst(parsed.images, newImages, formData),
   });
   await logAction("product_created", product.id);
@@ -146,4 +185,20 @@ export async function deleteProductAction(id: string): Promise<void> {
   await dbDeleteProduct(id);
   await logAction("product_deleted", id);
   revalidatePath("/products");
+}
+
+export async function attachProductAction(currentId: string, formData: FormData): Promise<void> {
+  const other = formData.get("otherProductId");
+  if (typeof other !== "string" || !other) return;
+  await attachToCollection(other, currentId);
+  await logAction("product_attached_to_collection", other);
+  revalidatePath("/products");
+  redirect(`/products/${currentId}/edit`);
+}
+
+export async function detachProductAction(id: string): Promise<void> {
+  await detachFromCollection(id);
+  await logAction("product_detached_from_collection", id);
+  revalidatePath("/products");
+  redirect(`/products/${id}/edit`);
 }

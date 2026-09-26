@@ -98,6 +98,12 @@ export function ensureSchema(): Promise<void> {
       // l'API Sendcloud (voir lib/shipping.ts) — nullable, les produits déjà
       // créés n'en ont pas encore, à compléter en admin.
       await sql`ALTER TABLE products ADD COLUMN IF NOT EXISTS weight_grams INTEGER`;
+      await sql`ALTER TABLE products ADD COLUMN IF NOT EXISTS subcategory TEXT`;
+      // Collections : plusieurs pièces (une ligne chacune, avec son stock, ses
+      // photos, son URL) regroupées sous un même collection_id — voir
+      // admin/lib/db/products.ts (synchro des champs communs).
+      await sql`ALTER TABLE products ADD COLUMN IF NOT EXISTS collection_id TEXT`;
+      await sql`ALTER TABLE products ADD COLUMN IF NOT EXISTS variant_label TEXT`;
     })();
   }
   return schemaReady;

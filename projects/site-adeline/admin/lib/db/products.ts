@@ -9,6 +9,9 @@ export type Product = {
   slug: string;
   name: string;
   category: string;
+  subcategory: string | null;
+  collection_id: string | null;
+  variant_label: string | null;
   description: string;
   price_cents: number | null;
   stock: number;
@@ -22,6 +25,9 @@ export type Product = {
 export type ProductInput = {
   name: string;
   category: string;
+  subcategory: string | null;
+  collection_id: string | null;
+  variant_label: string | null;
   description: string;
   price_cents: number | null;
   stock: number;
@@ -78,8 +84,8 @@ export async function getProductById(id: string): Promise<Product | null> {
 
 // Génère un slug unique en suffixant -2, -3... si le nom existe déjà.
 // `excludeId` permet d'éditer un produit sans se bloquer sur son propre slug.
-async function uniqueSlug(name: string, excludeId?: string): Promise<string> {
-  const base = slugify(name);
+async function uniqueSlug(name: string, excludeId?: string, variantLabel?: string | null): Promise<string> {
+  const base = slugify(variantLabel ? `${name} ${variantLabel}` : name);
   let slug = base;
   let n = 2;
   for (;;) {
@@ -95,26 +101,102 @@ async function uniqueSlug(name: string, excludeId?: string): Promise<string> {
 export async function createProduct(input: ProductInput): Promise<Product> {
   await ensureSchema();
   const id = crypto.randomUUID();
-  const slug = await uniqueSlug(input.name);
+  const slug = await uniqueSlug(input.name, undefined, input.variant_label);
   const now = new Date().toISOString();
   await sql`
-    INSERT INTO products (id, slug, name, category, description, price_cents, stock, images, status, weight_grams, created_at, updated_at)
-    VALUES (${id}, ${slug}, ${input.name}, ${input.category}, ${input.description}, ${input.price_cents}, ${input.stock}, ${JSON.stringify(input.images)}, ${input.status}, ${input.weight_grams}, ${now}, ${now})
+    INSERT INTO products (id, slug, name, category, subcategory, collection_id, variant_label, description, price_cents, stock, images, status, weight_grams, created_at, updated_at)
+    VALUES (${id}, ${slug}, ${input.name}, ${input.category}, ${input.subcategory}, ${input.collection_id}, ${input.variant_label}, ${input.description}, ${input.price_cents}, ${input.stock}, ${JSON.stringify(input.images)}, ${input.status}, ${input.weight_grams}, ${now}, ${now})
   `;
   return (await getProductById(id))!;
 }
 
 export async function updateProduct(id: string, input: ProductInput): Promise<Product> {
   await ensureSchema();
-  const slug = await uniqueSlug(input.name, id);
+  const slug = await uniqueSlug(input.name, id, input.variant_label);
   const now = new Date().toISOString();
   await sql`
-    UPDATE products SET slug = ${slug}, name = ${input.name}, category = ${input.category}, description = ${input.description},
+    UPDATE products SET slug = ${slug}, name = ${input.name}, category = ${input.category}, subcategory = ${input.subcategory}, variant_label = ${input.variant_label}, description = ${input.description},
       price_cents = ${input.price_cents}, stock = ${input.stock}, images = ${JSON.stringify(input.images)}, status = ${input.status},
       weight_grams = ${input.weight_grams}, updated_at = ${now}
     WHERE id = ${id}
   `;
-  return (await getProductById(id))!;
+  const updated = (await getProductById(id))!;
+  if (updated.collection_id) await syncCollectionSharedFields(updated);
+  return updated;
+}
+
+// ─── Collections ─────────────────────────────────────────────────────────
+// Une collection = plusieurs lignes `products` (une par déclinaison : son
+// stock, ses photos, son URL, son libellé) qui partagent un collection_id.
+// Nom, catégorie, sous-catégorie, description, prix et poids sont COMMUNS :
+// modifier l'un des membres recopie ces champs sur les autres. Le statut
+// (brouillon/publié) reste propre à chaque déclinaison.
+export async function getCollectionMembers(collectionId: string): Promise<Product[]> {
+  await ensureSchema();
+  const rows = (await sql`
+    SELECT * FROM products WHERE collection_id = ${collectionId} ORDER BY created_at ASC
+  `) as Product[];
+  return rows.map(fromRow);
+}
+
+async function syncCollectionSharedFields(source: Product): Promise<void> {
+  const members = await getCollectionMembers(source.collection_id!);
+  const now = new Date().toISOString();
+  for (const m of members) {
+    const slug = await uniqueSlug(source.name, m.id, m.variant_label);
+    await sql`
+      UPDATE products SET slug = ${slug}, name = ${source.name}, category = ${source.category},
+        subcategory = ${source.subcategory}, description = ${source.description},
+        price_cents = ${source.price_cents}, weight_grams = ${source.weight_grams}, updated_at = ${now}
+      WHERE id = ${m.id}
+    `;
+  }
+}
+
+// Renvoie l'identifiant de collection du produit, en le créant (et en
+// l'attribuant au produit) s'il n'en avait pas encore.
+export async function ensureCollection(productId: string): Promise<string> {
+  const product = await getProductById(productId);
+  if (!product) throw new Error("Produit introuvable.");
+  if (product.collection_id) return product.collection_id;
+  const collectionId = crypto.randomUUID();
+  const label = product.variant_label ?? product.name;
+  await sql`UPDATE products SET collection_id = ${collectionId}, variant_label = ${label} WHERE id = ${productId}`;
+  await syncCollectionSharedFields({ ...product, collection_id: collectionId, variant_label: label });
+  return collectionId;
+}
+
+// Rattache un produit existant à la collection de `targetId` : il adopte les
+// champs communs de la collection ; son ancien nom devient son libellé.
+export async function attachToCollection(productId: string, targetId: string): Promise<void> {
+  if (productId === targetId) return;
+  const collectionId = await ensureCollection(targetId);
+  const product = await getProductById(productId);
+  if (!product) throw new Error("Produit introuvable.");
+  await sql`
+    UPDATE products SET collection_id = ${collectionId}, variant_label = ${product.variant_label ?? product.name}
+    WHERE id = ${productId}
+  `;
+  const target = (await getProductById(targetId))!;
+  await syncCollectionSharedFields(target);
+}
+
+export async function detachFromCollection(productId: string): Promise<void> {
+  const product = await getProductById(productId);
+  if (!product) return;
+  const slug = await uniqueSlug(product.name, productId, null);
+  await sql`
+    UPDATE products SET collection_id = NULL, variant_label = NULL, slug = ${slug}, updated_at = ${new Date().toISOString()}
+    WHERE id = ${productId}
+  `;
+}
+
+export async function getAttachableProducts(excludeId: string, collectionId: string | null): Promise<Product[]> {
+  await ensureSchema();
+  const rows = (await sql`
+    SELECT * FROM products WHERE id != ${excludeId} AND (collection_id IS NULL ${collectionId ? sql`OR collection_id != ${collectionId}` : sql``}) ORDER BY name ASC
+  `) as Product[];
+  return rows.map(fromRow);
 }
 
 export async function deleteProduct(id: string): Promise<void> {

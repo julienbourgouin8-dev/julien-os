@@ -8,6 +8,9 @@ export type Product = {
   slug: string;
   name: string;
   category: string;
+  subcategory: string | null;
+  collection_id: string | null;
+  variant_label: string | null;
   description: string;
   price_cents: number | null;
   stock: number;
@@ -72,4 +75,15 @@ export async function getProductById(id: string): Promise<Product | null> {
     SELECT * FROM products WHERE id = ${id} AND status = 'active'
   `) as Product[];
   return rows[0] ? fromRow(rows[0]) : null;
+}
+
+// Déclinaisons publiées d'une collection (voir admin/lib/db/products.ts) :
+// la fiche produit affiche leurs miniatures et permet de passer de l'une à
+// l'autre. Ordre = ordre de création.
+export async function getCollectionVariants(collectionId: string): Promise<Product[]> {
+  await ensureSchema();
+  const rows = (await sql`
+    SELECT * FROM products WHERE collection_id = ${collectionId} AND status = 'active' ORDER BY created_at ASC
+  `) as Product[];
+  return rows.map(fromRow);
 }

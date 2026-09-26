@@ -76,7 +76,10 @@ export default async function AdminProductsPage() {
                         ) : (
                           <div className="h-10 w-10 rounded-xl bg-ink/5" />
                         )}
-                        <span className="font-medium text-ink">{p.name}</span>
+                        <span className="font-medium text-ink">
+                          {p.name}
+                          {p.variant_label && <span className="ml-2 rounded-full bg-denim/10 px-2 py-0.5 text-[0.65rem] font-semibold text-denim">{p.variant_label}</span>}
+                        </span>
                       </div>
                     </td>
                     <td className="px-4 py-3.5 text-ink/60">{getCategoryLabel(p.category)}</td>

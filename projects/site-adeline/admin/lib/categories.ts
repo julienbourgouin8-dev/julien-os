@@ -13,7 +13,6 @@ export const categories: Category[] = [
   { slug: "toilette", label: "Toilette" },
   { slug: "accessoires", label: "Accessoires" },
   { slug: "repas", label: "Repas" },
-  { slug: "pieces-cadeaux", label: "Pièces cadeaux" },
 ];
 
 export function getCategoryBySlug(slug: string): Category | undefined {

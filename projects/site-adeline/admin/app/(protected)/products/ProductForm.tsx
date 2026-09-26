@@ -3,18 +3,49 @@
 import { useActionState, useState } from "react";
 import Image from "next/image";
 import { categories } from "@/lib/categories";
+import { subcategoriesByCategory } from "@/lib/subcategories";
 import type { Product } from "@/lib/db/products";
+import { compressImageForUpload } from "@/lib/compress-image-client";
 import type { ProductFormState } from "./actions";
 
 type Action = (state: ProductFormState, formData: FormData) => Promise<ProductFormState>;
 
-export default function ProductForm({ product, action }: { product?: Product; action: Action }) {
+export default function ProductForm({
+  product,
+  source,
+  action,
+}: {
+  product?: Product;
+  // Produit d'origine quand on crée une déclinaison : ses champs communs
+  // préremplissent le formulaire (et sont recopiés côté serveur).
+  source?: Product;
+  action: Action;
+}) {
+  const shared = product ?? source;
+  const inCollection = Boolean(product?.collection_id || source);
   const [state, formAction, pending] = useActionState(action, undefined);
   const [existingImages, setExistingImages] = useState<string[]>(product?.images ?? []);
   const [newFiles, setNewFiles] = useState<File[]>([]);
   const [primaryImage, setPrimaryImage] = useState<{ type: "existing" | "new"; value: string } | null>(
     product?.images[0] ? { type: "existing", value: product.images[0] } : null,
   );
+
+  const [category, setCategory] = useState(shared?.category ?? categories[0].slug);
+  const subcategoryOptions = subcategoriesByCategory[category] ?? [];
+
+  // Position finale de chaque photo sur la boutique : la principale est en 1,
+  // les autres suivent dans l'ordre d'ajout (2, 3, 4… sans limite).
+  const isPrimary = (type: "existing" | "new", value: string) =>
+    primaryImage?.type === type && primaryImage.value === value;
+  const positionOf = (type: "existing" | "new", value: string) => {
+    if (isPrimary(type, value)) return 1;
+    const order = [
+      ...existingImages.map((u) => ({ type: "existing" as const, value: u })),
+      ...newFiles.map((_, i) => ({ type: "new" as const, value: String(i) })),
+    ].filter((p) => !isPrimary(p.type, p.value));
+    const index = order.findIndex((p) => p.type === type && p.value === value);
+    return index + (primaryImage ? 2 : 1);
+  };
 
   const removeExisting = (url: string) => {
     setExistingImages((imgs) => imgs.filter((u) => u !== url));
@@ -44,10 +75,34 @@ export default function ProductForm({ product, action }: { product?: Product; ac
           name="name"
           type="text"
           required
-          defaultValue={product?.name}
+          defaultValue={shared?.name}
           className="mt-1.5 w-full rounded-xl bg-ink/[0.04] px-4 py-3 text-sm text-ink outline-none ring-1 ring-transparent transition-all focus:bg-white focus:ring-denim"
         />
       </div>
+
+      {inCollection && (
+        <div className="rounded-xl border border-denim/25 bg-denim/[0.05] p-4">
+          {source && <input type="hidden" name="fromProductId" value={source.id} />}
+          <input type="hidden" name="inCollection" value="1" />
+          <label htmlFor="variantLabel" className="text-xs font-semibold uppercase tracking-[0.1em] text-denim">
+            Nom de cette déclinaison
+          </label>
+          <input
+            id="variantLabel"
+            name="variantLabel"
+            type="text"
+            required
+            placeholder="ex. Bleu marine, Rose poudré, Fleurs…"
+            defaultValue={product?.variant_label ?? ""}
+            className="mt-1.5 w-full rounded-xl bg-white px-4 py-3 text-sm text-ink outline-none ring-1 ring-ink/10 transition-all focus:ring-denim"
+          />
+          <p className="mt-2 text-xs leading-relaxed text-ink/55">
+            C&apos;est le nom affiché sous la fiche produit, à côté de sa miniature. Le nom, la catégorie, la
+            description, le prix et le poids sont communs à toute la collection ; les photos, le stock et le
+            statut sont propres à cette déclinaison.
+          </p>
+        </div>
+      )}
 
       <div>
         <label htmlFor="category" className="text-xs font-semibold uppercase tracking-[0.1em] text-ink/45">
@@ -57,7 +112,8 @@ export default function ProductForm({ product, action }: { product?: Product; ac
           id="category"
           name="category"
           required
-          defaultValue={product?.category ?? categories[0].slug}
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
           className="mt-1.5 w-full rounded-xl bg-ink/[0.04] px-4 py-3 text-sm text-ink outline-none ring-1 ring-transparent transition-all focus:bg-white focus:ring-denim"
         >
           {categories.map((c) => (
@@ -68,6 +124,28 @@ export default function ProductForm({ product, action }: { product?: Product; ac
         </select>
       </div>
 
+      {subcategoryOptions.length > 0 && (
+        <div>
+          <label htmlFor="subcategory" className="text-xs font-semibold uppercase tracking-[0.1em] text-ink/45">
+            Sous-catégorie
+          </label>
+          <select
+            id="subcategory"
+            name="subcategory"
+            key={category}
+            defaultValue={category === shared?.category ? (shared?.subcategory ?? "") : ""}
+            className="mt-1.5 w-full rounded-xl bg-ink/[0.04] px-4 py-3 text-sm text-ink outline-none ring-1 ring-transparent transition-all focus:bg-white focus:ring-denim"
+          >
+            <option value="">Aucune</option>
+            {subcategoryOptions.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       <div>
         <label htmlFor="description" className="text-xs font-semibold uppercase tracking-[0.1em] text-ink/45">
           Description
@@ -76,7 +154,7 @@ export default function ProductForm({ product, action }: { product?: Product; ac
           id="description"
           name="description"
           rows={4}
-          defaultValue={product?.description}
+          defaultValue={shared?.description}
           className="mt-1.5 w-full resize-none rounded-xl bg-ink/[0.04] px-4 py-3 text-sm text-ink outline-none ring-1 ring-transparent transition-all focus:bg-white focus:ring-denim"
         />
       </div>
@@ -91,7 +169,7 @@ export default function ProductForm({ product, action }: { product?: Product; ac
             name="price"
             type="text"
             inputMode="decimal"
-            defaultValue={product?.price_cents != null ? (product.price_cents / 100).toFixed(2) : ""}
+            defaultValue={shared?.price_cents != null ? (shared.price_cents / 100).toFixed(2) : ""}
             placeholder="ex. 45.00"
             className="mt-1.5 w-full rounded-xl bg-ink/[0.04] px-4 py-3 text-sm text-ink outline-none ring-1 ring-transparent transition-all focus:bg-white focus:ring-denim"
           />
@@ -124,7 +202,7 @@ export default function ProductForm({ product, action }: { product?: Product; ac
           type="number"
           min={0}
           step={1}
-          defaultValue={product?.weight_grams ?? ""}
+          defaultValue={shared?.weight_grams ?? ""}
           placeholder="ex. 250"
           className="mt-1.5 w-full rounded-xl bg-ink/[0.04] px-4 py-3 text-sm text-ink outline-none ring-1 ring-transparent transition-all focus:bg-white focus:ring-denim"
         />
@@ -165,6 +243,9 @@ export default function ProductForm({ product, action }: { product?: Product; ac
                     : "ring-transparent"
                 }`}
               />
+              <span className="absolute left-1.5 top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-ink/80 px-1 text-[0.65rem] font-bold text-paper">
+                {positionOf("existing", url)}
+              </span>
               <button
                 type="button"
                 onClick={() => setPrimaryImage({ type: "existing", value: url })}
@@ -194,6 +275,9 @@ export default function ProductForm({ product, action }: { product?: Product; ac
                     : "ring-transparent"
                 }`}
               />
+              <span className="absolute left-1.5 top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-ink/80 px-1 text-[0.65rem] font-bold text-paper">
+                {positionOf("new", String(i))}
+              </span>
               <button
                 type="button"
                 onClick={() => setPrimaryImage({ type: "new", value: String(i) })}
@@ -217,8 +301,10 @@ export default function ProductForm({ product, action }: { product?: Product; ac
           type="file"
           accept="image/*"
           multiple
-          onChange={(e) => {
-            const selected = Array.from(e.target.files ?? []);
+          onChange={async (e) => {
+            const input = e.target;
+            const selected = await Promise.all(Array.from(input.files ?? []).map(compressImageForUpload));
+            input.value = "";
             setNewFiles((prev) => {
               if (!primaryImage && selected.length > 0) {
                 setPrimaryImage({ type: "new", value: String(prev.length) });

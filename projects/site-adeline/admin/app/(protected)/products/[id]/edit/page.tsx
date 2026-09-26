@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import ProductForm from "../../ProductForm";
 import { updateProductAction } from "../../actions";
 import { getProductById } from "@/lib/db/products";
+import CollectionPanel from "../../CollectionPanel";
 
 export default async function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -12,7 +13,8 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
     <div>
       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">Catalogue</p>
       <h1 className="mt-1 font-display text-3xl text-ink">Modifier {product.name}</h1>
-      <div className="mt-8">
+      <div className="mt-8 space-y-6">
+        <CollectionPanel product={product} />
         <ProductForm product={product} action={updateProductAction.bind(null, id)} />
       </div>
     </div>

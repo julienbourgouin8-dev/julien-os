@@ -9,6 +9,7 @@ import { getCategoryBySlug } from "@/lib/categories";
 import { getActiveProductsByCategory, type Product } from "@/lib/db/products";
 import { demoProductsByCategory } from "@/lib/demo-products";
 import { subcategoriesByCategory } from "@/lib/subcategories";
+import { groupByCollection } from "@/lib/collections";
 
 // Sans ceci, la page héritait du title/description génériques du layout
 // racine — identiques sur tout le site, donc Google ne pouvait pas
@@ -46,6 +47,7 @@ export default async function CategoryPage({
   // le gabarit "Bientôt disponible" plutôt qu'un rayon vide — voir
   // lib/demo-products.ts. Le filtre prix ne s'applique qu'aux vraies pièces.
   let demoProducts = products.length === 0 ? (demoProductsByCategory[category] ?? []) : [];
+  if (subcategory) products = products.filter((p) => p.subcategory === subcategory);
   if (subcategory) demoProducts = demoProducts.filter((p) => p.subcategory === subcategory);
 
   const min = minPrice ? Number(minPrice) * 100 : undefined;
@@ -195,15 +197,16 @@ export default async function CategoryPage({
                  gap-x-10 par défaut inchangé en dessous de xl, où il n'y a
                  qu'une seule colonne visible de toute façon. */
               <div className="grid justify-center grid-cols-[repeat(auto-fit,minmax(min(390px,100%),420px))] gap-x-10 gap-y-16 xl:grid-cols-[repeat(2,420px)] xl:gap-x-24">
-                {products.map((p) => (
+                {groupByCollection(products).map(({ product: p, images, soldOut, variants }) => (
                   <ProductCard
                     key={p.id}
                     href={`/boutique/${category}/${p.slug}`}
                     category={cat.label}
                     name={p.name}
                     price_cents={p.price_cents}
-                    images={p.images}
-                    soldOut={p.stock <= 0}
+                    images={images}
+                    soldOut={soldOut}
+                    fade={variants.length > 1}
                   />
                 ))}
                 {demoProducts.map((p) => (
