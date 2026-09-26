@@ -63,7 +63,7 @@ export default function ProductCard({ href, category, name, price_cents, images,
               alt={name}
               fill
               sizes="(min-width: 1280px) 420px, (min-width: 768px) calc((100vw - 344px) / 2), 100vw"
-              quality={82}
+              quality={90}
               unoptimized={images[0].startsWith("/uploads/")}
               className={`object-contain ${soldOut ? "opacity-50" : ""}`}
             />

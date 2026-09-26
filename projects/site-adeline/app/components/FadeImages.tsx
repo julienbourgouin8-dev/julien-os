@@ -24,7 +24,7 @@ export default function FadeImages({ images, name, soldOut }: { images: string[]
           alt={i === 0 ? name : `${name} — déclinaison ${i + 1}`}
           fill
           sizes="(min-width: 1280px) 420px, (min-width: 768px) calc((100vw - 344px) / 2), 100vw"
-          quality={82}
+          quality={90}
           className={`object-contain transition-opacity duration-700 ${i === active ? "opacity-100" : "opacity-0"}`}
         />
       ))}

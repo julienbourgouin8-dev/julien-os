@@ -15,7 +15,7 @@ export default async function CollectionPanel({ product }: { product: Product })
     <section className="max-w-xl rounded-2xl border border-ink/[0.05] bg-[#fffdf8] p-6 shadow-[0_1px_2px_rgba(36,27,21,0.05),0_10px_28px_rgba(36,27,21,0.07)]">
       <p className="text-xs font-semibold uppercase tracking-[0.1em] text-ink/45">Collection</p>
       <p className="mt-1 text-xs leading-relaxed text-ink/55">
-        Plusieurs pièces identiques (même nom, même prix) dans des tissus ou coloris différents : elles
+        Plusieurs pièces identiques (même prix, même description) dans des tissus ou coloris différents : elles
         n&apos;apparaissent qu&apos;une fois dans la boutique, et les clients passent de l&apos;une à l&apos;autre
         sur la fiche produit.
       </p>
@@ -36,7 +36,7 @@ export default async function CollectionPanel({ product }: { product: Product })
                   <div className="h-full w-full bg-ink/5" />
                 )}
               </div>
-              <p className="mt-1.5 truncate text-xs font-semibold text-ink">{m.variant_label ?? "Pièce actuelle"}</p>
+              <p className="mt-1.5 truncate text-xs font-semibold text-ink">{m.name}</p>
               <p className="text-[0.65rem] text-ink/45">
                 {m.status === "active" ? "Publié" : m.status === "draft" ? "Brouillon" : "Archivé"} · stock {m.stock}
               </p>
@@ -67,7 +67,7 @@ export default async function CollectionPanel({ product }: { product: Product })
             </option>
             {attachable.map((p) => (
               <option key={p.id} value={p.id}>
-                {p.variant_label ? `${p.name} — ${p.variant_label}` : p.name}
+                {p.name}
               </option>
             ))}
           </select>

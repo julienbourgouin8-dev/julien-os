@@ -4,8 +4,11 @@
 // (un PNG "studio" sort à ~6 Mo ; 4 d'un coup dépassaient la limite de 20 Mo
 // des server actions). Pas de recadrage ici : la détection du sujet côté
 // serveur a besoin de l'image entière.
-const MAX_SIDE = 2400;
-const SKIP_UNDER_BYTES = 800 * 1024;
+// Seuils volontairement hauts : chaque recompression coûte de la netteté
+// (client JPEG → serveur WebP → affichage AVIF). On ne touche qu'aux fichiers
+// vraiment lourds, à qualité quasi maximale.
+const MAX_SIDE = 3200;
+const SKIP_UNDER_BYTES = 3 * 1024 * 1024;
 
 export async function compressImageForUpload(file: File): Promise<File> {
   try {
@@ -27,7 +30,7 @@ export async function compressImageForUpload(file: File): Promise<File> {
     ctx.drawImage(bitmap, 0, 0, width, height);
     bitmap.close();
 
-    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.9));
+    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.95));
     if (!blob || blob.size >= file.size) return file;
 
     return new File([blob], file.name.replace(/\.[^.]+$/, "") + ".jpg", {
@@ -36,5 +39,18 @@ export async function compressImageForUpload(file: File): Promise<File> {
     });
   } catch {
     return file;
+  }
+}
+
+// Largeur réelle (px) d'une photo, pour prévenir quand elle est trop petite
+// pour un rendu net (le site affiche des photos de 1600 px de large).
+export async function imageWidth(file: File): Promise<number | null> {
+  try {
+    const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+    const width = bitmap.width;
+    bitmap.close();
+    return width;
+  } catch {
+    return null;
   }
 }

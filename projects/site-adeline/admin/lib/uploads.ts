@@ -137,7 +137,7 @@ async function normalizeProductFrame(buffer: Buffer): Promise<Buffer> {
   if (!width || !height || width / height < 1.55 || width / height > 2.05) {
     return oriented
       .resize({ width: PRODUCT_FRAME_WIDTH, height: PRODUCT_FRAME_HEIGHT, fit: "inside", withoutEnlargement: true })
-      .webp({ quality: 82, effort: 4 })
+      .webp({ quality: 92, effort: 5, smartSubsample: true })
       .toBuffer();
   }
 
@@ -145,7 +145,7 @@ async function normalizeProductFrame(buffer: Buffer): Promise<Buffer> {
   if (!box) {
     return oriented
       .resize(PRODUCT_FRAME_WIDTH, PRODUCT_FRAME_HEIGHT, { fit: "fill" })
-      .webp({ quality: 82, effort: 4 })
+      .webp({ quality: 92, effort: 5, smartSubsample: true })
       .toBuffer();
   }
 
@@ -162,7 +162,7 @@ async function normalizeProductFrame(buffer: Buffer): Promise<Buffer> {
   return oriented
     .extract({ left, top, width: Math.min(cropWidth, width), height: Math.min(cropHeight, height) })
     .resize(PRODUCT_FRAME_WIDTH, PRODUCT_FRAME_HEIGHT, { fit: "fill" })
-    .webp({ quality: 82, effort: 4 })
+    .webp({ quality: 92, effort: 5, smartSubsample: true })
     .toBuffer();
 }
 

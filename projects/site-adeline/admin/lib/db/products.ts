@@ -128,9 +128,10 @@ export async function updateProduct(id: string, input: ProductInput): Promise<Pr
 // ─── Collections ─────────────────────────────────────────────────────────
 // Une collection = plusieurs lignes `products` (une par déclinaison : son
 // stock, ses photos, son URL, son libellé) qui partagent un collection_id.
-// Nom, catégorie, sous-catégorie, description, prix et poids sont COMMUNS :
+// Catégorie, sous-catégorie, description, prix et poids sont COMMUNS :
 // modifier l'un des membres recopie ces champs sur les autres. Le statut
-// (brouillon/publié) reste propre à chaque déclinaison.
+// (brouillon/publié) et le nom (affiché sous « Modèles ») restent propres à
+// chaque déclinaison.
 export async function getCollectionMembers(collectionId: string): Promise<Product[]> {
   await ensureSchema();
   const rows = (await sql`
@@ -143,9 +144,8 @@ async function syncCollectionSharedFields(source: Product): Promise<void> {
   const members = await getCollectionMembers(source.collection_id!);
   const now = new Date().toISOString();
   for (const m of members) {
-    const slug = await uniqueSlug(source.name, m.id, m.variant_label);
     await sql`
-      UPDATE products SET slug = ${slug}, name = ${source.name}, category = ${source.category},
+      UPDATE products SET category = ${source.category},
         subcategory = ${source.subcategory}, description = ${source.description},
         price_cents = ${source.price_cents}, weight_grams = ${source.weight_grams}, updated_at = ${now}
       WHERE id = ${m.id}
@@ -160,9 +160,8 @@ export async function ensureCollection(productId: string): Promise<string> {
   if (!product) throw new Error("Produit introuvable.");
   if (product.collection_id) return product.collection_id;
   const collectionId = crypto.randomUUID();
-  const label = product.variant_label ?? product.name;
-  await sql`UPDATE products SET collection_id = ${collectionId}, variant_label = ${label} WHERE id = ${productId}`;
-  await syncCollectionSharedFields({ ...product, collection_id: collectionId, variant_label: label });
+  await sql`UPDATE products SET collection_id = ${collectionId} WHERE id = ${productId}`;
+  await syncCollectionSharedFields({ ...product, collection_id: collectionId });
   return collectionId;
 }
 
@@ -174,8 +173,7 @@ export async function attachToCollection(productId: string, targetId: string): P
   const product = await getProductById(productId);
   if (!product) throw new Error("Produit introuvable.");
   await sql`
-    UPDATE products SET collection_id = ${collectionId}, variant_label = ${product.variant_label ?? product.name}
-    WHERE id = ${productId}
+    UPDATE products SET collection_id = ${collectionId} WHERE id = ${productId}
   `;
   const target = (await getProductById(targetId))!;
   await syncCollectionSharedFields(target);
@@ -184,9 +182,8 @@ export async function attachToCollection(productId: string, targetId: string): P
 export async function detachFromCollection(productId: string): Promise<void> {
   const product = await getProductById(productId);
   if (!product) return;
-  const slug = await uniqueSlug(product.name, productId, null);
   await sql`
-    UPDATE products SET collection_id = NULL, variant_label = NULL, slug = ${slug}, updated_at = ${new Date().toISOString()}
+    UPDATE products SET collection_id = NULL, variant_label = NULL, updated_at = ${new Date().toISOString()}
     WHERE id = ${productId}
   `;
 }

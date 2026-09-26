@@ -5,7 +5,7 @@ import Image from "next/image";
 import { categories } from "@/lib/categories";
 import { subcategoriesByCategory } from "@/lib/subcategories";
 import type { Product } from "@/lib/db/products";
-import { compressImageForUpload } from "@/lib/compress-image-client";
+import { compressImageForUpload, imageWidth } from "@/lib/compress-image-client";
 import type { ProductFormState } from "./actions";
 
 type Action = (state: ProductFormState, formData: FormData) => Promise<ProductFormState>;
@@ -22,10 +22,12 @@ export default function ProductForm({
   action: Action;
 }) {
   const shared = product ?? source;
-  const inCollection = Boolean(product?.collection_id || source);
   const [state, formAction, pending] = useActionState(action, undefined);
   const [existingImages, setExistingImages] = useState<string[]>(product?.images ?? []);
   const [newFiles, setNewFiles] = useState<File[]>([]);
+  // largeur réelle des nouvelles photos (px), pour signaler celles trop petites
+  const [widths, setWidths] = useState<Record<string, number>>({});
+  const fileKey = (f: File) => `${f.name}-${f.lastModified}-${f.size}`;
   const [primaryImage, setPrimaryImage] = useState<{ type: "existing" | "new"; value: string } | null>(
     product?.images[0] ? { type: "existing", value: product.images[0] } : null,
   );
@@ -80,29 +82,7 @@ export default function ProductForm({
         />
       </div>
 
-      {inCollection && (
-        <div className="rounded-xl border border-denim/25 bg-denim/[0.05] p-4">
-          {source && <input type="hidden" name="fromProductId" value={source.id} />}
-          <input type="hidden" name="inCollection" value="1" />
-          <label htmlFor="variantLabel" className="text-xs font-semibold uppercase tracking-[0.1em] text-denim">
-            Nom de cette déclinaison
-          </label>
-          <input
-            id="variantLabel"
-            name="variantLabel"
-            type="text"
-            required
-            placeholder="ex. Bleu marine, Rose poudré, Fleurs…"
-            defaultValue={product?.variant_label ?? ""}
-            className="mt-1.5 w-full rounded-xl bg-white px-4 py-3 text-sm text-ink outline-none ring-1 ring-ink/10 transition-all focus:ring-denim"
-          />
-          <p className="mt-2 text-xs leading-relaxed text-ink/55">
-            C&apos;est le nom affiché sous la fiche produit, à côté de sa miniature. Le nom, la catégorie, la
-            description, le prix et le poids sont communs à toute la collection ; les photos, le stock et le
-            statut sont propres à cette déclinaison.
-          </p>
-        </div>
-      )}
+      {source && <input type="hidden" name="fromProductId" value={source.id} />}
 
       <div>
         <label htmlFor="category" className="text-xs font-semibold uppercase tracking-[0.1em] text-ink/45">
@@ -285,6 +265,14 @@ export default function ProductForm({
               >
                 {primaryImage?.type === "new" && primaryImage.value === String(i) ? "Principale ✓" : "Mettre en 1er"}
               </button>
+              {(widths[fileKey(file)] ?? 9999) < 1400 && (
+                <span
+                  title={`Photo de ${widths[fileKey(file)]} px de large : trop petite, elle sera floue sur le site (idéal : 1600 px ou plus).`}
+                  className="absolute inset-x-1 top-8 rounded bg-rust px-1 py-0.5 text-center text-[0.55rem] font-bold uppercase leading-tight text-paper"
+                >
+                  Trop petite · floue
+                </span>
+              )}
               <button
                 type="button"
                 onClick={() => removeNew(i)}
@@ -305,6 +293,8 @@ export default function ProductForm({
             const input = e.target;
             const selected = await Promise.all(Array.from(input.files ?? []).map(compressImageForUpload));
             input.value = "";
+            const found = await Promise.all(selected.map(async (f) => [fileKey(f), await imageWidth(f)] as const));
+            setWidths((w) => ({ ...w, ...Object.fromEntries(found.filter((e): e is readonly [string, number] => e[1] !== null)) }));
             setNewFiles((prev) => {
               if (!primaryImage && selected.length > 0) {
                 setPrimaryImage({ type: "new", value: String(prev.length) });

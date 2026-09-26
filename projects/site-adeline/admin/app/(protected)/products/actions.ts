@@ -24,7 +24,6 @@ function parseInput(formData: FormData): ProductInput | { error: string } {
   const name = formData.get("name");
   const category = formData.get("category");
   const subcategoryRaw = formData.get("subcategory");
-  const variantLabelRaw = formData.get("variantLabel");
   const description = formData.get("description");
   const priceEuros = formData.get("price");
   const stock = formData.get("stock");
@@ -38,10 +37,6 @@ function parseInput(formData: FormData): ProductInput | { error: string } {
   const subcategory = typeof subcategoryRaw === "string" && subcategoryRaw !== "" ? subcategoryRaw : null;
   if (subcategory !== null && !isValidSubcategory(category, subcategory)) {
     return { error: "Sous-catégorie invalide pour cette catégorie." };
-  }
-  const variant_label = typeof variantLabelRaw === "string" && variantLabelRaw.trim() ? variantLabelRaw.trim() : null;
-  if (formData.get("inCollection") === "1" && !variant_label) {
-    return { error: "Donne un nom à cette déclinaison (ex. « Bleu marine »)." };
   }
   if (typeof status !== "string" || !["draft", "active", "archived"].includes(status)) {
     return { error: "Statut invalide." };
@@ -67,7 +62,7 @@ function parseInput(formData: FormData): ProductInput | { error: string } {
     category,
     subcategory,
     collection_id: null,
-    variant_label,
+    variant_label: null,
     description: typeof description === "string" ? description.trim() : "",
     price_cents,
     stock: stockNum,
@@ -134,7 +129,6 @@ export async function createProductAction(
     if (!source) return { error: "Le produit d'origine est introuvable." };
     collectionId = await ensureCollection(fromId);
     shared = {
-      name: source.name,
       category: source.category,
       subcategory: source.subcategory,
       description: source.description,

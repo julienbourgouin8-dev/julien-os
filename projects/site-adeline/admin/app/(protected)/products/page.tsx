@@ -78,7 +78,6 @@ export default async function AdminProductsPage() {
                         )}
                         <span className="font-medium text-ink">
                           {p.name}
-                          {p.variant_label && <span className="ml-2 rounded-full bg-denim/10 px-2 py-0.5 text-[0.65rem] font-semibold text-denim">{p.variant_label}</span>}
                         </span>
                       </div>
                     </td>

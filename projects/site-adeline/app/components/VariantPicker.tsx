@@ -13,7 +13,7 @@ export default function VariantPicker({ variants, currentId }: { variants: Produ
   return (
     <div className="mt-6">
       <p className="text-xs font-semibold uppercase tracking-[0.15em] text-ink">
-        Modèles : <span className="font-normal normal-case tracking-normal text-ink/70">{current?.variant_label}</span>
+        Modèles : <span className="font-normal normal-case tracking-normal text-ink/70">{current?.name}</span>
       </p>
       <div className="mt-3 flex flex-wrap gap-2">
         {variants.map((v) => {
@@ -23,10 +23,10 @@ export default function VariantPicker({ variants, currentId }: { variants: Produ
             <Link
               key={v.id}
               href={`/boutique/${v.category}/${v.slug}`}
-              aria-label={`${v.variant_label ?? v.name}${soldOut ? " (épuisé)" : ""}`}
+              aria-label={`${v.name}${soldOut ? " (épuisé)" : ""}`}
               aria-current={selected ? "true" : undefined}
               scroll={false}
-              className={`relative block h-20 w-24 overflow-hidden bg-white ring-2 transition-shadow ${
+              className={`relative block aspect-video w-32 overflow-hidden bg-white ring-2 transition-shadow ${
                 selected ? "ring-ink" : "ring-ink/15 hover:ring-ink/50"
               }`}
             >
@@ -35,8 +35,8 @@ export default function VariantPicker({ variants, currentId }: { variants: Produ
                   src={v.images[0]}
                   alt=""
                   fill
-                  sizes="96px"
-                  className={`object-contain ${soldOut ? "opacity-40" : ""}`}
+                  sizes="128px"
+                  className={`object-cover scale-[1.15] ${soldOut ? "opacity-40" : ""}`}
                 />
               )}
             </Link>
