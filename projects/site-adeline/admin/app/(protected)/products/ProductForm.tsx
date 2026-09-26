@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { startTransition, useActionState, useState } from "react";
 import Image from "next/image";
 import { categories } from "@/lib/categories";
 import { subcategoriesByCategory } from "@/lib/subcategories";
@@ -23,7 +23,7 @@ export default function ProductForm({
 }) {
   const shared = product ?? source;
   const [state, formAction, pending] = useActionState(action, undefined);
-  const [existingImages, setExistingImages] = useState<string[]>(product?.images ?? []);
+  const [existingImages, setExistingImages] = useState<string[]>(Array.from(new Set(product?.images ?? [])));
   const [newFiles, setNewFiles] = useState<File[]>([]);
   // largeur réelle des nouvelles photos (px), pour signaler celles trop petites
   const [widths, setWidths] = useState<Record<string, number>>({});
@@ -65,7 +65,18 @@ export default function ProductForm({
 
   return (
     <form
-      action={formAction}
+      // Pas de `action={formAction}` : React 19 réinitialise (form.reset())
+      // tout formulaire après une action, même en erreur. Les menus
+      // Catégorie/Sous-catégorie revenaient alors sur leur première option
+      // à l'écran alors que l'état React gardait l'ancien choix, d'où
+      // « sous-catégorie invalide » au renvoi suivant. On envoie donc les
+      // données à la main : rien n'est remis à zéro si l'enregistrement
+      // échoue (photos, choix et saisies restent en place).
+      onSubmit={(e) => {
+        e.preventDefault();
+        const data = new FormData(e.currentTarget);
+        startTransition(() => formAction(data));
+      }}
       className="max-w-xl space-y-5 rounded-2xl border border-ink/[0.05] bg-[#fffdf8] p-8 shadow-[0_1px_2px_rgba(36,27,21,0.05),0_10px_28px_rgba(36,27,21,0.07)]"
     >
       <div>
@@ -244,7 +255,7 @@ export default function ProductForm({
             </div>
           ))}
           {newFiles.map((file, i) => (
-            <div key={`${file.name}-${file.lastModified}`} className="group relative h-24 w-24">
+            <div key={`${fileKey(file)}-${i}`} className="group relative h-24 w-24">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={URL.createObjectURL(file)}
@@ -296,11 +307,11 @@ export default function ProductForm({
             const found = await Promise.all(selected.map(async (f) => [fileKey(f), await imageWidth(f)] as const));
             setWidths((w) => ({ ...w, ...Object.fromEntries(found.filter((e): e is readonly [string, number] => e[1] !== null)) }));
             setNewFiles((prev) => {
-              if (!primaryImage && selected.length > 0) {
-                setPrimaryImage({ type: "new", value: String(prev.length) });
-              }
               return [...prev, ...selected];
             });
+            if (!primaryImage && selected.length > 0) {
+              setPrimaryImage({ type: "new", value: String(newFiles.length) });
+            }
           }}
           className="mt-3 text-sm text-ink/60"
         />

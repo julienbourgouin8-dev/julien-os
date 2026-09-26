@@ -67,7 +67,8 @@ function parseInput(formData: FormData): ProductInput | { error: string } {
     price_cents,
     stock: stockNum,
     weight_grams,
-    images: formData.getAll("existingImages").filter((v): v is string => typeof v === "string"),
+    // dédoublonné : une même photo listée deux fois faussait la photo principale
+    images: Array.from(new Set(formData.getAll("existingImages").filter((v): v is string => typeof v === "string"))),
     status: status as ProductStatus,
   };
 }
