@@ -49,6 +49,32 @@ export default function NouveautesSlider({ products, groupSize }: { products: No
   const [autoResetKey, setAutoResetKey] = useState(0);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
 
+  // Les photos ne se téléchargent que lorsque le slider approche de l'écran
+  // (et seulement pour la diapositive affichée + ses voisines). Avec toutes
+  // les pièces du site dans le slider, tout charger au démarrage se
+  // disputait la bande passante avec le hero : Speed Index mobile 2,2 s →
+  // 6,0 s sur PageSpeed (2026-09-26). Les cadres 16/9 réservent la place :
+  // aucun décalage de mise en page.
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const [armed, setArmed] = useState(false);
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el || armed) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0]?.isIntersecting) return;
+        setArmed(true);
+        observer.disconnect();
+      },
+      // marge négative : il faut voir au moins 150 px du slider pour charger (sur
+      // un téléphone il dépasse déjà de quelques pixels en bas de l'écran
+      // d'arrivée : ce simple débordement ne doit rien télécharger)
+      { rootMargin: "0px 0px -150px 0px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [armed]);
+
   const advance = (dir: 1 | -1) => {
     setPos((p) => p + dir);
     setAutoResetKey((k) => k + 1);
@@ -109,7 +135,7 @@ export default function NouveautesSlider({ products, groupSize }: { products: No
   };
 
   return (
-    <div className="overflow-hidden" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+    <div ref={rootRef} className="overflow-hidden" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
       <div
         className={instant ? "flex" : "flex transition-transform duration-700 ease-in-out"}
         style={{ transform: `translateX(-${pos * 100}%)` }}
@@ -121,7 +147,12 @@ export default function NouveautesSlider({ products, groupSize }: { products: No
             style={{ gridTemplateColumns: `repeat(${groupSize}, minmax(0, 1fr))` }}
           >
             {group.map((item) => (
-              <NouveauteCard key={item.href} {...item} activeIndex={imageStep} />
+              <NouveauteCard
+                key={item.href}
+                {...item}
+                activeIndex={imageStep}
+                loadMode={!armed ? "none" : gi === pos ? "cycle" : Math.abs(gi - pos) === 1 ? "first" : "none"}
+              />
             ))}
           </div>
         ))}

@@ -2,6 +2,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { formatPrice } from "@/components/ProductCard";
 
+// none : aucune photo (cadre vide) · first : seulement la 1re (diapositive
+// voisine) · cycle : toutes les photos de la diapositive affichée (fondu).
+export type LoadMode = "none" | "first" | "cycle";
+
 export type NouveauteProduct = {
   href: string;
   category: string;
@@ -22,7 +26,8 @@ export default function NouveauteCard({
   price_cents,
   images,
   activeIndex,
-}: NouveauteProduct & { activeIndex: number }) {
+  loadMode = "cycle",
+}: NouveauteProduct & { activeIndex: number; loadMode?: LoadMode }) {
   const active = images.length > 0 ? activeIndex % images.length : 0;
 
   return (
@@ -32,18 +37,20 @@ export default function NouveauteCard({
           blanches au-dessus/dessous de la photo. */}
       <div className="relative aspect-[16/9] overflow-hidden bg-white">
         {images.length > 0 ? (
-          images.map((src, i) => (
-            <Image
-              key={src}
-              src={src}
-              alt={name}
-              fill
-              sizes="(min-width: 640px) 45vw, 92vw"
-              quality={85}
-              className="object-contain transition-opacity duration-700 ease-in-out"
-              style={{ opacity: i === active ? 1 : 0 }}
-            />
-          ))
+          images.map((src, i) =>
+            loadMode === "cycle" || (loadMode === "first" && i === 0) ? (
+              <Image
+                key={src}
+                src={src}
+                alt={name}
+                fill
+                sizes="(min-width: 640px) 45vw, 92vw"
+                quality={85}
+                className="object-contain transition-opacity duration-700 ease-in-out"
+                style={{ opacity: i === active ? 1 : 0 }}
+              />
+            ) : null,
+          )
         ) : (
           <div className="flex h-full w-full items-center justify-center">
             <p className="text-[0.6rem] font-semibold uppercase tracking-[0.15em] text-ink/35">Photo à venir</p>
