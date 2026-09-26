@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from "react";
 import WriteOnHeading from "@/components/WriteOnHeading";
 
-const IMAGE = "/brand/vitrine-composite-v4.jpg";
+const IMAGE = "/brand/vitrine-composite-v5.jpg";
 const MOBILE_UNLOCK_VIDEO = "/products/videos/mobile-unlock.mp4";
 
 type Hotspot = {
@@ -26,7 +26,7 @@ type Hotspot = {
 };
 
 // Coordonnées mesurées par script (seuillage pixel vs fond, voir historique
-// de session) sur vitrine-composite-v4.jpg. Les zones DE SURVOL ci-dessous
+// de session) sur vitrine-composite-v5.jpg. Les zones DE SURVOL ci-dessous
 // sont volontairement plus larges que la pièce visible : elles se touchent
 // bord à bord (aucun trou entre deux pièces). Les crops visuels statiques
 // (staticCropStyle) utilisent eux les coordonnées réelles de la pièce, pas

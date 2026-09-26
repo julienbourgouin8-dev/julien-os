@@ -39,7 +39,7 @@ export default function NouveauteCard({
               alt={name}
               fill
               sizes="(min-width: 640px) 45vw, 92vw"
-              quality={90}
+              quality={85}
               className="object-contain transition-opacity duration-700 ease-in-out"
               style={{ opacity: i === active ? 1 : 0 }}
             />

@@ -10,7 +10,7 @@ const PRODUCT_COUNT = 4;
 export default async function Nouveautes() {
   // On récupère plus de lignes que d'emplacements : les déclinaisons d'une
   // même collection ne forment qu'une seule carte (voir lib/collections.ts).
-  const groups = groupByCollection(await getLatestActiveProducts(PRODUCT_COUNT * 6)).slice(0, PRODUCT_COUNT);
+  const groups = groupByCollection(await getLatestActiveProducts(PRODUCT_COUNT * 3)).slice(0, PRODUCT_COUNT);
   if (groups.length === 0) return null;
 
   const items: NouveauteProduct[] = groups.map(({ product: p, images }) => ({
