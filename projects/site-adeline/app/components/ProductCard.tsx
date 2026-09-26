@@ -15,7 +15,8 @@ type ProductCardProps = {
   images: string[];
   comingSoon?: boolean;
   soldOut?: boolean;
-  // collection : fondu entre la photo principale de chaque déclinaison
+  // diaporama en fondu entre les photos (toutes celles du produit, ou la
+  // photo principale de chaque déclinaison pour une collection)
   fade?: boolean;
 };
 

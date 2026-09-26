@@ -3,17 +3,32 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
-// Diaporama en fondu simple des photos principales des déclinaisons d'une
-// collection (carte de la page catégorie). Reste sur la première photo si
-// l'utilisateur préfère les animations réduites.
+const FADE_INTERVAL_MS = 2800;
+
+// Diaporama en fondu simple des photos d'une carte de la page catégorie :
+// toutes les photos du produit, ou la photo principale de chaque déclinaison
+// pour une collection. Reste sur la première photo si l'utilisateur préfère
+// les animations réduites.
 export default function FadeImages({ images, name, soldOut }: { images: string[]; name: string; soldOut?: boolean }) {
-  const [active, setActive] = useState(0);
+  // Horloge partagée : toutes les cartes de la page changent de photo au même
+  // instant (même principe que le slider Nouveautés de la home), en s'alignant
+  // sur des multiples de FADE_INTERVAL_MS plutôt qu'un minuteur par carte.
+  const [tick, setTick] = useState(0);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const timer = setInterval(() => setActive((i) => (i + 1) % images.length), 2600);
-    return () => clearInterval(timer);
-  }, [images.length]);
+    let interval: ReturnType<typeof setInterval> | undefined;
+    const start = setTimeout(() => {
+      setTick(Math.floor(Date.now() / FADE_INTERVAL_MS));
+      interval = setInterval(() => setTick(Math.floor(Date.now() / FADE_INTERVAL_MS)), FADE_INTERVAL_MS);
+    }, FADE_INTERVAL_MS - (Date.now() % FADE_INTERVAL_MS));
+    return () => {
+      clearTimeout(start);
+      if (interval) clearInterval(interval);
+    };
+  }, []);
+
+  const active = tick % images.length;
 
   return (
     <div className={`absolute inset-0 ${soldOut ? "opacity-50" : ""}`}>
@@ -21,7 +36,7 @@ export default function FadeImages({ images, name, soldOut }: { images: string[]
         <Image
           key={src}
           src={src}
-          alt={i === 0 ? name : `${name} — déclinaison ${i + 1}`}
+          alt={i === 0 ? name : `${name} — vue ${i + 1}`}
           fill
           sizes="(min-width: 1280px) 420px, (min-width: 768px) calc((100vw - 344px) / 2), 100vw"
           quality={90}

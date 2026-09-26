@@ -197,7 +197,7 @@ export default async function CategoryPage({
                  gap-x-10 par défaut inchangé en dessous de xl, où il n'y a
                  qu'une seule colonne visible de toute façon. */
               <div className="grid justify-center grid-cols-[repeat(auto-fit,minmax(min(390px,100%),420px))] gap-x-10 gap-y-16 xl:grid-cols-[repeat(2,420px)] xl:gap-x-24">
-                {groupByCollection(products).map(({ product: p, images, soldOut, variants }) => (
+                {groupByCollection(products).map(({ product: p, images, soldOut }) => (
                   <ProductCard
                     key={p.id}
                     href={`/boutique/${category}/${p.slug}`}
@@ -206,7 +206,7 @@ export default async function CategoryPage({
                     price_cents={p.price_cents}
                     images={images}
                     soldOut={soldOut}
-                    fade={variants.length > 1}
+                    fade={images.length > 1}
                   />
                 ))}
                 {demoProducts.map((p) => (
@@ -217,6 +217,7 @@ export default async function CategoryPage({
                     name={p.name}
                     price_cents={p.price_cents}
                     images={p.images}
+                    fade={p.images.length > 1}
                     comingSoon={p.comingSoon ?? true}
                   />
                 ))}
