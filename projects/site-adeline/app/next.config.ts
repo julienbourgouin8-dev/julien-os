@@ -11,6 +11,14 @@ const nextConfig: NextConfig = {
     // Accept du navigateur (fallback WebP transparent pour les
     // navigateurs qui ne supportent pas AVIF, zéro changement visuel).
     formats: ["image/avif", "image/webp"],
+    // Depuis Next 16, `qualities` doit être déclaré explicitement (défaut :
+    // [75] seulement) — sans ça, tous les `quality={85}`/`quality={90}`
+    // posés sur les <Image> du site (ProductGallery, ProductCard,
+    // FadeImages, NouveautéCard, VariantPicker, Fabrics) sont silencieusement
+    // ramenés à 75, la valeur autorisée la plus proche. Diagnostic du
+    // 2026-09-27 : vérifié en réseau, une image avec quality={85} dans le
+    // code sortait en q=75 sur le site en ligne.
+    qualities: [75, 85, 90],
   },
   // Anti-clickjacking (le site n'a aucune raison d'être chargé dans une
   // iframe tierce) + durcissement de base. Pas de Content-Security-Policy
