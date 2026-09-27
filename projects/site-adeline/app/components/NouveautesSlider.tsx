@@ -80,10 +80,35 @@ export default function NouveautesSlider({ products, groupSize }: { products: No
     setAutoResetKey((k) => k + 1);
   };
 
+  // En pause quand l'onglet n'est pas visible (écran verrouillé, changement
+  // d'appli) — même principe que les vidéos autoplay de VitrineArc. Sans ça,
+  // un onglet resté ouvert en arrière-plan pouvait revenir avec plusieurs
+  // diapositives de retard à rattraper d'un coup ; leurs photos n'avaient
+  // alors jamais eu l'occasion de précharger (préchargement limité au
+  // voisin immédiat, un cran à la fois), d'où des cartes blanches signalées
+  // par Julien après un cycle complet (2026-09-27).
   useEffect(() => {
     if (!loop) return;
-    const id = setInterval(() => setPos((p) => p + 1), GROUP_INTERVAL_MS);
-    return () => clearInterval(id);
+    let id: ReturnType<typeof setInterval> | null = null;
+    const start = () => {
+      if (id !== null) return;
+      id = setInterval(() => setPos((p) => p + 1), GROUP_INTERVAL_MS);
+    };
+    const stop = () => {
+      if (id === null) return;
+      clearInterval(id);
+      id = null;
+    };
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") start();
+      else stop();
+    };
+    if (document.visibilityState === "visible") start();
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () => {
+      stop();
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
   }, [loop, autoResetKey]);
 
   // Vient de glisser sur un clone (au tout début ou à la toute fin de la
