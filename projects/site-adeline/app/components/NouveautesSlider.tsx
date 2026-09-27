@@ -75,8 +75,17 @@ export default function NouveautesSlider({ products, groupSize }: { products: No
     return () => observer.disconnect();
   }, [armed]);
 
+  // Plusieurs swipes rapprochés (plus vite que SLIDE_TRANSITION_MS) pouvaient
+  // pousser `pos` au-delà du clone de bord avant que l'effet de saut
+  // instantané ci-dessous n'ait eu la main pour le corriger — resté hors des
+  // bornes du tableau, l'écran affichait alors du vide total (aucune
+  // diapositive à cette position), pas juste une photo qui charge. Cartes
+  // entièrement blanches, texte et prix compris, signalées par Julien
+  // (2026-09-27, capture vidéo à l'appui). `advance` plafonne maintenant
+  // toujours dans [0, lastPos].
   const advance = (dir: 1 | -1) => {
-    setPos((p) => p + dir);
+    const lastPos = extendedGroups.length - 1;
+    setPos((p) => Math.max(0, Math.min(lastPos, p + dir)));
     setAutoResetKey((k) => k + 1);
   };
 
@@ -90,9 +99,10 @@ export default function NouveautesSlider({ products, groupSize }: { products: No
   useEffect(() => {
     if (!loop) return;
     let id: ReturnType<typeof setInterval> | null = null;
+    const lastPos = extendedGroups.length - 1;
     const start = () => {
       if (id !== null) return;
-      id = setInterval(() => setPos((p) => p + 1), GROUP_INTERVAL_MS);
+      id = setInterval(() => setPos((p) => Math.min(lastPos, p + 1)), GROUP_INTERVAL_MS);
     };
     const stop = () => {
       if (id === null) return;
@@ -118,8 +128,11 @@ export default function NouveautesSlider({ products, groupSize }: { products: No
   useEffect(() => {
     if (!loop) return;
     const lastPos = extendedGroups.length - 1;
-    if (pos !== 0 && pos !== lastPos) return;
-    const target = pos === 0 ? groups.length : 1;
+    // `<= 0` / `>= lastPos` plutôt qu'une égalité stricte : filet de
+    // sécurité si `pos` venait quand même à dépasser les bornes (advance()
+    // et l'intervalle auto le clampent déjà, voir plus haut).
+    if (pos > 0 && pos < lastPos) return;
+    const target = pos <= 0 ? groups.length : 1;
     const t = setTimeout(() => {
       setInstant(true);
       setPos(target);
