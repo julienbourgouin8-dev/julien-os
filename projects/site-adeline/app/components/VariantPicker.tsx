@@ -36,6 +36,7 @@ export default function VariantPicker({ variants, currentId }: { variants: Produ
                   alt=""
                   fill
                   sizes="128px"
+                  quality={90}
                   className={`object-cover scale-[1.15] ${soldOut ? "opacity-40" : ""}`}
                 />
               )}

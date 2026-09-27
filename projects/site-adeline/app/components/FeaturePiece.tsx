@@ -27,6 +27,7 @@ export default function FeaturePiece({
           alt={product.name}
           fill
           sizes="(min-width: 1024px) 45vw, 100vw"
+          quality={90}
           className="object-cover"
         />
       </div>

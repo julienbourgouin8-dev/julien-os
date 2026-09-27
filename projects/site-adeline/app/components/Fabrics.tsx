@@ -27,6 +27,7 @@ export default function Fabrics() {
                 alt={`Tissu ${fabric.name}, ${fabric.color}`}
                 fill
                 sizes="(min-width: 640px) 22vw, 45vw"
+                quality={90}
                 className="object-cover transition-transform duration-500 group-hover:scale-110"
               />
             </div>
