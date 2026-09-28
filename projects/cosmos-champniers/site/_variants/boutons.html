@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cosmos — variantes de boutons</title>
+<link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;600;700&family=Marcellus&display=swap" rel="stylesheet">
+<style>
+  :root { --night:#020812; --navy:#041930; --blue:#039ae4; --neon:#5fc8ff; --warm:#f2bb96; --warm-2:#e89a63; --text:#eef3f8; --text-2:#9db0c6; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--night); color: var(--text); font-family: Karla, system-ui, sans-serif; }
+  .v { position: relative; min-height: 300px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 22px; padding: 40px 20px 44px; overflow: hidden; border-bottom: 1px solid rgba(157,176,198,.16); }
+  .v::before { content: ""; position: absolute; inset: 0; background: url(../assets/img/tunnel-render.webp) center 62% / cover; z-index: -2; }
+  .v::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(2,8,18,.92), rgba(2,8,18,.35) 70%, rgba(2,8,18,.2)); z-index: -1; }
+  .v:nth-child(odd)::before { background-position: center 85%; }
+  .label { position: absolute; top: 20px; left: 24px; font: 600 .75rem/1.4 Karla; letter-spacing: .18em; text-transform: uppercase; color: var(--text); background: rgba(2,8,18,.82); padding: 12px 16px; border-radius: 6px; }
+  .label small { display: block; font: 400 .9rem/1.4 Karla; letter-spacing: 0; text-transform: none; color: var(--text-2); max-width: 46ch; margin-top: 4px; }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 0 30px; white-space: nowrap; cursor: pointer; text-decoration: none; transition: background-color .3s, color .3s, border-color .3s; }
+
+  /* 1. Crème plein */
+  .b1 { background: var(--text); color: var(--navy); border-radius: 6px; font: 700 .78rem/1 Karla; letter-spacing: .16em; text-transform: uppercase; }
+  .b1:hover { background: var(--blue); color: #fff; }
+
+  /* 2. Pêche chaud, pilule */
+  .b2 { background: var(--warm); color: var(--night); border-radius: 999px; font: 700 .95rem/1 Karla; letter-spacing: .01em; }
+  .b2:hover { background: var(--warm-2); }
+
+  /* 3. Verre bleu, coins droits */
+  .b3 { background: rgba(3,154,228,.16); border: 1px solid var(--neon); color: #fff; backdrop-filter: blur(10px); border-radius: 2px; font: 600 .78rem/1 Karla; letter-spacing: .18em; text-transform: uppercase; }
+  .b3:hover { background: var(--blue); border-color: var(--blue); }
+
+  /* 4. Éditorial serif */
+  .b4 { background: rgba(2,8,18,.45); border: 1px solid rgba(242,187,150,.7); color: var(--warm); backdrop-filter: blur(8px); border-radius: 0; font: 400 1.05rem/1 Marcellus, serif; letter-spacing: .12em; text-transform: uppercase; padding: 0 34px; }
+  .b4:hover { background: var(--warm); color: var(--night); border-color: var(--warm); }
+
+  /* 5. Bleu planète mat */
+  .b5 { background: var(--blue); color: #fff; border-radius: 6px; font: 700 .78rem/1 Karla; letter-spacing: .16em; text-transform: uppercase; }
+  .b5:hover { background: #027fbd; }
+</style>
+</head>
+<body>
+  <section class="v"><p class="label">1 · Crème plein<small>Fond blanc cassé, texte bleu nuit, capitales. Le plus lisible sur la photo, sobre et haut de gamme. Survol : bleu planète.</small></p>
+    <div class="row"><a class="btn b1">Réserver une table</a><a class="btn b1">Découvrir le buffet</a></div></section>
+  <section class="v"><p class="label">2 · Pêche chaud, pilule<small>La couleur des prix du site actuel. Contraste chaud sur l'ambiance bleue, ton plus convivial. Survol : pêche plus soutenu.</small></p>
+    <div class="row"><a class="btn b2">Réserver une table</a><a class="btn b2">Découvrir le buffet</a></div></section>
+  <section class="v"><p class="label">3 · Verre bleu néon<small>Fond bleu translucide, bordure néon fine, coins droits. Colle à la DA « nuit cosmique ». Survol : bleu plein.</small></p>
+    <div class="row"><a class="btn b3">Réserver une table</a><a class="btn b3">Découvrir le buffet</a></div></section>
+  <section class="v"><p class="label">4 · Éditorial serif<small>Typo Marcellus du logo, contour pêche, coins nets. Côté restaurant gastronomique. Survol : rempli pêche.</small></p>
+    <div class="row"><a class="btn b4">Réserver une table</a><a class="btn b4">Découvrir le buffet</a></div></section>
+  <section class="v"><p class="label">5 · Bleu planète mat<small>Le bleu du logo, sans halo ni lueur. Direct et cohérent avec la marque. Survol : bleu plus foncé.</small></p>
+    <div class="row"><a class="btn b5">Réserver une table</a><a class="btn b5">Découvrir le buffet</a></div></section>
+</body>
+</html>

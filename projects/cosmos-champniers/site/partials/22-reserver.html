@@ -1,0 +1,89 @@
+<section id="reserver" data-section="reserver" class="rv" aria-labelledby="rv-title">
+  <div class="container">
+    <header class="rv-head">
+      <h2 class="display h2" id="rv-title">Réserver une table</h2>
+      <p class="rv-sub">Pour les groupes de 10 à 30 personnes. En dessous, venez directement, une table vous attend.</p>
+    </header>
+
+    <div class="rv-card">
+      <!-- Billet d'embarquement : se remplit au fil des réponses, chaque ligne ramène à sa question -->
+      <aside class="rv-pass" aria-label="Récapitulatif de votre réservation">
+        <div class="rv-pass__top">
+          <svg class="rv-pass__logo" viewBox="0 0 48 24" aria-hidden="true"><ellipse cx="24" cy="12" rx="22" ry="5.5" transform="rotate(-10 24 12)" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="24" cy="12" r="7" fill="var(--blue)"/></svg>
+          <span class="rv-pass__brand">Cosmos</span>
+          <span class="rv-pass__kind">Carte d'embarquement</span>
+        </div>
+        <dl class="rv-pass__rows">
+          <button type="button" class="rv-line" data-go="0"><dt>Passagers</dt><dd data-p="pers">—</dd></button>
+          <button type="button" class="rv-line" data-go="1"><dt>Date</dt><dd data-p="date">—</dd></button>
+          <button type="button" class="rv-line" data-go="2"><dt>Service</dt><dd data-p="svc">—</dd></button>
+          <button type="button" class="rv-line" data-go="3"><dt>Heure</dt><dd data-p="time">—</dd></button>
+          <button type="button" class="rv-line" data-go="4"><dt>Au nom de</dt><dd data-p="name">—</dd></button>
+        </dl>
+        <div class="rv-pass__stub">
+          <span class="rv-pass__est-label">Estimation adultes</span>
+          <span class="rv-pass__est price" data-p="est">—</span>
+        </div>
+        <span class="rv-pass__stamp" aria-hidden="true">Confirmé</span>
+      </aside>
+
+      <div class="rv-stage" aria-live="polite">
+        <div class="rv-progress" aria-hidden="true"><span class="rv-progress__fill"></span></div>
+
+        <!-- 1. Passagers -->
+        <div class="rv-step is-active" data-step="0">
+          <p class="rv-q">Combien serez-vous ?</p>
+          <div class="rv-count">
+            <button type="button" class="rv-count__btn" data-pers="-1" aria-label="Une personne de moins">−</button>
+            <output class="rv-count__num" data-pers-num aria-live="polite">12</output>
+            <button type="button" class="rv-count__btn" data-pers="1" aria-label="Une personne de plus">+</button>
+          </div>
+          <p class="rv-count__unit">personnes</p>
+          <p class="rv-note">Plus de 30 ? Appelez-nous au <a href="tel:+33545381107">05 45 38 11 07</a>.</p>
+          <button type="button" class="btn rv-next" data-next>Continuer</button>
+        </div>
+
+        <!-- 2. Date -->
+        <div class="rv-step" data-step="1">
+          <p class="rv-q">Quel jour ?</p>
+          <div class="rv-days" role="listbox" aria-label="Choisir une date" data-lenis-prevent></div>
+        </div>
+
+        <!-- 3. Service -->
+        <div class="rv-step" data-step="2">
+          <p class="rv-q">Midi ou soir ?</p>
+          <div class="rv-svcs" data-svcs></div>
+        </div>
+
+        <!-- 4. Heure -->
+        <div class="rv-step" data-step="3">
+          <p class="rv-q">À quelle heure ?</p>
+          <div class="rv-slots" data-slots></div>
+        </div>
+
+        <!-- 5. Coordonnées -->
+        <form class="rv-step rv-form" data-step="4" novalidate>
+          <p class="rv-q">À quel nom ?</p>
+          <div class="rv-fields">
+            <label class="rv-field"><span>Nom</span><input name="nom" type="text" autocomplete="name" maxlength="80" required></label>
+            <label class="rv-field"><span>Téléphone</span><input name="telephone" type="tel" autocomplete="tel" required></label>
+            <label class="rv-field rv-field--wide"><span>Email</span><input name="email" type="email" autocomplete="email" required></label>
+            <label class="rv-field rv-field--wide"><span>Un message ? (facultatif)</span><input name="message" type="text" maxlength="500" placeholder="Allergies, anniversaire…"></label>
+          </div>
+          <p class="rv-error" role="alert" hidden></p>
+          <button type="submit" class="btn rv-next"><span data-submit-label>Confirmer la réservation</span></button>
+          <p class="rv-fine">Démo : aucune demande n'est envoyée. Table gardée 5 minutes après l'heure réservée.</p>
+        </form>
+
+        <!-- Succès -->
+        <div class="rv-step rv-done" data-step="5" tabindex="-1">
+          <p class="rv-q" data-done-title>Merci.</p>
+          <p class="rv-done__text" data-done-text></p>
+          <button type="button" class="btn rv-next" data-restart>Nouvelle réservation</button>
+        </div>
+
+        <button type="button" class="rv-back" data-back hidden>← Retour</button>
+      </div>
+    </div>
+  </div>
+</section>

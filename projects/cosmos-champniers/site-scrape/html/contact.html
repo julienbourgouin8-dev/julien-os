@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact — COSMOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;600;700&family=Marcellus&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="page">
+  <div class="card">
+
+    <header class="header">
+      <div class="header-brand">
+        <span class="brand-name">COSMOS</span>
+        <span class="brand-slogan">Cuisine du monde · champniers</span>
+      </div>
+      <div class="header-actions">
+        <a class="nav-link" href="index.php">Accueil</a>
+        <a class="phone-link" href="tel:0545381107">05 45 38 11 07</a>
+        <a class="btn" href="https://booking.cosmos-tech.fr">Réserver une table</a>
+      </div>
+    </header>
+
+    <div class="admin-card" style="margin-top:24px">
+      <h2>Contactez-nous</h2>
+
+      
+      
+      <form method="post" novalidate>
+        <input type="hidden" name="csrf_token" value="5d99409872685b075cdaf3b4e9fc663500dfe31af72d4dfaf5c636e2382a0290">
+        <div style="position:absolute;left:-9999px" aria-hidden="true">
+          <label for="website">Ne pas remplir ce champ</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label for="name">Nom</label>
+            <input type="text" id="name" name="name" required maxlength="120" value="">
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required maxlength="180" value="">
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label for="phone">Téléphone (optionnel)</label>
+            <input type="text" id="phone" name="phone" maxlength="40" value="">
+          </div>
+          <div class="field">
+            <label for="subject">Sujet (optionnel)</label>
+            <input type="text" id="subject" name="subject" maxlength="150" value="">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="6" required maxlength="4000"></textarea>
+        </div>
+
+        <button type="submit" class="btn-dark" style="border:none;cursor:pointer">Envoyer le message</button>
+      </form>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

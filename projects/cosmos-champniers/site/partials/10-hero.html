@@ -1,0 +1,93 @@
+<section id="hero" data-section="hero" class="hero" aria-labelledby="hero-title">
+
+  <!-- Loader d'ouverture : logo Saturne tracé puis allumé (retiré par JS ; failsafe CSS) -->
+  <div class="hero__loader" aria-hidden="true">
+    <svg class="hero__mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200">
+      <defs>
+        <mask id="hero-cm-behind">
+          <rect width="240" height="200" fill="#fff"/>
+          <path d="M86 104 a34 34 0 0 1 68 0 z" transform="rotate(-8 120 104)" fill="#000"/>
+        </mask>
+        <clipPath id="hero-cm-planet"><circle cx="120" cy="104" r="34"/></clipPath>
+      </defs>
+      <circle class="hero__mark-orbit" cx="121" cy="98" r="64" fill="none" stroke="currentColor" stroke-width="6" pathLength="1" transform="rotate(-90 121 98)"/>
+      <g class="hero__mark-planet">
+        <circle cx="120" cy="104" r="34" fill="#039ae4"/>
+        <path d="M100 86 a22 22 0 0 1 24 -12 a26 26 0 0 0 -18 22 z" fill="#0284c7" opacity=".55" clip-path="url(#hero-cm-planet)"/>
+      </g>
+      <g fill="none" stroke="currentColor" stroke-linecap="round" transform="rotate(-8 120 108)" mask="url(#hero-cm-behind)">
+        <ellipse class="hero__mark-ring" cx="120" cy="108" rx="112" ry="24" stroke-width="4.5" pathLength="1"/>
+        <ellipse class="hero__mark-ring" cx="120" cy="108" rx="96" ry="17" stroke-width="4" pathLength="1"/>
+        <ellipse class="hero__mark-ring" cx="120" cy="108" rx="80" ry="11" stroke-width="3.5" pathLength="1"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="hero__pin">
+
+    <!-- Écran 1 : le tunnel -->
+    <div class="hero__screen hero__screen--tunnel">
+      <div class="hero__cam">
+        <div class="hero__drift">
+          <picture class="hero__media">
+            <source media="(max-width: 760px)" srcset="assets/img/tunnel-reel-sm.webp 750w, assets/img/tunnel-reel.webp 1200w" sizes="100vw" width="1200" height="1600">
+            <img class="hero__img" src="assets/img/tunnel-render.webp" srcset="assets/img/tunnel-render-sm.webp 1000w, assets/img/tunnel-render.webp 1787w" sizes="100vw" width="1787" height="1787" alt="Tunnel du restaurant Cosmos : arches lumineuses bleues, écrans aquatiques au plafond et tables alignées jusqu'au fond" fetchpriority="high" decoding="async">
+          </picture>
+        </div>
+      </div>
+      <div class="hero__shade" aria-hidden="true"></div>
+
+      <div class="hero__content">
+        <div class="hero__word" aria-hidden="true">
+          <span class="hero__half hero__half--l">COS</span><span class="hero__half hero__half--r">MOS</span>
+        </div>
+        <div class="hero__ui">
+          <a class="hero__rating" href="#avis" aria-label="Note 4,6 sur 5, 1 558 avis">
+            <span class="hero__rating-num" aria-hidden="true">4,6</span>
+            <span class="hero__rating-side" aria-hidden="true">
+              <svg class="hero__stars" viewBox="0 0 120 20">
+                <defs>
+                  <path id="hero-star" d="M10 0.8l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L10 14.6l-5.4 2.9 1.1-6.1L1.2 7.2l6.1-.8z"/>
+                  <g id="hero-stars-row"><use href="#hero-star"/><use href="#hero-star" x="25"/><use href="#hero-star" x="50"/><use href="#hero-star" x="75"/><use href="#hero-star" x="100"/></g>
+                  <!-- 4,6 / 5 : 4 étoiles pleines + 60 % de la 5e (étoile 5 de x=101.2 à 118.8 → 101.2 + 0.6 × 17.6) -->
+                  <clipPath id="hero-stars-clip"><rect x="0" y="0" width="111.8" height="20"/></clipPath>
+                </defs>
+                <use href="#hero-stars-row" fill="rgba(238,243,248,0.28)"/>
+                <use href="#hero-stars-row" fill="#f4c46b" clip-path="url(#hero-stars-clip)"/>
+              </svg>
+              <span class="hero__rating-count">1 558 avis</span>
+            </span>
+          </a>
+          <div class="hero__ctas">
+            <a class="btn btn--primary" href="https://booking.cosmos-tech.fr" data-resa>Réserver une table</a>
+            <a class="btn btn--ghost" href="#buffet">Découvrir le buffet</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Écran 2 : l'atterrissage dans la salle -->
+    <div class="hero__screen hero__screen--land">
+      <div class="hero__land-cam">
+        <picture class="hero__media">
+          <img class="hero__land-img" src="assets/img/salle-bleue.webp" srcset="assets/img/salle-bleue-sm.webp 1000w, assets/img/salle-bleue.webp 2000w" sizes="100vw" width="2000" height="1500" alt="La grande salle du Cosmos au coucher du soleil : tables sous un immense plafond d'orbites et de planètes lumineuses, baies vitrées au fond" fetchpriority="low" decoding="async">
+        </picture>
+      </div>
+      <div class="hero__land-shade" aria-hidden="true"></div>
+      <div class="hero__land-sweep" aria-hidden="true"></div>
+
+      <div class="hero__land-copy container">
+        <h1 id="hero-title" class="display h1 hero__title">Le plus grand restaurant asiatique de la Charente</h1>
+        <div class="hero__land-row">
+          <p class="lead hero__text">Avec sa capacité exceptionnelle de 650 couverts, le Restaurant COSMOS vous accueille dans un espace moderne et chaleureux au cœur de Champniers.</p>
+          <p class="hero__count"><span class="hero__count-n" data-count="650">650</span><span class="hero__count-bar" aria-hidden="true"></span><span class="hero__count-l">couverts</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sous le pin, en flux normal : le gros buffet -->
+  <div class="hero__after container">
+    <p class="hero__after-text">Venez découvrir un gigantesque buffet à volonté réunissant le meilleur de la cuisine chinoise et asiatique : un assortiment d'entrées, des sushis préparés sur place, un large choix de plats chauds, ainsi qu'un espace wok et grillades sur-mesure, sans oublier un buffet complet de desserts.</p>
+  </div>
+</section>

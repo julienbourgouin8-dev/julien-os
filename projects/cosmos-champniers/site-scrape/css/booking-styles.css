@@ -1,0 +1,224 @@
+:root {
+  --navy: #16304a;
+  --navy-dark: #0f2337;
+  --ink: #1f2225;
+  --muted: #7f878d;
+  --muted-2: #636a70;
+  --muted-3: #444a4f;
+  --border: #e0e3e6;
+  --border-2: #d1d6da;
+  --border-3: #e7eaec;
+  --bg: #f1f2f3;
+  --card: #fdfefe;
+  --field-bg: #f9fafb;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Manrope", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--navy); text-decoration: none; }
+a:hover { color: #2c5a80; text-decoration: underline; }
+
+input, select, textarea, button { font: inherit; color: inherit; }
+input::placeholder, textarea::placeholder { color: #9ea5ab; }
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--navy); outline-offset: 1px; }
+
+.page {
+  min-height: 100vh;
+  padding: clamp(20px, 4vw, 64px) clamp(16px, 4vw, 56px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(24px, 3vw, 44px);
+}
+
+.header {
+  width: 100%;
+  max-width: 1080px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+.eyebrow { font-size: 11px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--muted); }
+.brand {
+  margin: 0;
+  font-family: "Bodoni Moda", serif;
+  font-weight: 400;
+  font-size: clamp(44px, 7vw, 76px);
+  letter-spacing: 0.06em;
+  color: var(--navy);
+  line-height: 1;
+}
+.rule { width: 40px; height: 1px; background: var(--border-2); margin: 6px 0; }
+.tagline { margin: 0; font-size: 15px; line-height: 1.6; color: var(--muted-2); max-width: 40ch; }
+
+.main {
+  width: 100%;
+  max-width: 1080px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: clamp(20px, 2.5vw, 36px);
+  align-items: start;
+}
+
+@media (max-width: 760px) {
+  .main { grid-template-columns: 1fr; }
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: clamp(22px, 3vw, 40px);
+}
+
+.form { display: flex; flex-direction: column; gap: 22px; }
+
+.form-error {
+  background: #fdecec;
+  border: 1px solid #e8a3a3;
+  color: #7a2020;
+  padding: 12px 14px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.row-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 18px; }
+
+.field { display: flex; flex-direction: column; gap: 8px; }
+.field-label { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+.field-hint { font-size: 12px; line-height: 1.5; color: var(--muted); }
+.field-hint a { color: inherit; }
+
+input[type="date"], input[type="text"], input[type="tel"], input[type="email"], select, textarea {
+  background: var(--field-bg);
+  border: 1px solid var(--border-2);
+  border-radius: 0;
+  padding: 13px 14px;
+  font-size: 15px;
+  min-height: 48px;
+  width: 100%;
+}
+textarea { line-height: 1.6; resize: vertical; }
+
+.field-error {
+  font-size: 12px;
+  color: #b3261e;
+}
+
+.service-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.service-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+  padding: 16px 18px;
+  cursor: pointer;
+  text-align: left;
+  min-height: 48px;
+  background: var(--field-bg);
+  border: 1px solid var(--border-2);
+  color: var(--ink);
+}
+.service-card:hover { border-color: var(--navy); }
+.service-card.active {
+  background: #e2e9f0;
+  border: 1px solid var(--navy);
+  box-shadow: inset 0 0 0 1px var(--navy);
+}
+.service-name { font-family: "Bodoni Moda", serif; font-size: 19px; }
+.service-hours { font-size: 12px; color: var(--muted); }
+
+.divider { height: 1px; background: var(--border-3); }
+
+.btn-primary {
+  background: var(--navy);
+  color: var(--card);
+  border: 1px solid var(--navy);
+  padding: 17px 24px;
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  cursor: pointer;
+  min-height: 52px;
+}
+.btn-primary:hover { background: var(--navy-dark); }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.btn-outline {
+  align-self: flex-start;
+  margin-top: 8px;
+  background: none;
+  border: 1px solid var(--navy);
+  color: var(--navy);
+  padding: 12px 22px;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.btn-outline:hover { background: var(--navy); color: var(--card); }
+
+.fineprint { margin: 0; font-size: 12px; line-height: 1.6; color: var(--muted); }
+
+.success { display: flex; flex-direction: column; gap: 16px; padding: 12px 0; }
+.success[hidden] { display: none; }
+.success:focus { outline: 2px solid var(--navy); outline-offset: 4px; }
+.success-title { font-family: "Bodoni Moda", serif; font-size: 30px; color: var(--navy); }
+.success-text { margin: 0; font-size: 15px; line-height: 1.7; color: var(--muted-3); }
+.success-note { margin: 0; font-size: 13px; line-height: 1.6; color: var(--muted); }
+
+/* Honeypot : masqué visuellement mais présent dans le DOM pour piéger les bots */
+.honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.aside { display: flex; flex-direction: column; gap: 14px; }
+
+.panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: clamp(22px, 2.5vw, 32px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.panel-dark {
+  background: var(--navy);
+  color: #e7eef4;
+  gap: 18px;
+}
+.panel-title { font-family: "Bodoni Moda", serif; font-size: 24px; letter-spacing: 0.02em; }
+.address { display: flex; flex-direction: column; gap: 4px; font-size: 15px; line-height: 1.65; }
+.rule-dark { height: 1px; background: rgba(231,238,244,0.28); }
+.contacts { display: flex; flex-direction: column; gap: 10px; font-size: 15px; }
+.contacts a { color: #e7eef4; word-break: break-all; }
+
+.panel-label { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag { border: 1px solid var(--border-2); padding: 7px 12px; font-size: 13px; color: var(--muted-3); }
+.panel-text { margin: 0; font-size: 15px; line-height: 1.7; color: var(--muted-3); }
+.panel-quote { margin: 0; font-family: "Bodoni Moda", serif; font-size: 17px; line-height: 1.6; color: var(--navy); }
+
+.footer {
+  width: 100%;
+  max-width: 1080px;
+  padding-top: 6px;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #9ea5ab;
+}

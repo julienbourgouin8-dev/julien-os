@@ -1,0 +1,94 @@
+/* Section Salle : carrousel coverflow glissable + lightbox "on rentre dans l'image" */
+#salle { position: relative; overflow-x: clip; padding-block: var(--section-y); --sl-w: min(58vw, 900px); --sl-ratio: 0.625; }
+
+#salle .sl-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+#salle .sl-head .h2 { margin-top: 16px; }
+
+/* ---------- Carrousel ---------- */
+#salle .sl-carousel {
+  position: relative; margin-top: clamp(40px, 6vh, 72px);
+  height: calc(var(--sl-w) * var(--sl-ratio) + 40px);
+  perspective: 1800px; perspective-origin: 50% 50%;
+  touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: grab;
+  outline: none;
+}
+#salle .sl-carousel.is-dragging { cursor: grabbing; }
+#salle .sl-carousel:focus-visible .sl-slide.is-active { outline: 2px solid var(--neon); outline-offset: 6px; }
+#salle .sl-stage { position: absolute; inset: 0; transform-style: preserve-3d; }
+
+#salle .sl-slide {
+  position: absolute; left: 50%; top: 50%;
+  width: var(--sl-w); height: calc(var(--sl-w) * var(--sl-ratio));
+  margin-left: calc(var(--sl-w) / -2); margin-top: calc(var(--sl-w) * var(--sl-ratio) / -2);
+  border-radius: var(--r-lg); overflow: hidden; background: var(--navy);
+  box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.9);
+  cursor: inherit; -webkit-tap-highlight-color: transparent;
+  backface-visibility: hidden;
+}
+#salle .sl-slide.is-active { cursor: zoom-in; }
+#salle .sl-carousel.is-dragging .sl-slide { cursor: grabbing; }
+#salle .sl-slide__media { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; }
+#salle .sl-slide__media img {
+  position: absolute; top: 0; left: -10%; width: 120%; max-width: none; height: 100%;
+  object-fit: cover; pointer-events: none;
+}
+#salle .sl-slide__shade { position: absolute; inset: 0; z-index: 1; transform: translateZ(1px); background: var(--night); opacity: 0; pointer-events: none; border-radius: inherit; }
+#salle .sl-slide::after {
+  content: ""; position: absolute; inset: 0; z-index: 2; border-radius: inherit; pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(157, 176, 198, 0.14);
+}
+
+/* ---------- Légende + flèches ---------- */
+#salle .sl-bar { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-top: clamp(20px, 3vh, 36px); }
+#salle .sl-caption { display: flex; align-items: baseline; gap: 18px; min-height: 2.2em; }
+#salle .sl-count[hidden] { display: none; }
+#salle .sl-count { font: 600 0.78rem/1 var(--font-body); letter-spacing: 0.2em; color: var(--text-3); font-variant-numeric: tabular-nums; }
+#salle .sl-caption__txt { display: inline-block; font: 400 var(--fs-h3)/1.15 var(--font-display); color: var(--text); }
+#salle .sl-arrows { display: flex; gap: 12px; }
+#salle .sl-arrow, #salle .sl-lb__btn {
+  display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%;
+  border: 1px solid rgba(238, 243, 248, 0.24); color: var(--text); background: rgba(4, 25, 48, 0.35);
+  transition: border-color 0.3s, transform 0.4s var(--ease-out), background-color 0.3s;
+}
+#salle .sl-arrow:hover, #salle .sl-lb__btn:hover { border-color: var(--neon); background: rgba(3, 154, 228, 0.18); transform: scale(1.06); }
+#salle .sl-arrow svg, #salle .sl-lb__btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- Lightbox ---------- */
+#salle .sl-lb { position: fixed; inset: 0; z-index: 950; }
+#salle .sl-lb[hidden] { display: none; }
+#salle .sl-lb__bg { position: absolute; inset: 0; background: rgba(2, 8, 18, 0.96); }
+#salle .sl-lb__frame { position: absolute; inset: 0; overflow: hidden; }
+#salle .sl-lb__layer { position: absolute; inset: 0; overflow: hidden; }
+#salle .sl-lb__pan { position: absolute; inset: 0; }
+#salle .sl-lb__pan img { width: 100%; height: 100%; object-fit: cover; }
+#salle .sl-lb__ui { position: absolute; inset: 0; pointer-events: none; }
+#salle .sl-lb__ui::before {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 34vh;
+  background: linear-gradient(rgba(2, 8, 18, 0), rgba(2, 8, 18, 0.78));
+}
+#salle .sl-lb__ui > * { pointer-events: auto; }
+#salle .sl-lb__cap {
+  position: absolute; left: var(--gutter); bottom: clamp(28px, 6vh, 56px);
+  display: flex; flex-direction: column; gap: 12px;
+}
+#salle .sl-lb__txt { font: 400 var(--fs-h2)/1.05 var(--font-display); color: var(--text); text-shadow: 0 2px 30px rgba(2, 8, 18, 0.6); }
+#salle .sl-lb__close { position: absolute; top: clamp(16px, 3vh, 28px); right: var(--gutter); background: rgba(2, 8, 18, 0.5); }
+#salle .sl-lb__prev, #salle .sl-lb__next { position: absolute; top: 50%; margin-top: -26px; background: rgba(2, 8, 18, 0.5); }
+#salle .sl-lb__prev { left: var(--gutter); }
+#salle .sl-lb__next { right: var(--gutter); }
+
+/* ---------- Mobile ---------- */
+@media (max-width: 760px) {
+  #salle { --sl-w: 76vw; --sl-ratio: 1.25; }
+  #salle .sl-head { flex-direction: column; align-items: flex-start; gap: 18px; }
+  #salle .sl-caption { flex-direction: column; gap: 8px; }
+  #salle .sl-arrow { width: 48px; height: 48px; }
+  /* plein écran mobile : cadre centré plutôt que recadrage extrême d'une photo carrée */
+  #salle .sl-lb__frame { top: 0; bottom: 0; height: min(125vw, calc(100svh - 220px)); margin: auto 0; }
+  #salle .sl-lb__ui::before { height: 40vh; }
+  #salle .sl-lb__prev, #salle .sl-lb__next { top: auto; bottom: 28px; margin-top: 0; }
+  #salle .sl-lb__prev { left: auto; right: calc(var(--gutter) + 60px); }
+  #salle .sl-lb__cap { bottom: 32px; right: calc(var(--gutter) + 124px); }
+  #salle .sl-lb__txt { font-size: 1.6rem; }
+}
+#salle .sl-lb { touch-action: none; }

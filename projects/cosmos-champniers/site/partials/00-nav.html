@@ -1,0 +1,46 @@
+<header class="nav" id="top">
+  <a class="nav__brand" href="index.html" aria-label="Cosmos, accueil">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" aria-hidden="true">
+  <defs>
+    <mask id="nav-cm-behind">
+      <rect width="240" height="200" fill="#fff"/>
+      <path d="M86 104 a34 34 0 0 1 68 0 z" transform="rotate(-8 120 104)" fill="#000"/>
+    </mask>
+    <clipPath id="nav-cm-planet"><circle cx="120" cy="104" r="34"/></clipPath>
+  </defs>
+  <circle class="cm-orbit" cx="121" cy="98" r="64" fill="none" stroke="currentColor" stroke-width="6"/>
+  <circle class="cm-planet" cx="120" cy="104" r="34" fill="#039ae4"/>
+  <path d="M100 86 a22 22 0 0 1 24 -12 a26 26 0 0 0 -18 22 z" fill="#0284c7" opacity=".55" clip-path="url(#nav-cm-planet)"/>
+  <g class="cm-rings" fill="none" stroke="currentColor" stroke-linecap="round" transform="rotate(-8 120 108)" mask="url(#nav-cm-behind)">
+    <ellipse class="cm-ring" cx="120" cy="108" rx="112" ry="24" stroke-width="4.5"/>
+    <ellipse class="cm-ring" cx="120" cy="108" rx="96" ry="17" stroke-width="4"/>
+    <ellipse class="cm-ring" cx="120" cy="108" rx="80" ry="11" stroke-width="3.5"/>
+  </g>
+</svg>
+    <span class="nav__word">COSMOS</span>
+  </a>
+  <nav class="nav__links" aria-label="Navigation principale">
+    <a href="#buffet">Le buffet</a>
+    <a href="#tarifs">Tarifs</a>
+    <a href="#salle">La salle</a>
+    <a href="evenements.html">Événements</a>
+    <a href="#infos">Infos pratiques</a>
+  </nav>
+  <div class="nav__actions">
+    <a class="nav__phone" href="tel:+33545381107">05 45 38 11 07</a>
+    <a class="btn btn--primary" href="https://booking.cosmos-tech.fr" data-resa>Réserver</a>
+    <button class="nav__burger" type="button" aria-label="Menu"><span></span><span></span></button>
+  </div>
+</header>
+<div class="menu" aria-label="Menu">
+  <a class="menu__link" href="#buffet">Le buffet</a>
+  <a class="menu__link" href="#tarifs">Tarifs</a>
+  <a class="menu__link" href="#salle">La salle</a>
+  <a class="menu__link" href="evenements.html">Événements</a>
+  <a class="menu__link" href="#infos">Infos pratiques</a>
+  <div class="menu__foot">
+    <a href="tel:+33545381107">05 45 38 11 07</a>
+    <a class="btn btn--primary" href="https://booking.cosmos-tech.fr" data-resa>Réserver une table</a>
+  </div>
+</div>
+<main id="main">

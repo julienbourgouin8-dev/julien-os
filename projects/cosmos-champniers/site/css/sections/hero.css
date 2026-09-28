@@ -1,0 +1,187 @@
+/* Hero « Le voyage dans le tunnel » — partials/10-hero.html + js/sections/hero.js
+ * Par défaut (sans JS / reduced) : écrans empilés en flux normal, tout lisible.
+ * #hero.is-cine (posé par le JS) : écrans superposés dans un stage épinglé. */
+
+#hero { position: relative; background: var(--night); overflow-x: clip; }
+
+/* ---------- Loader d'ouverture ---------- */
+#hero .hero__loader {
+  position: fixed; inset: 0; z-index: 850;
+  display: none; align-items: center; justify-content: center;
+  background: var(--night); color: var(--text);
+  /* failsafe : si le JS ne prend jamais la main, le loader s'efface seul */
+  animation: hero-failsafe 0.6s 5s forwards;
+}
+body.is-intro #hero .hero__loader { display: flex; }
+#hero .hero__loader.is-driven { animation: none; }
+@keyframes hero-failsafe { to { opacity: 0; visibility: hidden; } }
+
+#hero .hero__mark { width: clamp(120px, 14vw, 180px); height: auto; overflow: visible; }
+#hero .hero__mark-orbit,
+#hero .hero__mark-ring { stroke-dasharray: 1; stroke-dashoffset: 1; }
+#hero .hero__mark-planet { opacity: 0; }
+#hero .hero__mark.is-lit .hero__mark-planet { filter: drop-shadow(0 0 10px rgba(3, 154, 228, 0.85)) drop-shadow(0 0 28px rgba(95, 200, 255, 0.45)); }
+
+/* ---------- Écrans ---------- */
+#hero .hero__pin { position: relative; }
+#hero .hero__screen { position: relative; overflow: hidden; background: var(--night); }
+#hero .hero__screen--tunnel { height: 100vh; height: 100dvh; height: 100lvh; }
+#hero .hero__screen--land { min-height: 100vh; min-height: 100svh; display: flex; align-items: flex-end; }
+
+#hero .hero__cam,
+#hero .hero__drift,
+#hero .hero__land-cam { position: absolute; inset: 0; }
+#hero .hero__media, #hero .hero__media img { display: block; width: 100%; height: 100%; }
+#hero .hero__img { object-fit: cover; object-position: 50% 50%; }
+#hero .hero__land-img { object-fit: cover; object-position: 50% 58%; }
+
+/* Lisibilité : haut (nav + eyebrow) et bas (boutons) */
+#hero .hero__shade {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(to bottom, rgba(2, 8, 18, 0.2) 0%, rgba(2, 8, 18, 0) 16%),
+    linear-gradient(to top, rgba(2, 8, 18, 0.92) 0%, rgba(2, 8, 18, 0.45) 26%, rgba(2, 8, 18, 0) 50%),
+    radial-gradient(ellipse 70% 60% at 50% 48%, rgba(2, 8, 18, 0) 40%, rgba(2, 8, 18, 0.35) 100%);
+}
+
+/* Contenu écran 1 : cadré sur la petite hauteur (svh) pour ne jamais passer sous la barre mobile */
+#hero .hero__content {
+  position: absolute; inset: 0 0 auto; height: 100vh; height: 100svh;
+  display: flex; flex-direction: column; align-items: center;
+  padding: calc(var(--nav-h) + clamp(28px, 7vh, 72px)) var(--gutter) clamp(28px, 6vh, 56px);
+  text-align: center;
+}
+
+/* Wordmark géant, centré dans l'arche (point de fuite ≈ 48 % de la hauteur desktop) */
+#hero .hero__word {
+  position: absolute; left: 0; right: 0; top: 48%; height: 0;
+  display: flex; justify-content: center; align-items: center; /* ligne de hauteur nulle : centre sans transform (GSAP pilote transform) */
+  font: 400 var(--fs-mega)/0.9 var(--font-display);
+  letter-spacing: 0.08em; padding-left: 0.08em; /* recentre malgré l'espacement de fin */
+  color: var(--text);
+  text-shadow: 0 0 32px rgba(3, 154, 228, 0.55), 0 0 90px rgba(3, 154, 228, 0.3), 0 2px 18px rgba(2, 8, 18, 0.6);
+  pointer-events: none; user-select: none; white-space: nowrap;
+}
+#hero .hero__half { display: inline-block; }
+
+#hero .hero__ui {
+  margin-top: auto; margin-bottom: clamp(20px, 8vh, 96px); /* remonté pour se rapprocher du wordmark */
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center; gap: 18px;
+}
+#hero .hero__ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; }
+#hero .hero__ctas .btn { min-height: 64px; padding: 0 46px; font-size: 0.9rem; }
+
+/* Note Google entre le wordmark et les boutons : grand chiffre + étoiles et nombre d'avis empilés */
+#hero .hero__rating { display: inline-flex; align-items: center; gap: 14px; margin-bottom: 10px; color: var(--text); text-shadow: 0 1px 12px rgba(2, 8, 18, 0.85); }
+#hero .hero__rating-num { font: 400 2.9rem/1 var(--font-display); letter-spacing: 0.02em; }
+#hero .hero__rating-side { display: flex; flex-direction: column; align-items: flex-start; gap: 7px; }
+#hero .hero__stars { display: block; width: 118px; height: auto; filter: drop-shadow(0 1px 6px rgba(2, 8, 18, 0.7)); }
+#hero .hero__rating-count { font: 600 0.75rem/1 var(--font-body); letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-2); }
+
+/* ---------- Écran 2 : atterrissage ---------- */
+#hero .hero__land-shade {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(to top, rgba(2, 8, 18, 0.5) 0%, rgba(2, 8, 18, 0.32) 30%, rgba(2, 8, 18, 0.1) 55%, rgba(2, 8, 18, 0) 72%),
+    linear-gradient(to bottom, rgba(2, 8, 18, 0.25) 0%, rgba(2, 8, 18, 0) 16%);
+}
+#hero .hero__land-copy { position: relative; z-index: 1; padding-bottom: clamp(40px, 9vh, 96px); }
+/* Voile localisé derrière le texte : la photo reste claire ailleurs, le texte se détache des tables */
+#hero .hero__land-copy::before {
+  content: ""; position: absolute; z-index: -1; pointer-events: none;
+  left: -12%; right: -12%; top: -18%; bottom: -10%;
+  background: radial-gradient(ellipse 60% 62% at 34% 62%, rgba(2, 8, 18, 0.72) 0%, rgba(2, 8, 18, 0.5) 45%, rgba(2, 8, 18, 0) 100%),
+              radial-gradient(ellipse 22% 40% at 88% 78%, rgba(2, 8, 18, 0.55) 0%, rgba(2, 8, 18, 0) 100%);
+}
+#hero .hero__title { max-width: 15ch; }
+#hero .hero__title .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+#hero .hero__title .w > span { display: inline-block; }
+#hero .hero__land-row {
+  margin-top: clamp(22px, 3.5vh, 40px);
+  display: flex; align-items: flex-end; justify-content: space-between; gap: clamp(24px, 5vw, 80px);
+}
+#hero .hero__text { color: var(--text); max-width: 48ch; font-size: clamp(1.08rem, 1.35vw, 1.35rem); line-height: 1.6; text-shadow: 0 1px 14px rgba(2, 8, 18, 0.95), 0 0 3px rgba(2, 8, 18, 0.8); }
+#hero .hero__title { text-shadow: 0 2px 30px rgba(2, 8, 18, 0.9), 0 1px 6px rgba(2, 8, 18, 0.7); }
+#hero .hero__count { display: flex; flex-direction: column; align-items: flex-end; flex: none; line-height: 1; }
+#hero .hero__count-n {
+  font: 400 clamp(3.4rem, 7vw, 6.4rem)/0.9 var(--font-display); color: var(--text);
+  font-variant-numeric: tabular-nums; text-shadow: 0 0 30px rgba(3, 154, 228, 0.5);
+}
+/* clip-path plutôt qu'overflow : le halo du chiffre déborde sur les côtés sans dessiner de rectangle */
+/* le halo passe en filtre sur la rangée (appliqué après le découpage des colonnes : aucun bord visible) */
+#hero .hero__count-n:has(.odo-row) { text-shadow: none; animation: none; }
+#hero .odo-row { display: inline-flex; filter: drop-shadow(0 0 16px rgba(3, 154, 228, 0.55)); animation: hero-glow-f 4.5s ease-in-out infinite; }
+@keyframes hero-glow-f { 50% { filter: drop-shadow(0 0 26px rgba(3, 154, 228, 0.9)); } }
+#hero .odo { display: inline-block; height: 1em; clip-path: inset(0 -1em); vertical-align: top; }
+#hero .odo__strip { display: flex; flex-direction: column; align-items: center; }
+#hero .odo__strip > span { display: block; height: 1em; line-height: 1em; }
+#hero .hero__count-bar {
+  display: block; width: 100%; height: 1px; margin-top: 12px; transform-origin: right;
+  background: linear-gradient(90deg, rgba(95, 200, 255, 0), var(--neon)); box-shadow: 0 0 10px var(--blue);
+}
+/* Ambiance de l'écran 2 une fois posé : la salle respire lentement, un voile de lumière la traverse,
+   le 650 pulse doucement. Tout reste très léger. */
+#hero .hero__land-img { animation: hero-land-breathe 18s ease-in-out infinite alternate; }
+@keyframes hero-land-breathe { from { transform: scale(1) translate3d(0, 0, 0); } to { transform: scale(1.045) translate3d(-1%, -0.6%, 0); } }
+#hero .hero__land-sweep {
+  position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen; opacity: 0.5;
+  background: linear-gradient(105deg, rgba(95, 200, 255, 0) 38%, rgba(140, 210, 255, 0.14) 48%, rgba(95, 200, 255, 0) 58%);
+  background-size: 260% 100%; animation: hero-sweep 11s ease-in-out infinite;
+}
+@keyframes hero-sweep { 0% { background-position: 120% 0; } 60%, 100% { background-position: -40% 0; } }
+#hero .hero__count-n { animation: hero-glow 4.5s ease-in-out infinite; }
+@keyframes hero-glow { 50% { text-shadow: 0 0 44px rgba(3, 154, 228, 0.85), 0 0 90px rgba(3, 154, 228, 0.3); } }
+@media (prefers-reduced-motion: reduce) { #hero .hero__land-img, #hero .hero__land-sweep, #hero .hero__count-n, #hero .odo-row { animation: none; } }
+#hero .hero__text .tw { display: inline-block; }
+#hero .hero__count-l {
+  margin-top: 10px; font: 600 var(--fs-eyebrow)/1 var(--font-body); letter-spacing: 0.26em;
+  text-transform: uppercase; color: var(--neon);
+}
+
+/* ---------- Sous le pin : le gros buffet ---------- */
+#hero .hero__after { padding-block: clamp(48px, 9vh, 110px) clamp(24px, 5vh, 56px); }
+#hero .hero__after-text {
+  max-width: 40ch;
+  font: 400 clamp(1.35rem, 2.3vw, 2.05rem)/1.38 var(--font-display); color: var(--text);
+  text-wrap: pretty;
+}
+#hero .hero__after-text .aw { display: inline; }
+
+/* ---------- Mode cinématique (JS) ---------- */
+#hero.is-cine .hero__pin { height: 100vh; height: 100dvh; height: 100lvh; overflow: hidden; }
+#hero.is-cine .hero__screen { position: absolute; inset: 0; min-height: 0; height: 100%; }
+#hero.is-cine .hero__screen--land { visibility: hidden; opacity: 0; }
+#hero.is-cine .hero__screen--land .hero__land-copy { height: 100vh; height: 100svh; display: flex; flex-direction: column; justify-content: flex-end; }
+#hero.is-cine .hero__img { transform-origin: var(--kb-origin, 50% 49%); animation: hero-breathe 22s ease-in-out infinite alternate; }
+@keyframes hero-breathe { from { transform: scale(1); } to { transform: scale(1.06); } }
+#hero.is-cine .hero__screen--land { align-items: stretch; }
+#hero.is-cine .hero__land-copy { margin-top: auto; }
+
+/* ---------- Mobile ---------- */
+@media (max-width: 760px) {
+  #hero .hero__img { object-position: 56% 50%; }
+  #hero .hero__land-img { object-position: 38% 50%; }
+  #hero .hero__content { padding-top: calc(var(--nav-h) + 28px); padding-bottom: 22px; }
+  #hero .hero__word { top: 47%; font-size: clamp(3.6rem, 19vw, 5rem); letter-spacing: 0.07em; padding-left: 0.07em; }
+  #hero .hero__ui { gap: 14px; width: 100%; }
+  #hero .hero__ctas { flex-direction: column; width: 100%; max-width: 360px; gap: 10px; }
+  #hero .hero__ctas .btn { width: 100%; min-height: 58px; padding: 0 24px; font-size: 0.82rem; }
+  #hero .hero__rating-num { font-size: 2.4rem; }
+  #hero .hero__stars { width: 100px; }
+  #hero .hero__title { font-size: clamp(2.3rem, 10.5vw, 2.9rem); max-width: none; }
+  #hero .hero__land-row { flex-direction: column; align-items: flex-start; gap: 22px; }
+  #hero .hero__count { flex-direction: row; align-items: baseline; gap: 14px; }
+  #hero .hero__count-bar { display: none; }
+  #hero .hero__count-n { font-size: 3.4rem; }
+  #hero .hero__land-shade {
+    background:
+      linear-gradient(to top, rgba(2, 8, 18, 0.6) 0%, rgba(2, 8, 18, 0.4) 34%, rgba(2, 8, 18, 0.12) 60%, rgba(2, 8, 18, 0) 76%),
+      linear-gradient(to bottom, rgba(2, 8, 18, 0.25) 0%, rgba(2, 8, 18, 0) 14%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #hero .hero__loader { display: none !important; }
+  #hero .hero__img { animation: none !important; }
+}

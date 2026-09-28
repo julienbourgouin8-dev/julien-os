@@ -1,0 +1,18 @@
+import { createRequire } from "node:module";
+const require = createRequire("/Users/julien/julien-os/scripts/playwright/package.json");
+const { chromium } = require("playwright");
+const [w, h] = process.argv.slice(2).map(Number);
+const b = await chromium.launch({ headless: true });
+const p = await b.newPage({ viewport: { width: w, height: h } });
+const errs = []; p.on("console", (m) => m.type() === "error" && errs.push(m.text().slice(0, 140) + " @ " + (m.location().url || "").slice(0, 60)));
+await p.goto("http://localhost:5178/?jump=0", { waitUntil: "load" });
+await p.waitForFunction("window.__ready === true");
+const y = await p.evaluate(() => { const m = document.querySelector("#infos .infos__map"); return Math.round(m.getBoundingClientRect().top + scrollY - 120); });
+await p.goto(`http://localhost:5178/?jump=${y}`, { waitUntil: "load" });
+await p.waitForFunction("window.__ready === true");
+const fr = p.frames().length;
+await p.waitForTimeout(5000);
+console.log("frames", fr, "->", p.frames().map(f => f.url().slice(0, 60)));
+await p.screenshot({ path: `/Users/julien/julien-os/projects/cosmos-champniers/site/_shots/infos/5-carte-${w < 800 ? "m" : "d"}.png` });
+console.log(errs.length ? errs : "console: aucune erreur");
+await b.close();

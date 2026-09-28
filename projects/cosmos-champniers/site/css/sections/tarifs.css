@@ -1,0 +1,109 @@
+/* Section Tarifs (sous les avis) : 3 cartes adultes identiques (le tarif du moment porte l'anneau orbite des boutons)
+   + bande Enfants pleine largeur. */
+#tarifs { position: relative; isolation: isolate; overflow-x: clip; padding-block: var(--section-y); }
+
+#tarifs .tf-sky { position: absolute; inset: 0; z-index: -2; pointer-events: none; }
+#tarifs .tf-sky__view { position: sticky; top: 0; height: 100lvh; overflow: hidden; }
+#tarifs .tf-sky__img { position: absolute; left: 0; top: -8%; width: 100%; height: 116%; object-fit: cover; object-position: 62% 45%; filter: blur(2.5px) saturate(1.1) brightness(0.72); transform: scale(1.14); }
+#tarifs .tf-sky__stars { position: absolute; inset: 0; width: 100%; height: 100%; }
+#tarifs .tf-sky__veil { position: absolute; inset: 0; background: radial-gradient(ellipse 70% 60% at 50% 45%, rgba(2, 8, 18, 0.3), rgba(2, 8, 18, 0.6) 62%, rgba(2, 8, 18, 0.9) 100%), linear-gradient(rgba(2, 8, 18, 0.3), rgba(2, 8, 18, 0.5)); }
+#tarifs::before, #tarifs::after { content: ""; position: absolute; left: 0; right: 0; height: 30vh; z-index: -1; pointer-events: none; }
+#tarifs::before { top: 0; background: linear-gradient(var(--night), rgba(2, 8, 18, 0)); }
+#tarifs::after { bottom: 0; background: linear-gradient(rgba(2, 8, 18, 0), var(--night)); }
+
+#tarifs .tf-head { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
+#tarifs .tf-note { color: var(--text-2); }
+
+/* ---------- 3 cartes ---------- */
+#tarifs .tf-deck {
+  list-style: none; margin: clamp(48px, 7vh, 72px) auto 0; padding: 0; max-width: 1120px;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px;
+  perspective: 1200px;
+}
+#tarifs .tf-card { position: relative; }
+#tarifs .tf-card__in {
+  --mx: 50%; --my: 0%;
+  position: relative; isolation: isolate; overflow: hidden; height: 100%; min-height: 330px;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  padding: 58px 28px 32px; border-radius: var(--r-lg);
+  /* verre bleu nuit plus clair en haut : la carte se détache du ciel */
+  background:
+    radial-gradient(120% 60% at 50% 0%, rgba(95, 200, 255, 0.12), rgba(95, 200, 255, 0) 60%),
+    linear-gradient(170deg, rgba(20, 56, 96, 0.78), rgba(8, 26, 50, 0.82) 55%, rgba(4, 16, 32, 0.88));
+  backdrop-filter: blur(16px) saturate(1.3);
+  border: 1px solid rgba(238, 243, 248, 0.2);
+  box-shadow:
+    inset 0 1px 0 rgba(238, 243, 248, 0.22),
+    0 0 0 1px rgba(2, 8, 18, 0.4),
+    0 40px 70px -30px rgba(0, 0, 0, 0.9),
+    0 20px 60px -20px rgba(3, 154, 228, 0.22);
+  transform-style: preserve-3d; will-change: transform;
+  transition: box-shadow 0.6s var(--ease-out);
+}
+/* lumière qui suit le curseur + liseré qui s'allume */
+#tarifs .tf-card__in::before, #tarifs .tf-card__in::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity 0.5s var(--ease-out); }
+#tarifs .tf-card__in::before { z-index: -1; background: radial-gradient(420px circle at var(--mx) var(--my), rgba(3, 154, 228, 0.18), rgba(3, 154, 228, 0) 60%); }
+#tarifs .tf-card__in::after { padding: 1px; background: radial-gradient(300px circle at var(--mx) var(--my), rgba(95, 200, 255, 0.85), rgba(95, 200, 255, 0) 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+#tarifs .tf-card:hover .tf-card__in::before, #tarifs .tf-card:hover .tf-card__in::after { opacity: 1; }
+#tarifs .tf-card:hover .tf-card__in { box-shadow: inset 0 1px 0 rgba(238, 243, 248, 0.28), 0 50px 90px -40px rgba(3, 154, 228, 0.6), 0 40px 70px -30px rgba(0, 0, 0, 0.9); }
+
+#tarifs .tf-card__name { font: 400 var(--fs-h3)/1.1 var(--font-display); color: var(--text); }
+#tarifs .tf-card__when { margin-top: 10px; max-width: 26ch; min-height: 3em; font-size: 0.92rem; line-height: 1.5; color: var(--text-2); }
+#tarifs .tf-card__price {
+  margin-top: auto; padding-top: 26px;
+  font-size: clamp(3rem, 4.4vw, 4.2rem); line-height: 1; font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 40px rgba(242, 187, 150, 0.25);
+}
+#tarifs .tf-card__per { margin-top: 10px; font: 600 0.7rem/1 var(--font-body); letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-3); }
+
+/* Tarif du moment : anneau orbite (même effet que les boutons) + étiquette */
+#tarifs .tf-now {
+  position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+  display: none; align-items: center; gap: 8px; padding: 6px 12px; border-radius: var(--r-pill); white-space: nowrap;
+  border: 1px solid rgba(95, 200, 255, 0.4); background: rgba(3, 154, 228, 0.14);
+  font: 700 0.62rem/1 var(--font-body); letter-spacing: 0.16em; text-transform: uppercase; color: var(--neon);
+}
+#tarifs .tf-now::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--neon); box-shadow: 0 0 10px var(--neon); }
+#tarifs .tf-card.is-now .tf-now { display: inline-flex; }
+#tarifs .tf-card.is-now::before {
+  content: ""; position: absolute; inset: -1px; z-index: 2; border-radius: var(--r-lg); padding: 2px; pointer-events: none;
+  background: conic-gradient(from var(--orbit), transparent 0 55%, var(--blue) 75%, var(--text) 88%, transparent 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
+  animation: btn-orbit 5s linear infinite;
+}
+#tarifs .tf-card.is-now { top: -10px; }
+
+/* ---------- Bande Enfants ---------- */
+#tarifs .tf-kids {
+  max-width: 1120px; margin: 20px auto 0;
+  display: flex; align-items: center; gap: clamp(20px, 3vw, 44px);
+  padding: 22px clamp(24px, 3vw, 40px); border-radius: var(--r-md);
+  background: linear-gradient(170deg, rgba(20, 56, 96, 0.7), rgba(6, 20, 40, 0.82));
+  backdrop-filter: blur(16px) saturate(1.3);
+  border: 1px solid rgba(238, 243, 248, 0.18);
+  box-shadow: inset 0 1px 0 rgba(238, 243, 248, 0.18), 0 30px 60px -30px rgba(0, 0, 0, 0.85);
+}
+#tarifs .tf-kids__title { font: 400 1.5rem/1 var(--font-display); color: var(--text); flex: none; }
+#tarifs .tf-kids__list { margin: 0; flex: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+#tarifs .tf-kid { padding-left: 20px; border-left: 1px solid rgba(238, 243, 248, 0.12); }
+#tarifs .tf-kid dt { font-size: 0.82rem; color: var(--text-2); }
+#tarifs .tf-kid dd { margin: 6px 0 0; white-space: nowrap; }
+#tarifs .tf-kid .price { font-size: 1.3rem; }
+#tarifs .tf-kid small { font-size: 0.78rem; color: var(--text-3); }
+#tarifs .tf-kid__sep { color: var(--text-3); margin: 0 4px; }
+
+#tarifs .tf-foot { display: flex; justify-content: center; margin-top: clamp(36px, 6vh, 56px); }
+
+@media (max-width: 1000px) {
+  #tarifs .tf-deck { grid-template-columns: 1fr; max-width: 460px; gap: 14px; }
+  #tarifs .tf-card__in { min-height: 0; padding: 54px 24px 26px; }
+  #tarifs .tf-card.is-now { top: 0; }
+  #tarifs .tf-kids { flex-direction: column; align-items: stretch; max-width: 460px; gap: 14px; }
+  #tarifs .tf-kids__list { grid-template-columns: 1fr; gap: 0; }
+  #tarifs .tf-kid { padding: 12px 0; border-left: 0; border-top: 1px solid rgba(238, 243, 248, 0.1); display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  #tarifs .tf-kid dd { margin: 0; }
+  #tarifs .tf-kid dt { white-space: nowrap; }
+  #tarifs .tf-kid .price { font-size: 1.1rem; }
+}
+@media (max-width: 560px) { #tarifs .tf-foot .btn { width: 100%; } }

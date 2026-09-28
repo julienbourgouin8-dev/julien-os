@@ -1,0 +1,115 @@
+/* ==========================================================================
+   #wok — « Cuisiné devant vous, à la minute »
+   Deux modes :
+   - par défaut (mobile, reduced, sans JS) : empilement, chaque chapitre avec son image
+   - .is-split (desktop, ajouté par js/sections/wok.js) : écran coupé épinglé,
+     chapitres à gauche, image à droite qui change par volet
+   ========================================================================== */
+
+#wok {
+  position: relative;
+  background: var(--night);
+  overflow-x: clip;
+}
+
+/* ---------- Empilement (par défaut) ---------- */
+#wok .wk-grid { max-width: var(--maxw); margin-inline: auto; padding: var(--section-y) var(--gutter); }
+#wok .wk-visual { display: none; }
+#wok .wk-text { display: flex; flex-direction: column; }
+#wok .wk-head { order: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 20px; }
+#wok .wk-title { max-width: 13ch; }
+#wok .wk-body { order: 1; margin-top: 28px; display: flex; flex-direction: column; gap: 14px; color: var(--text-2); max-width: 58ch; }
+#wok .wk-tags { order: 2; list-style: none; margin: 26px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+#wok .wk-chapters { order: 3; list-style: none; margin: clamp(48px, 8vh, 88px) 0 0; padding: 0; display: flex; flex-direction: column; gap: clamp(56px, 9vh, 96px); }
+
+#wok .wk-ch__head {
+  position: relative;
+  display: flex; align-items: baseline; gap: 16px;
+  padding-bottom: 18px; border-bottom: 1px solid var(--line);
+}
+#wok .wk-ch__n {
+  font: 600 var(--fs-eyebrow)/1 var(--font-body); letter-spacing: 0.24em; color: var(--warm);
+  font-variant-numeric: tabular-nums; flex: none;
+}
+#wok .wk-ch__t { font: 400 clamp(1.9rem, 3.2vw, 2.6rem)/1.08 var(--font-display); color: var(--text); text-wrap: balance; }
+#wok .wk-ch__bar {
+  position: absolute; left: 0; bottom: -1px; width: 100%; height: 1px;
+  background: var(--warm); transform-origin: left center; opacity: 0.7;
+}
+
+#wok .wk-m { margin-top: 22px; }
+#wok .wk-m__fig { position: relative; margin: 0; overflow: hidden; border-radius: var(--r-md); background: var(--navy); aspect-ratio: 4 / 3; }
+#wok .wk-m__fig img { width: 100%; height: 100%; object-fit: cover; }
+#wok .wk-m--pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start; }
+#wok .wk-m--pair .wk-m__fig { aspect-ratio: 3 / 4; }
+#wok .wk-m--pair .wk-m__fig:nth-child(2) { margin-top: 18%; }
+
+@media (min-width: 761px) {
+  /* empilement large (reduced sur desktop) : titre de chapitre à gauche, image à droite */
+  #wok .wk-ch { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(28px, 4vw, 64px); align-items: start; }
+  #wok .wk-m { margin-top: 0; }
+}
+
+/* ==========================================================================
+   Desktop : écran coupé épinglé
+   ========================================================================== */
+#wok.is-split .wk-grid {
+  max-width: none; padding: 0;
+  display: grid; grid-template-columns: minmax(0, 47fr) minmax(0, 53fr);
+  height: 100svh;
+}
+#wok.is-split .wk-text {
+  justify-content: center;
+  padding: calc(var(--nav-h) * 0.7) clamp(32px, 3.6vw, 64px) 4svh max(var(--gutter), calc((100vw - 1560px) / 2));
+}
+#wok.is-split .wk-head,
+#wok.is-split .wk-chapters,
+#wok.is-split .wk-body,
+#wok.is-split .wk-tags { order: 0; }
+#wok.is-split .wk-head { gap: 16px; }
+#wok.is-split .wk-title { font-size: min(var(--fs-h2), 7svh); }
+#wok.is-split .wk-chapters { margin: min(5svh, 44px) 0 0; gap: 0; }
+#wok.is-split .wk-ch { display: block; }
+#wok.is-split .wk-m { display: none; }
+#wok.is-split .wk-ch__head { padding: min(1.9svh, 18px) 0; align-items: center; }
+#wok.is-split .wk-ch__t { font-size: min(clamp(1.5rem, 2.2vw, 2.3rem), 4.4svh); white-space: nowrap; }
+#wok.is-split .wk-ch__n,
+#wok.is-split .wk-ch__t { opacity: 0.3; }
+#wok.is-split .wk-ch:first-child .wk-ch__n,
+#wok.is-split .wk-ch:first-child .wk-ch__t { opacity: 1; }
+#wok.is-split .wk-ch__bar { transform: scaleX(0); opacity: 1; }
+#wok.is-split .wk-ch:first-child .wk-ch__bar { transform: scaleX(1); }
+#wok.is-split .wk-body { margin-top: min(4svh, 36px); font-size: min(var(--fs-body), 2.1svh); gap: 10px; }
+#wok.is-split .wk-tags { margin-top: min(3svh, 26px); flex-wrap: nowrap; gap: 8px; }
+#wok.is-split .wk-tags .pill { padding: 8px 13px; font-size: 0.8rem; white-space: nowrap; }
+
+#wok.is-split .wk-visual { display: block; position: relative; height: 100svh; overflow: hidden; background: var(--navy); }
+#wok .wk-shot { position: absolute; inset: 0; margin: 0; overflow: hidden; clip-path: inset(100% 0% 0% 0%); }
+#wok .wk-shot:first-child { clip-path: inset(0% 0% 0% 0%); }
+#wok .wk-shot img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.08); transform-origin: 50% 60%; }
+/* lisibilité du compteur + liaison douce avec la colonne texte */
+#wok .wk-visual::after {
+  content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background:
+    linear-gradient(to right, rgba(2, 8, 18, 0.55) 0%, rgba(2, 8, 18, 0) 18%),
+    linear-gradient(to top, rgba(2, 8, 18, 0.6) 0%, rgba(2, 8, 18, 0) 26%);
+}
+#wok .wk-count {
+  position: absolute; z-index: 3; right: var(--gutter); bottom: max(4svh, 28px);
+  font: 400 1.1rem/1 var(--font-display); color: var(--text-2); letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+#wok .wk-count__cur { color: var(--text); font-size: 2.4rem; }
+
+/* ==========================================================================
+   Mobile
+   ========================================================================== */
+@media (max-width: 760px) {
+  #wok .wk-grid { padding-block: clamp(72px, 12svh, 110px); }
+  #wok .wk-title { font-size: clamp(2.3rem, 10vw, 2.9rem); }
+  #wok .wk-chapters { gap: 64px; }
+  #wok .wk-ch__t { font-size: clamp(1.8rem, 8vw, 2.2rem); }
+  #wok .wk-m__fig { aspect-ratio: 4 / 5; }
+  #wok .wk-m--pair .wk-m__fig { aspect-ratio: 3 / 4.4; }
+  #wok .wk-m--pair .wk-m__fig:nth-child(2) { margin-top: 30%; }
+}

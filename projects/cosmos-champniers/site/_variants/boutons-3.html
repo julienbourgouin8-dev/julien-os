@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cosmos — boutons logo + effets</title>
+<link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;600;700&family=Marcellus&display=swap" rel="stylesheet">
+<style>
+  /* Couleurs du logo (assets/logo/cosmos-mark.svg) : planète #039ae4 / #0284c7, anneau blanc, fond nuit */
+  :root { --night:#020812; --navy:#041930; --planet:#039ae4; --planet-2:#0284c7; --ring:#eef3f8; --neon:#5fc8ff; --text-2:#9db0c6; }
+  @property --a { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--night); color: var(--ring); font-family: Karla, system-ui, sans-serif; }
+  .v { position: relative; height: 400px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding: 0 20px 44px; overflow: hidden; border-bottom: 1px solid rgba(157,176,198,.16); isolation: isolate; }
+  .v::before { content: ""; position: absolute; inset: 0; background: url(../assets/img/tunnel-render.webp) center 45% / cover; z-index: -2; }
+  .v::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(2,8,18,.9), rgba(2,8,18,.25) 60%, rgba(2,8,18,.1)); z-index: -1; }
+  .word { position: absolute; top: 26%; left: 0; right: 0; text-align: center; font: 400 clamp(4rem, 12vw, 9rem)/1 Marcellus, serif; letter-spacing: .08em; text-shadow: 0 0 32px rgba(3,154,228,.55), 0 2px 18px rgba(2,8,18,.6); }
+  .label { position: absolute; top: 16px; left: 16px; max-width: 440px; font: 700 .75rem/1.4 Karla; letter-spacing: .16em; text-transform: uppercase; background: rgba(2,8,18,.85); padding: 12px 16px; border-radius: 6px; }
+  .label small { display: block; margin-top: 4px; font: 400 .9rem/1.45 Karla; letter-spacing: 0; text-transform: none; color: var(--text-2); }
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
+
+  .btn { position: relative; isolation: isolate; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; min-height: 54px; padding: 0 32px; border-radius: 999px; white-space: nowrap; cursor: pointer; color: #fff; font: 700 .8rem/1 Karla; letter-spacing: .18em; text-transform: uppercase; transition: transform .35s cubic-bezier(.2,.8,.2,1), color .3s, background-color .3s, border-color .3s; }
+
+  /* 1. Orbite : l'anneau du logo tourne autour du bouton */
+  .o { background: rgba(2,8,18,.7); backdrop-filter: blur(10px); }
+  .o::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 2px; z-index: -1;
+    background: conic-gradient(from var(--a), transparent 0 55%, var(--planet) 75%, var(--ring) 88%, transparent 100%), rgba(238,243,248,.14);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
+    animation: orbit 4s linear infinite; }
+  .o:hover::before { animation-duration: 1.6s; }
+  @keyframes orbit { to { --a: 360deg; } }
+
+  /* 2. Planète : sphère bleue du logo + reflet qui balaie au survol */
+  .p { background: radial-gradient(120% 160% at 30% 20%, #3db6f0 0%, var(--planet) 40%, var(--planet-2) 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.35); }
+  .p::after { content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 40%; z-index: -0; background: linear-gradient(100deg, transparent, rgba(255,255,255,.45), transparent); transform: skewX(-20deg); transition: left .7s cubic-bezier(.2,.8,.2,1); }
+  .p:hover::after { left: 130%; }
+  .p:hover { transform: translateY(-2px); }
+
+  /* 3. Remplissage planète : contour anneau blanc, la planète grossit depuis la gauche */
+  .f { border: 1.5px solid var(--ring); background: rgba(2,8,18,.45); backdrop-filter: blur(10px); }
+  .f::before { content: ""; position: absolute; z-index: -1; left: 22px; top: 50%; width: 10px; height: 10px; margin-top: -5px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #3db6f0, var(--planet) 55%, var(--planet-2)); transition: transform .6s cubic-bezier(.7,0,.2,1); }
+  .f { padding-left: 46px; }
+  .f:hover::before { transform: scale(64); }
+  .f:hover { border-color: var(--planet); }
+
+  /* 4. Anneau incliné : ellipse fine derrière le texte, comme l'orbite du logo, qui s'allume au survol */
+  .r { background: var(--navy); border: 1px solid rgba(3,154,228,.5); }
+  .r::before { content: ""; position: absolute; z-index: -1; left: 8%; right: 8%; top: 50%; height: 26px; margin-top: -13px; border-radius: 50%;
+    border: 1px solid rgba(238,243,248,.18); transform: rotate(-6deg); transition: border-color .4s, transform .6s cubic-bezier(.2,.8,.2,1); }
+  .r:hover { border-color: var(--planet); }
+  .r:hover::before { border-color: var(--neon); transform: rotate(-6deg) scaleX(1.12); }
+
+  /* 5. Duo : principal planète + secondaire orbite */
+</style>
+</head>
+<body>
+  <section class="v"><p class="label">1 · Orbite<small>Fond nuit, un trait bleu→blanc tourne en continu autour du bouton comme l'anneau du logo. Il accélère au survol.</small></p>
+    <div class="word">COSMOS</div><div class="row"><a class="btn o">Réserver une table</a><a class="btn o">Découvrir le buffet</a></div></section>
+  <section class="v"><p class="label">2 · Planète<small>Le bleu sphérique du logo, avec un petit relief. Au survol, un reflet de lumière balaie le bouton.</small></p>
+    <div class="word">COSMOS</div><div class="row"><a class="btn p">Réserver une table</a><a class="btn p">Découvrir le buffet</a></div></section>
+  <section class="v"><p class="label">3 · Planète qui remplit<small>Contour blanc (l'anneau) avec une petite planète bleue à gauche. Au survol, elle grossit et remplit tout le bouton.</small></p>
+    <div class="word">COSMOS</div><div class="row"><a class="btn f">Réserver une table</a><a class="btn f">Découvrir le buffet</a></div></section>
+  <section class="v"><p class="label">4 · Anneau incliné<small>Bleu nuit, une fine orbite inclinée derrière le texte, reprise du logo. Elle s'allume et s'étire au survol.</small></p>
+    <div class="word">COSMOS</div><div class="row"><a class="btn r">Réserver une table</a><a class="btn r">Découvrir le buffet</a></div></section>
+  <section class="v"><p class="label">5 · Duo planète + orbite<small>Si tu acceptes deux niveaux : « Réserver » en planète (le plus visible), le second en orbite. Même forme, même famille.</small></p>
+    <div class="word">COSMOS</div><div class="row"><a class="btn p">Réserver une table</a><a class="btn o">Découvrir le buffet</a></div></section>
+</body>
+</html>

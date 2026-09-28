@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cosmos — Réservation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+<div class="page">
+
+  <header class="header">
+    <div class="eyebrow">Restaurant</div>
+    <h1 class="brand">COSMOS</h1>
+    <div class="rule"></div>
+    <p class="tagline">Réservez votre table en quelques instants. Service du midi et du soir.</p>
+  </header>
+
+  <main class="main">
+
+    <section class="card">
+
+      <div id="successView" class="success" hidden tabindex="-1" role="status" aria-live="polite">
+        <div class="success-title">Merci, <span id="successName"></span>.</div>
+        <p class="success-text">Votre demande de réservation a bien été enregistrée : <strong id="successRecap"></strong>. Nous vous confirmons la table par téléphone ou par email.</p>
+        <p class="success-note">Nous gardons la table 5 minutes après votre heure de réservation.</p>
+        <button type="button" id="resetBtn" class="btn-outline">Nouvelle réservation</button>
+      </div>
+
+      <form id="reservationForm" class="form" novalidate>
+
+        <div id="formError" class="form-error" role="alert" hidden></div>
+
+        <div class="row-2">
+          <label class="field">
+            <span class="field-label">Date</span>
+            <input type="date" name="date" id="date" required />
+          </label>
+          <label class="field">
+            <span class="field-label">Heure de réservation</span>
+            <select name="heure" id="heure" required></select>
+          </label>
+        </div>
+
+        <div class="field">
+          <span class="field-label">Service</span>
+          <div class="service-grid">
+            <button type="button" id="pickMidi" class="service-card active" aria-pressed="true">
+              <span class="service-name">Midi</span>
+              <span class="service-hours">12h00 – 14h00</span>
+            </button>
+            <button type="button" id="pickSoir" class="service-card" aria-pressed="false">
+              <span class="service-name">Soir</span>
+              <span class="service-hours">19h00 – 21h30</span>
+            </button>
+          </div>
+          <input type="hidden" name="service" id="service" value="midi" />
+        </div>
+
+        <label class="field">
+          <span class="field-label">Nombre de personnes</span>
+          <select name="personnes" id="personnes" required></select>
+          <span class="field-hint">Réservation à partir de 10 personnes uniquement (en dessous, une table est disponible sans réservation). Au-delà de 30 personnes, merci de nous appeler au <a href="tel:+33545381107">05 45 38 11 07</a>.</span>
+        </label>
+
+        <div class="divider"></div>
+
+        <div class="row-2">
+          <label class="field">
+            <span class="field-label">Nom</span>
+            <input type="text" name="nom" id="nom" required placeholder="Votre nom" maxlength="80" />
+          </label>
+          <label class="field">
+            <span class="field-label">Numéro de téléphone</span>
+            <input type="tel" name="telephone" id="telephone" required placeholder="06 00 00 00 00" />
+          </label>
+        </div>
+
+        <label class="field">
+          <span class="field-label">Adresse email</span>
+          <input type="email" name="email" id="email" required placeholder="vous@exemple.fr" />
+        </label>
+
+        <label class="field">
+          <span class="field-label">Message</span>
+          <textarea name="message" id="message" rows="4" maxlength="500" placeholder="Allergies, occasion particulière, demande de table…"></textarea>
+        </label>
+
+        <!-- Honeypot anti-bot : champ invisible, doit rester vide -->
+        <div class="honeypot" aria-hidden="true">
+          <label>Site web
+            <input type="text" name="website" id="website" tabindex="-1" autocomplete="off" />
+          </label>
+        </div>
+
+        <button type="submit" id="submitBtn" class="btn-primary">Demander une table</button>
+
+        <p class="fineprint">Votre réservation est confirmée par nos équipes. Pour les groupes ou une demande urgente, appelez le <a href="tel:+33545381107">05 45 38 11 07</a>.</p>
+      </form>
+    </section>
+
+    <aside class="aside">
+      <div class="panel panel-dark">
+        <div class="panel-title">Nous trouver</div>
+        <div class="address">
+          <span>1156 Rte de la braconne</span>
+          <span>16430 Champniers</span>
+        </div>
+        <div class="rule-dark"></div>
+        <div class="contacts">
+          <a href="tel:+33545381107">05 45 38 11 07</a>
+          <a href="/cdn-cgi/l/email-protection#21424e524c4e520f4249404c514f4844535261464c40484d0f424e4c"><span class="__cf_email__" data-cfemail="dcbfb3afb1b3aff2bfb4bdb1acb2b5b9aeaf9cbbb1bdb5b0f2bfb3b1">[email&#160;protected]</span></a>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-label">Moyens de paiement acceptés</div>
+        <div class="tags">
+          <span class="tag">CB</span>
+          <span class="tag">Chèque vacances</span>
+          <span class="tag">Ticket restaurant</span>
+          <span class="tag">Espèces</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-label">À savoir</div>
+        <p class="panel-text">Les animaux ne sont pas acceptés.</p>
+        <p class="panel-quote">« Nous gardons la table 5 minutes après votre heure de réservation. »</p>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="footer">Cosmos — Champniers</footer>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="/app.js"></script>
+</body>
+</html>

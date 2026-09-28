@@ -1,0 +1,76 @@
+/* Section 90 — Pied de page : colonnes, logo Saturne qui tourne lentement, wordmark géant révélé
+   lettre par lettre au scroll (état final visible par défaut). */
+#footer {
+  position: relative; overflow: hidden;
+  background:
+    radial-gradient(70% 60% at 50% 110%, rgba(3, 154, 228, 0.22), rgba(3, 154, 228, 0) 70%),
+    var(--night);
+  border-top: 1px solid var(--line);
+  padding-top: clamp(72px, 11vh, 130px);
+}
+#footer .ft__top {
+  display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 1.2fr);
+  gap: clamp(32px, 4vw, 64px);
+}
+#footer .ft__brand { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; }
+#footer .ft__mark {
+  width: 96px; height: auto; color: var(--text);
+  animation: ft-spin 90s linear infinite;
+  filter: drop-shadow(0 0 22px rgba(3, 154, 228, 0.35));
+}
+@keyframes ft-spin { to { transform: rotate(360deg); } }
+#footer .ft__text { color: var(--text-2); max-width: 34ch; font-size: 0.98rem; line-height: 1.6; }
+#footer .live-status { color: var(--text); }
+
+#footer .ft__label {
+  font: 600 var(--fs-eyebrow)/1.5 var(--font-body); letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--text-3); margin-bottom: 14px;
+}
+#footer ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+#footer .ft__col a {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 40px;
+  color: var(--text); font-size: 1rem; overflow-wrap: anywhere; transition: color 0.25s;
+}
+#footer .ft__col a:hover { color: var(--neon); }
+#footer .ft__addr { color: var(--text-2); font-size: 0.95rem; line-height: 1.55; padding-top: 8px; }
+#footer .ft__cta { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+#footer .nw { white-space: nowrap; }
+#footer .ft__hours { font: 400 1.2rem/1.4 var(--font-display); color: var(--text); max-width: 20ch; margin-bottom: 14px; }
+
+/* Wordmark géant : remplit la largeur */
+#footer .ft__word {
+  display: flex; justify-content: center;
+  margin-top: clamp(56px, 9vh, 110px);
+  font: 400 23.2vw/0.78 var(--font-display);
+  letter-spacing: -0.015em;
+  user-select: none; pointer-events: none;
+}
+#footer .ft__letter { display: inline-block; overflow: hidden; padding: 0.04em 0 0.02em; }
+#footer .ft__letter > span {
+  display: block;
+  background: linear-gradient(to bottom, var(--text) 18%, rgba(157, 176, 198, 0.55) 62%, rgba(18, 52, 90, 0.35) 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+#footer .ft__legal {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  padding-block: 22px 28px;
+  font-size: var(--fs-small); color: var(--text-3);
+  position: relative;
+}
+#footer .ft__legal::before {
+  content: ""; position: absolute; top: 0; left: var(--gutter); right: var(--gutter);
+  height: 1px; background: var(--line);
+}
+#footer .ft__up { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--text-2); transition: color 0.25s; }
+#footer .ft__up:hover { color: var(--neon); }
+
+@media (max-width: 1080px) {
+  #footer .ft__top { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 560px) {
+  #footer .ft__top { grid-template-columns: 1fr 1fr; gap: 36px 20px; }
+  #footer .ft__brand, #footer .ft__cta { grid-column: 1 / -1; }
+  #footer .ft__mark { width: 80px; }
+  #footer .ft__cta .btn { width: 100%; }
+}

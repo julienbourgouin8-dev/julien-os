@@ -1,0 +1,108 @@
+/* Section avis (sous le buffet). Titre + note centrés, puis bandeau d'avis qui défile à l'infini
+   (piste dupliquée par js/sections/avis.js, pause au survol). Cartes toutes identiques ;
+   le texte complet s'ouvre dans une fenêtre (les avis ne sont jamais raccourcis). */
+#avis { background: var(--night); overflow-x: clip; }
+
+/* ---------- En-tête ---------- */
+#avis .avis__top { display: flex; flex-direction: column; align-items: center; gap: 22px; text-align: center; }
+#avis .avis__title { max-width: 18ch; }
+#avis .avis__rating { display: inline-flex; align-items: center; gap: 14px; color: var(--text); }
+#avis .avis__num { font: 400 2.9rem/1 var(--font-display); letter-spacing: 0.01em; }
+#avis .avis__side { display: flex; flex-direction: column; align-items: flex-start; gap: 7px; }
+#avis .avis__bigstars { width: 118px; height: auto; }
+#avis .avis__total {
+  font: 600 0.75rem/1 var(--font-body); letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-2);
+  transition: color 0.3s;
+}
+#avis .avis__rating:hover .avis__total { color: var(--text); }
+
+/* ---------- Bandeau infini ---------- */
+#avis .avis__viewport {
+  margin-top: clamp(40px, 7vh, 72px);
+  /* bords fondus : les cartes apparaissent et disparaissent en douceur */
+  -webkit-mask: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+          mask: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
+#avis .avis__track {
+  --card-w: clamp(300px, 26vw, 380px);
+  --gap: 20px;
+  list-style: none; margin: 0; padding: 4px 0;
+  display: flex; gap: var(--gap); width: max-content;
+}
+#avis .avis__track.is-looping { animation: avis-loop var(--loop-dur, 60s) linear infinite; }
+#avis .avis__viewport:hover .avis__track,
+#avis .avis__track:focus-within { animation-play-state: paused; }
+@keyframes avis-loop { to { transform: translateX(var(--loop-shift, -50%)); } }
+
+#avis .avis__item { flex: none; width: var(--card-w); }
+
+/* ---------- Carte ---------- */
+#avis .avis__card {
+  height: 244px;
+  display: flex; flex-direction: column; gap: 18px;
+  padding: 28px 28px 22px; border-radius: var(--r-md);
+  background: rgba(238, 243, 248, 0.035);
+  border: 1px solid rgba(238, 243, 248, 0.1);
+  transition: border-color 0.35s, background-color 0.35s;
+}
+#avis .avis__card:hover { border-color: rgba(238, 243, 248, 0.22); background: rgba(238, 243, 248, 0.055); }
+
+#avis .avis__stars { display: flex; gap: 4px; }
+#avis .avis__stars svg { width: 17px; height: 17px; fill: rgba(238, 243, 248, 0.2); }
+#avis .avis__stars svg.is-on { fill: #f4c46b; }
+
+#avis .avis__text {
+  flex: 1; min-height: 0;
+  white-space: pre-line; color: var(--text); font-size: 1rem; line-height: 1.65;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden;
+}
+
+#avis .avis__foot {
+  display: flex; align-items: center; gap: 12px;
+  min-height: 62px; /* même hauteur avec ou sans « Lire l'avis » */
+  padding-top: 18px; border-top: 1px solid rgba(238, 243, 248, 0.08);
+}
+#avis .avis__avatar {
+  flex: none; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center;
+  border: 1px solid rgba(238, 243, 248, 0.18); color: var(--text); font: 400 1.05rem/1 var(--font-display);
+}
+#avis .avis__who { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+#avis .avis__author { font: 600 0.95rem/1.2 var(--font-body); color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#avis .avis__date { font-size: 0.8rem; line-height: 1; color: var(--text-3); }
+#avis .avis__more {
+  margin-left: auto; flex: none; min-height: 44px; padding: 0 2px;
+  font: 600 0.72rem/1 var(--font-body); letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-2);
+  transition: color 0.25s;
+}
+#avis .avis__more:hover { color: var(--text); }
+
+/* ---------- Fenêtre avis complet ---------- */
+#avis .avis__dialog {
+  width: min(560px, calc(100vw - 32px)); max-height: min(80vh, 720px);
+  padding: 0; border: 1px solid rgba(238, 243, 248, 0.14); border-radius: var(--r-md);
+  background: var(--navy); color: var(--text);
+}
+#avis .avis__dialog::backdrop { background: rgba(2, 8, 18, 0.72); backdrop-filter: blur(6px); }
+#avis .avis__dialog-inner { position: relative; display: flex; flex-direction: column; gap: 18px; padding: 34px 32px 28px; }
+#avis .avis__dialog-inner:focus { outline: none; }
+#avis .avis__more[hidden] { display: none; }
+#avis .avis__d-text { white-space: pre-line; line-height: 1.7; }
+#avis .avis__d-who { display: flex; flex-direction: column; gap: 4px; padding-top: 16px; border-top: 1px solid rgba(238, 243, 248, 0.08); }
+#avis .avis__close {
+  position: absolute; top: 10px; right: 12px; width: 44px; height: 44px;
+  font-size: 1.6rem; line-height: 1; color: var(--text-2);
+}
+#avis .avis__close:hover { color: var(--text); }
+
+@media (max-width: 760px) {
+  #avis .avis__track { --card-w: 82vw; --gap: 14px; }
+  #avis .avis__card { height: 244px; padding: 24px 22px 18px; }
+  #avis .avis__num { font-size: 2.4rem; }
+  #avis .avis__bigstars { width: 100px; }
+}
+
+/* Mouvement réduit : pas de défilement auto, carrousel natif */
+@media (prefers-reduced-motion: reduce) {
+  #avis .avis__viewport { overflow-x: auto; scrollbar-width: none; }
+  #avis .avis__track { padding-inline: var(--gutter); }
+}

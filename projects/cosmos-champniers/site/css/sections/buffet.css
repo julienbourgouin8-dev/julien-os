@@ -1,0 +1,123 @@
+/* ==========================================================================
+   #buffet — « Le meilleur de l’Asie, à volonté »
+   Deux modes :
+   - par défaut (mobile, reduced, sans JS) : carrousel natif scroll-snap
+   - .is-pinned (desktop, ajouté par js/sections/buffet.js) : défilement horizontal épinglé
+   ========================================================================== */
+
+#buffet {
+  --bf-h: 72svh;          /* tous les panneaux : même hauteur, même format carré */
+  --bf-gap: clamp(16px, 1.8vw, 28px);
+  position: relative;
+  padding-block: var(--section-y);
+  overflow-x: clip;
+  background: var(--night);
+}
+
+#buffet .bf-stage { position: relative; }
+
+/* ---------- Piste (mode natif par défaut) ---------- */
+#buffet .bf-track {
+  list-style: none; margin: 0;
+  display: flex; align-items: center; gap: var(--bf-gap);
+  height: calc(var(--bf-h) + 2px);
+  padding: 0 var(--gutter);
+  overflow-x: auto; overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--gutter);
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+#buffet .bf-track::-webkit-scrollbar { display: none; }
+
+/* ---------- Panneaux ---------- */
+#buffet .bf-panel {
+  position: relative; flex: none;
+  height: var(--bf-h);
+  width: var(--bf-h);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--navy);
+  scroll-snap-align: start;
+  isolation: isolate;
+}
+
+/* Média : le cadre (.bf-media) porte le zoom, l'image la parallaxe horizontale.
+   L'image déborde de 8 % de chaque côté pour que la parallaxe ne découvre jamais le fond. */
+#buffet .bf-media { position: absolute; inset: 0; margin: 0; overflow: hidden; transform-origin: 50% 55%; }
+#buffet .bf-media img {
+  position: absolute; top: 0; left: -8%;
+  width: 116%; max-width: none; height: 100%;
+  object-fit: cover;
+}
+
+/* Dégradé de lisibilité : texte posé directement sur l'image */
+#buffet .bf-item::after,
+#buffet .bf-open::after {
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(to top, rgba(2, 8, 18, 0.9) 0%, rgba(2, 8, 18, 0.55) 24%, rgba(2, 8, 18, 0.12) 46%, rgba(2, 8, 18, 0) 60%);
+}
+#buffet .bf-open::after {
+  background:
+    linear-gradient(to top, rgba(2, 8, 18, 0.92) 0%, rgba(2, 8, 18, 0.6) 34%, rgba(2, 8, 18, 0) 66%),
+    linear-gradient(to right, rgba(2, 8, 18, 0.6) 0%, rgba(2, 8, 18, 0) 58%);
+}
+
+#buffet .bf-cap {
+  position: absolute; z-index: 2; left: clamp(20px, 2vw, 30px); right: clamp(20px, 2vw, 30px); bottom: clamp(18px, 2vw, 28px);
+  display: flex; flex-direction: column; gap: 10px;
+}
+#buffet .bf-caption {
+  font: 400 clamp(1.5rem, 2.2vw, 2.25rem)/1.08 var(--font-display); color: var(--text);
+  text-wrap: balance;
+}
+
+/* Panneau d'ouverture : porte le titre de section */
+#buffet .bf-open__text {
+  position: absolute; z-index: 2; left: clamp(24px, 3.4vw, 56px); right: clamp(24px, 3.4vw, 56px); bottom: clamp(28px, 4.4vw, 64px);
+  display: flex; flex-direction: column; align-items: flex-start; gap: 18px;
+}
+#buffet .bf-open__title { font-size: 6.2svh; } /* suit la hauteur du carré : « Le meilleur de l’Asie, » tient sur une ligne */
+#buffet .bf-nw { white-space: nowrap; }
+#buffet .bf-open__lead { color: var(--text); max-width: 40ch; text-wrap: pretty; text-shadow: 0 1px 12px rgba(2, 8, 18, 0.9); }
+
+/* Panneau final : appel à l'action */
+#buffet .bf-end {
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  background:
+    radial-gradient(120% 70% at 20% 100%, rgba(3, 154, 228, 0.28) 0%, rgba(3, 154, 228, 0) 60%),
+    var(--navy);
+  border: 1px solid var(--line);
+}
+#buffet .bf-end__inner { padding: clamp(28px, 3.4vw, 52px); display: flex; flex-direction: column; align-items: center; gap: 22px; }
+#buffet .bf-end__title { font-size: var(--fs-h2); line-height: 1.04; max-width: 9ch; }
+#buffet .bf-end__actions { display: flex; justify-content: center; margin-top: 6px; }
+
+/* ==========================================================================
+   Desktop épinglé
+   ========================================================================== */
+#buffet.is-pinned { height: 100svh; padding: 0; overflow: hidden; }
+#buffet.is-pinned .bf-stage { height: 100%; display: flex; flex-direction: column; justify-content: center; }
+#buffet.is-pinned .bf-track {
+  width: max-content; overflow: visible;
+  scroll-snap-type: none;
+}
+
+/* ==========================================================================
+   Mobile : carrousel swipe natif
+   ========================================================================== */
+@media (max-width: 760px) {
+  #buffet { --bf-gap: 12px; padding-block: clamp(72px, 12svh, 110px); }
+  #buffet .bf-track { height: auto; align-items: stretch; }
+  #buffet .bf-panel { width: 84vw; height: 84vw; }
+  #buffet .bf-open .bf-media img { object-position: 42% 50%; }
+  #buffet .bf-open__title { font-size: clamp(2.2rem, 10vw, 2.8rem); }
+  #buffet .bf-nw { white-space: normal; }
+  #buffet .bf-open__text { gap: 12px; }
+  #buffet .bf-caption { font-size: 1.6rem; }
+  #buffet .bf-end__title { font-size: clamp(2.2rem, 10vw, 2.8rem); }
+}
+
+/* Intégration : resserre la jonction buffet -> wok sur mobile */
+@media (max-width: 760px) { #buffet { padding-bottom: 32px; } }

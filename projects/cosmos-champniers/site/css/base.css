@@ -1,0 +1,187 @@
+/* Cosmos — tokens + base partagés. Propriété du thread principal : les agents de section
+ * NE MODIFIENT PAS ce fichier (lecture seule). Tout style de section va dans css/sections/<id>.css,
+ * préfixé par l'id de la section (#hero .x, #buffet .y). */
+
+:root {
+  /* Palette tirée du vrai matériau : bleu planète du logo (#039ae4), bleu nuit du site actuel
+     (#041930), bleu gris du slogan actuel (#9db0c6), pêche du titre tarifs actuel (#f2bb96). */
+  --night: #020812;        /* fond le plus profond (espace) */
+  --navy: #041930;         /* bleu nuit de marque */
+  --navy-2: #0a2542;       /* surfaces élevées */
+  --navy-3: #12345a;       /* bordures sur fond sombre */
+  --blue: #039ae4;         /* planète du logo : accent principal, CTA */
+  --neon: #5fc8ff;         /* halo néon (glow, focus) */
+  --warm: #f2bb96;         /* accent chaud : prix, nourriture */
+  --warm-2: #e89a63;
+  --text: #eef3f8;         /* texte principal sur sombre */
+  --text-2: #9db0c6;       /* texte secondaire (bleu gris de marque) */
+  --text-3: #6b819b;       /* légendes, méta */
+  --line: rgba(157, 176, 198, 0.16);
+  --glass: rgba(4, 25, 48, 0.55);
+
+  --font-display: "Marcellus", "Times New Roman", serif;
+  --font-body: "Karla", system-ui, sans-serif;
+
+  --fs-mega: clamp(4.5rem, 17vw, 17rem);     /* wordmark géant */
+  --fs-h1: clamp(2.6rem, 6.2vw, 5.6rem);
+  --fs-h2: clamp(2.1rem, 4.4vw, 3.9rem);
+  --fs-h3: clamp(1.4rem, 2.2vw, 1.9rem);
+  --fs-body: clamp(1rem, 1.05vw, 1.125rem);
+  --fs-small: 0.875rem;
+  --fs-eyebrow: 0.75rem;
+
+  --gutter: clamp(20px, 5vw, 72px);
+  --maxw: 1320px;
+  --section-y: clamp(96px, 14vh, 180px);
+  --r-sm: 6px;
+  --r-md: 14px;
+  --r-lg: 28px;
+  --r-pill: 999px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --glow: 0 0 24px rgba(3, 154, 228, 0.55), 0 0 64px rgba(3, 154, 228, 0.25);
+  --nav-h: 76px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+body {
+  margin: 0;
+  background: var(--night);
+  color: var(--text);
+  font: 400 var(--fs-body)/1.65 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+img, video, svg { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; padding: 0; }
+h1, h2, h3, h4, p, figure { margin: 0; }
+::selection { background: var(--blue); color: #fff; }
+:focus-visible { outline: 2px solid var(--neon); outline-offset: 3px; border-radius: 4px; }
+
+/* Grain film global : lie rendus 3D et vraies photos */
+body::after {
+  content: ""; position: fixed; inset: -50%; z-index: 9000; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.07; mix-blend-mode: overlay;
+}
+
+/* ---------- Primitives partagées ---------- */
+.container { width: 100%; max-width: var(--maxw); margin-inline: auto; padding-inline: var(--gutter); }
+.section { position: relative; padding-block: var(--section-y); }
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font: 600 var(--fs-eyebrow)/1 var(--font-body);
+  letter-spacing: 0.26em; text-transform: uppercase; color: var(--text-2);
+}
+.eyebrow::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--blue); box-shadow: var(--glow); }
+.eyebrow--warm::before { background: var(--warm); box-shadow: 0 0 18px rgba(242, 187, 150, 0.6); }
+
+.display { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.01em; line-height: 1.04; text-wrap: balance; }
+.h1 { font-size: var(--fs-h1); }
+.h2 { font-size: var(--fs-h2); }
+.h3 { font-size: var(--fs-h3); line-height: 1.15; }
+.lead { color: var(--text-2); max-width: 54ch; text-wrap: pretty; }
+.price { font-family: var(--font-display); color: var(--warm); white-space: nowrap; }
+
+/* Bouton « orbite » : fond nuit, l'anneau du logo (bleu planète → blanc) tourne autour, accélère au survol.
+   Un seul style sur tout le site : --primary et --ghost restent comme hooks, sans variante visuelle. */
+@property --orbit { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+.btn {
+  position: relative; isolation: isolate;
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 54px; padding: 0 32px; border-radius: var(--r-pill);
+  background: rgba(2, 8, 18, 0.7); backdrop-filter: blur(10px);
+  color: #fff; font: 700 0.8rem/1 var(--font-body); letter-spacing: 0.18em; text-transform: uppercase; white-space: nowrap;
+}
+.btn::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; padding: 2px;
+  background: conic-gradient(from var(--orbit), transparent 0 55%, var(--blue) 75%, var(--text) 88%, transparent 100%), rgba(238, 243, 248, 0.14);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
+  animation: btn-orbit 4s linear infinite; pointer-events: none;
+}
+.btn:hover::before { animation-duration: 1.6s; }
+@keyframes btn-orbit { to { --orbit: 360deg; } }
+
+.pill {
+  display: inline-flex; align-items: center; padding: 9px 16px; border-radius: var(--r-pill);
+  border: 1px solid var(--line); font: 500 0.85rem/1 var(--font-body); color: var(--text);
+}
+
+/* Badge statut en direct (rempli par core.js sur tout [data-live-status]) */
+.live-status { display: inline-flex; align-items: center; gap: 9px; font: 600 0.8rem/1 var(--font-body); letter-spacing: 0.04em; }
+.live-status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--text-3); }
+.live-status.is-open::before { background: #3ee08f; box-shadow: 0 0 12px #3ee08f; animation: live-pulse 2s ease-in-out infinite; }
+@keyframes live-pulse { 50% { opacity: 0.35; } }
+
+.media { position: relative; overflow: hidden; background: var(--navy); }
+.media > img { width: 100%; height: 100%; object-fit: cover; }
+
+.sr-only { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* ---------- Navigation (partials/00-nav.html) ---------- */
+.nav {
+  position: fixed; inset: 0 0 auto; z-index: 800; height: var(--nav-h);
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  padding-inline: var(--gutter);
+  transition: transform 0.5s var(--ease-out), background-color 0.4s, backdrop-filter 0.4s;
+}
+/* Pas de bande sombre au scroll : la pastille et le bouton ont leur propre fond, logo et téléphone une ombre portée */
+.nav__brand, .nav__phone { text-shadow: 0 1px 10px rgba(2, 8, 18, 0.9), 0 0 2px rgba(2, 8, 18, 0.8); }
+.nav__brand svg { filter: drop-shadow(0 1px 6px rgba(2, 8, 18, 0.85)); }
+body.is-intro .nav { opacity: 0; pointer-events: none; }
+.nav.is-away { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.5s, visibility 0s 0.5s; } /* tunnel du hero */
+.nav { transition: opacity 0.8s var(--ease-out), transform 0.5s var(--ease-out), background-color 0.4s; }
+.nav__brand { display: flex; align-items: center; gap: 12px; color: var(--text); }
+.nav__brand svg { width: 46px; height: auto; color: #fff; }
+.nav__word { font: 400 1.35rem/1 var(--font-display); letter-spacing: 0.14em; }
+/* Liens centrés dans une pastille verre : lisibles sur n'importe quelle zone de la photo du hero */
+.nav__links {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  display: flex; gap: 4px; padding: 6px;
+  border-radius: var(--r-pill); border: 1px solid rgba(238, 243, 248, 0.14);
+  background: rgba(2, 8, 18, 0.55); backdrop-filter: blur(14px) saturate(1.3);
+  box-shadow: 0 8px 28px rgba(2, 8, 18, 0.35);
+  font: 500 1rem/1 var(--font-body);
+}
+.nav__links a { padding: 13px 20px; border-radius: var(--r-pill); color: var(--text); white-space: nowrap; transition: background-color 0.25s, color 0.25s; }
+.nav__links a:hover { background: rgba(238, 243, 248, 0.12); }
+.nav__actions { display: flex; align-items: center; gap: 18px; }
+.nav__phone { font: 600 0.92rem/1 var(--font-body); color: var(--text); }
+.nav .btn { min-height: 44px; padding: 0 20px; }
+.nav__burger { display: none; width: 44px; height: 44px; position: relative; }
+.nav__burger span { position: absolute; left: 11px; right: 11px; height: 1.5px; background: var(--text); transition: transform 0.4s var(--ease-out), opacity 0.2s; }
+.nav__burger span:nth-child(1) { top: 17px; }
+.nav__burger span:nth-child(2) { top: 26px; }
+body.menu-open .nav__burger span:nth-child(1) { transform: translateY(4.5px) rotate(45deg); }
+body.menu-open .nav__burger span:nth-child(2) { transform: translateY(-4.5px) rotate(-45deg); }
+
+.menu {
+  position: fixed; inset: 0; z-index: 790; background: rgba(2, 8, 18, 0.96); backdrop-filter: blur(16px);
+  display: flex; flex-direction: column; justify-content: center; gap: 8px; padding: var(--nav-h) var(--gutter) 40px;
+  opacity: 0; visibility: hidden; transition: opacity 0.4s, visibility 0.4s;
+}
+body.menu-open .menu { opacity: 1; visibility: visible; }
+.menu a.menu__link { font: 400 clamp(2.2rem, 9vw, 3.4rem)/1.2 var(--font-display); color: var(--text); }
+.menu__foot { margin-top: 32px; display: flex; flex-direction: column; gap: 16px; align-items: flex-start; color: var(--text-2); }
+
+@media (max-width: 1280px) {
+  .nav__links, .nav__phone { display: none; }
+  .nav__burger { display: block; }
+}
+@media (max-width: 560px) {
+  :root { --nav-h: 64px; }
+  .nav .live-status { display: none; }
+  .nav .btn { padding: 0 16px; min-height: 40px; font-size: 0.72rem; }
+  .nav__word { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+}

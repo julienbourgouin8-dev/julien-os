@@ -1,0 +1,203 @@
+/* Panneau de réservation global (js/sections/resa.js). Tout est préfixé #resa / .resa. */
+
+body.resa-open { overflow: hidden; }
+html:has(body.resa-open) { overflow: hidden; }
+
+#resa {
+  position: fixed; inset: 0; z-index: 850;
+  visibility: hidden; pointer-events: none;
+}
+#resa.is-active { visibility: visible; pointer-events: auto; }
+
+#resa .resa__scrim {
+  position: absolute; inset: 0;
+  background: rgba(2, 8, 18, 0.62);
+  backdrop-filter: blur(6px) saturate(1.1);
+  -webkit-backdrop-filter: blur(6px) saturate(1.1);
+}
+
+#resa .resa__panel {
+  position: absolute; top: 0; right: 0; bottom: 0;
+  width: min(560px, 100%);
+  overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+  background:
+    radial-gradient(120% 60% at 100% 0%, rgba(3, 154, 228, 0.16), transparent 60%),
+    linear-gradient(180deg, var(--navy) 0%, var(--night) 100%);
+  border-left: 1px solid var(--line);
+  box-shadow: -30px 0 80px rgba(2, 8, 18, 0.6);
+  color-scheme: dark;
+  outline: none;
+  scrollbar-width: thin; scrollbar-color: var(--navy-3) transparent;
+}
+#resa:not(.is-active) .resa__panel { transform: translateX(100%); }
+
+/* ---------- Barre haute (collante) ---------- */
+#resa .resa__bar {
+  position: sticky; top: 0; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px clamp(20px, 5vw, 44px);
+  background: linear-gradient(180deg, var(--navy) 55%, rgba(4, 25, 48, 0));
+}
+#resa .resa__close {
+  width: 44px; height: 44px; border-radius: 50%;
+  display: grid; place-items: center;
+  border: 1px solid var(--line); background: rgba(2, 8, 18, 0.35);
+  transition: border-color 0.25s, transform 0.4s var(--ease-out);
+}
+#resa .resa__close:hover { border-color: var(--neon); transform: rotate(90deg); }
+#resa .resa__close svg { width: 18px; height: 18px; fill: none; stroke: var(--text); stroke-width: 1.6; stroke-linecap: round; }
+
+/* ---------- En-tête ---------- */
+#resa .resa__head { padding: 6px clamp(20px, 5vw, 44px) 0; }
+#resa .resa__title { font-size: clamp(2.1rem, 4vw, 2.8rem); }
+#resa .resa__tagline { margin-top: 10px; color: var(--text-2); font-size: 0.98rem; }
+
+#resa .resa__rate {
+  margin-top: 26px; padding: 18px 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 18px;
+  border: 1px solid var(--line); border-radius: var(--r-md);
+  background: rgba(2, 8, 18, 0.4);
+  position: relative; overflow: hidden;
+}
+#resa .resa__rate::before {
+  content: ""; position: absolute; left: 0; top: 16px; bottom: 16px; width: 2px;
+  background: var(--warm); box-shadow: 0 0 14px rgba(242, 187, 150, 0.6); border-radius: 2px;
+}
+#resa .resa__rate-txt { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+#resa .resa__rate-when { font: 600 0.72rem/1.3 var(--font-body); letter-spacing: 0.2em; text-transform: uppercase; color: var(--warm); }
+#resa .resa__rate-label { font-weight: 600; color: var(--text); font-size: 0.98rem; }
+#resa .resa__rate-sub { color: var(--text-3); font-size: 0.8rem; line-height: 1.4; }
+#resa .resa__rate-num { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex: none; text-align: right; }
+#resa .resa__rate-price { display: block; overflow: hidden; font-size: 2.1rem; line-height: 1.1; }
+#resa .resa__rate-price > span { display: inline-block; }
+#resa .resa__rate-note { color: var(--text-3); font-size: 0.72rem; line-height: 1.3; max-width: 13ch; }
+
+/* ---------- Formulaire ---------- */
+#resa .resa__body { padding: 28px clamp(20px, 5vw, 44px) 8px; }
+#resa .resa__form { display: flex; flex-direction: column; gap: 20px; }
+#resa .resa__form[hidden] { display: none; }
+#resa .resa__row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+#resa .resa__field { display: flex; flex-direction: column; gap: 8px; min-width: 0; margin: 0; padding: 0; border: 0; }
+#resa .resa__label {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 0;
+  font: 600 0.74rem/1.2 var(--font-body); letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-2);
+}
+#resa .resa__count { letter-spacing: 0.04em; color: var(--text-3); font-weight: 500; text-transform: none; }
+
+#resa input:not([type="radio"]), #resa select, #resa textarea {
+  width: 100%; min-height: 52px; padding: 13px 16px;
+  font: 400 16px/1.4 var(--font-body); color: var(--text);
+  background: rgba(2, 8, 18, 0.5);
+  border: 1px solid var(--line); border-radius: 12px;
+  transition: border-color 0.25s, box-shadow 0.25s, background-color 0.25s;
+  appearance: none; -webkit-appearance: none;
+}
+#resa textarea { resize: vertical; min-height: 116px; }
+#resa input::placeholder, #resa textarea::placeholder { color: var(--text-3); }
+#resa select {
+  padding-right: 42px; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' fill='none' stroke='%239db0c6' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center; background-size: 18px;
+}
+#resa select option { background: var(--navy); color: var(--text); }
+#resa input[type="date"] { display: block; }
+#resa input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.8); cursor: pointer; }
+#resa input:not([type="radio"]):hover, #resa select:hover, #resa textarea:hover { border-color: rgba(157, 176, 198, 0.34); }
+#resa input:not([type="radio"]):focus, #resa select:focus, #resa textarea:focus {
+  outline: none; border-color: var(--blue); background-color: rgba(2, 8, 18, 0.7);
+  box-shadow: 0 0 0 3px rgba(3, 154, 228, 0.2);
+}
+#resa [aria-invalid="true"] { border-color: var(--warm-2) !important; box-shadow: 0 0 0 3px rgba(232, 154, 99, 0.18) !important; }
+
+/* Cartes Midi / Soir */
+#resa .resa__svcs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+#resa .resa__svc { position: relative; cursor: pointer; }
+#resa .resa__svc input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+#resa .resa__svc-box {
+  position: relative; display: flex; flex-direction: column; gap: 6px;
+  padding: 18px 18px 16px; border-radius: var(--r-md);
+  border: 1px solid var(--line); background: rgba(2, 8, 18, 0.4);
+  transition: border-color 0.3s, background-color 0.3s, box-shadow 0.35s var(--ease-out), transform 0.35s var(--ease-out);
+}
+#resa .resa__svc:hover .resa__svc-box { border-color: rgba(157, 176, 198, 0.34); transform: translateY(-2px); }
+#resa .resa__svc-dot {
+  position: absolute; top: 18px; right: 18px; width: 16px; height: 16px; border-radius: 50%;
+  border: 1.5px solid var(--text-3); transition: border-color 0.3s;
+}
+#resa .resa__svc-dot::after {
+  content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--blue);
+  transform: scale(0); transition: transform 0.4s var(--ease-out); box-shadow: var(--glow);
+}
+#resa .resa__svc-name { font: 400 1.5rem/1 var(--font-display); color: var(--text); }
+#resa .resa__svc-hours { font-size: 0.9rem; color: var(--text-2); }
+#resa .resa__svc input:checked + .resa__svc-box {
+  border-color: var(--blue); background: rgba(3, 154, 228, 0.1);
+  box-shadow: inset 0 0 0 1px var(--blue), 0 10px 36px rgba(3, 154, 228, 0.18);
+}
+#resa .resa__svc input:checked + .resa__svc-box .resa__svc-dot { border-color: var(--blue); }
+#resa .resa__svc input:checked + .resa__svc-box .resa__svc-dot::after { transform: scale(1); }
+#resa .resa__svc input:focus-visible + .resa__svc-box { outline: 2px solid var(--neon); outline-offset: 3px; }
+
+#resa .resa__hint { margin-top: -8px; font-size: 0.86rem; line-height: 1.55; color: var(--text-3); }
+#resa .resa__hint a, #resa .resa__foot a { color: var(--text); border-bottom: 1px solid rgba(95, 200, 255, 0.5); white-space: nowrap; }
+#resa .resa__rule { height: 1px; background: var(--line); margin-block: 2px; }
+
+#resa .resa__error {
+  padding: 14px 16px 14px 44px; border-radius: 12px; position: relative;
+  border: 1px solid rgba(232, 154, 99, 0.45); background: rgba(232, 154, 99, 0.1);
+  color: var(--warm); font-size: 0.94rem; line-height: 1.45;
+}
+#resa .resa__error::before {
+  content: "!"; position: absolute; left: 14px; top: 13px; width: 20px; height: 20px; border-radius: 50%;
+  display: grid; place-items: center; font: 700 0.75rem/1 var(--font-body); color: var(--night); background: var(--warm);
+}
+#resa .resa__error[hidden] { display: none; }
+
+#resa .resa__hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+#resa .resa__submit { display: flex; flex-direction: column; align-items: stretch; gap: 10px; margin-top: 4px; }
+#resa .resa__btn { width: 100%; min-height: 58px; font-size: 1rem; }
+#resa .resa__btn:disabled { opacity: 0.75; cursor: progress; transform: none; }
+#resa .resa__demo { text-align: center; font-size: 0.76rem; letter-spacing: 0.04em; color: var(--text-3); }
+
+/* ---------- Succès ---------- */
+#resa .resa__success { padding: 12px 0 18px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px; outline: none; }
+#resa .resa__success[hidden] { display: none; }
+#resa .resa__orb { position: relative; width: 150px; height: 150px; margin-bottom: 6px; }
+#resa .resa__orb-halo {
+  position: absolute; inset: -30px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(3, 154, 228, 0.45) 0%, rgba(3, 154, 228, 0.12) 40%, transparent 68%);
+}
+#resa .resa__orb svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+#resa .resa__orb-planet circle { fill: var(--blue); filter: drop-shadow(0 0 18px rgba(3, 154, 228, 0.8)); }
+#resa .resa__orb-ring { fill: none; stroke: var(--text); stroke-width: 2.2; opacity: 0.85; }
+#resa .resa__orb-check path { fill: none; stroke: #fff; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+#resa .resa__success-title { font-size: clamp(2rem, 4vw, 2.6rem); line-height: 1.1; }
+#resa .resa__success-text { color: var(--text-2); max-width: 40ch; line-height: 1.6; }
+#resa .resa__success-text strong { color: var(--text); font-weight: 600; }
+#resa .resa__success-note { font: 400 1.05rem/1.5 var(--font-display); color: var(--warm); max-width: 34ch; }
+#resa .resa__success-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 10px; }
+
+/* ---------- Pied ---------- */
+#resa .resa__foot {
+  margin: 28px clamp(20px, 5vw, 44px) 0; padding: 24px 0 calc(34px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--line);
+  display: flex; flex-direction: column; gap: 10px;
+  font-size: 0.86rem; line-height: 1.55; color: var(--text-3);
+}
+#resa .resa__foot-quote { font: 400 1rem/1.45 var(--font-display); color: var(--text-2); }
+#resa .resa__pay { margin-top: 8px; display: flex; flex-direction: column; gap: 10px; }
+#resa .resa__pay-label { font: 600 0.7rem/1 var(--font-body); letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-2); }
+#resa .resa__pay-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+#resa .resa__pay-tags .pill { padding: 8px 13px; font-size: 0.8rem; color: var(--text-2); }
+
+/* ---------- Mobile : plein écran ---------- */
+@media (max-width: 760px) {
+  #resa .resa__panel { width: 100%; border-left: 0; }
+}
+@media (max-width: 420px) {
+  #resa .resa__row { grid-template-columns: 1fr; gap: 20px; }
+  #resa .resa__rate { flex-direction: column; align-items: flex-start; gap: 12px; }
+  #resa .resa__rate-num { align-items: flex-start; text-align: left; flex-direction: row; align-items: baseline; gap: 12px; }
+  #resa .resa__rate-note { max-width: none; }
+}

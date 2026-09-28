@@ -1,0 +1,15 @@
+import { chromium } from "/Users/julien/julien-os/scripts/playwright/node_modules/playwright/index.mjs";
+const b = await chromium.launch({ headless: true });
+const p = await b.newPage({ viewport: { width: 1440, height: 900 }, reducedMotion: "reduce" });
+const errs = []; p.on("console", m => m.type()==="error" && errs.push(m.text())); p.on("pageerror", e => errs.push(e.message));
+await p.goto("http://localhost:5178/"); await p.waitForFunction("window.__ready===true");
+const y = await p.evaluate(() => document.querySelector("#tarifs .tf-deck").getBoundingClientRect().top + scrollY - 300);
+await p.evaluate(y => scrollTo(0, y), y); await p.waitForTimeout(600);
+await p.screenshot({ path: "/Users/julien/julien-os/projects/cosmos-champniers/site/_shots/tarifs/d-reduced.png" });
+const y2 = await p.evaluate(() => document.querySelector("#salle").getBoundingClientRect().top + scrollY);
+await p.evaluate(y => scrollTo(0, y), y2); await p.waitForTimeout(600);
+await p.locator(".sl-slide.is-active").click(); await p.waitForTimeout(200);
+await p.screenshot({ path: "/Users/julien/julien-os/projects/cosmos-champniers/site/_shots/salle/d-reduced-lb.png" });
+await p.keyboard.press("Escape"); await p.waitForTimeout(100);
+console.log("price:", await p.evaluate(() => document.querySelector("[data-tf-price]").textContent), "lb hidden:", await p.evaluate(() => document.querySelector(".sl-lb").hidden), "overflow:", await p.evaluate(()=>document.documentElement.style.overflow||"(vide)"));
+console.log("ERREURS:", errs.length ? errs : "aucune"); await b.close();

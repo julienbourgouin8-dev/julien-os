@@ -19,3 +19,6 @@ projects/site-adeline/data/uploads/*
 .vercel
 .secrets/
 projects/drivingsens-site/assets/blender/
+
+# Captures de vérification (régénérables, ~134 Mo)
+projects/cosmos-champniers/site/_shots/
