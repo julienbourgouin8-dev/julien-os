@@ -3,106 +3,18 @@ body>.stage>.header{display:none}.head{position:absolute;z-index:50;top:0;left:0
 
 /* Cinq traitements de CTA sur la direction Îlot retenue */
 .head--island{top:0;left:0;width:100%;height:104px;padding:0 4.2vw;border:0;background:transparent;backdrop-filter:none;box-shadow:none;grid-template-columns:auto 1fr auto}
-.head--island{padding-left:2.2vw}
-.head__brand{display:flex;align-items:center;gap:20px;min-width:0}
-.head__since{display:flex;align-items:center;padding-left:20px;border-left:1px solid rgba(255,255,255,.32)}
-.head__since-text{display:flex;flex-direction:column;gap:4px;white-space:nowrap}
-.head__since-text em,.head__since-text b{font-style:normal;font-family:"Urbanist",sans-serif;font-size:10.5px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#eef6ff;opacity:1;text-shadow:none}
-.head__since-text b{font-size:12.5px;font-weight:700}
-
-/* Pilule nav vraiment centrée sur la page entière, pas juste sur la colonne du milieu
-   (colonnes gauche/droite asymétriques depuis l'ajout du badge "Depuis 2018") */
-.head--island .nav-island{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);justify-self:unset}
-
-/* Compteur "420+" — 4e passe. Constat partagé avec Julien : tout le reste de la page est déjà en
-   verre/translucide (header, pilule nav, CTA, les 2 cartes) donc une pastille en verre s'y noie
-   quelle que soit sa taille. Nouvelle direction : un chip PLEIN/opaque (pas de blur, pas de
-   transparence), compact à l'échelle du bouton CTA (~44px de haut, une ligne) — la seule tache de
-   couleur pleine de la page, donc ça ressort par contraste de matière plutôt que par taille.
-   5 intensités de bleu comparées, du foncé au très clair (le texte bascule en marine sur les 2
-   variantes claires pour rester lisible). */
-.stat-scroll{display:inline-flex;align-items:center;gap:9px;padding:12px 22px;border-radius:999px;box-shadow:0 10px 24px rgba(0,0,0,.22)}
-.stat-scroll__body{display:flex;align-items:baseline}
-.stat-scroll__number{position:relative;display:flex;align-items:baseline;font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:19px;line-height:1;letter-spacing:-.005em;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35)}
-.digit{position:relative;height:1em;width:.6em;overflow:hidden}
-.digit__reel{position:absolute;left:0;top:0;width:100%;display:flex;flex-direction:column;transform:translateY(0);transition:transform 1.15s cubic-bezier(.16,1,.3,1)}
-.digit__reel span{height:1em;line-height:1;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums;color:inherit}
-.digit:nth-child(2) .digit__reel{transition-delay:.1s}
-.digit:nth-child(3) .digit__reel{transition-delay:.2s}
-.stat-scroll.is-counted .digit[data-digit="0"] .digit__reel{transform:translateY(0)}
-.stat-scroll.is-counted .digit[data-digit="1"] .digit__reel{transform:translateY(-10%)}
-.stat-scroll.is-counted .digit[data-digit="2"] .digit__reel{transform:translateY(-20%)}
-.stat-scroll.is-counted .digit[data-digit="3"] .digit__reel{transform:translateY(-30%)}
-.stat-scroll.is-counted .digit[data-digit="4"] .digit__reel{transform:translateY(-40%)}
-.stat-scroll.is-counted .digit[data-digit="5"] .digit__reel{transform:translateY(-50%)}
-.stat-scroll.is-counted .digit[data-digit="6"] .digit__reel{transform:translateY(-60%)}
-.stat-scroll.is-counted .digit[data-digit="7"] .digit__reel{transform:translateY(-70%)}
-.stat-scroll.is-counted .digit[data-digit="8"] .digit__reel{transform:translateY(-80%)}
-.stat-scroll.is-counted .digit[data-digit="9"] .digit__reel{transform:translateY(-90%)}
-.stat-scroll__plus{order:-1;align-self:center;margin-right:3px;font-size:.66em;font-weight:500;color:#dce6f6}
-.stat-scroll small{font-size:8px;font-weight:500;text-transform:uppercase;letter-spacing:.11em;color:#eef4ff;opacity:.92;white-space:nowrap}
-
-/* 01 — Foncé : bleu nuit quasi noir, contraste maximal */
-[data-stat="fonce"] .stat-scroll{background:#152c56}
-
-/* 02 — Marine : le bleu de marque (--navy) tel quel */
-[data-stat="marine"] .stat-scroll{background:#1e3a6e}
-
-/* 03 — Acier : bleu-gris intermédiaire, moins saturé */
-[data-stat="acier"] .stat-scroll{background:#4a6491}
-
-/* 04 — Clair : bleu pâle, texte bascule en marine pour rester lisible */
-[data-stat="clair"] .stat-scroll{background:#9db4e0}
-[data-stat="clair"] .stat-scroll__number,[data-stat="clair"] .stat-scroll__plus,[data-stat="clair"] .stat-scroll small{color:#152c56;text-shadow:none;opacity:1}
-
-/* 05 — Ivoire : quasi blanc (--mist), le plus clair, texte marine */
-[data-stat="ivoire"] .stat-scroll{background:#e6eaef}
-[data-stat="ivoire"] .stat-scroll__number,[data-stat="ivoire"] .stat-scroll__plus,[data-stat="ivoire"] .stat-scroll small{color:#152c56;text-shadow:none;opacity:1}
-
-/* 06-09 — Texte nu posé sur la vidéo, sans pastille ni bouton (piste explorée après les chips).
-   Reset commun : plus de fond/bordure/ombre-boîte, empilé et centré comme l'ancienne carte verre,
-   nombre remonté à 44px pour porter tout seul — sans boîte derrière, la seule chose qui le fait
-   "ressortir" est le traitement typographique lui-même (ombre, contour, lueur ou dégradé). */
-[data-stat^="txt-"] .stat-scroll{background:none;border:0;box-shadow:none;padding:0;border-radius:0;flex-direction:column;gap:7px}
-[data-stat^="txt-"] .stat-scroll__body{flex-direction:column;align-items:center;gap:5px}
-[data-stat^="txt-"] .stat-scroll__number{font-family:"Space Grotesk",sans-serif;font-size:44px;font-weight:700;letter-spacing:-.005em}
-[data-stat^="txt-"] .stat-scroll small{font-size:10px;letter-spacing:.16em;text-shadow:0 1px 2px rgba(0,0,0,.9),0 4px 12px rgba(0,0,0,.6)}
-
-/* 06 — Texte : même recette d'ombre que le titre au-dessus (cohérence typo), en blanc plein */
-[data-stat="txt-simple"] .stat-scroll__number{color:#fff;text-shadow:0 2px 2px rgba(0,0,0,.95),0 3px 6px rgba(0,0,0,.85),0 10px 26px rgba(0,0,0,.7)}
-[data-stat="txt-simple"] .stat-scroll__plus{color:#fff}
-
-/* 07 — Contour : contour sombre autour des glyphes, tient même sur un fond vidéo clair */
-[data-stat="txt-contour"] .digit__reel span{color:#fff;-webkit-text-stroke:1.1px rgba(2,7,15,.92);text-shadow:0 4px 14px rgba(0,0,0,.6)}
-[data-stat="txt-contour"] .stat-scroll__plus{color:#fff;-webkit-text-stroke:.5px rgba(2,7,15,.7);text-shadow:0 4px 14px rgba(0,0,0,.6)}
-
-/* 08 — Lueur : halo bleu lumineux autour du chiffre, look plus cinématique */
-[data-stat="txt-lueur"] .stat-scroll__number{color:#fff;text-shadow:0 0 10px rgba(157,180,224,.95),0 0 28px rgba(30,58,110,.85),0 2px 6px rgba(0,0,0,.7)}
-[data-stat="txt-lueur"] .stat-scroll__plus{color:#dce6f6}
-
-/* 09 — Dégradé : reprend le traitement du mot "autrement" du titre (fill dégradé clair) */
-[data-stat="txt-degrade"] .digit__reel span,[data-stat="txt-degrade"] .stat-scroll__plus{background:linear-gradient(120deg,#fff,#9db4e0 65%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 10px rgba(0,0,0,.55))}
-
-/* 10 — Ombre : Julien préférait Contour (07) mais "pas fan" — demande explicite d'ajouter une
-   ombre derrière, pour le chiffre ET le libellé en dessous (pas juste le halo bleu de 08, qui ne
-   couvrait que le nombre). Reprend le contour de 07 + un fond d'ombre sombre diffus (pas une boîte
-   à bord net) qui englobe tout le bloc nombre+libellé pour un vrai gain de contraste. */
-[data-stat="txt-ombre"] .stat-scroll{position:relative}
-[data-stat="txt-ombre"] .stat-scroll:before{display:none}
-[data-stat="txt-ombre"] .stat-scroll__number{color:#fff;text-shadow:none}
-[data-stat="txt-ombre"] .digit__reel span{color:#fff;-webkit-text-fill-color:#fff;-webkit-text-stroke:0;text-shadow:-.5px -.5px 0 rgba(6,9,13,.78),.5px -.5px 0 rgba(6,9,13,.78),-.5px .5px 0 rgba(6,9,13,.78),.5px .5px 0 rgba(6,9,13,.78),0 2px 2px rgba(0,0,0,.72)}
-[data-stat="txt-ombre"] .stat-scroll__plus{color:#fff;-webkit-text-fill-color:#fff;-webkit-text-stroke:0;text-shadow:-.5px -.5px 0 rgba(6,9,13,.78),.5px -.5px 0 rgba(6,9,13,.78),-.5px .5px 0 rgba(6,9,13,.78),.5px .5px 0 rgba(6,9,13,.78),0 2px 2px rgba(0,0,0,.72)}
-[data-stat="txt-ombre"] .stat-scroll small{color:#fff;font-size:11.5px;font-weight:700;letter-spacing:.13em;opacity:1;-webkit-text-stroke:0;text-shadow:-1px -1px 0 rgba(0,0,0,.9),1px -1px 0 rgba(0,0,0,.9),-1px 1px 0 rgba(0,0,0,.9),1px 1px 0 rgba(0,0,0,.9),0 2px 3px #000}
-
-.stat-picker{position:fixed;z-index:80;left:18px;bottom:16px;display:flex;padding:5px;background:rgba(3,12,25,.82);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(18px)}
-.stat-picker button{font-family:"Urbanist",sans-serif;border:0;background:transparent;color:#fff;padding:10px 12px;display:flex;align-items:center;gap:8px;cursor:pointer}
-.stat-picker b{font-size:8px;font-weight:300;opacity:.48}
-.stat-picker span{font-size:9px;font-weight:300;letter-spacing:.07em}
-.stat-picker button.is-active{background:#fff;color:#1e3a6e}
-.head--island .nav-island{justify-self:center;padding:7px;background:rgba(5,13,23,.44);border:1px solid rgba(255,255,255,.17);border-radius:999px;backdrop-filter:blur(18px);box-shadow:0 12px 34px rgba(0,0,0,.12)}
-.head--island nav{gap:4px;height:auto}
-.head--island nav a{height:auto;padding:10px 19px;border:0;border-radius:999px;font-family:"Urbanist",sans-serif;font-size:11px;font-weight:300;line-height:1;letter-spacing:.025em;text-transform:none}
-.head--island nav a:first-child{background:rgba(255,255,255,.13)}
+.head__brand{display:flex;align-items:center;gap:18px;min-width:0}
+.head__since{position:relative;display:grid;grid-template-columns:auto auto;align-items:baseline;column-gap:6px;padding:9px 0 9px 18px;border-left:1px solid rgba(255,255,255,.3);color:#fff;white-space:nowrap;text-shadow:0 2px 10px rgba(0,0,0,.72)}
+.head__since:before,.head__since:after{content:"";position:absolute;left:12px;width:5px;height:1px;background:rgba(255,255,255,.58)}
+.head__since:before{top:4px}.head__since:after{bottom:4px}
+.head__since small{font-family:"Urbanist",sans-serif;font-size:8px;font-weight:300;letter-spacing:.18em;text-transform:uppercase;opacity:.78}
+.head__since b{font-family:"Urbanist",sans-serif;font-size:15px;font-weight:300;letter-spacing:.1em}
+.head--island .nav-island{justify-self:center;padding:5px;background:rgba(5,13,23,.44);border:1px solid rgba(255,255,255,.17);border-radius:999px;backdrop-filter:blur(18px);box-shadow:0 12px 34px rgba(0,0,0,.12);overflow:hidden}
+.head--island nav{gap:0;height:auto}
+.head--island nav a{height:auto;min-width:112px;padding:11px 20px;border:0;border-radius:0;font-family:"Urbanist",sans-serif;font-size:11px;font-weight:300;line-height:1;text-align:center;letter-spacing:.025em;text-transform:none}
+.head--island nav a+a{border-left:1px solid rgba(255,255,255,.18)}
+.head--island nav a:first-child{border-radius:999px 0 0 999px;background:rgba(255,255,255,.13)}
+.head--island nav a:last-child{border-radius:0 999px 999px 0}
 .head--island nav a:after{display:none}
 .head--island .head__cta{position:relative;min-height:43px;padding:0 22px;font-family:"Urbanist",sans-serif;font-size:10px;font-weight:400;line-height:1;letter-spacing:.13em;text-transform:uppercase;box-sizing:border-box}
 
@@ -160,28 +72,26 @@ body>.stage>.header{display:none}.head{position:absolute;z-index:50;top:0;left:0
 .type-outfit .story-title{font-family:"Outfit",sans-serif!important;font-weight:200!important;letter-spacing:-.025em}.type-outfit .story-word--bottom{font-size:.9em;color:#b5d3f2;-webkit-text-fill-color:#b5d3f2;letter-spacing:-.018em}
 .tone-original .film{filter:grayscale(1) brightness(.72) contrast(1.24)}
 .tone-original .grade{background:linear-gradient(180deg,rgba(5,11,19,.38),rgba(3,9,17,.82))}
-.tone-light .film{filter:grayscale(.42) brightness(.95) contrast(1.14)}
-.tone-light .grade{background:linear-gradient(180deg,rgba(196,205,216,.13),rgba(196,205,216,.3))}
+.tone-light .film{filter:grayscale(.5) brightness(1.02) contrast(1.02)}
+.tone-light .grade{background:linear-gradient(180deg,rgba(196,205,216,.28),rgba(196,205,216,.54))}
 .tone-bright .film{filter:grayscale(.12) saturate(.95) brightness(1.14) contrast(.98)}
 .tone-bright .grade{background:linear-gradient(180deg,rgba(7,14,23,.02),rgba(5,12,21,.16))}
 .tone-soft .stage{background:#07111e}
-/* Recette Soft historique, reprise à l'identique de la version visible dans l'enregistrement. */
-.tone-soft .film{opacity:.62;filter:grayscale(.42) saturate(.8) brightness(.8) contrast(1.06)}
-.tone-soft .grade{background:linear-gradient(180deg,rgba(16,26,50,.3),rgba(7,14,30,.6))}
+.tone-soft .film{opacity:.72;filter:grayscale(.62) saturate(.7) brightness(1.02) contrast(1.04)}
+.tone-soft .grade{background:linear-gradient(180deg,rgba(7,15,26,.1),rgba(4,11,20,.34))}
 .story-word--top.is-refreshing{animation:story-refresh .6s cubic-bezier(.16,1,.3,1) both}
 .story-word--bottom.is-refreshing{animation:story-refresh .66s .34s cubic-bezier(.16,1,.3,1) both}
 @keyframes story-refresh{from{opacity:0;transform:translate3d(0,16px,0);filter:blur(4px)}to{opacity:1;transform:translate3d(0,0,0);filter:blur(0)}}
 
 .tone-light .proofs,.tone-light .card,.tone-soft .proofs,.tone-soft .card{background:rgba(8,16,27,.17);border-color:rgba(255,255,255,.29);box-shadow:0 12px 34px rgba(0,0,0,.18);text-shadow:0 1px 2px rgba(0,0,0,.92),0 5px 18px rgba(0,0,0,.68)}
 
-/* Compteur social proof unique (expérience + clients), chiffres animés au chargement — remplace
-   les 2 badges séparés. Le comparateur de skin bleu reste sur sa propre page : ../badge-variants/ */
-.proofs{overflow:hidden;display:flex;align-items:stretch;border-radius:16px;background:rgba(8,18,32,.3);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(16px);box-shadow:0 16px 44px rgba(0,0,0,.2)}
-.proofs>span{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;white-space:nowrap}
-.proofs>span+span{border-left:1px solid rgba(255,255,255,.16)}
-.proofs b{font-variant-numeric:tabular-nums;line-height:1;letter-spacing:-.01em}
-.proofs small{opacity:.88;color:#eef6ff;text-transform:uppercase;letter-spacing:.14em}
-.proof-slim .proofs>span{padding:22px 32px}.proof-slim .proofs b{font-size:36px;font-weight:200}.proof-slim .proofs small{font-size:9px}
+/* Deux preuves (expérience + clients) — gris neutre (base client-preview), comme avant. Le
+   redesign en badge bleu unique se compare maintenant sur sa propre page : ../badge-variants/ */
+.proofs.proofs--counter,.tone-light .proofs--counter,.tone-soft .proofs--counter{position:relative;display:block;align-self:center;overflow:visible;min-width:0;margin:8px auto 2px;border:0;border-radius:0;background:transparent;backdrop-filter:none;box-shadow:none;text-shadow:0 2px 3px rgba(0,0,0,.86),0 9px 28px rgba(0,0,0,.58)}
+.proofs--counter:after{content:"";display:block;width:42px;height:2px;margin:12px auto 0;background:#274c84;box-shadow:0 0 18px rgba(39,76,132,.82)}
+.proofs--counter>span{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;width:auto;padding:0;white-space:nowrap;text-align:center}
+.proofs--counter b{min-width:3ch;font-variant-numeric:tabular-nums;font-family:"Urbanist",sans-serif;font-size:clamp(58px,6vw,88px);font-weight:200;line-height:.82;letter-spacing:-.06em;color:#fff}
+.proofs--counter small{padding:0;font-size:9px;line-height:1;letter-spacing:.2em;text-align:center;text-transform:uppercase;color:#dcecff;opacity:.92}
 .proof-capsule .proofs>span{padding:11px 23px}.proof-capsule .proofs b{font-size:20px}.proof-capsule .proofs small{font-size:8px;letter-spacing:.14em}
 .proof-glass .proofs>span{padding:12px 22px}.proof-glass .proofs b{font-size:21px}.proof-glass .proofs small{font-size:8px}
 .proof-glow .proofs>span{padding:11px 24px}.proof-glow .proofs b{font-size:21px}.proof-glow .proofs small{font-size:8px}
@@ -189,4 +99,4 @@ body>.stage>.header{display:none}.head{position:absolute;z-index:50;top:0;left:0
 
 @media(prefers-reduced-motion:reduce){.head.is-active,.duo .card{animation:none!important;opacity:1;transform:none}.story-word{transition:none;animation:none!important}}
 
-@media(max-width:900px){.head--island{top:0!important;left:0!important;width:100%!important;height:82px!important;padding:0 20px!important;grid-template-columns:1fr auto!important;border:0!important;border-bottom:1px solid rgba(255,255,255,.16)!important;border-radius:0!important;background:rgba(4,12,22,.18)!important}.head--island nav,.head--island .head__cta,.head--island .nav-island,.head__since{display:none!important}.intro .story-title{width:100%;margin-left:0;white-space:normal;text-align:center;font-size:clamp(40px,11vw,62px)}.story-word--bottom{width:100%;text-align:center}.duo .card:first-child{transform:translate3d(-110vw,0,0)}.duo .card:last-child{transform:translate3d(110vw,0,0)}.proofs{border-radius:13px}.proof-slim .proofs>span{padding:15px 18px}.proof-slim .proofs b{font-size:24px}.proof-slim .proofs small{font-size:7.5px}.stat-scroll{padding:10px 18px}.stat-scroll__number{font-size:17px}[data-stat^="txt-"] .stat-scroll__number{font-size:30px}.stat-picker{left:12px;right:auto;bottom:12px;max-width:calc(100vw - 24px);overflow-x:auto}.stat-picker button{padding:9px 8px}.stat-picker span{font-size:8px}}
+@media(max-width:900px){.head--island{top:0!important;left:0!important;width:100%!important;height:82px!important;padding:0 20px!important;grid-template-columns:1fr auto!important;border:0!important;border-bottom:1px solid rgba(255,255,255,.16)!important;border-radius:0!important;background:rgba(4,12,22,.18)!important}.head--island nav,.head--island .head__cta,.head--island .nav-island{display:none!important}.head__brand{gap:10px}.head__since{padding-left:11px;column-gap:4px}.head__since:before,.head__since:after{display:none}.head__since small{font-size:6px}.head__since b{font-size:11px}.intro .story-title{width:100%;margin-left:0;white-space:normal;text-align:center;font-size:clamp(40px,11vw,62px)}.story-word--bottom{width:100%;text-align:center}.duo .card:first-child{transform:translate3d(-110vw,0,0)}.duo .card:last-child{transform:translate3d(110vw,0,0)}.proofs.proofs--counter{margin-top:4px}.proofs--counter b{font-size:54px}.proofs--counter small{font-size:7.5px}.proofs--counter:after{width:34px;margin-top:10px}}

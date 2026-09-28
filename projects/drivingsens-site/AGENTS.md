@@ -1516,3 +1516,826 @@ construite dès maintenant avec la liste ci-dessus (accord de principe de Julien
 - **Prochaine étape actionnable dès la reprise** : construire les 12 cards prestations Particulier
   (accueil) + leur détail (`offre.html`) avec la liste reçue ci-dessus, en parallèle de l'attente des
   photos/vidéos et de la liste Pro.
+
+### 4 retouches hero suite au retour téléphonique de la femme d'Elie (2026-09-25)
+
+Modifications faites directement dans `header-variants/` (le hero qui converge, pas la racine
+`index.html`) :
+
+1. **Filtre vidéo** : `.tone-light .film`/`.grade` (le tone par défaut, actif sans `?filter=` dans
+   l'URL) recolorés avec `#C4CDD8` — déjà la variable `--silver` définie dans
+   `client-preview/styles.css`. `.grade` passe d'un dégradé bleu marine sombre à un dégradé du même
+   gris-argenté (`rgba(196,205,216,.34)` → `.54`), `.film` légèrement moins désaturé (`grayscale(.55)`
+   au lieu de `.68`) pour que la teinte se voie. Seul `.tone-light` a été touché — les autres tons
+   (`original`/`bright`/`soft`, accessibles via `?filter=`) restent inchangés.
+2. **Nav pill → 3 compartiments** : `Blog` retiré de `.nav-island nav` dans `index.html`. Reste
+   Particuliers / Entreprises / À propos.
+3. **Social proof → compteur animé unique** : les 2 badges séparés ("9 ans d'expérience" /
+   "420+ clients accompagnés chaque année") fusionnés en une seule carte `.proofs` (fond
+   verre/blur, bord arrondi 16px, un seul contour, séparateur vertical entre les 2 stats).
+   Chiffres remontés en `<b class="counter" data-count="9" data-suffix=" ans">`/`data-count="420"
+   data-suffix="+"`, comptés de 0 à la cible en ~1,5 s (easing cubic-out) au chargement de la page via
+   `animateCounters()` dans `script.js` (déclenché 320 ms après `motion-ready`, respecte
+   `prefers-reduced-motion` — valeur finale posée directement sans animation). Tailles bien
+   agrandies (`b` 36px desktop / 24px mobile) pour remplir l'espace, valeurs elles-mêmes inchangées
+   (9 ans, 420+). Seul `.proof-slim` (le variant actif par défaut) a été retouché ; les autres
+   variants `?proof=` (capsule/glass/glow/signature) restent tels quels, non concernés.
+4. **Badge "Depuis 2018" à côté du logo** : référence envoyée par Julien (site "Advancing Mobility
+   / Since 1924") reproduite en **structure**, pas en skin — `.head__brand` (nouveau wrapper flex
+   logo + badge) avec un séparateur vertical (`border-left`) puis 2 lignes de texte capitales
+   (`PERFECTIONNEMENT AU PILOTAGE` — la vraie baseline déjà utilisée sur `logo-tag.svg` — puis
+   `DEPUIS 2018`). **Essai avec un fragment de `logo-icon.svg` recadré en carré (`object-fit:cover`)
+   abandonné après vérification visuelle** : le crop donnait un smudge abstrait illisible, pas un
+   fragment de marque élégant (pas d'asset icône compact disponible dans le projet) — retiré,
+   gardé divider + texte seul, plus propre. `.head--island` passé en `grid-template-columns:auto 1fr
+   auto` pour laisser la colonne de gauche s'élargir ; `.head__since` masqué en dessous de 900px
+   (pas de place).
+
+Vérifié visuellement via `chrome-devtools-mcp` (1440px et 390px), aucune erreur console. Lien :
+`http://localhost:8123/header-variants/`.
+
+### 3 ajustements après retour sur captures d'écran (2026-09-25, même soirée)
+
+Julien a envoyé 2 captures du rendu ci-dessus et demandé 3 corrections, toutes faites dans
+`header-variants/` :
+
+1. **Pilule nav pas centrée sur la page** (elle l'était seulement sur la colonne du milieu, décalée
+   par l'ajout du badge "Depuis 2018" à gauche). Corrigé en sortant `.nav-island` du flux grid :
+   `.head--island .nav-island{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}` —
+   centrage sur `.head` (positionné, pleine largeur) donc indépendant de la largeur des colonnes
+   gauche/droite. Permet de laisser le bloc logo+badge s'élargir librement sans jamais repousser
+   la pilule.
+2. **Texte "Perfectionnement au pilotage / Depuis 2018" pas assez lisible** : `em`/`b` remontés en
+   taille (8.5→10.5px / 10→12.5px), poids augmenté (300→500 / 500→700), opacité quasi pleine,
+   triple text-shadow renforcé. Bordure du séparateur aussi éclaircie (`.24`→`.32`).
+3. **Badge "9 ans d'expérience" supprimé**, le "420+" transformé en widget fin sans carte/fond —
+   Julien a explicitement rejeté toute pastille pleine largeur façon carte Particulier/Entreprise.
+   Nouveau composant `.stat-scroll` : chiffres en **rouleaux façon odomètre** (`.digit`/`.digit__reel`,
+   3 colonnes 0-9 empilées, `transform:translateY` en `%` de la hauteur du rouleau = un digit exact),
+   déclenché au chargement via `animateStatScroll()` dans `script.js` (classe `.is-counted`, respecte
+   `prefers-reduced-motion` en coupant la transition). Premier essai avec un `+` en 52px (taille du
+   nombre) rendait un gros signe mal aligné — corrigé à `.42em`, `align-self:flex-start`.
+
+**Julien a ensuite demandé, avant tout tranchage** : réincorporer le dégradé bleu de l'ancienne
+pastille, mais **sous 5 variantes comparables en direct sur ce même lien** (pas une page séparée
+type `badge-variants/`) plutôt qu'un choix arbitraire de Claude. Fait avec la même mécanique que
+`badge-variants/proof-picker` (attribut `data-stat` sur `body`, classe `.is-active` togglée en JS,
+sélecteur fixe en bas à **gauche** cette fois — `.picker` existant est à droite mais inutilisé sur
+cette page). 5 traitements, tous gardent l'animation odomètre, seul le décor autour du nombre
+change :
+1. **Trait** (défaut) — petit tiret dégradé bleu au-dessus du nombre.
+2. **Couleur** — les chiffres eux-mêmes en bleu clair (`#a9c2ec`), aucun décor.
+3. **Halo** — lueur radiale bleue diffuse derrière le nombre (`::before` flouté).
+4. **Capsule** — reprend le dégradé bleu quasi identique à l'ancienne pastille, mais resserré
+   uniquement sur le nombre (pill compacte, pas pleine largeur).
+5. **Bord** — barre verticale dégradée à gauche, nombre + libellé alignés à côté (layout en ligne).
+
+Les 5 vérifiées en cliquant dessus une à une via `chrome-devtools-mcp` — rendu correct et distinct
+à chaque fois.
+
+### Rejet des 5 variantes, vrai component carte à la place (même soirée, 3e passe)
+
+Julien a rejeté le principe même des 5 variantes ("j'aime pas ce que t'as fait... c'est un peu
+simple... je veux vraiment faire un component") — pas une histoire de laquelle des 5 choisir, mais
+le fait que toutes partaient d'un nombre nu avec juste un décor autour (trait/halo/couleur), ce qui
+lisait comme pas assez travaillé/pas assez de présence. Sélecteur `.stat-picker` et les 5 règles
+`[data-stat=...]` entièrement supprimés (HTML, CSS, JS) — un seul design assumé, plus de comparateur
+sur ce point.
+
+**Nouveau `.stat-scroll`** : vraie carte (padding 30px 52px, `border-radius:20px`, verre teinté bleu
+marine `linear-gradient(155deg,rgba(30,58,110,.5),rgba(10,17,30,.42))`, bordure bleu clair, blur 20px,
+ombre portée + liseré interne clair, halo radial subtil en coin haut-gauche via `::before`) —
+délibérément **différente** du gris neutre des cartes Particulier/Entreprise en dessous (demande
+explicite de Julien : pas la même chose que les 2 cartes). Typo des chiffres changée : Julien
+n'aimait pas non plus la police — passée de Urbanist 200 (trop fine/frêle) à **Space Grotesk 600**
+(déjà chargée sur la page), 54px, plus de présence/caractère. L'animation odomètre (rouleaux de
+chiffres 0-9) est conservée à l'identique, seul l'habillage change.
+
+**Logo + badge "Depuis 2018" décalés vers la gauche** (demande explicite) : `.head--island`
+`padding-left` réduit de `4.2vw` à `2.2vw` (padding droit inchangé pour ne pas bouger le CTA), la
+pilule nav restant centrée sur la page entière (mécanisme `position:absolute` déjà en place, donc
+indépendant de ce décalage).
+
+Vérifié visuellement à 1440px et 390px via `chrome-devtools-mcp`. Lien inchangé :
+`http://localhost:8123/header-variants/`.
+
+### Compteur "420+" — décision finale : texte nu + ombre (même soirée, 5e et dernière passe)
+
+Après le rejet de la carte "vraie" (trop lourde) puis des 5 chips pleins compacts (Julien : "ça me
+plaît" sur le principe mais explore quand même l'idée de texte nu), une nouvelle direction a été
+testée : **plus aucune forme du tout** (ni carte, ni pastille, ni chip), juste le "420+" posé
+directement sur la vidéo. 4 traitements typographiques comparés (`txt-simple`/`txt-contour`/
+`txt-lueur`/`txt-degrade`, mêmes noms que le sélecteur qui existait alors) — Julien a préféré
+`txt-contour` (contour sombre autour des glyphes) sans être complètement convaincu, et a demandé un
+5e essai combinant ce contour avec **une ombre diffuse derrière, sous le chiffre ET sous le
+libellé** (pas juste derrière le nombre comme le halo bleu de `txt-lueur`). Cet essai (`txt-ombre`)
+a été validé, puis affiné une fois de plus sur demande explicite : libellé remonté à 11.5px, poids
+700, blanc plein, ombre renforcée, pour qu'il ressorte autant que le chiffre.
+
+**`txt-ombre` est la version définitive, verrouillée** (Julien : "Ombre validé, on reste sur ça,
+héros section définitive"). Le sélecteur `.stat-picker` et son câblage JS ont été retirés de
+`header-variants/index.html` et `script.js` — `data-stat="txt-ombre"` est maintenant codé en dur
+sur `<body>`, plus de comparateur sur ce point. Les règles CSS des 9 autres traitements explorés
+(`fonce`/`marine`/`acier`/`clair`/`ivoire`/`txt-simple`/`txt-contour`/`txt-lueur`/`txt-degrade`)
+sont laissées en place dans `styles.css` comme référence mais ne s'appliquent plus (aucun sélecteur
+ne pointe plus vers elles) — même convention que le reste du fichier (`.head--1` à `.head--5`,
+`.proof-*`) : historique gardé, jamais nettoyé tant que non demandé.
+
+**État final du `.stat-scroll`** (`data-stat="txt-ombre"`) : aucun fond/bordure, nombre 44px
+Space Grotesk 600 blanc avec contour sombre (`-webkit-text-stroke:1.1px`), ombre radiale diffuse
+`::before` (pas de bord net) derrière tout le bloc nombre+libellé, libellé 11.5px/700 blanc avec
+ombre renforcée. Animation odomètre inchangée (rouleaux 0-9, `is-counted` posé par
+`animateStatScroll()` dans `script.js`).
+
+**Hero de `header-variants/` considéré fini pour cette session** (filtre vidéo #C4CDD8, nav 3
+compartiments, badge "Depuis 2018", compteur "420+" texte+ombre) — Julien l'a qualifié de
+"définitif". Reste ouvert : ce hero fini n'a **pas encore été reporté sur le vrai `index.html`**
+racine (toujours sur l'ancienne architecture nav-caché/chooser-cartes, voir plus haut) — migration à
+faire dans une session future si Julien le demande, pas fait d'initiative ce soir.
+
+### Fusion hero + section services, vrai bug de simulateur, copywriting et polish (2026-09-26)
+
+Session sur `services-section/` (et son comparatif `services-section-blue/`, toujours maintenu en
+miroir strict) — reprise du travail codex sur la section prestations/simulateur de qualification.
+
+**Fusion architecture hero + services (fix bug critique)** : cliquer sur "Particulier"/"Entreprise"
+depuis le hero faisait un vrai rechargement de page (`<a href="../services-section/?profil=...">`)
+au lieu de rester sur la même page — Julien : "ça c'est un problème". Corrigé en intégrant le
+markup du hero directement dans `services-section/index.html` (plus d'iframe `.hero-preview`),
+`<link>` vers les mêmes polices/`client-preview/styles.css`/`header-variants/styles.css`, et les
+cartes du duo passées en `data-profile-link="particulier|professionnel"` avec
+`event.preventDefault()` + réglage du profil en JS + `slowScrollTo` custom (rAF + easing
+cubic, 3400ms, filet de sécurité `setTimeout`) vers le panneau. Ancrage du scroll calé sur le
+**haut du titre** `#guide-title`, pas sur le bas du panneau (hauteur du panneau instable selon
+que la grille d'objectifs fait 2 ou 3 rangées) — après plusieurs itérations où Julien renvoyait
+des captures "ça tombe trop bas/trop haut", demande explicite de "trouve une vraie solution".
+
+**Vrai bug trouvé pendant la vérification (pas juste du polish)** : depuis qu'une session
+précédente avait fait supprimer le bouton "Voir mes recommandations" et la sous-écriture
+(Julien : "je voulais vraiment que t'enlèves le bouton et la sous écriture"), cliquer sur un
+objectif ne déclenchait plus rien — c'était ce bouton, disparu du DOM, qui appelait
+`pushToRecommendations()`. Rien ne l'avait remplacé : le simulateur était cassé en silence
+(aucune erreur console, juste aucun effet). Corrigé en rendant la sélection d'objectif
+**single-choice** (cohérent avec "Quel est votre objectif ?" au singulier) : un clic sur une
+pastille appelle directement `pushToRecommendations()`. Vérifié en cliquant à travers les deux
+profils (Particulier objectif "circuit" → Stage circuit/Coaching VIP/Voyages automobile ; Pro
+objectif "risque" → Prévention du risque routier/Éco-conduite/Team building), scoring cohérent
+avec les données.
+
+**Les 13 vraies prestations officielles** (lues dans
+`~/Downloads/01 · Cahier de cadrage · Refonte drivingsens.com.docx`, extrait manuellement en
+dézippant le `.docx` et en nettoyant le XML — pandoc/python-docx indisponibles dans
+l'environnement) remplacent les noms inventés/placeholder dans `profiles`/`services` de
+`script.js`. Répartition Particulier/Professionnel faite par déduction du brief (les cibles
+B2C/B2B et priorités citées) — **pas explicite dans le document, à valider par Julien**,
+notamment "Conduite sécuritaire" et "Voyages automobile" qui existent des deux côtés sous un
+angle différent (individuel vs flotte/équipe). Le second document envoyé
+(`Communication _ Site Web - Ébauche-2.docx`) s'est révélé **vide** (un seul paragraphe blanc) —
+signalé à Julien plutôt que d'inventer du contenu à partir de rien.
+
+**Refonte de l'affichage des recommandations**, sur retour direct de Julien après un premier essai
+où les recommandations remplaçaient le panneau d'objectifs (`guidePanel.style.display="none"`) :
+- Le panneau **reste visible et accessible** quand les recommandations s'affichent — elles
+  s'ajoutent juste en dessous dans le flux normal (plus de `display:none`), avec un léger scroll
+  pour les amener à l'écran. Julien : "il faudrait que on puisse quand même accéder à au menu de
+  base... il faudrait pas que ça s'enlève."
+- Les cartes de recommandation sont passées d'`<article>` + bouton interne "Découvrir la
+  prestation ↗" à des **`<a>` cliquables sur toute leur surface**, sans aucun texte type
+  "cliquez ici" — Julien : "fais pas forcément des boutons... j'aimerais plus un truc comme ça
+  donc mets pas de bouton". Effet au survol : lift `translateY(-6px)` + éclaircissement du
+  bord/fond (pas d'icône flèche visible en permanence).
+- Puis 2 éléments encore retirés sur retour capture d'écran : l'icône flèche qui apparaissait au
+  survol (jugée pas jolie) et l'étiquette catégorie ("Performance & sensations" etc. au-dessus du
+  titre) — Julien : "enlève ces éléments". Cartes raccourcies (`min-height` 380→260px) et texte
+  remonté (`.recommendation-card__body` passé de `margin-top:auto` — qui plaquait tout en bas
+  d'une carte haute — à `margin-top:28px` fixe) : "les cartes sont très hautes et le texte est
+  tout en bas donc remonte un peu... sans tout".
+- `href="#"` sur les cartes et sur "Voir toutes les prestations" (avec sa flèche, retirée aussi)
+  remplacé par `href="#services"` : Julien avait repéré qu'un clic renvoyait tout en haut sur le
+  hero au lieu de rester dans la zone prestations ("l'URL de redirection pas bon").
+- Titre "Conduite sécuritaire — prévention flotte" renommé **"Prévention du risque routier"**
+  (le tiret cadratin "faisait pas jolie" une fois le titre passé sur 2 lignes dans la carte).
+
+**Copywriting des 3 phrases de transition** (`handoff__copy`, entre hero et section services)
+retravaillé sur demande explicite ("améliore le copywriting") : de "Sur circuit, sur route, /
+pour soi ou pour une équipe, / chaque conduite mérite le meilleur accompagnement." à "Sur
+circuit, sur route, / seul au volant ou en équipe, / chaque conduite mérite un accompagnement
+sur-mesure." — **la progression de longueur croissante entre les 3 lignes a été préservée
+volontairement** après un premier essai qui la cassait (2e ligne trop raccourcie) ; retour
+immédiat de Julien : "j'aimais bien quand ça faisait ses premières phrases, une taille deuxième
+phrase un peu plus long et troisième phrase un peu plus long" — donc toujours 1 courte < 2
+moyenne < 3 longue, chaque `<span>` reste sur une seule ligne (`white-space:nowrap`).
+
+**Fix z-index survol pastilles d'objectifs** : retour de Julien (confirmé via question de
+clarification) que survoler une pastille de la rangée du haut la faisait passer derrière un
+élément voisin au lieu de rester devant. `.objective` passé en `position:relative;z-index:0`,
+`z-index:3` au survol/focus, plus un peu de marge de respiration sur
+`.objectives-viewport` (`padding-top:8px;margin-top:-8px`) pour éviter tout clipping par
+l'`overflow:hidden` du conteneur (nécessaire par ailleurs pour l'animation de transition
+particulier/pro).
+
+**Fix scroll au rechargement** : Julien a remarqué qu'un F5 partait direct sur la section
+services au lieu du hero. Cause réelle : l'URL avait gardé `#services` dans la barre d'adresse
+suite à un clic sur une carte/lien (comportement natif du navigateur qui saute au fragment au
+chargement). Fix en tête de `script.js` : `history.scrollRestoration="manual"`, suppression du
+hash de l'URL via `history.replaceState` si présent, et `forceScrollTop()` appelé immédiatement +
+sur l'event `load` + après un `setTimeout(300ms)` de sécurité (pour battre tout scroll natif
+tardif lié au fragment ou au chargement différé de la vidéo/police).
+
+Tout ce qui précède a été appliqué **à l'identique** sur `services-section/` et
+`services-section-blue/` (les deux variantes comparées en parallèle par Julien) — fichiers
+`index.html`, `styles.css`, `script.js` des deux dossiers modifiés en miroir strict à chaque
+étape.
+
+**Reste ouvert pour la prochaine session** :
+- Confirmation de Julien sur la répartition Particulier/Professionnel des 13 prestations
+  (hypothèse de déduction, pas un découpage explicite du brief).
+- Le brief décrit des pages séparées "Offres particuliers (simulateur)" et "Offres entreprises
+  (argumentaire B2B + devis)" dans son arborescence, potentiellement différent du simulateur
+  unique à bascule Particulier/Professionnel actuellement en place — pas encore soulevé avec
+  Julien, à clarifier si le sujet revient.
+- Les `href="#services"` sur les cartes de recommandation sont un placeholder en attendant que
+  chaque prestation ait sa vraie page de détail.
+
+### Migration du hero + simulateur sur le vrai `index.html` (2026-09-27)
+
+Deux décisions tranchées par Julien en reprise de session, avant tout code :
+1. **Liste de prestations qui fait foi (pour l'instant)** : les **12 prestations Particulier**
+   de la femme d'Elie (Stage circuit découverte, Perfectionnement au pilotage, Maîtrise du
+   freinage, Track Day accompagné, Sensations en zone contrôlée, Bilan de conduite personnalisé,
+   Prise en main véhicule haute performance, Aide décisionnelle à l'achat de véhicule, Essai
+   accompagné avant achat, Audit véhicule d'occasion, Prise en main véhicule haute technologie,
+   Conseil technologies embarquées) — **pas** les 13 du cahier de cadrage actuellement câblées
+   dans `services-section*/script.js`. **La liste équivalente côté Professionnel n'est toujours
+   pas arrivée.**
+2. **Chantier choisi pour cette session** : reporter le hero verrouillé de `header-variants/`
+   sur le vrai `index.html` racine (qui tournait encore sur l'ancienne architecture nav-caché +
+   chooser à cartes après une vidéo jouée une fois). Julien a précisé en cours de route : **on
+   part de la variante "full bleu"** (`services-section-blue/`, fond marine continu sans le bloc
+   blanc de transition de `services-section/`) pour tout ce qui suit le hero, pas de la variante
+   blanche.
+
+**Ce qui a été fait** : `index.html` racine entièrement reconstruit. Ne duplique **aucun**
+CSS/JS des dossiers de travail — il pointe directement dessus en relatif depuis la racine
+(`client-preview/styles.css`, `header-variants/styles.css`, `header-variants/script.js`,
+`services-section-blue/styles.css`, `services-section-blue/script.js`) : une retouche future
+faite dans ces dossiers se reflète automatiquement sur le vrai site, pas besoin de re-synchroniser
+à la main. Contenu : hero "définitif" (vidéo boucle + titre "Vivez l'automobile autrement" +
+compteur 420+ + les 2 cartes Particulier/Entreprise) directement suivi du handoff + simulateur de
+qualification "full bleu", identique à `services-section-blue/`. L'intro logo (`css/intro.css` +
+`js/intro.js`, "codée, validée" de longue date) a été **conservée** par défaut au-dessus de ce
+nouveau hero — rien dans l'historique ne disait de l'abandonner, et elle est indépendante du hero
+(overlay plein écran avant que la page n'apparaisse). Les anciens `css/hero.css`, `css/header.css`,
+`js/hero-video.js` (ancienne architecture vidéo-jouée-une-fois + chooser) ne sont plus chargés par
+`index.html` — laissés sur disque tels quels, pas supprimés, au cas où.
+
+**Vrai bug trouvé et corrigé pendant la vérification** : `css/intro.css` (l'overlay du logo) et
+`header-variants/styles.css` (le conteneur du titre animé du hero, section `.hero .intro`)
+utilisaient tous les deux la classe générique `.intro` — collision de nom pure coïncidence.
+Header-variants chargeant après intro.css, son `.intro{position:relative;...}` écrasait le
+`position:fixed` de l'overlay logo sans toucher son `background:var(--ink)` (propriété non
+redéclarée) : résultat, le conteneur du titre du hero héritait d'un fond bleu-nuit plein cadre
+derrière "Vivez l'automobile / autrement", visible sur le tout premier rendu généré. Corrigé en
+renommant la classe racine de l'overlay logo en **`.logo-intro`** dans `css/intro.css` (les
+enfants `.intro__stage`/`.intro__piece*`, qui ne collisionnaient pas, sont restés inchangés) et
+dans `index.html` (`class="logo-intro is-scattered"`) — `js/intro.js` cible l'élément par `id`,
+donc aucun changement JS nécessaire. **Piège à retenir** : avant de fusionner deux bases CSS
+développées séparément (dossier de travail + reste du site), grep les noms de classe génériques
+courants (`.intro`, `.hero`, `.card`, `.header`...) des deux côtés pour repérer les collisions
+avant de charger les deux ensemble, pas après.
+
+**Vérifié visuellement** (voir méthode `shot.mjs` ci-dessous) sur le hero (1440px, correspond
+pixel pour pixel à `header-variants/` après le fix), l'intro logo (plein écran, fond noir), le
+simulateur scrollé (identique à `services-section-blue/`) et un rendu mobile 390px (cartes
+empilées, menu hamburger visible) — aucune erreur visuelle restante.
+
+**Outil de vérification browser — changement d'outil pour ce projet.** Chrome DevTools MCP
+(`take_screenshot`) a timeout à deux reprises sur ce projet (>120s, `Page.captureScreenshot`)
+probablement à cause des animations CSS infinies (blobs de fond, vidéo en boucle) — beaucoup trop
+lent pour de l'itération. Claude in Chrome n'était pas connecté non plus dans cette session.
+Remplacé par un petit script Playwright réutilisable : **`scripts/playwright/shot.mjs`**
+(`node shot.mjs <url> <out.png> [width] [height] [waitMs] [scrollY]`, doit être exécuté depuis
+`scripts/playwright/` où vit déjà `node_modules/playwright` — sinon `ERR_MODULE_NOT_FOUND`).
+Headless, ~2-3s par capture. **Piège découvert en marge** : `shot.mjs` attend 2,7s après le
+`load` avant d'appliquer un `scrollY` demandé — nécessaire ici parce que `js/intro.js` pose
+`html.is-locked` (`overflow:hidden`) pendant toute la durée de l'intro logo (~2,4s, jusqu'à 4,5s
+en filet de sécurité) : un `scrollTo` envoyé avant ce déverrouillage est silencieusement ignoré
+(pas d'erreur, juste aucun effet), et rien ne le repropose ensuite. À réutiliser pour toute
+vérification visuelle rapide sur ce projet (et les autres sites statiques locaux) plutôt que de
+repartir sur `chrome-devtools-mcp`.
+
+Le nav du header (`Particuliers`/`Entreprises`/`À propos`) et le logo pointent toujours vers `#`
+(placeholder), identique à l'état validé de `header-variants/` — pas corrigé de mon propre chef.
+
+### Intro logo retirée + 12 prestations Particulier câblées dans le simulateur (2026-09-27, suite)
+
+Deux demandes de Julien juste après la migration ci-dessus :
+
+1. **Intro logo retirée d'`index.html`** — Julien : "enlève le truc du logo faut que ça arrive
+   direct sur la page, c'était un truc d'avant des anciennes versions". Retiré : le
+   `<div class="logo-intro">`, le `<link rel="stylesheet" href="css/intro.css">` et le
+   `<script src="js/intro.js">`. Fichiers `css/intro.css`/`js/intro.js` laissés sur disque
+   (inutilisés), pas supprimés. La page arrive maintenant directement sur le hero vidéo.
+2. **Les 12 prestations Particulier câblées dans le simulateur.** Mapping proposé par Claude et
+   validé par Julien (juste une correction de libellé : "Vivre une expérience sur circuit", pas
+   "vivre une **vraie** expérience...") — **5 objectifs** au lieu des 6 précédents, pour couvrir
+   les 12 prestations sans trou (certaines reviennent dans 2 objectifs, volontaire, cohérent avec
+   le système de score existant) :
+
+   | Objectif | Prestations recommandées (ordre = poids du score) |
+   |---|---|
+   | Vivre une expérience sur circuit | Stage circuit découverte · Track Day accompagné · Sensations en zone contrôlée |
+   | Me perfectionner au pilotage | Perfectionnement au pilotage · Maîtrise du freinage · Prise en main véhicule haute performance |
+   | Faire le point sur ma conduite | Bilan de conduite personnalisé · Perfectionnement au pilotage · Maîtrise du freinage |
+   | Être accompagné dans l'achat d'un véhicule | Aide décisionnelle à l'achat · Essai accompagné avant achat · Audit véhicule d'occasion |
+   | Prendre en main les technologies embarquées | Prise en main véhicule haute technologie · Conseil technologies embarquées · Prise en main véhicule haute performance |
+
+   Câblé dans `services-section-blue/script.js` (`profiles.particulier` + `services`, avec une
+   vraie description courte par prestation, catégories internes `Circuit & performance` /
+   `Diagnostic & progression` / `Expertise automobile` / `Technologies embarquées` — non affichées
+   dans l'UI actuelle, gardées pour cohérence de structure si l'étiquette catégorie revient un
+   jour). Copié à l'identique dans `services-section/script.js` (miroir strict maintenu). Le côté
+   **Professionnel n'a pas été touché** (toujours les 7 prestations du cahier de cadrage, liste
+   équivalente à celle de la femme d'Elie toujours pas reçue).
+
+**Vérifié** (script Playwright dédié, voir `shot.mjs` ci-dessus pour l'outil) : les 5 objectifs
+Particulier s'affichent avec les bons libellés, cliquer sur "Vivre une expérience sur circuit"
+recommande bien Stage circuit découverte / Track Day accompagné / Sensations en zone contrôlée
+dans cet ordre, basculer sur Professionnel n'a rien cassé (6 objectifs Pro inchangés), aucune
+erreur JS console. Contrôle visuel du rendu des cartes de recommandation à l'écran, cohérent avec
+le design existant.
+
+### 12 vraies pages de détail par prestation + effet "on rentre dans la carte" (2026-09-27, suite)
+
+Julien : au clic sur une carte de recommandation, il veut un effet où "on rentre dans la carte" et
+la page de la prestation s'affiche — pas juste une navigation instantanée. Deux précisions
+obtenues avant de coder : ce sont bien les **cartes de recommandation du simulateur** (pas le duo
+hero, pas une nouvelle grille), et il veut une **vraie page séparée par prestation** (pas un
+panneau qui s'agrandit sur la même page).
+
+**Construit** :
+- `offre/data.mjs` — source unique des 12 prestations (catégorie, titre, accroche, description
+  longue, 3 points forts, libellé de CTA). **Contenu rédigé par Claude, pas par Julien** — les
+  descriptions courtes existaient déjà (script.js), le reste (accroche/description longue/points
+  forts) est un premier jet raisonnable mais générique, **sans aucun chiffre inventé** (prix,
+  durée, lieu exact) — à valider/enrichir par Julien avant mise en ligne réelle.
+- `scripts/build-offre-pages.mjs` — génère `offre/<id>.html` (12 fichiers) depuis `data.mjs`.
+  **Ne jamais éditer un fichier `offre/*.html` à la main** — modifier `data.mjs` puis relancer
+  `node scripts/build-offre-pages.mjs` depuis la racine du projet.
+- `offre/styles.css` — mise en page de la page prestation (nav retour + logo, bloc hero façon
+  carte verre, liste de points forts, CTA), réutilise les tokens/police de
+  `services-section-blue/styles.css` + `client-preview/styles.css` (liés en plus, pas dupliqués).
+- **Effet "on rentre dans la carte"** : 1ère version tentée avec la **View Transitions API**
+  cross-document du navigateur (`@view-transition { navigation: auto; }` + `view-transition-name`
+  partagé carte/hero) — **invisible pour Julien** ("j'ai pas compris l'effet... y a pas du tout cet
+  effet"). Deux causes probables : support encore inégal, et surtout le comportement par défaut de
+  l'API sans keyframes personnalisées est un simple fondu-enchaîné, pas un vrai zoom perceptible.
+  **Remplacée entièrement par une implémentation maison** (JS + CSS purs, garantie identique dans
+  tous les navigateurs) : `css/page-transition.css` + `js/page-transition.js` (fichiers partagés à
+  la racine, chargés en chemin absolu `/css/...`/`/js/...` sur `index.html`,
+  `services-section/index.html`, `services-section-blue/index.html` et les 12 `offre/*.html`).
+  Mécanique :
+  1. Chaque carte de recommandation qui a une vraie page porte l'attribut `data-zoom` (posé par
+     `recommendationsHTML()` dans `script.js`, remplace l'ancien `view-transition-name`).
+  2. Au clic, `page-transition.js` intercepte la navigation, lit `getBoundingClientRect()` de la
+     carte, pose un `<div class="page-zoom-overlay">` **exactement à sa taille/position/rayon de
+     bordure**, force un reflow puis ajoute `.is-expanding` (transition CSS sur `top/left/width/
+     height/border-radius` vers plein écran, ~480ms, couleur `var(--ink)` — un rectangle sombre qui
+     grandit visiblement, pas un calque quasi transparent comme l'était la carte elle-même).
+  3. Une fois la transition terminée (`setTimeout` calé sur la même durée), navigation réelle
+     (`window.location.href`).
+  4. La page de destination (`<body data-page-reveal>`) a ses blocs marqués `data-reveal-in`
+     (`.prestation-hero`, `.prestation-highlights`, `.prestation-cta`) qui démarrent
+     `opacity:0;scale(.94)` puis passent à leur état final peu après le chargement (`requestAnimationFrame`
+     double, classe `.is-revealed`, décalage progressif via `--reveal-i` posé en JS par élément) —
+     prolonge visuellement le zoom qui vient de se terminer plutôt qu'un contenu qui claque d'un coup.
+  5. Le lien "← Retour aux prestations" porte `data-fade` (fondu simple `body.is-leaving`avant de
+     naviguer, pas un zoom inverse symétrique — volontairement plus sobre).
+  `prefers-reduced-motion` : navigation instantanée, aucune animation, dans les deux sens.
+- `services-section-blue/script.js` (`getRecommendations`/`recommendationsHTML`) modifié pour
+  pointer chaque carte vers `/offre/<id>.html` (**chemin absolu, pas relatif** — ce script tourne
+  aussi depuis `services-section/` et `services-section-blue/`, un chemin relatif `offre/...`
+  casserait depuis ces deux sous-dossiers puisque `offre/` n'existe qu'à la racine du site) plutôt
+  que `#services`. Un `OFFRE_PAGE_IDS` limite ça aux 12 id Particulier qui ont une vraie page —
+  le côté Professionnel retombe sur `#services` (pas de page construite, liste Pro toujours pas
+  reçue). Copié à l'identique dans `services-section/script.js` (confirmé octet pour octet
+  identique par `diff` avant le `cp`, donc mirror sûr — contrairement à `styles.css`, voir piège
+  ci-dessous).
+
+**Piège rencontré et corrigé** : en voulant juste ajouter la règle `@view-transition` à
+`services-section/styles.css` en miroir, un `cp services-section-blue/styles.css services-section/styles.css`
+a **écrasé par erreur** les vraies différences intentionnelles entre les deux variantes (5 vs 6
+blobs de fond, `.handoff` blanc vs transparent, `.section-group`/`overflow` — voir tout en haut de
+ce fichier pour le détail de ces différences). Reconstruit à la main à partir du diff capturé plus
+tôt dans la session (5 hunks : blobs, `background:#fff`+`color:var(--ink)` du handoff,
+`.section-group`, `position:relative` sur `.section-title`, `overflow:hidden` en trop sur
+`.guide`) — vérifié par un nouveau `diff` qui retombe exactement sur le diff d'origine. **Piège à
+retenir : ne jamais `cp` un fichier entier entre `services-section/` et `services-section-blue/`
+pour propager un changement ponctuel — ce sont deux fichiers avec des différences volontaires,
+toujours éditer le changement précis des deux côtés, jamais copier le fichier en bloc.**
+
+**Vérifié** (scripts Playwright dédiés, temporaires, supprimés après usage) : clic sur la 1ère carte
+de recommandation depuis les 3 pages qui partagent ce script (`/`, `/services-section/`,
+`/services-section-blue/`) pointe bien vers `/offre/stage-decouverte.html` dans les 3 cas.
+Pour l'effet maison, capture du calque **à mi-course** de l'animation (~200ms après le clic) :
+rect passé de 382×303px (taille réelle de la carte cliquée) à 619×459px, en route vers le plein
+écran — donc le zoom est réellement en train de jouer, pas juste posé instantanément. Après le
+délai complet : navigation effective, `body.is-revealed` bien ajouté sur la page de destination,
+H1 correct, aucune erreur JS. Contrôle visuel des deux captures (calque à mi-zoom, puis page
+d'arrivée pleinement révélée) cohérent avec l'effet demandé.
+
+**Prochaine étape actionnable** : liste Pro toujours en attente. Contenu des 12 pages `offre/*.html`
+à relire/enrichir par Julien (accroche, description longue, points forts — premier jet générique).
+Le CTA de chaque page pointe vers `#contact` (placeholder, pas encore de vraie prise de contact/
+réservation sur le site).
+
+### 3 retours après validation de l'effet (2026-09-27, suite) — retour cassé, pilule nav inerte
+
+Julien a validé l'effet de zoom ("il est vraiment sympa") et signalé deux bugs, plus une réflexion
+en suspens :
+
+1. **"Retour aux prestations" ramenait sur la vidéo hero au lieu du simulateur.** Cause : le fix
+   anti-F5 du 2026-09-26 (`forceScrollTop()` inconditionnel au chargement, pour éviter qu'un F5 sur
+   une URL ayant gardé `#services` ne saute directement à la section) était **trop large** — il
+   annulait AUSSI une navigation fraîche et légitime venant d'une autre page avec un hash
+   intentionnel (le lien retour pointe vers `../index.html#services` exprès). Corrigé en
+   distinguant les deux cas via l'**API Navigation Timing**
+   (`performance.getEntriesByType("navigation")[0].type`) : `"reload"` (vrai F5) → comportement
+   inchangé (scroll forcé en haut, hash nettoyé de l'URL) ; toute autre valeur (navigation fraîche
+   depuis un lien, y compris cross-page) → le hash est honoré, avec une ré-assertion du
+   `scrollIntoView` après `load` + 300ms (le contenu qui charge tard — vidéo, polices — peut
+   décaler le saut natif du navigateur). Câblé dans `services-section-blue/script.js`, copié à
+   l'identique dans `services-section/script.js` (confirmé mirror sûr par `diff` avant le `cp`).
+2. **La pilule de nav flottante sur la vidéo (Particuliers/Entreprises/À propos) ne faisait rien**
+   — placeholders `href="#"` jamais câblés. Julien voulait le même comportement que les 2 cartes du
+   duo hero (slow-scroll + sélection du profil). Corrigé en ajoutant `data-profile-link="particulier"`
+   / `"professionnel"` sur les liens "Particuliers"/"Entreprises" — **le mécanisme existait déjà**
+   dans `script.js` (`document.querySelectorAll("[data-profile-link]")...`, écrit pour les cartes du
+   duo), donc aucune nouvelle logique JS nécessaire, juste l'attribut posé sur 3 fichiers
+   (`index.html`, `services-section/index.html`, `services-section-blue/index.html` — markup
+   identique dans les 3, édité individuellement). "À propos" reste un placeholder `href="#"` : pas
+   de section/page cible pour l'instant, pas demandé par Julien.
+3. **Réflexion non tranchée, pas d'action requise** : Julien hésite à garder le design "full bleu"
+   uniforme sur toutes les futures pages du site (offre/, etc.) — l'alternative (un habillage propre
+   à chaque page/catégorie) demanderait plus de travail mais casserait la répétition visuelle qui
+   l'inquiète ("le bleu ça va faire très récurrent"). **"À voir"** — ne pas commencer ce chantier de
+   soi-même, attendre qu'il tranche.
+
+**Vérifié** (3 scripts Playwright temporaires, supprimés après usage) : navigation directe vers
+`index.html#services` atterrit à scrollY 1777px (pas 0) ; un `reload()` sur cette même URL repart
+bien à scrollY 0 ; cliquer "Entreprises" dans la pilule nav depuis le hero sélectionne bien
+Professionnel (`aria-pressed="true"`) et affiche ses 6 objectifs après le slow-scroll ; **test
+bout-en-bout réel** (pas juste une navigation simulée) : depuis `offre/stage-decouverte.html`, un
+vrai clic sur `.prestation-back` atterrit sur `/#services` à scrollY 1757px. Aucune erreur JS dans
+les 3 scripts de test.
+
+### Effet miroir sur "Retour" (2026-09-27, suite) — Julien voulait le zoom inversé, pas juste un fondu
+
+Après avoir vu le fondu simple posé sur "← Retour aux prestations" (choix initial volontairement
+plus sobre), Julien : "il faudrait que ça fasse le même effet que quand on rentre sur la page mais
+en arrière" — le zoom-avant à l'envers, pas une sortie discrète.
+
+**Corrigé** : `data-fade` retiré, remplacé par `data-zoom-out` sur `.prestation-back`
+(`scripts/build-offre-pages.mjs`, régénère les 12 pages). Nouvelle fonction `zoomOutOfPage()` dans
+`js/page-transition.js` — même calque (`.page-zoom-overlay`), même transition CSS, mais posé en
+sens inverse : créé plein écran (`top:0,left:0,100vw,100vh,radius:0`), reflow forcé, puis son style
+inline est changé vers un **petit rectangle centré** (`min(360px, 70vw)` × `min(220px, 50vh)`,
+coins arrondis 28px) — la transition déjà déclarée sur `.page-zoom-overlay` anime seule le
+passage entre les deux jeux de valeurs inline, aucune classe CSS supplémentaire nécessaire (à la
+différence de `zoomInto()`, qui utilise `!important` sur `.is-expanding` pour battre le style
+inline initial — pas besoin ici puisque les deux états sont posés directement en inline, dans
+l'ordre). **Pas de position d'origine réelle à viser** (page différente de celle qui a ouvert la
+page courante, état du simulateur pas garanti identique) — fermeture vers un point neutre au centre
+de l'écran plutôt qu'une carte précise. CSS `body.is-leaving`/fondu devenu mort retiré de
+`css/page-transition.css`.
+
+**Vérifié** : capture du calque à ~220ms après le clic sur "Retour" — passé de 1440×1000 (plein
+écran) à 1093×750 (en route vers ~360×220), donc la fermeture joue réellement, pas un saut. Capture
+visuelle du calque à mi-fermeture cohérente avec l'effet voulu (rectangle sombre qui se referme,
+coins qui s'arrondissent). Navigation aboutit toujours correctement sur `/#services`. Aucune
+erreur JS.
+
+### Vrai bug trouvé via capture d'écran de Julien : sursaut visible à l'arrivée sur #services (2026-09-27, suite)
+
+Julien a envoyé un enregistrement d'écran ("ça fonctionne pas... regarde la fin") — diagnostic fait
+en extrayant les frames à 6fps (`ffmpeg -vf fps=6`) et en les relisant une par une avec `Read`, pas
+en devinant depuis sa description. Constat : après le clic sur "Retour", `index.html` charge et
+**saute d'abord au milieu du hero** (compteur "+000" pas encore animé) pendant ~600-700ms, **puis se
+corrige brutalement** vers `#services` — un sursaut bien visible, pas un atterrissage propre.
+Deux causes trouvées, cumulées :
+
+1. **Le navigateur saute nativement vers l'ancre tôt**, avec une mise en page pas encore stable
+   (police web pas encore appliquée, vidéo pas encore mesurée) — la ré-assertion `scrollIntoView`
+   après coup (déjà en place) corrigeait bien la position, mais **après** que le mauvais saut ait
+   déjà été peint à l'écran, d'où le sursaut visible.
+2. **Second bug découvert en testant le fix du point 1** : `html{scroll-behavior:smooth}` (posé
+   globalement dans `base.css`) fait que le `scrollIntoView` de correction déclenche un **défilement
+   animé progressif**, pas un saut instantané — donc même en cachant la page jusqu'au bon moment,
+   la révéler faisait quand même voir un scroll de 0 vers 1777px sous les yeux de l'utilisateur.
+
+**Corrigé** :
+- **Anti-flash bloquant en tête de `<head>`** (avant tout CSS externe) sur les 3 pages qui
+  partagent `services-section-blue/script.js` (`index.html`, `services-section/index.html`,
+  `services-section-blue/index.html`) : un petit `<script>` inline détecte une navigation fraîche
+  avec hash (même logique `navEntry.type === "reload"` que le script principal) et pose
+  `html.hash-settling` ; un `<style>` inline associé (`html{background:#0d1728}
+  html.hash-settling body{visibility:hidden}`) cache tout le `<body>` tant que cette classe est
+  présente — fond bleu-nuit uni pendant ce temps, jamais de blanc ni de position fausse visible.
+- Dans `services-section-blue/script.js`, la fonction `settle()` (déjà en place) retire maintenant
+  `hash-settling` une fois le repositionnement fait, et attend `document.fonts.ready` **et**
+  `window.load` avant de le faire (avec un filet de sécurité `setTimeout(settle, 700)` si l'un des
+  deux ne se déclenche jamais).
+- **`scrollIntoView({ block: "start", behavior: "instant" })`** — le `behavior:"instant"` explicite
+  est nécessaire pour court-circuiter `scroll-behavior:smooth` sur ce repositionnement précis (les
+  autres usages de `scrollIntoView` ailleurs dans le fichier, eux, doivent rester animés — pas
+  touchés).
+- Copié à l'identique dans `services-section/script.js` (mirror confirmé sûr par `diff` avant le
+  `cp`, comme d'habitude) et dans l'anti-flash de `services-section/index.html`.
+
+**Vérifié** : script Playwright échantillonnant `body.visibility`/`scrollY`/`location.pathname`
+toutes les 100ms pendant 1,4s après un vrai clic sur `.prestation-back` — **aucun échantillon** ne
+montre le body visible à un `scrollY < 500` sur `index.html` (donc plus aucune position
+intermédiaire fausse visible), atterrissage final à `scrollY 1777` sur `/#services`. Un `reload()`
+direct après ça repart bien à `scrollY 0` (la régression F5 n'est pas revenue). Aucune erreur JS.
+
+### Zoom retour vers la carte d'origine exacte, pas un rectangle générique (2026-09-27, suite)
+
+Julien a envoyé un 2e enregistrement d'écran ("ça bug toujours") et précisé ce qu'il voulait
+vraiment : "j'aimerais que ça fasse un zoom out et que ça revienne sur la carte... il faut que ça
+redevienne comme quand on a cliqué au début pour y aller" — le calque retour doit se refermer
+**exactement sur la carte cliquée à l'origine**, pas sur le petit rectangle centré neutre posé
+initialement (faute de connaître sa position sur une page différente).
+
+**Diagnostic du 2e enregistrement** : frames extraites à 8fps et relues une par une. Le clic sur
+"Maîtrise du freinage" zoom bien vers `offre/freinage.html`, le contenu s'y révèle correctement, le
+clic sur "Retour" navigue bien vers `/#services` sans sursaut visible (le fix de la passe
+précédente tient) — mais atterrit sur le simulateur **remis à zéro** (aucun objectif sélectionné,
+recommandations cachées), pas sur l'état exact d'où on était parti. C'est ce reset total, pas un
+crash, que Julien décrit comme "ça bug".
+
+**Corrigé avec `sessionStorage`** (persiste entre les deux documents, même origine/onglet) :
+- Chaque carte de recommandation porte maintenant aussi `data-offre-id`, `data-profile`,
+  `data-objective` (posés par `recommendationsHTML()` dans `services-section-blue/script.js`).
+- `zoomInto()` (`js/page-transition.js`) enregistre dans `sessionStorage["ds_offre_origin"]` le
+  rect exact de la carte cliquée (`top/left/width/height`) + ces 3 valeurs, juste avant de lancer
+  l'animation.
+- Chaque page `offre/*.html` porte `data-offre-id="<id>"` sur `<body>` (ajouté dans
+  `scripts/build-offre-pages.mjs`, régénère les 12 pages).
+- `zoomOutOfPage()` lit cette entrée : si son `id` correspond à la page courante (garde-fou contre
+  un accès direct par URL ou une entrée périmée), le calque se referme sur **ce rect précis** au
+  lieu du rectangle centré générique (repli conservé si aucune correspondance).
+- Nouvelle fonction `restoreOffreOrigin()` dans `services-section-blue/script.js`, appelée au
+  chargement à la place de `renderObjectives()` nu : lit la même entrée `sessionStorage` (et la
+  vide aussitôt — restauration à usage unique, une visite ultérieure normale sur `#services` ne
+  doit pas rejouer un vieux choix), reconstruit le profil actif, l'objectif sélectionné et la grille
+  de recommandations **avant** que `settle()` ne révèle la page.
+- **Alignement fin du scroll** : restaurer la carte ne suffit pas si le scroll n'atterrit qu'en haut
+  de `#services` — un nouveau `pendingScrollAlign` (posé par `restoreOffreOrigin()`, lu par
+  `settle()`) fait un `window.scrollBy()` de rattrapage après le `scrollIntoView` normal, pour que
+  la carte restaurée retombe pixel pour pixel à la même position Y qu'au moment du clic (pas
+  seulement le bon profil/objectif, aussi le bon cadrage à l'écran).
+
+**Vérifié** (script Playwright dédié) : carte "Maîtrise du freinage" cliquée à `{x:528.66,
+y:512.52}` → sessionStorage contient bien `{id:"freinage", profile:"particulier",
+objective:"pilotage", rect:{...}}` → calque à 220ms en route vers ce rect précis (pas le rectangle
+centré) → après navigation, Particulier actif, "Me perfectionner au pilotage" sélectionné, carte
+"Maîtrise du freinage" restaurée à `{x:528.66, y:512.52}` — **identique au pixel près** à la
+position de départ. `sessionStorage` bien vidé après usage. **Cas de repli testé séparément** :
+accès direct à `offre/bilan.html` par URL (sans passer par une carte, donc sans entrée
+`sessionStorage`) — clic sur "Retour" se referme correctement sur le rectangle centré générique,
+recommandations restent cachées à l'arrivée (pas de faux état restauré), aucune erreur JS dans les
+deux scénarios.
+
+### Le fix `behavior:"instant"` ne suffisait pas — Safari anime quand même (2026-09-27, suite)
+
+Julien : "ça dézoom sur la carte puis ça rafraîchit, ça remonte sur la section des catégories
+broad, puis ça redescend sur les 3 catégories" — un vrai sursaut en 2 temps, visible cette fois
+malgré le fix précédent. Diagnostic fait en testant avec **Playwright sous le moteur WebKit**
+(`playwright.webkit`, pas Chromium — le moteur réel de Safari), avec un échantillonnage de
+`scrollY`/`body.visibility` toutes les 50ms : le 1er `target.scrollIntoView({block:"start"})`
+s'anime bien en douceur (0→1777 sur ~260ms, mais **caché**, donc pas grave), puis le 2e ajustement
+(`pendingScrollAlign`, via `scrollBy`) s'anime **lui aussi** en douceur (1777→2018 sur ~200ms) —
+**après** que le body soit redevenu visible, exactement le sursaut décrit. Tentative intermédiaire
+de contournement (`document.documentElement.style.scrollBehavior = "auto"` posé en inline juste
+avant les deux appels, pour battre `html{scroll-behavior:smooth}` de `base.css`) — **testée et
+insuffisante** : le nouvel échantillonnage montre que WebKit continue d'animer même avec ce
+contournement.
+
+**Fix définitif** : abandon complet de `scrollIntoView()`/`scrollBy()` (méthodes, donc soumises à
+`scroll-behavior` quoi qu'on tente) au profit d'une **assignation directe à la propriété
+`scrollTop`** (`document.documentElement.scrollTop = targetY; document.body.scrollTop = targetY;`)
+— une assignation de propriété, pas un appel de méthode, donc toujours instantanée par spec, peu
+importe `scroll-behavior` (même mécanisme déjà utilisé sans problème par `forceScrollTop()` pour
+le cas F5). `targetY` est calculé nous-mêmes via `getBoundingClientRect()` (pure lecture de
+géométrie, ne déclenche aucun scroll) — pour `#services` seul, ou directement pour aligner la carte
+restaurée (`pendingScrollAlign`) si elle existe, en une seule valeur combinée (plus besoin de deux
+opérations séparées qui pouvaient s'animer indépendamment).
+
+**Vérifié en double** :
+- Test Playwright/WebKit synthétique : reste un léger résidu observé dans ce test précis (mais
+  moins prononcé), à mettre possiblement sur le compte de différences entre le WebKit embarqué par
+  Playwright et le vrai Safari.
+- **Test réel, décisif : 3e enregistrement d'écran de Julien** (vrai Safari, pas une simulation) —
+  frames extraites à 10fps et relues une par une : le clic sur "Retour" (carte "Perfectionnement au
+  pilotage") passe directement de l'état caché (fond uni) à l'état final pleinement révélé et
+  correctement positionné (carte "Perfectionnement au pilotage" en position 01, comme à l'origine),
+  **sans aucune image intermédiaire montrant un sursaut ou un scroll en 2 temps**. C'est ce test réel
+  qui fait foi, pas le test synthétique.
+
+**Piège à retenir pour toute future logique de positionnement précis/instantané sur ce projet** :
+ne jamais faire confiance à `behavior:"instant"` ni à un override CSS de `scroll-behavior` pour
+garantir un scroll instantané sous Safari — seule une assignation directe à `scrollTop`
+(propriété, pas méthode) l'est de façon fiable. Et pour diagnostiquer un bug spécifique à Safari,
+préférer `playwright.webkit` à `playwright.chromium` quand c'est pertinent (disponible dans ce
+projet, voir `scripts/playwright/`) — mais vérifier quand même contre un enregistrement de l'écran
+réel de Julien avant de conclure, les deux moteurs WebKit n'étant pas garantis identiques.
+
+### Le calque de fermeture visait la carte d'origine — mauvaise page, résultat n'importe où (2026-09-27, suite)
+
+Julien, sur ce même enregistrement : "je veux le même effet que quand on zoom in, là ça fait plein
+de truc bizarre" — pas juste le sursaut de scroll déjà corrigé. Diagnostic : ré-extraction des
+frames de son enregistrement à 20-30fps sur la fenêtre exacte du clic "Retour" (pas seulement
+l'arrivée sur `index.html` déjà vérifiée) — trouvé une **vraie 2e régression**, différente du
+sursaut de scroll : le calque de fermeture apparaissait comme un **petit rectangle sombre posé
+n'importe où sur la page offre/**, chevauchant le titre "Perfectionnement au pilotage" au hasard,
+au lieu de partir plein écran proprement.
+
+**Cause** : `zoomOutOfPage()` (ajoutée dans la passe précédente pour viser la carte d'origine
+exacte) lisait le rect mémorisé par `zoomInto()` dans `sessionStorage` et l'utilisait tel quel comme
+cible de fermeture — **mais ce rect est relatif au viewport d'`index.html`** au moment du clic
+(scroll, mise en page propres à cette page). Le réutiliser comme cible sur la page `offre/`
+(contenu totalement différent, aucun rapport avec ces coordonnées) fait atterrir le calque à un
+endroit arbitraire qui n'a de sens sur aucune des deux pages.
+
+**Corrigé** : `zoomOutOfPage()` **ne vise plus jamais** le rect d'origine — repli permanent sur le
+petit rectangle centré, quel que soit le contenu de `sessionStorage`. La restauration précise (même
+carte, même position) reste **entièrement côté page d'arrivée** (`restoreOffreOrigin()` +
+`pendingScrollAlign` dans `services-section-blue/script.js`, non touchés, déjà vérifiés propres) —
+les deux effets (fermeture neutre sur la page qu'on quitte, arrivée précise sur la page qu'on
+rejoint) n'ont pas besoin d'être visuellement connectés entre eux puisqu'une vraie navigation de
+page a de toute façon lieu entre les deux, sans continuité possible sans les View Transitions du
+navigateur (déjà écartées, voir plus haut).
+
+**Piège à retenir** : un rect obtenu par `getBoundingClientRect()` est TOUJOURS relatif au viewport
+de la page qui l'a mesuré à cet instant précis (scroll compris) — ne jamais le réutiliser comme
+position cible sur une AUTRE page/un autre chargement de document, même si les dimensions de
+fenêtre sont identiques. Utile uniquement pour une animation qui reste sur la même page (comme
+`zoomInto()`, qui vise fullscreen sur la page courante — pas de problème là), ou transmis à une
+autre page uniquement pour des calculs qui ont un sens sur CETTE page (comme
+`pendingScrollAlign`, qui compare le rect d'origine à la position *recalculée* du même élément
+restauré sur la nouvelle page, jamais utilisé tel quel).
+
+**Vérifié** (Playwright) : calque de fermeture échantillonné à ~220ms — dérive du centre du calque
+par rapport au centre de l'écran = 0px (parfaitement centré, plus de décalage vers un coin) ; carte
+"Perfectionnement au pilotage" toujours restaurée en position 1 à l'arrivée (la restauration côté
+destination n'a pas régressé). Aucune erreur JS.
+
+### Unification aller/retour — plus jamais de calque qui finit petit (2026-09-27, suite)
+
+Même après le fix ci-dessus, Julien a précisé (en réponse au rectangle centré) ce qu'il voulait
+vraiment : "quand on fait retour, ça dézoome, ça revient bleu, et ça remet sur le menu là où on a
+cliqué, mais il y a aucun effet d'actualiser... c'est exactement le même que quand on rentre, je
+veux le même quand on ressort." Le vrai symptôme qu'il décrivait ("on voit cette carte [le petit
+rectangle], puis ça s'actualise, on voit que c'est au milieu, puis ça redescend") : le calque de
+fermeture finissait **petit** (rectangle centré 360×220) — le reste de la page `offre/` restait
+donc visible tout autour pendant que le vrai chargement de page se produisait, rendant ce
+chargement visible ("ça s'actualise"). À l'inverse, le calque d'entrée finit **plein écran** avant
+de naviguer : rien ne dépasse, donc le chargement de page réel est invisible, masqué par une couleur
+unie identique des deux côtés.
+
+**Corrigé en unifiant les deux sens sur un seul mécanisme** : suppression complète de
+`zoomOutOfPage()` et de l'attribut `data-zoom-out` — le lien "← Retour aux prestations" porte
+maintenant `data-zoom`, exactement comme les cartes de recommandation, et déclenche donc
+`zoomInto()` (le calque grandit depuis CE lien jusqu'au plein écran, puis navigue). Même code,
+même comportement, dans les deux sens — plus de risque qu'un calque atterrisse petit ou mal placé.
+`js/page-transition.js` passé de 3 mécanismes à 2 (zoom générique + révélation d'entrée) ;
+`scripts/build-offre-pages.mjs` mis à jour, 12 pages `offre/*.html` régénérées.
+
+**Vérifié** : le lien retour porte bien `data-zoom` (plus `data-zoom-out`) ; le calque mesuré juste
+avant la navigation (~450ms sur les 480ms de l'animation) fait 1434×995 sur un viewport 1440×1000 —
+donc bien plein écran, pas un petit rectangle — dans les deux sens désormais. La restauration
+précise de la carte d'origine à l'arrivée (`restoreOffreOrigin`/`pendingScrollAlign`, non touchée
+par ce changement) fonctionne toujours : carte "Perfectionnement au pilotage" restaurée en
+position 1. Aucune erreur JS.
+
+### Vraie révélation en "resserrement" sur la carte au retour + piège scrollTop non synchrone (2026-09-27, suite)
+
+Julien, sur l'unification aller/retour ci-dessus : "c'est un peu mieux dans l'idée mais on voit
+toujours que ça revient sur la carte... ça part des cartes principales et ça revient sur la carte
+sélectionnée, il faudrait que l'effet soit mieux géré." Investigation faite en capturant moi-même
+une frise d'écrans (Playwright, pas une nouvelle vidéo demandée à Julien) : à l'arrivée sur
+`index.html`, la page apparaissait **d'un coup, déjà entièrement positionnée** sur les 3 cartes de
+recommandation — aucun mouvement de resserrement vers LA carte spécifique, contrairement à l'entrée
+qui grandit visiblement depuis elle. C'est cette absence de mouvement symétrique côté retour que
+Julien pointait.
+
+**Ajouté** : `window.dsRevealFromZoom(targetEl)`, nouvelle fonction exposée par
+`js/page-transition.js`. Appelée par `settle()` (`services-section-blue/script.js`) juste après
+avoir positionné le scroll et retiré `hash-settling` : pose un calque plein écran (déjà là au
+moment où la page redevient visible, donc jamais de contenu nu entre les deux) qui se **referme
+sur `targetEl`** (la carte restaurée par `pendingScrollAlign`, mesurée sur CETTE page — jamais un
+rect importé d'ailleurs, contrairement au piège de la passe précédente) avant de disparaître. Sans
+carte à viser (arrivée générique), simple fondu de sortie.
+
+**2e vrai bug trouvé en testant ça** : le calque se refermait vers un point situé à des **milliers
+de pixels hors-écran** au lieu de la carte. Diagnostic poussé (logs temporaires, supprimés après) :
+`document.documentElement.scrollTop = targetY` (l'assignation directe déjà utilisée pour le fix
+Safari précédent) **n'est pas reflétée de façon synchrone** — un `window.scrollY` lu juste après,
+**même après deux `requestAnimationFrame`**, renvoyait encore l'ancienne valeur (0) dans les tests
+automatisés. `dsRevealFromZoom` mesurait donc la carte AVANT que le scroll soit réellement pris en
+compte par le moteur de rendu, avec les coordonnées non-scrollées (des milliers de pixels plus bas,
+puisque la section services est loin dans la page). `window.scrollTo()` (la méthode, testée en
+comparaison) semble appliquer plus vite, mais reste soumise à `scroll-behavior:smooth` comme établi
+précédemment — aucune des deux approches n'était donc fiable telle quelle.
+
+**Fix final** : au lieu de deviner un délai fixe (frame, timeout...), `applyScroll()` **réaffirme
+l'assignation à `scrollTop` à chaque frame et relit `window.scrollY` pour confirmer**, jusqu'à
+concordance (± 2px) ou un plafond de 20 frames (~330ms, filet de sécurité) — le corps reste caché
+tout ce temps, donc aucun flash quelle que soit la durée réelle. Une fois confirmé, `reveal()`
+retire `hash-settling` et appelle `dsRevealFromZoom()` avec la cible enfin mesurée sur la bonne
+position.
+
+**Piège à retenir, au-delà de ce projet** : une assignation à `scrollTop` peut ne pas être reflétée
+avant plusieurs frames selon le moteur/contexte — ne jamais supposer qu'elle est instantanée pour
+un enchaînement `assigner → mesurer` qui doit être fiable, même en l'absence de toute animation
+visible. Toujours reconfirmer par relecture avant de s'appuyer sur la nouvelle position.
+
+**Vérifié** (Playwright) : calque échantillonné toutes les 60ms — converge progressivement vers
+`top≈512,left≈130` (position réelle de la carte "Perfectionnement au pilotage"), pas vers un point
+hors-écran comme avant le fix. Rect de la carte identique au pixel près avant/après tout le cycle
+(`x:130,y:512.515625` dans les deux cas). Aucune erreur JS. **Incertitude assumée** : le délai de
+confirmation du scroll observé dans ces tests automatisés (jusqu'à ~300ms avant que le calque de
+révélation démarre) est possiblement propre à l'environnement Playwright/Chromium headless plutôt
+que représentatif du vrai Safari de Julien (déjà vu sur ce projet que les deux divergent) — à
+reconfirmer sur son retour réel plutôt que de considérer le timing exact comme acquis.
+
+### Pivot architectural : panneau prestation EN PAGE, plus de navigation du tout (2026-09-27, suite)
+
+Après cette 4e passe de corrections, Julien a envoyé un nouvel enregistrement en demandant
+"énormément de frames" — diagnostic fait sur 251 images à 30fps. Verdict chiffré à partir des
+frames horodatées : le clic sur "Retour" jusqu'au retour complet à l'état stable prenait environ
+**2 secondes**, pour un total aller-retour d'environ **4 secondes** — bien plus lent que voulu. Le
+nouvel effet de "resserrement" (section précédente) fonctionnait visuellement (confirmé dans les
+frames : le calque converge bien vers la carte "Maîtrise du freinage"), mais Julien a jugé le
+résultat encore imparfait ("y a encore pas mal de bugs, il faudrait que ce soit beaucoup plus
+rapide") et a suggéré un changement d'angle : "vois-le pas comme une page... comme une continuité...
+peut-être qu'on aura pas à rafraîchir".
+
+**Diagnostic de fond** : toute la complexité accumulée sur 5-6 passes (anti-flash, polling
+scrollTop, sessionStorage, dsRevealFromZoom...) vient d'une seule décision architecturale : chaque
+clic sur une carte déclenchait une **vraie navigation de page** (`index.html` → `offre/<id>.html`
+→ `index.html`), avec tout ce que ça implique de resynchronisation entre deux documents distincts
+(scroll, état du simulateur, timing de chargement Safari). Julien a eu raison de pointer que ce
+n'était pas nécessaire : les 12 pages `offre/*.html` n'ont besoin d'exister comme vraies pages que
+pour l'accès direct par URL (partage, liens) — **pas pour la navigation interne depuis les
+cartes**.
+
+**Reconstruit** :
+- `offre/data.mjs` exporte toujours `OFFRE` pour `scripts/build-offre-pages.mjs` (Node), et pose
+  en plus `window.OFFRE = OFFRE` pour le navigateur — chargé via
+  `<script type="module" src="/offre/data.mjs">` sur `index.html` et les 2 variantes
+  `services-section*`.
+- **`js/prestation-panel.js`** (nouveau) : au clic sur une carte de recommandation, un panneau
+  (`<div class="prestation-panel">`, créé une seule fois, réutilisé) grandit depuis CETTE carte
+  jusqu'au plein écran, se remplit avec `window.OFFRE[id]` (mêmes champs que les pages statiques :
+  catégorie, titre, accroche, description, points forts, CTA), révèle son contenu — **tout ça sans
+  la moindre navigation, dans le document déjà chargé**. Le clic sur "Retour" (un `<button>`, pas
+  un lien, puisqu'il ne navigue nulle part) fait l'inverse exact : le panneau se referme sur LA
+  MÊME carte (son élément DOM réel, capturé à l'ouverture — aucune ambiguïté cross-page possible
+  puisqu'il n'y a qu'une seule page).
+- Interception faite en **phase de capture** (`addEventListener(..., true)`), qui s'exécute avant
+  le listener de `js/page-transition.js` (phase de bulles) — `event.stopImmediatePropagation()`
+  empêche ce dernier de aussi déclencher son zoom-plein-écran-puis-navigation sur le même clic. Le
+  sélecteur cible précisément `a[data-zoom][data-offre-id]` : seules les cartes de recommandation
+  ont les deux attributs à la fois, le lien "Retour" des pages `offre/*.html` n'a que `data-zoom`
+  et continue donc de naviguer normalement (pas concerné par ce panneau).
+- **Tout le travail des passes précédentes reste utile en repli** — pas supprimé : si `window.OFFRE`
+  n'est pas encore chargé au moment du clic (réseau lent), ou si quelqu'un arrive directement sur
+  une page `offre/*.html` par un lien partagé puis clique "Retour", le chemin de navigation réelle
+  (avec l'anti-flash, la restauration de carte, le polling scrollTop) prend le relais exactement
+  comme avant — c'est un filet de sécurité robuste, pas du code mort.
+- CSS reprend les classes déjà existantes de `offre/styles.css` (`.prestation-hero`,
+  `.prestation-highlights`, `.prestation-cta`, etc.) — chargé en plus sur `index.html`/
+  `services-section*` pour que le panneau ait le même rendu que les pages statiques. Nouveau
+  fichier `css/prestation-panel.css` pour le conteneur (grandissement/rétrécissement,
+  révélation du contenu — mêmes mécaniques que `.page-zoom-overlay`, dupliquées car un panneau
+  affiche du contenu réel alors que l'overlay n'est qu'une couleur unie).
+- **Minutage en `setTimeout` fixe plutôt que `transitionend`** — leçon tirée des passes
+  précédentes (ne jamais faire confiance à un événement de fin d'animation/scroll pour être fiable
+  partout) : 300ms pour grandir/rétrécir, révélation du contenu déclenchée à 220ms (chevauchement
+  volontaire avec la fin de la croissance, plus fluide qu'un enchaînement strict).
+
+**Vérifié** (Playwright, mesures chronométrées précises via `waitForFunction`, pas de délais
+fixes) : ouverture jusqu'à contenu visible **307ms**, fermeture **530ms**, soit un aller-retour
+complet sous **900ms** — contre ~4 secondes avec l'ancienne approche par navigation. **L'URL ne
+change jamais** pendant tout le cycle (confirmé) — donc plus aucun scroll à resynchroniser, plus de
+sessionStorage nécessaire pour ce chemin, plus de "ça s'actualise" possible puisqu'il n'y a
+littéralement aucun chargement de page. Contenu du panneau vérifié correct (titre, description).
+Aucune erreur JS.
+
+**Non fait dans cette passe** : pas de `history.pushState`/`popstate` — l'URL reste `/` ou
+`/#services` pendant que le panneau est ouvert, donc un rafraîchissement ou un lien direct vers
+une prestation précise depuis ce panneau n'est pas possible (seules les pages `offre/*.html`
+statiques offrent ça). Ajout possible plus tard si Julien le demande, volontairement laissé de
+côté pour rester sur l'essentiel (rapidité + fiabilité) plutôt que rajouter une couche de
+complexité supplémentaire dans une passe déjà dense.

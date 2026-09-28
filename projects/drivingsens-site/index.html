@@ -4,87 +4,146 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Driving Sens — Perfectionnement au pilotage</title>
+<!-- Anti-flash sur une arrivée avec ancre (ex: lien "Retour" depuis une page offre/) : le
+     navigateur saute au fragment tôt, avec une mise en page pas encore stable (polices, vidéo),
+     puis notre propre script corrige la position une fois tout chargé — visible à l'écran comme un
+     sursaut si on ne cache pas la page entre les deux. Bloquant, en tête de <head>, avant tout CSS
+     externe : cache le corps (pas <html>, pour garder un fond sombre plutôt qu'un blanc le temps
+     du calcul) jusqu'à ce que services-section-blue/script.js confirme la position finale et
+     retire cette classe. Jamais posé sur un vrai F5 (voir la même détection dans ce script). -->
+<style>html{background:#0d1728}html.hash-settling body{visibility:hidden}</style>
+<script>
+(function () {
+  if (!location.hash) return;
+  var nav = performance.getEntriesByType && performance.getEntriesByType("navigation")[0];
+  if (nav && nav.type === "reload") return;
+  document.documentElement.classList.add("hash-settling");
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link
-  href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
-  rel="stylesheet"
-/>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400&family=Manrope:wght@300;400&family=Outfit:wght@200;300;400&family=Space+Grotesk:wght@300;400;500;600;700&family=Urbanist:wght@200;300;400;500;600&display=swap" rel="stylesheet" />
+<!-- Base du site (reset, tokens) -->
 <link rel="stylesheet" href="css/tokens.css" />
 <link rel="stylesheet" href="css/base.css" />
-<link rel="stylesheet" href="css/intro.css" />
-<link rel="stylesheet" href="css/header.css" />
-<link rel="stylesheet" href="css/hero.css" />
+<!-- Hero + services : on pointe directement sur les fichiers validés par Julien
+     (header-variants/ = hero "définitif" du 2026-09-25, services-section-blue/ = simulateur
+     "full bleu" fusionné le 2026-09-26), plutôt que dupliquer leur CSS/JS ici — une retouche
+     faite dans ces dossiers de travail continue de se refléter directement sur le vrai site. -->
+<link rel="stylesheet" href="client-preview/styles.css" />
+<link rel="stylesheet" href="header-variants/styles.css" />
+<link rel="stylesheet" href="services-section-blue/styles.css" />
+<link rel="stylesheet" href="/css/page-transition.css" />
+<link rel="stylesheet" href="/offre/styles.css" />
+<link rel="stylesheet" href="/css/prestation-panel.css" />
 </head>
-<body id="top">
+<body id="top" class="mono" data-header="1" data-stat="txt-ombre">
 
-<div class="intro is-scattered" id="intro" aria-hidden="true">
-  <div class="intro__stage">
-    <img class="intro__piece intro__piece--icon" src="assets/brand/logo-icon.svg" alt="" />
-    <img class="intro__piece intro__piece--word" src="assets/brand/logo-word.svg" alt="" />
-    <img class="intro__piece intro__piece--tag" src="assets/brand/logo-tag.svg" alt="" />
+<div class="bg-field" aria-hidden="true">
+  <div class="bg-blobs">
+    <span class="bg-blob bg-blob--1"></span>
+    <span class="bg-blob bg-blob--2"></span>
+    <span class="bg-blob bg-blob--3"></span>
+    <span class="bg-blob bg-blob--4"></span>
+    <span class="bg-blob bg-blob--5"></span>
+    <span class="bg-blob bg-blob--6"></span>
   </div>
 </div>
 
-<header class="site-header" id="siteHeader">
-  <div class="site-header__inner">
-    <a class="site-header__brand" href="#top">
-      <img src="assets/brand/logo-full.svg" alt="Driving Sens" />
-    </a>
-    <nav class="site-header__nav">
-      <a href="#performance-passion">Performance &amp; Passion</a>
-      <a href="#serenite-confiance">Sérénité &amp; Confiance</a>
-      <a href="#entreprise-collectif">Entreprise &amp; Collectif</a>
-      <a href="#industrie-marques">Industrie &amp; Marques</a>
-    </nav>
-    <a class="site-header__cta" href="#contact">Réserver un stage</a>
+<main>
+  <div class="stage">
+    <video class="film" autoplay muted loop playsinline preload="auto" poster="hero-concepts/assets/hero-driving-sens-clean-poster.jpg">
+      <source src="hero-concepts/assets/hero-driving-sens-clean.mp4?v=4" type="video/mp4" />
+    </video>
+    <div class="grade"></div>
+    <div class="texture"></div>
+    <header class="head head--2 head--island is-active">
+      <div class="head__brand">
+        <a class="head__logo" href="#"><img src="hero-concepts/assets/logo-white.png" alt="Driving Sens" /></a>
+        <div class="head__since"><span class="head__since-text"><em>Perfectionnement au pilotage</em><b>Depuis 2018</b></span></div>
+      </div>
+      <div class="nav-island"><nav><a href="#services" data-profile-link="particulier">Particuliers</a><a href="#services" data-profile-link="professionnel">Entreprises</a><a href="#">À propos</a></nav></div>
+      <a class="head__cta" href="#contact">Réserve ta session</a>
+      <button class="head__menu" aria-label="Ouvrir le menu"><span></span><span></span></button>
+    </header>
+    <section class="hero">
+      <div class="intro">
+        <h1 class="story-title"><span class="story-word story-word--top">Vivez l’ automobile</span><br /><span class="story-word story-word--bottom">autrement</span></h1>
+      </div>
+      <div class="stat-scroll">
+        <div class="stat-scroll__body">
+          <span class="stat-scroll__number">
+            <span class="digit" data-digit="4"><span class="digit__reel"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span>
+            <span class="digit" data-digit="2"><span class="digit__reel"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span>
+            <span class="digit" data-digit="0"><span class="digit__reel"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span>
+            <b class="stat-scroll__plus">+</b>
+          </span>
+          <small>clients accompagnés chaque année</small>
+        </div>
+      </div>
+      <div class="duo">
+        <a class="card" href="#services" data-profile-link="particulier">
+          <div><h2>Particulier</h2><p class="promise">Gagner en maîtrise.</p><small>Stage circuit · Coaching VIP · Remise en confiance</small></div>
+          <span class="link">Découvrir les offres</span>
+        </a>
+        <a class="card" href="#services" data-profile-link="professionnel">
+          <div><h2>Entreprise</h2><p class="promise">Créer un impact.</p><small>Éco-conduite · Prévention · Team building</small></div>
+          <span class="link">Découvrir les solutions</span>
+        </a>
+      </div>
+    </section>
   </div>
-</header>
 
-<section class="hero-scroll" id="heroScroll">
-  <div class="hero-viewport" id="hero">
-    <video
-      class="hero__video-bg"
-      id="heroVideoBg"
-      muted
-      playsinline
-      preload="auto"
-      aria-hidden="true"
-      tabindex="-1"
-    >
-      <source src="assets/video/hero.mp4?v=5" type="video/mp4" />
-    </video>
+  <section class="handoff" aria-label="Transition après le hero">
+    <p class="handoff__copy" data-reveal="stagger">
+      <span>Sur circuit, sur route,</span>
+      <span>seul au volant ou en équipe,</span>
+      <span>chaque conduite mérite un accompagnement sur-mesure.</span>
+    </p>
+  </section>
 
-    <video
-      class="hero__video"
-      id="heroVideo"
-      poster="assets/img/hero-poster.jpg"
-      muted
-      playsinline
-      preload="auto"
-    >
-      <source src="assets/video/hero.mp4?v=5" type="video/mp4" />
-    </video>
+  <section class="section-title">
+    <h1 id="guide-title" data-reveal>Trouvez votre<br /><span>accompagnement</span></h1>
+  </section>
 
-    <img class="hero__end-frame" id="heroEndFrame" src="assets/img/hero-end.jpg" alt="" aria-hidden="true" />
+  <section class="guide" id="services" aria-label="Simulateur de qualification">
+    <div class="guide__stage">
+    <div class="guide__panel" data-reveal>
+      <div class="profile-picker">
+        <span class="profile-picker__label">Vous êtes…</span>
+        <div class="profile-picker__control" role="group" aria-label="Choisissez votre profil">
+          <span class="profile-picker__slider" aria-hidden="true"></span>
+          <button type="button" data-profile="particulier" aria-pressed="true">Particulier</button>
+          <button type="button" data-profile="professionnel" aria-pressed="false">Professionnel</button>
+        </div>
+      </div>
 
-    <div class="hero__chooser" id="heroChooser" aria-hidden="true">
-      <h2 class="hero__chooser-title">Que recherchez-vous&nbsp;?</h2>
-      <div class="hero__chooser-cards">
-        <a class="hero__chooser-card" href="#performance-passion">Performance &amp; Passion</a>
-        <a class="hero__chooser-card" href="#serenite-confiance">Sérénité &amp; Confiance</a>
-        <a class="hero__chooser-card" href="#entreprise-collectif">Entreprise &amp; Collectif</a>
-        <a class="hero__chooser-card" href="#industrie-marques">Industrie &amp; Marques</a>
+      <div class="guide__question">
+        <p>Quel est votre objectif ?</p>
+      </div>
+
+      <div class="objectives-viewport">
+        <div class="objectives" id="objectives" aria-live="polite"></div>
       </div>
     </div>
-  </div>
-</section>
 
-<section id="prestations" style="min-height:100vh; background:var(--ink); display:flex; align-items:center; justify-content:center;">
-  <p class="eyebrow">Prestations — contenu à venir</p>
-</section>
-
-<script src="js/intro.js"></script>
-<script src="js/hero-video.js"></script>
+    <section class="recommendations" id="recommendations" aria-labelledby="recommendations-title" hidden>
+      <header class="recommendations__header">
+        <div>
+          <p>Pour vous</p>
+          <h2 id="recommendations-title">Nos recommandations</h2>
+        </div>
+      </header>
+      <div class="recommendations__grid"></div>
+      <a class="all-services" href="#services">Voir toutes les prestations</a>
+    </section>
+    </div>
+  </section>
+</main>
+<script src="header-variants/script.js"></script>
+<script src="services-section-blue/script.js"></script>
+<script src="/js/page-transition.js"></script>
+<script type="module" src="/offre/data.mjs"></script>
+<script src="/js/prestation-panel.js"></script>
 </body>
 </html>

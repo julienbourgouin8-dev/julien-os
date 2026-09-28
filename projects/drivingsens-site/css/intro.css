@@ -1,4 +1,4 @@
-.intro {
+.logo-intro {
   position: fixed;
   inset: 0;
   z-index: 999;
@@ -53,36 +53,36 @@
 /* Start: the 3 layers pulled apart vertically (top layer up, bottom layer
    down, like an open burger). JS removes this class shortly after paint
    so the browser animates them closing back onto each other. */
-.intro.is-scattered .intro__piece--icon {
+.logo-intro.is-scattered .intro__piece--icon {
   transform: translateY(calc(var(--stage-h) * -0.62));
 }
-.intro.is-scattered .intro__piece--word {
+.logo-intro.is-scattered .intro__piece--word {
   transform: translateY(calc(var(--stage-h) * -0.1));
 }
-.intro.is-scattered .intro__piece--tag {
+.logo-intro.is-scattered .intro__piece--tag {
   transform: translateY(calc(var(--stage-h) * 0.68));
 }
 
 /* End: assembled logo holds, then opens back up (further this time) while
    the whole overlay fades — this IS the reveal transition. */
-.intro.is-departing {
+.logo-intro.is-departing {
   opacity: 0;
 }
-.intro.is-departing .intro__piece {
+.logo-intro.is-departing .intro__piece {
   opacity: 0;
   transition: transform 640ms var(--ease-premium), opacity 460ms ease 100ms;
 }
-.intro.is-departing .intro__piece--icon {
+.logo-intro.is-departing .intro__piece--icon {
   transform: translateY(calc(var(--stage-h) * -1));
 }
-.intro.is-departing .intro__piece--word {
+.logo-intro.is-departing .intro__piece--word {
   transform: translateY(calc(var(--stage-h) * -0.16));
 }
-.intro.is-departing .intro__piece--tag {
+.logo-intro.is-departing .intro__piece--tag {
   transform: translateY(calc(var(--stage-h) * 1.1));
 }
 
-.intro.is-done {
+.logo-intro.is-done {
   display: none;
 }
 
@@ -91,7 +91,7 @@
     transition: opacity 250ms ease !important;
     transform: none !important;
   }
-  .intro.is-scattered .intro__piece {
+  .logo-intro.is-scattered .intro__piece {
     opacity: 0;
   }
 }

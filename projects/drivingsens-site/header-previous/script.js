@@ -1,5 +1,5 @@
 (function(){
-  var filter=new URLSearchParams(window.location.search).get('filter')||'soft';
+  var filter=new URLSearchParams(window.location.search).get('filter')||'light';
   if(['original','light','bright','soft'].indexOf(filter)===-1){filter='light'}
   document.body.classList.add('tone-'+filter);
   var type=new URLSearchParams(window.location.search).get('type')||'urban';
@@ -61,18 +61,26 @@
     },1100);
   }
 
-  function animateStatScroll(){
-    var stat=document.querySelector('.stat-scroll');
-    if(!stat){return}
-    if(reduced){
-      stat.querySelectorAll('.digit__reel').forEach(function(reel){reel.style.transition='none'});
+  function animateCounter(){
+    var counter=document.querySelector('.counter');
+    if(!counter){return}
+    var target=parseInt(counter.getAttribute('data-count'),10)||420;
+    if(reduced){counter.textContent=target;return}
+    var startedAt=null;
+    var duration=1800;
+    function tick(now){
+      if(startedAt===null){startedAt=now}
+      var progress=Math.min(1,(now-startedAt)/duration);
+      var eased=1-Math.pow(1-progress,4);
+      counter.textContent=String(Math.round(target*eased)).padStart(3,'0');
+      if(progress<1){requestAnimationFrame(tick)}else{counter.textContent=String(target)}
     }
-    requestAnimationFrame(function(){stat.classList.add('is-counted')});
+    requestAnimationFrame(tick);
   }
 
   requestAnimationFrame(function(){
     document.body.classList.add('motion-ready');
-    window.setTimeout(animateStatScroll,320);
+    window.setTimeout(animateCounter,380);
   });
   if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitStory)}else{fitStory()}
   window.addEventListener('resize',fitStory);

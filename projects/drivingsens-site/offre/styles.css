@@ -1,0 +1,118 @@
+.prestation-nav {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 28px clamp(20px, 4vw, 64px);
+}
+.prestation-back {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: .04em;
+  color: rgba(255,255,255,.7);
+  transition: color 200ms ease;
+}
+.prestation-back:hover { color: #fff; }
+.prestation-logo img { height: 34px; width: auto; display: block; }
+
+.prestation {
+  position: relative;
+  z-index: 1;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: clamp(24px, 5vw, 64px) clamp(20px, 4vw, 64px) clamp(64px, 8vw, 120px);
+}
+
+.prestation-hero {
+  padding: clamp(28px, 4vw, 48px);
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: var(--radius-panel, 32px);
+  background: rgba(232,236,240,.05);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 30px 90px rgba(0,0,0,.4);
+}
+.prestation-hero .eyebrow {
+  display: block;
+  margin: 0 0 18px;
+  color: var(--accent, #9db4e0);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+}
+.prestation-hero h1 {
+  margin: 0 0 14px;
+  color: #fff;
+  font-family: "Urbanist", sans-serif;
+  font-size: clamp(32px, 5vw, 54px);
+  font-weight: 200;
+  line-height: 1.02;
+  letter-spacing: -.03em;
+}
+.prestation-tagline {
+  margin: 0 0 22px;
+  color: rgba(255,255,255,.78);
+  font-size: clamp(16px, 1.6vw, 20px);
+  font-weight: 300;
+  letter-spacing: -.01em;
+}
+.prestation-description {
+  margin: 0;
+  max-width: 60ch;
+  color: rgba(255,255,255,.62);
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.65;
+}
+
+.prestation-highlights {
+  margin-top: clamp(32px, 5vw, 56px);
+}
+.prestation-highlights h2 {
+  margin: 0 0 20px;
+  color: #fff;
+  font-family: "Urbanist", sans-serif;
+  font-size: clamp(20px, 2.2vw, 28px);
+  font-weight: 300;
+  letter-spacing: -.02em;
+}
+.prestation-highlights ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+.prestation-highlights li {
+  position: relative;
+  padding-left: 26px;
+  color: rgba(255,255,255,.72);
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.5;
+}
+.prestation-highlights li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .55em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent, #9db4e0);
+}
+
+.prestation-cta {
+  margin-top: clamp(36px, 5vw, 56px);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+}
+
+@media (max-width: 640px) {
+  .prestation-nav { padding: 20px; }
+  .prestation { padding: 16px 20px 64px; }
+}
