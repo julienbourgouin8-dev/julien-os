@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import type { MarketPin } from "@/components/Marches";
 
 // MapLibre GL (JS + CSS) est lourd — pas seulement en octets (~200 Ko) mais
 // en coût processeur réel à l'initialisation (création du contexte WebGL,
@@ -32,7 +33,7 @@ const PLACEHOLDER = (
   </section>
 );
 
-export default function MarchesLazy() {
+export default function MarchesLazy({ markets }: { markets: MarketPin[] }) {
   const [visible, setVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -51,8 +52,9 @@ export default function MarchesLazy() {
     return () => observer.disconnect();
   }, [visible]);
 
+  if (markets.length === 0) return null;
   if (!visible) {
     return <div ref={ref}>{PLACEHOLDER}</div>;
   }
-  return <Marches />;
+  return <Marches markets={markets} />;
 }

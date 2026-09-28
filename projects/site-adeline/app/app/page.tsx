@@ -8,6 +8,7 @@ import Nouveautes from "@/components/Nouveautes";
 // Chargement paresseux (JS + CSS MapLibre hors bundle critique) — voir
 // commentaire dans MarchesLazy.tsx.
 import Marches from "@/components/MarchesLazy";
+import { getUpcomingMarkets } from "@/lib/db/markets";
 
 // Sans un minimum de fraîcheur forcée, Next.js prérend cette page une seule
 // fois au build et la sert figée pour toujours ensuite (Full Route Cache) —
@@ -26,7 +27,14 @@ import Marches from "@/components/MarchesLazy";
 // exacte à la seconde près.
 export const revalidate = 60;
 
-export default function Home() {
+export default async function Home() {
+  // Un marché sans coordonnées géocodées (lieu introuvable en admin) ne peut
+  // ni recevoir de pin ni être recadré par la carte — filtré ici plutôt que
+  // de complexifier Marches.tsx avec un cas "pin optionnel".
+  const markets = (await getUpcomingMarkets()).filter(
+    (m): m is typeof m & { lat: number; lng: number } => m.lat !== null && m.lng !== null,
+  );
+
   return (
     <>
       <a
@@ -321,7 +329,7 @@ export default function Home() {
           <VitrineArc />
         </section>
 
-        <Marches />
+        <Marches markets={markets} />
       </main>
 
       <ContactSection />

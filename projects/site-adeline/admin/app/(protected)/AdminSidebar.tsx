@@ -25,6 +25,15 @@ function ProductsIcon({ className }: { className?: string }) {
   );
 }
 
+function MarketsIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className} aria-hidden>
+      <path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z" />
+      <circle cx="12" cy="9" r="2.5" />
+    </svg>
+  );
+}
+
 function OrdersIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className} aria-hidden>
@@ -56,6 +65,7 @@ function LogoutIcon({ className }: { className?: string }) {
 const NAV = [
   { href: "/", label: "Tableau de bord", icon: DashboardIcon },
   { href: "/products", label: "Produits", icon: ProductsIcon },
+  { href: "/markets", label: "Marchés", icon: MarketsIcon },
   { href: "/orders", label: "Commandes", icon: OrdersIcon },
   { href: "/compte", label: "Mon compte", icon: AccountIcon },
 ];

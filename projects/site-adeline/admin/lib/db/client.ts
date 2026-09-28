@@ -151,6 +151,38 @@ export function ensureSchema(): Promise<void> {
       // plusieurs comptes admin : sans ça, un lien de réinitialisation
       // changerait le mot de passe du mauvais compte.
       await sql`ALTER TABLE password_reset_tokens ADD COLUMN IF NOT EXISTS email TEXT NOT NULL DEFAULT ''`;
+      // Marchés/salons affichés section "Nos marchés" du site (voir
+      // app/components/Marches.tsx) — gérés depuis l'admin depuis le
+      // 2026-09-28 (avant : tableau en dur dans le composant). `lat`/`lng`
+      // sont géocodés automatiquement depuis `place` à la création/édition
+      // (voir admin/lib/geocode.ts) : la carte du site en a besoin pour
+      // placer le pin, mais on ne demande pas à Julien/Adeline de les saisir
+      // à la main.
+      await sql`
+        CREATE TABLE IF NOT EXISTS markets (
+          id TEXT PRIMARY KEY,
+          title TEXT NOT NULL,
+          place TEXT NOT NULL,
+          event_date DATE,
+          image TEXT,
+          lat DOUBLE PRECISION,
+          lng DOUBLE PRECISION,
+          created_at TIMESTAMPTZ NOT NULL,
+          updated_at TIMESTAMPTZ NOT NULL
+        )
+      `;
+      // Seed unique des 2 marchés de Noël déjà en dur sur le site
+      // (2026-09-28) pour qu'ils apparaissent d'emblée dans l'admin au lieu
+      // de partir d'une liste vide — seulement si la table est encore vide,
+      // pour ne jamais les faire réapparaître après suppression.
+      await sql`
+        INSERT INTO markets (id, title, place, event_date, image, lat, lng, created_at, updated_at)
+        SELECT * FROM (VALUES
+          ('4e5e6a9e-0f5a-4a2a-9c8a-6b1b6f6a0e01', 'Marché de Noël (APE)', 'Balzac (16430)', DATE '2026-12-06', NULL::TEXT, 45.715981::DOUBLE PRECISION, 0.135735::DOUBLE PRECISION, now(), now()),
+          ('4e5e6a9e-0f5a-4a2a-9c8a-6b1b6f6a0e02', 'Marché de Noël (comité des fêtes)', 'Angoulême (Espace Lunesse)', DATE '2026-12-20', NULL::TEXT, 45.656553::DOUBLE PRECISION, 0.175728::DOUBLE PRECISION, now(), now())
+        ) AS seed
+        WHERE NOT EXISTS (SELECT 1 FROM markets)
+      `;
     })();
   }
   return schemaReady;

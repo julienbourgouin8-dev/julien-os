@@ -104,6 +104,21 @@ export function ensureSchema(): Promise<void> {
       // admin/lib/db/products.ts (synchro des champs communs).
       await sql`ALTER TABLE products ADD COLUMN IF NOT EXISTS collection_id TEXT`;
       await sql`ALTER TABLE products ADD COLUMN IF NOT EXISTS variant_label TEXT`;
+      // Même table que admin/lib/db/client.ts (schéma dupliqué, gérée
+      // uniquement côté admin — voir ce fichier pour le détail et le seed).
+      await sql`
+        CREATE TABLE IF NOT EXISTS markets (
+          id TEXT PRIMARY KEY,
+          title TEXT NOT NULL,
+          place TEXT NOT NULL,
+          event_date DATE,
+          image TEXT,
+          lat DOUBLE PRECISION,
+          lng DOUBLE PRECISION,
+          created_at TIMESTAMPTZ NOT NULL,
+          updated_at TIMESTAMPTZ NOT NULL
+        )
+      `;
     })();
   }
   return schemaReady;

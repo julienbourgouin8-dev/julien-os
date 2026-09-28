@@ -16,36 +16,34 @@ if (typeof window !== "undefined") {
   setWorkerUrl("/maplibre-gl-worker.js");
 }
 
-// Les deux marchés de Noël 2026 ci-dessous ont une date confirmée par
-// Adeline elle-même (message du 2026-09-28) : Balzac le 6/12 avec l'APE, et
-// le marché du comité des fêtes d'Angoulême le 20/12. "Lunesse" (mentionné
-// par Adeline) est en fait l'Espace Lunesse, rue Paul Mairat à Angoulême —
-// salle municipale où ce comité tient son marché de Noël chaque année
-// (confirmé via angouleme-tourisme.com), géocodée via api-adresse.data.gouv.fr.
-// Pas encore de flyer ni de confirmation pour d'éventuels autres marchés
-// cette saison — à ajouter dès qu'Adeline les transmet. Les anciennes
-// entrées historiques (marchés/salons passés retrouvés sur Facebook) ont
-// été retirées à la demande de Julien le 2026-09-28.
-type Market = {
-  name: string;
+// Depuis le 2026-09-28, les marchés sont gérés depuis l'admin (section
+// "Marchés", voir admin/app/(protected)/markets) plutôt qu'en dur ici — ce
+// composant ne fait plus que les afficher. `lat`/`lng` sont géocodés
+// automatiquement en admin depuis le champ "lieu" (api-adresse.data.gouv.fr) ;
+// seuls les marchés ayant géocodé avec succès arrivent jusqu'ici (voir
+// MarchesLazy.tsx), un marché sans coordonnées n'aurait ni pin ni flyTo
+// possible.
+export type MarketPin = {
+  id: string;
+  title: string;
   place: string;
-  postcode: string;
+  event_date: string | null;
+  image: string | null;
   lat: number;
   lng: number;
-  date?: string;
 };
 
-const dates: Market[] = [
-  { name: "Marché de Noël (APE)", place: "Balzac", postcode: "16430", lat: 45.715981, lng: 0.135735, date: "6 décembre" },
-  { name: "Marché de Noël (comité des fêtes)", place: "Angoulême (Espace Lunesse)", postcode: "16000", lat: 45.656553, lng: 0.175728, date: "20 décembre" },
-];
+function formatDate(iso: string | null): string | null {
+  if (!iso) return null;
+  return new Date(`${iso}T00:00:00`).toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
+}
 
 // Style vectoriel CARTO Positron — gratuit, sans clé API, rendu WebGL
 // (vrai pan/zoom fluide), esthétique claire et minimale qui se fond dans
 // la palette du site plutôt qu'un fond de carte chargé/daté.
 const MAP_STYLE = "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
 
-export default function Marches() {
+export default function Marches({ markets }: { markets: MarketPin[] }) {
   const [active, setActive] = useState(0);
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
@@ -59,7 +57,7 @@ export default function Marches() {
     const map = new MapLibreMap({
       container: mapContainer.current,
       style: MAP_STYLE,
-      center: [0.735, 45.185],
+      center: [markets[0].lng, markets[0].lat],
       zoom: 10.3,
       attributionControl: { compact: true },
     });
@@ -74,11 +72,11 @@ export default function Marches() {
     });
     popupRef.current = popup;
 
-    markersRef.current = dates.map((d, i) => {
+    markersRef.current = markets.map((d, i) => {
       const el = document.createElement("button");
       el.type = "button";
       el.className = "marche-pin";
-      el.setAttribute("aria-label", `${d.name}, ${d.place}`);
+      el.setAttribute("aria-label", `${d.title}, ${d.place}`);
       el.addEventListener("click", () => setActive(i));
 
       return new Marker({ element: el, anchor: "bottom" })
@@ -90,6 +88,7 @@ export default function Marches() {
       map.remove();
       mapRef.current = null;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // synchronise pin actif + popup + cadrage à chaque changement de
@@ -98,7 +97,7 @@ export default function Marches() {
     const map = mapRef.current;
     const popup = popupRef.current;
     if (!map || !popup) return;
-    const current = dates[active];
+    const current = markets[active];
 
     markersRef.current.forEach((m, i) => {
       m.getElement().classList.toggle("marche-pin--active", i === active);
@@ -108,18 +107,18 @@ export default function Marches() {
       .setLngLat([current.lng, current.lat])
       .setHTML(
         `<div class="marche-popup-card">
-          <img src="/products/stand-marche.webp" alt="" width="320" height="320" loading="lazy" />
+          <img src="${current.image ?? "/products/stand-marche.webp"}" alt="" width="320" height="320" loading="lazy" />
           <div class="marche-popup-body">
-            <p class="marche-popup-date">${current.date ?? "Charente"}</p>
-            <p class="marche-popup-name">${current.name}</p>
-            <p class="marche-popup-place">${current.place} (${current.postcode})</p>
+            <p class="marche-popup-date">${formatDate(current.event_date) ?? "Charente"}</p>
+            <p class="marche-popup-name">${current.title}</p>
+            <p class="marche-popup-place">${current.place}</p>
           </div>
         </div>`,
       )
       .addTo(map);
 
     map.flyTo({ center: [current.lng, current.lat], zoom: 11.6, duration: 900, essential: true });
-  }, [active]);
+  }, [active, markets]);
 
   return (
     <section id="marches" className="scroll-mt-20 bg-paper px-6 py-14">
@@ -137,65 +136,67 @@ export default function Marches() {
         </div>
 
         <div className="grid gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-14">
-          {/* liste des marchés/salons réels — la sélectionnée grossit et
-              prend la couleur denim, cliquer recadre la carte sur la
-              bonne ville */}
+          {/* liste des marchés — la sélectionnée grossit et prend la
+              couleur denim, cliquer recadre la carte sur la bonne ville */}
           <div className="flex flex-col gap-2">
-            {dates.map((d, i) => (
-              <button
-                key={`${d.name}-${d.place}`}
-                type="button"
-                onMouseEnter={() => setActive(i)}
-                onClick={() => setActive(i)}
-                className="group flex items-center gap-5 rounded-2xl px-4 py-4 text-left transition-colors duration-300"
-                style={{
-                  backgroundColor: active === i ? "var(--color-denim)" : "transparent",
-                }}
-              >
-                <div
-                  className="flex w-16 shrink-0 flex-col items-center justify-center rounded-xl py-3 transition-colors duration-300"
+            {markets.map((d, i) => {
+              const date = formatDate(d.event_date);
+              return (
+                <button
+                  key={d.id}
+                  type="button"
+                  onMouseEnter={() => setActive(i)}
+                  onClick={() => setActive(i)}
+                  className="group flex items-center gap-5 rounded-2xl px-4 py-4 text-left transition-colors duration-300"
                   style={{
-                    backgroundColor: active === i ? "rgba(255,255,255,0.15)" : "var(--color-line)",
+                    backgroundColor: active === i ? "var(--color-denim)" : "transparent",
                   }}
                 >
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke={active === i ? "var(--color-paper)" : "var(--color-ink)"}
-                    strokeWidth="1.8"
+                  <div
+                    className="flex w-16 shrink-0 flex-col items-center justify-center rounded-xl py-3 transition-colors duration-300"
+                    style={{
+                      backgroundColor: active === i ? "rgba(255,255,255,0.15)" : "var(--color-line)",
+                    }}
                   >
-                    <path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z" />
-                    <circle cx="12" cy="9" r="2.5" />
-                  </svg>
-                </div>
-                <div>
-                  {d.date && (
-                    <p
-                      className="text-xs font-semibold uppercase tracking-[0.1em] transition-colors duration-300"
-                      style={{ color: active === i ? "var(--color-paper)" : "var(--color-teal)", opacity: active === i ? 0.85 : 1 }}
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke={active === i ? "var(--color-paper)" : "var(--color-ink)"}
+                      strokeWidth="1.8"
                     >
-                      {d.date}
+                      <path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z" />
+                      <circle cx="12" cy="9" r="2.5" />
+                    </svg>
+                  </div>
+                  <div>
+                    {date && (
+                      <p
+                        className="text-xs font-semibold uppercase tracking-[0.1em] transition-colors duration-300"
+                        style={{ color: active === i ? "var(--color-paper)" : "var(--color-teal)", opacity: active === i ? 0.85 : 1 }}
+                      >
+                        {date}
+                      </p>
+                    )}
+                    <p
+                      className="font-display text-lg italic transition-colors duration-300"
+                      style={{ color: active === i ? "var(--color-paper)" : "var(--color-ink)" }}
+                    >
+                      {d.title}
                     </p>
-                  )}
-                  <p
-                    className="font-display text-lg italic transition-colors duration-300"
-                    style={{ color: active === i ? "var(--color-paper)" : "var(--color-ink)" }}
-                  >
-                    {d.name}
-                  </p>
-                  <p
-                    className="text-sm transition-colors duration-300"
-                    style={{ color: active === i ? "var(--color-paper)" : "var(--color-ink)", opacity: active === i ? 0.75 : 0.55 }}
-                  >
-                    {d.place} <span className="tabular-nums">({d.postcode})</span>
-                  </p>
-                </div>
-              </button>
-            ))}
+                    <p
+                      className="text-sm transition-colors duration-300"
+                      style={{ color: active === i ? "var(--color-paper)" : "var(--color-ink)", opacity: active === i ? 0.75 : 0.55 }}
+                    >
+                      {d.place}
+                    </p>
+                  </div>
+                </button>
+              );
+            })}
             <p className="mt-4 px-4 text-xs text-ink/40">
-              Retrouvez CréA&apos;deline sur ces marchés de Noël en Charente.
+              Retrouvez CréA&apos;deline sur ces marchés en Charente.
             </p>
           </div>
 

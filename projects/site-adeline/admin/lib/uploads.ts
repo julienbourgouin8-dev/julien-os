@@ -193,6 +193,38 @@ export async function saveUploadedFile(file: File): Promise<string> {
   return `/uploads/${filename}`;
 }
 
+// Upload générique (photo de marché, etc.) : pas de détection de sujet sur
+// fond studio comme `normalizeProductFrame` (une photo de stand n'a pas ce
+// fond uni, le recadrage automatique produirait n'importe quoi) — juste
+// orientation EXIF + plafond de taille + conversion WebP.
+async function normalizeGenericImage(buffer: Buffer): Promise<Buffer> {
+  return sharp(buffer, { animated: false })
+    .rotate()
+    .resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true })
+    .webp({ quality: 88, effort: 5 })
+    .toBuffer();
+}
+
+export async function saveGenericImage(file: File): Promise<string> {
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const ext = detectImageExt(buffer);
+  if (!ext) {
+    throw new Error(`Fichier "${file.name}" refusé : ce n'est pas une image valide (jpg, png, webp ou gif).`);
+  }
+  const optimized = await normalizeGenericImage(buffer);
+  const filename = `${crypto.randomUUID()}.webp`;
+  await getS3().send(
+    new PutObjectCommand({
+      Bucket: bucket(),
+      Key: filename,
+      Body: optimized,
+      ContentType: CONTENT_TYPES.webp,
+      CacheControl: "public, max-age=31536000, immutable",
+    }),
+  );
+  return `/uploads/${filename}`;
+}
+
 // `url` est le chemin renvoyé par saveUploadedFile ("/uploads/xxx.jpg") —
 // on ignore silencieusement si l'objet est déjà absent.
 export async function deleteUploadedFile(url: string): Promise<void> {
