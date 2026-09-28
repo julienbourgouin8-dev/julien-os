@@ -54,6 +54,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="fr"
       className={`${display.variable} ${body.variable} ${script.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <head>
         <script

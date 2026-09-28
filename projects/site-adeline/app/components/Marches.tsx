@@ -16,29 +16,28 @@ if (typeof window !== "undefined") {
   setWorkerUrl("/maplibre-gl-worker.js");
 }
 
-// Marchés/salons RÉELS où Adeline a exposé, retrouvés en cherchant "marché"
-// / "salon" / "expo" directement dans les publications de sa page Facebook
-// (facebook.com/deline1001) — noms d'événements repris de ses propres
-// légendes ("Présente aujourd'hui au...", "Mon expo à..."), villes
-// géocodées via api-adresse.data.gouv.fr. Pas de date exacte : Facebook
-// obfusque les horodatages contre le scraping, donc plutôt que d'inventer
-// un jour/mois, la section ne prétend pas en donner. Un post mentionnait
-// "Lunesse" mais ça ne géocode vers rien de plausible (résultat le plus
-// proche : un village breton à 400km de tout le reste) — probablement une
-// coquille dans sa légende, écarté plutôt que de placer un pin au hasard.
+// Les deux marchés de Noël 2026 ci-dessous ont une date confirmée par
+// Adeline elle-même (message du 2026-09-28) : Balzac le 6/12 avec l'APE, et
+// le marché du comité des fêtes d'Angoulême le 20/12. "Lunesse" (mentionné
+// par Adeline) est en fait l'Espace Lunesse, rue Paul Mairat à Angoulême —
+// salle municipale où ce comité tient son marché de Noël chaque année
+// (confirmé via angouleme-tourisme.com), géocodée via api-adresse.data.gouv.fr.
+// Pas encore de flyer ni de confirmation pour d'éventuels autres marchés
+// cette saison — à ajouter dès qu'Adeline les transmet. Les anciennes
+// entrées historiques (marchés/salons passés retrouvés sur Facebook) ont
+// été retirées à la demande de Julien le 2026-09-28.
 type Market = {
   name: string;
   place: string;
   postcode: string;
   lat: number;
   lng: number;
+  date?: string;
 };
 
 const dates: Market[] = [
-  { name: "Marché de Noël (APE)", place: "Chasseneuil-sur-Bonnieure", postcode: "16260", lat: 45.822963, lng: 0.447077 },
-  { name: "Marché de Noël (APE)", place: "Balzac", postcode: "16430", lat: 45.715981, lng: 0.135735 },
-  { name: "Salon du livre et des Arts", place: "Gond-Pontouvre", postcode: "16160", lat: 45.679323, lng: 0.164108 },
-  { name: "Expo à L'Atelier 171", place: "Soyaux", postcode: "16800", lat: 45.639166, lng: 0.198152 },
+  { name: "Marché de Noël (APE)", place: "Balzac", postcode: "16430", lat: 45.715981, lng: 0.135735, date: "6 décembre" },
+  { name: "Marché de Noël (comité des fêtes)", place: "Angoulême (Espace Lunesse)", postcode: "16000", lat: 45.656553, lng: 0.175728, date: "20 décembre" },
 ];
 
 // Style vectoriel CARTO Positron — gratuit, sans clé API, rendu WebGL
@@ -111,7 +110,7 @@ export default function Marches() {
         `<div class="marche-popup-card">
           <img src="/products/stand-marche.webp" alt="" width="320" height="320" loading="lazy" />
           <div class="marche-popup-body">
-            <p class="marche-popup-date">Charente</p>
+            <p class="marche-popup-date">${current.date ?? "Charente"}</p>
             <p class="marche-popup-name">${current.name}</p>
             <p class="marche-popup-place">${current.place} (${current.postcode})</p>
           </div>
@@ -172,6 +171,14 @@ export default function Marches() {
                   </svg>
                 </div>
                 <div>
+                  {d.date && (
+                    <p
+                      className="text-xs font-semibold uppercase tracking-[0.1em] transition-colors duration-300"
+                      style={{ color: active === i ? "var(--color-paper)" : "var(--color-teal)", opacity: active === i ? 0.85 : 1 }}
+                    >
+                      {d.date}
+                    </p>
+                  )}
                   <p
                     className="font-display text-lg italic transition-colors duration-300"
                     style={{ color: active === i ? "var(--color-paper)" : "var(--color-ink)" }}
@@ -188,7 +195,7 @@ export default function Marches() {
               </button>
             ))}
             <p className="mt-4 px-4 text-xs text-ink/40">
-              Quelques marchés et salons en Charente où vous avez pu croiser CréA&apos;deline.
+              Retrouvez CréA&apos;deline sur ces marchés de Noël en Charente.
             </p>
           </div>
 
